@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	"github.com/99designs/gqlgen/example/federation/reviews/graph/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -126,4 +127,9 @@ type ProductDiffDAO struct {
 	NewProduct *ProductDAO `json:"newproduct"`
 	Type       string      `json:"type"`
 	IsPushed   bool
+}
+
+func (pdDao *ProductDAO) ToEntity() *model.Product {
+	var pd *model.Product
+	return pd
 }
