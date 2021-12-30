@@ -20,8 +20,8 @@ func (repo *brandsRepo) Get(ID string) (*domain.BrandDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	brandObjectId, _ := primitive.ObjectIDFromHex(ID)
-	filter := bson.M{"_id": brandObjectId}
+	brandObjectID, _ := primitive.ObjectIDFromHex(ID)
+	filter := bson.M{"_id": brandObjectID}
 
 	var brand *domain.BrandDAO
 	if err := repo.col.FindOne(ctx, filter).Decode(&brand); err != nil {
@@ -76,6 +76,7 @@ func (repo *brandsRepo) Upsert(brand *domain.BrandDAO) (*domain.BrandDAO, error)
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"keyname": &brand.KeyName}
 	brand.ID = ""
+
 	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &brand}, opts); err != nil {
 		return nil, err
 	}
@@ -88,8 +89,8 @@ func (repo *brandsRepo) Upsert(brand *domain.BrandDAO) (*domain.BrandDAO, error)
 	return updatedBrand, nil
 }
 
-func MongoBrandsRepo(conn *MongoRepo) repository.BrandsRepository {
+func MongoBrandsRepo(conn *MongoDB) repository.BrandsRepository {
 	return &brandsRepo{
-		col: conn.brandsCol,
+		col: conn.brandCol,
 	}
 }

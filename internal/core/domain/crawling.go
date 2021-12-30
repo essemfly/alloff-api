@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 type CrawlSourceDAO struct {
 	ID string `bson:"_id,omitempty"`
 	// 크롤링하는 브랜드의  Keyname
@@ -16,4 +18,12 @@ type CrawlSourceDAO struct {
 	CrawlModuleName string
 	// 아울렛 상품인지 유무
 	IsOutletProducts bool
+}
+
+type CrawlRecordDAO struct {
+	ID            string    `bson:"_id,omitempty"`
+	Date          time.Time `json:"date"`
+	NewProducts   int       `json:"newproducts"`
+	OldProducts   int       `json:"oldproducts"`
+	CrawledBrands []string  `json:"crawledbrands"`
 }

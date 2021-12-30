@@ -15,10 +15,73 @@ type ProductsRepository interface {
 	Get(ID string) (*domain.ProductDAO, error)
 	GetByProductID(brandKeyname string, productID string) (*domain.ProductDAO, error)
 	List(limit, offset int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
-	Upsert(product *domain.ProductDAO) (*domain.ProductDAO, error)
+	Upsert(*domain.ProductDAO) (*domain.ProductDAO, error)
 }
 
 type CrawlSourcesRepository interface {
-	AddSource(*domain.CrawlSourceDAO) error
-	ListSourcesByModule(moduleName string) ([]*domain.CrawlSourceDAO, error)
+	List(filter interface{}) ([]*domain.CrawlSourceDAO, int, error)
+	Upsert(*domain.CrawlSourceDAO) (*domain.CrawlSourceDAO, error)
+}
+
+type CategoriesRepository interface {
+	List(brandKeyname string) ([]*domain.CategoryDAO, error)
+	Upsert(*domain.CategoryDAO) (*domain.CategoryDAO, error)
+}
+
+type AlloffCategoriesRepository interface {
+	Get(ID string) (*domain.AlloffCategoryDAO, error)
+	GetByKeyname(keyname string) (*domain.AlloffCategoryDAO, error)
+	List(parentID *string) ([]*domain.AlloffCategoryDAO, error)
+	Upsert(*domain.AlloffCategoryDAO) (*domain.AlloffCategoryDAO, error)
+}
+
+type ClassifyRulesRepository interface {
+	Upsert(*domain.ClassifierDAO) (*domain.ClassifierDAO, error)
+	GetByKeyname(brandKeyname, categoryKeyname string) (*domain.ClassifierDAO, error)
+}
+
+type CrawlRecordsRepository interface {
+	GetLast() (*domain.CrawlRecordDAO, error)
+	Insert(*domain.CrawlRecordDAO) error
+}
+
+type ProductDiffsRepository interface {
+	Insert(*domain.ProductDiffDAO) error
+	List(filter interface{}) ([]*domain.ProductDiffDAO, error)
+}
+
+type ProductGroupsRepository interface {
+}
+
+type FeaturedsRepository interface {
+}
+
+type HomeItemsRepository interface {
+}
+
+type OrdersRepository interface {
+}
+
+type PaymentsRepository interface {
+}
+
+type UsersRepository interface {
+}
+
+type DevicesRepository interface {
+}
+
+type NotificationsRepository interface {
+}
+
+type AlimtalksRepository interface {
+}
+
+type LikeBrandsRepository interface {
+}
+
+type LikeProductsRepository interface {
+}
+
+type AlarmProductGroupsRepository interface {
 }

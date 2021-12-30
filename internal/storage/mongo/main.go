@@ -12,14 +12,30 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-type MongoRepo struct {
-	brandsCol   *mongo.Collection
-	productsCol *mongo.Collection
-	sourceCol   *mongo.Collection
-	categoryCol *mongo.Collection
+type MongoDB struct {
+	brandCol             *mongo.Collection
+	productCol           *mongo.Collection
+	crawlSourceCol       *mongo.Collection
+	crawlRecordCol       *mongo.Collection
+	categoryCol          *mongo.Collection
+	alloffCategoryCol    *mongo.Collection
+	classifyRuleCol      *mongo.Collection
+	productDiffCol       *mongo.Collection
+	productGroupCol      *mongo.Collection
+	featuredCol          *mongo.Collection
+	homeitemCol          *mongo.Collection
+	orderCol             *mongo.Collection
+	paymentCol           *mongo.Collection
+	userCol              *mongo.Collection
+	deviceCol            *mongo.Collection
+	notificationCol      *mongo.Collection
+	alimtalkCol          *mongo.Collection
+	likeBrandsCol        *mongo.Collection
+	likeProductsCol      *mongo.Collection
+	alarmProductGroupCol *mongo.Collection
 }
 
-func NewMongoDB(conf config.Configuration) *MongoRepo {
+func NewMongoDB(conf config.Configuration) *MongoDB {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	credential := options.Credential{
@@ -34,16 +50,40 @@ func NewMongoDB(conf config.Configuration) *MongoRepo {
 	checkErr(mongoClient.Ping(ctx, readpref.Primary()), "Ping error in mongoconnect")
 	db := mongoClient.Database(conf.MONGO_DB_NAME)
 
-	return &MongoRepo{
-		brandsCol:   db.Collection("brands"),
-		productsCol: db.Collection("products"),
-		sourceCol:   db.Collection("sources"),
-		categoryCol: db.Collection("categories"),
+	return &MongoDB{
+		brandCol:             db.Collection("brands"),
+		productCol:           db.Collection("products"),
+		crawlSourceCol:       db.Collection("sources"),
+		crawlRecordCol:       db.Collection("crawling_records"),
+		categoryCol:          db.Collection("categories"),
+		alloffCategoryCol:    db.Collection("alloffcategories"),
+		classifyRuleCol:      db.Collection("classifier"),
+		productDiffCol:       db.Collection("product_diffs"),
+		productGroupCol:      db.Collection("productgroups"),
+		featuredCol:          db.Collection("featured"),
+		homeitemCol:          db.Collection("homeitems"),
+		orderCol:             db.Collection("orders"),
+		paymentCol:           db.Collection("payments"),
+		userCol:              db.Collection("users"),
+		deviceCol:            db.Collection("devices"),
+		notificationCol:      db.Collection("notifications"),
+		alimtalkCol:          db.Collection("alimtalks"),
+		likeBrandsCol:        db.Collection("likes"),
+		likeProductsCol:      db.Collection("likes_products"),
+		alarmProductGroupCol: db.Collection("alarm_productgroups"),
 	}
 }
 
-func (conn *MongoRepo) RegisterRepos() {
+func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.Brands = MongoBrandsRepo(conn)
+	ioc.Repo.Products = MongoProductsRepo(conn)
+	ioc.Repo.CrawlSources = MongoCrawlSourcesRepo(conn)
+	ioc.Repo.CrawlRecords = MongoCrawlRecordRepo(conn)
+	ioc.Repo.Categories = MongoCategoriesRepo(conn)
+	ioc.Repo.AlloffCategories = MongoAlloffCategoriesRepo(conn)
+	ioc.Repo.ClassifyRules = MongoClassifyRulesRepo(conn)
+	ioc.Repo.ProductDiffs = MongoProductDiffsRepo(conn)
+
 }
 
 func checkErr(err error, location string) {

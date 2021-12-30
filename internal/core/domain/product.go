@@ -24,6 +24,12 @@ type ProductMetaInfoDAO struct {
 	Description    map[string]string
 	SizeAvailable  []string
 	ColorAvailable []string
+	PriceHistory   []PriceHistoryDAO
+}
+
+type PriceHistoryDAO struct {
+	Date  time.Time
+	Price float32
 }
 
 type ProductScoreInfoDAO struct {
@@ -78,9 +84,9 @@ type ProductDAO struct {
 }
 
 type PriceDAO struct {
-	OriginalPrice int
+	OriginalPrice float32
 	CurrencyType  CurrencyType
-	SellersPrice  int
+	SellersPrice  float32
 }
 
 type LikeProductDAO struct {
@@ -112,4 +118,12 @@ type ProductGroupDAO struct {
 type ProductPriorityDAO struct {
 	Priority int
 	Product  *ProductDAO
+}
+
+type ProductDiffDAO struct {
+	ID         string      `bson:"_id,omitempty"`
+	OldProduct *ProductDAO `json:"oldproduct"`
+	NewProduct *ProductDAO `json:"newproduct"`
+	Type       string      `json:"type"`
+	IsPushed   bool
 }

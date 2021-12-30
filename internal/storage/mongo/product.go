@@ -16,6 +16,10 @@ type productRepo struct {
 	col *mongo.Collection
 }
 
+type productDiffRepo struct {
+	col *mongo.Collection
+}
+
 func (repo *productRepo) Get(ID string) (*domain.ProductDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -86,8 +90,43 @@ func (repo *productRepo) Upsert(product *domain.ProductDAO) (*domain.ProductDAO,
 	return updatedProduct, nil
 }
 
-func MongoProductsRepo(conn *MongoRepo) repository.ProductsRepository {
+func MongoProductsRepo(conn *MongoDB) repository.ProductsRepository {
 	return &productRepo{
-		col: conn.productsCol,
+		col: conn.productCol,
+	}
+}
+
+func (repo *productDiffRepo) Insert(diff *domain.ProductDiffDAO) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	_, err := repo.col.InsertOne(ctx, diff)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (repo *productDiffRepo) List(filter interface{}) ([]*domain.ProductDiffDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	cursor, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var diffs []*domain.ProductDiffDAO
+	err = cursor.All(ctx, &diffs)
+	if err != nil {
+		return nil, err
+	}
+	return diffs, nil
+}
+
+func MongoProductDiffsRepo(conn *MongoDB) repository.ProductDiffsRepository {
+	return &productDiffRepo{
+		col: conn.productDiffCol,
 	}
 }
