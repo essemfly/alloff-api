@@ -1,0 +1,47 @@
+type Brand {
+  id: ID!
+  korName: String!
+  engName: String!
+  keyName: String!
+  logoImgUrl: String!
+  categories: [Category!]!
+  onPopular: Boolean!
+  description: String!
+  maxDiscountRate: Int!
+  isOpen: Boolean!
+  inMaintenance: Boolean!
+  numNewProducts: Int!
+  sizeGuide: [SizeGuide]!
+}
+
+type SizeGuide {
+  label: String!
+  imgUrl: String!
+}
+
+type Category {
+  id: ID!
+  keyName: String!
+  name: String!
+}
+
+input LikeBrandInput {
+  brandId: String!
+}
+
+input BrandInput {
+  brandId: String!
+}
+
+input BrandsInput {
+  onlyLikes: Boolean
+}
+
+extend type Query {
+  brand(input: BrandInput): Brand!
+  brands(input: BrandsInput): [Brand!]!
+}
+
+extend type Mutation {
+  likeBrand(input: LikeBrandInput): Boolean!
+}

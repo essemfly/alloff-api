@@ -1,0 +1,40 @@
+type AlloffCategory {
+  id: ID!
+  name: String!
+  keyName: String!
+  level: Int!
+  parentId: ID!
+  imgUrl: String!
+}
+
+input AlloffCategoryInput {
+  parentId: String
+}
+
+input AlloffCategoryId {
+  id: String!
+}
+
+input CategoryProductsInput {
+  offset: Int!
+  limit: Int!
+  alloffcategoryId: String!
+  brandIds: [String!]
+  sorting: [SortingType]
+}
+
+type AlloffCategoryProducts {
+  alloffcategory: AlloffCategory!
+  products: [Product]
+  allBrands: [Brand]
+  totalCount: Int!
+  offset: Int!
+  limit: Int!
+  selectedBrands: [String!]
+}
+
+extend type Query {
+  alloffcategories(input: AlloffCategoryInput): [AlloffCategory]!
+  alloffcategory(input: AlloffCategoryId): AlloffCategory!
+  alloffcategoryProducts(input: CategoryProductsInput!): AlloffCategoryProducts!
+}

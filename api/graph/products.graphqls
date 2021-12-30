@@ -1,0 +1,70 @@
+enum SortingType {
+  PRICE_ASCENDING
+  PRICE_DESCENDING
+  DISCOUNT_0_30
+  DISCOUNT_30_50
+  DISCOUNT_50_70
+  DISCOUNT_70_100
+  DISCOUNTRATE_ASCENDING
+  DISCOUNTRATE_DESCENDING
+}
+
+type Product {
+  id: ID!
+  category: Category!
+  brand: Brand!
+  name: String!
+  originalPrice: Int!
+  soldout: Boolean!
+  images: [String!]!
+  discountedPrice: Int
+  discountRate: Int
+  productUrl: String!
+  sizeAvailable: [String!]!
+  isUpdated: Boolean!
+  isNewProduct: Boolean!
+  removed: Boolean!
+  description: [KeyValueInfo]
+  deliveryDescription: [String!]
+  cancelDescription: [String!]
+}
+
+type KeyValueInfo {
+  key: String!
+  value: String!
+}
+
+input ProductsInput {
+  offset: Int!
+  limit: Int!
+  brand: String
+  category: String
+  alloffcategory: String
+  sorting: [SortingType]
+}
+
+input LikeProductInput {
+  productId: String!
+}
+
+type ProductsOutput {
+  totalCount: Int!
+  offset: Int!
+  limit: Int!
+  products: [Product]!
+}
+
+type LikeProductOutput {
+  oldProduct: Product!
+  newProduct: Product!
+}
+
+extend type Query {
+  product(id: String!): Product!
+  products(input: ProductsInput!): ProductsOutput!
+  likeproducts: [LikeProductOutput]!
+}
+
+extend type Mutation {
+  likeProduct(input: LikeProductInput): Boolean!
+}

@@ -1,0 +1,79 @@
+scalar Upload
+
+type ProductGroup {
+  id: ID!
+  title: String!
+  shortTitle: String!
+  instruction: [String!]!
+  imgUrl: String!
+  alloffproducts: [AlloffProduct]!
+  startTime: Date!
+  finishTime: Date!
+  numAlarms: Int!
+  setAlarm: Boolean!
+}
+
+type AlloffProduct {
+  id: ID!
+  brand: Brand!
+  name: String!
+  productGroupId: String!
+  producttype: [String!]!
+  description: [String!]
+  originalPrice: Int!
+  discountedPrice: Int!
+  discountRate: Int!
+  images: [String!]!
+  removed: Boolean!
+  soldout: Boolean!
+  inventory: [Inventory]!
+  instruction: Instruction!
+  faults: [Faults!]
+  sizeDescription: [String!]
+  cancelDescription: [String!]
+  deliveryDescription: [String!]
+}
+
+input AlloffProductInput {
+  productGroupId: String!
+  productType: [String]!
+  brandId: String!
+  productName: String!
+  originalPrice: String!
+  discountedPrice: String!
+  images: [String]!
+  inventories: [InventoryInput]!
+}
+
+type Faults {
+  image: String
+  description: String!
+}
+
+type Instruction {
+  thumbnail: String!
+  title: String!
+  description: [String!]
+  images: [String!]
+}
+
+type Inventory {
+  size: String!
+  quantity: Int!
+}
+
+input InventoryInput {
+  size: String!
+  quantity: Int!
+}
+
+extend type Query {
+  alloffproduct(id: String!): AlloffProduct!
+  productGroup(id: String!): ProductGroup!
+  productGroups: [ProductGroup]!
+}
+
+extend type Mutation {
+  addAlloffProduct(input: AlloffProductInput): AlloffProduct!
+  alarmProductGroup(groupId: String!): Boolean!
+}

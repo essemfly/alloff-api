@@ -1,0 +1,66 @@
+enum HomeItemType {
+  COMMUNITY
+  IMAGE
+  PRODUCT
+  BRAND
+  TIMEDEAL
+}
+
+enum CommunityItemType {
+  OUTLINK
+  INTERNAL
+}
+
+type FeaturedItem {
+  id: ID!
+  order: Int!
+  brand: Brand!
+  img: String!
+  category: Category
+}
+
+type Curation {
+  id: ID!
+  order: Int!
+  title: String!
+  items: [CurationItem!]!
+}
+
+type CurationItem {
+  id: ID!
+  img: String!
+  brand: Brand!
+  category: Category
+}
+
+type HomeItem {
+  id: ID!
+  priority: Int!
+  title: String!
+  itemType: HomeItemType!
+  targetId: String!
+  sorting: [SortingType!]
+  images: [String!]
+  communityItems: [CommunityItem]
+  brands: [BrandItem]
+  products: [Product]
+  productGroups: [ProductGroup]
+}
+
+type CommunityItem {
+  name: String!
+  target: String!
+  targetType: CommunityItemType!
+  imgUrl: String!
+}
+
+type BrandItem {
+  imgUrl: String!
+  brand: Brand!
+}
+
+extend type Query {
+  featureds: [FeaturedItem]!
+  curations: [Curation]!
+  homeitems: [HomeItem]!
+}
