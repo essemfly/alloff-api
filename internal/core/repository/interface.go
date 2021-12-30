@@ -5,17 +5,17 @@ import (
 )
 
 type BrandsRepository interface {
-	Get(keyname string) (*domain.BrandDAO, error)
-	List(alloffCategoryID *string) ([]*domain.BrandDAO, error)
-	Upsert(*domain.BrandDAO) error
+	Get(ID string) (*domain.BrandDAO, error)
+	GetByKeyname(keyname string) (*domain.BrandDAO, error)
+	List(limit, offset int, filter, sortingOptions interface{}) ([]*domain.BrandDAO, int, error)
+	Upsert(*domain.BrandDAO) (*domain.BrandDAO, error)
 }
 
 type ProductsRepository interface {
-	Get(id string) (*domain.ProductDAO, error)
-	GetByProductID(productID string) (*domain.ProductDAO, error)
-	List(offset, limit int, brandID, categoryID, alloffCategoryID, sorting string, priceRanges []string) ([]*domain.ProductDAO, int, error)
-	Upsert(*domain.ProductDAO) error
-	ListDistinctBrands(alloffCategoryID string) ([]*domain.BrandDAO, error)
+	Get(ID string) (*domain.ProductDAO, error)
+	GetByProductID(brandKeyname string, productID string) (*domain.ProductDAO, error)
+	List(limit, offset int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
+	Upsert(product *domain.ProductDAO) (*domain.ProductDAO, error)
 }
 
 type CrawlSourcesRepository interface {
