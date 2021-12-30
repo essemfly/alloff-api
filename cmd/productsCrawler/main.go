@@ -8,7 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 )
 
-const numWorkers = 20
+const numWorkers = 1
 
 func main() {
 	conf := config.GetConfiguration()
@@ -18,6 +18,11 @@ func main() {
 	conn.RegisterRepos()
 
 	for i := 0; i < numWorkers; i++ {
-		ioc.Repo.Brands.Get("HOIT")
+		brand, err := ioc.Repo.Brands.Get("60b60075881252a2bd16b848")
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		log.Println(brand.KorName)
 	}
 }
