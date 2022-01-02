@@ -106,6 +106,7 @@ func AddBylynn() {
 				Category:        *updatedCat,
 				CrawlUrl:        crawlUrl + brandId,
 				CrawlModuleName: modulename,
+				IsSalesProducts: true,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)

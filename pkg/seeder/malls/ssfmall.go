@@ -298,6 +298,7 @@ func AddSSFMall() {
 					Category:        *updatedCat,
 					CrawlUrl:        buildCrawlUrl(shopId, updatedCat.CatIdentifier),
 					CrawlModuleName: modulename,
+					IsSalesProducts: true,
 				}
 
 				_, err = ioc.Repo.CrawlSources.Upsert(&source)

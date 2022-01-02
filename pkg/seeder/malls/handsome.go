@@ -207,6 +207,7 @@ func AddHandsome() {
 				Category:        *updatedCat,
 				CrawlUrl:        "http://www.thehandsome.com/ko/c/categoryList?brandCode=ou&categoryCode=ou_" + brandId + "_" + val,
 				CrawlModuleName: modulename,
+				IsSalesProducts: false,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)

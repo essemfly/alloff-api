@@ -115,6 +115,7 @@ func AddKolonMall() {
 				Category:        *updatedCat,
 				CrawlUrl:        "https://www.kolonmall.com/Category/List/" + val + "?supplierBrands=" + brandId,
 				CrawlModuleName: modulename,
+				IsSalesProducts: true,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)

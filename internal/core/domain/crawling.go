@@ -16,8 +16,8 @@ type CrawlSourceDAO struct {
 	CrawlUrl string
 	// 어떤 몰에서 어떤 모듈로 크롤링하는지 내용
 	CrawlModuleName string
-	// 아울렛 상품인지 유무
-	IsOutletProducts bool
+	// 아울렛 상품인지 유무, 판매 상품인지 여부
+	IsSalesProducts bool
 }
 
 type CrawlRecordDAO struct {

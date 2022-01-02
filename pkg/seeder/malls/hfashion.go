@@ -119,6 +119,7 @@ func AddHfashion() {
 				Category:        *updatedCat,
 				CrawlUrl:        buildHfashionCrawlUrl(shopId, updatedCat.CatIdentifier),
 				CrawlModuleName: modulename,
+				IsSalesProducts: false,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)

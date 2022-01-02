@@ -66,6 +66,7 @@ func AddSisley() {
 				Category:        *updatedCat,
 				CrawlUrl:        crawlUrl,
 				CrawlModuleName: modulename,
+				IsSalesProducts: true,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)

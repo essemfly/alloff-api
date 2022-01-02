@@ -233,6 +233,7 @@ func AddIdLook() {
 			Category:        *updatedCat,
 			CrawlUrl:        "http://www.idlookmall.com/display/outlet_product_list.do?catLvl=1&cateId=" + updatedCat.CatIdentifier,
 			CrawlModuleName: modulename,
+			IsSalesProducts: true,
 		}
 
 		_, err = ioc.Repo.CrawlSources.Upsert(&source)

@@ -70,6 +70,7 @@ func AddMichaa() {
 			Category:        *updatedCat,
 			CrawlUrl:        crawlUrl + "cate_code=" + val + "&soldout_include=N&upper_cate_code=" + "1105",
 			CrawlModuleName: modulename,
+			IsSalesProducts: false,
 		}
 
 		_, err = ioc.Repo.CrawlSources.Upsert(&source)

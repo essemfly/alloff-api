@@ -90,6 +90,7 @@ func AddLoungeB() {
 				Category:        *updatedCat,
 				CrawlUrl:        brandCrawlUrl,
 				CrawlModuleName: modulename,
+				IsSalesProducts: true,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)

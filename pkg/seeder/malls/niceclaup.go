@@ -66,6 +66,7 @@ func AddNiceClaup() {
 				Category:        *updatedCat,
 				CrawlUrl:        crawlUrl + val,
 				CrawlModuleName: modulename,
+				IsSalesProducts: true,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)
