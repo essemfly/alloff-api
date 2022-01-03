@@ -1,8 +1,6 @@
 package repository
 
-import (
-	"github.com/lessbutter/alloff-api/internal/core/domain"
-)
+import "github.com/lessbutter/alloff-api/internal/core/domain"
 
 type BrandsRepository interface {
 	Get(ID string) (*domain.BrandDAO, error)
@@ -13,9 +11,23 @@ type BrandsRepository interface {
 
 type ProductsRepository interface {
 	Get(ID string) (*domain.ProductDAO, error)
-	GetByProductID(brandKeyname string, productID string) (*domain.ProductDAO, error)
+	GetByMetaID(MetaID string) (*domain.ProductDAO, error)
 	List(limit, offset int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
+	Insert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	Upsert(*domain.ProductDAO) (*domain.ProductDAO, error)
+}
+
+type ProductMetaInfoRepository interface {
+	GetByProductID(brandKeyname string, productID string) (*domain.ProductMetaInfoDAO, error)
+	Insert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
+}
+
+type ProductDiffsRepository interface {
+	Insert(*domain.ProductDiffDAO) error
+	List(filter interface{}) ([]*domain.ProductDiffDAO, error)
+}
+
+type ProductGroupsRepository interface {
 }
 
 type CrawlSourcesRepository interface {
@@ -43,14 +55,6 @@ type ClassifyRulesRepository interface {
 type CrawlRecordsRepository interface {
 	GetLast() (*domain.CrawlRecordDAO, error)
 	Insert(*domain.CrawlRecordDAO) error
-}
-
-type ProductDiffsRepository interface {
-	Insert(*domain.ProductDiffDAO) error
-	List(filter interface{}) ([]*domain.ProductDiffDAO, error)
-}
-
-type ProductGroupsRepository interface {
 }
 
 type FeaturedsRepository interface {

@@ -7,13 +7,14 @@ import (
 type iocRepo struct {
 	Brands             repository.BrandsRepository
 	Products           repository.ProductsRepository
+	ProductMetaInfos   repository.ProductMetaInfoRepository
+	ProductDiffs       repository.ProductDiffsRepository
+	ProductGroups      repository.ProductGroupsRepository
 	CrawlSources       repository.CrawlSourcesRepository
 	CrawlRecords       repository.CrawlRecordsRepository
 	Categories         repository.CategoriesRepository
 	AlloffCategories   repository.AlloffCategoriesRepository
 	ClassifyRules      repository.ClassifyRulesRepository
-	ProductDiffs       repository.ProductDiffsRepository
-	ProductGroups      repository.ProductGroupsRepository
 	Featureds          repository.FeaturedsRepository
 	HomeItems          repository.HomeItemsRepository
 	Orders             repository.OrdersRepository

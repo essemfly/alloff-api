@@ -15,13 +15,14 @@ import (
 type MongoDB struct {
 	brandCol             *mongo.Collection
 	productCol           *mongo.Collection
+	productMetaInfoCol   *mongo.Collection
+	productDiffCol       *mongo.Collection
+	productGroupCol      *mongo.Collection
 	crawlSourceCol       *mongo.Collection
 	crawlRecordCol       *mongo.Collection
 	categoryCol          *mongo.Collection
 	alloffCategoryCol    *mongo.Collection
 	classifyRuleCol      *mongo.Collection
-	productDiffCol       *mongo.Collection
-	productGroupCol      *mongo.Collection
 	featuredCol          *mongo.Collection
 	homeitemCol          *mongo.Collection
 	orderCol             *mongo.Collection
@@ -53,13 +54,14 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 	return &MongoDB{
 		brandCol:             db.Collection("brands"),
 		productCol:           db.Collection("products"),
+		productMetaInfoCol:   db.Collection("product_infos"),
+		productDiffCol:       db.Collection("product_diffs"),
+		productGroupCol:      db.Collection("productgroups"),
 		crawlSourceCol:       db.Collection("sources"),
 		crawlRecordCol:       db.Collection("crawling_records"),
 		categoryCol:          db.Collection("categories"),
 		alloffCategoryCol:    db.Collection("alloffcategories"),
 		classifyRuleCol:      db.Collection("classifier"),
-		productDiffCol:       db.Collection("product_diffs"),
-		productGroupCol:      db.Collection("productgroups"),
 		featuredCol:          db.Collection("featured"),
 		homeitemCol:          db.Collection("homeitems"),
 		orderCol:             db.Collection("orders"),
@@ -77,6 +79,7 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.Brands = MongoBrandsRepo(conn)
 	ioc.Repo.Products = MongoProductsRepo(conn)
+	ioc.Repo.ProductMetaInfos = MongoProductMetaInfosRepo(conn)
 	ioc.Repo.CrawlSources = MongoCrawlSourcesRepo(conn)
 	ioc.Repo.CrawlRecords = MongoCrawlRecordRepo(conn)
 	ioc.Repo.Categories = MongoCategoriesRepo(conn)

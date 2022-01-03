@@ -71,3 +71,19 @@ func MakeRequest(url string, method RequestType, headers map[string]string, body
 		return nil, &errObject
 	}
 }
+
+func GetHeader() map[string]string {
+	return map[string]string{
+		"accept":          "*/*",
+		"content-type":    "application/x-www-form-urlencoded;charset=UTF-8",
+		"connection":      "keep-alive",
+		"user-agent":      "Crawler",
+		"accept-language": "ko-KR",
+	}
+}
+
+func GetJsonHeader() map[string]string {
+	return map[string]string{
+		"accept": "application/json",
+	}
+}

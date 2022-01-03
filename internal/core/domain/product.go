@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/example/federation/reviews/graph/model"
+	"github.com/lessbutter/alloff-api/internal/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -15,22 +16,66 @@ const (
 )
 
 type ProductMetaInfoDAO struct {
-	ProductID      string
-	Category       *CategoryDAO
-	Brand          *BrandDAO
-	OriginalName   string
-	Price          *PriceDAO
-	Images         []string
-	ProductUrl     string
-	Description    map[string]string
-	SizeAvailable  []string
-	ColorAvailable []string
-	PriceHistory   []PriceHistoryDAO
+	ID           primitive.ObjectID `bson:"_id,omitempty"`
+	ProductID    string
+	Category     *CategoryDAO
+	Brand        *BrandDAO
+	OriginalName string
+	Price        *PriceDAO
+	Images       []string
+	ProductUrl   string
+	Description  map[string]string
+	Sizes        []string
+	Colors       []string
+	Created      time.Time
+	Updated      time.Time
+	Source       *CrawlSourceDAO
+}
+
+func (pdInfo *ProductMetaInfoDAO) SetBrandAndCategory(brand *BrandDAO, source *CrawlSourceDAO) {
+	pdInfo.Brand = brand
+	pdInfo.Category = &source.Category
+	pdInfo.Source = source
+}
+
+func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyType CurrencyType) {
+	newHistory := []PriceHistoryDAO{
+		{
+			Date:  time.Now(),
+			Price: float32(curPrice),
+		},
+	}
+
+	if pdInfo.Price != nil {
+		newHistory = append(pdInfo.Price.History, newHistory...)
+	}
+
+	pdInfo.Price = &PriceDAO{
+		OriginalPrice: float32(origPrice),
+		CurrencyType:  currencyType,
+		CurrentPrice:  float32(curPrice),
+		History:       newHistory,
+	}
+}
+
+func (pdInfo *ProductMetaInfoDAO) SetGeneralInfo(productName, productID, productUrl string, images, sizes, colors []string, description map[string]string) {
+	pdInfo.OriginalName = productName
+	pdInfo.ProductID = productID
+	pdInfo.ProductUrl = productUrl
+	pdInfo.Images = images
+	pdInfo.Sizes = sizes
+	pdInfo.Colors = colors
+	pdInfo.Description = description
 }
 
 type PriceHistoryDAO struct {
 	Date  time.Time
 	Price float32
+}
+
+type InventoryDAO struct {
+	Size     string
+	Quantity int
 }
 
 type ProductScoreInfoDAO struct {
@@ -41,6 +86,13 @@ type ProductScoreInfoDAO struct {
 	ManualScore int
 	AutoScore   int
 	TotalScore  int
+}
+
+type ProductAlloffCategoryDAO struct {
+	First   *AlloffCategoryDAO
+	Second  *AlloffCategoryDAO
+	Done    bool
+	Touched bool
 }
 
 type AlloffInstructionDAO struct {
@@ -61,33 +113,70 @@ type AlloffInstructionDAO struct {
 }
 
 type ProductDAO struct {
-	ID               string `bson:"_id,omitempty"`
+	ID               primitive.ObjectID `bson:"_id,omitempty"`
 	ProductInfo      *ProductMetaInfoDAO
 	DiscountedPrice  int
 	DiscountRate     int
-	AlloffProductID  string
-	AlloffCategories struct {
-		First   *AlloffCategoryDAO
-		Second  *AlloffCategoryDAO
-		Done    bool
-		Touched bool
-	}
-	Soldout   bool
-	Removed   bool
-	Inventory []struct {
-		Size     string
-		Quantity int
-	}
+	AlloffCategories *ProductAlloffCategoryDAO
+	Soldout          bool
+	Removed          bool
+	Inventory        []InventoryDAO
 	Score            *ProductScoreInfoDAO
 	SalesInstruction *AlloffInstructionDAO
+	PriceHistory     []PriceHistoryDAO
 	Created          time.Time
 	Updated          time.Time
+}
+
+func (pd *ProductDAO) UpdatePrice(origPrice, alloffPrice float32) {
+	pd.DiscountedPrice = int(alloffPrice)
+	pd.DiscountRate = utils.CalculateDiscountRate(origPrice, alloffPrice)
+
+	newHistory := []PriceHistoryDAO{
+		{
+			Date:  time.Now(),
+			Price: alloffPrice,
+		},
+	}
+
+	if pd.PriceHistory != nil {
+		newHistory = append(pd.PriceHistory, newHistory...)
+	}
+
+	pd.PriceHistory = append(pd.PriceHistory, newHistory...)
+}
+
+func (pd *ProductDAO) UpdateScore(newScore *ProductScoreInfoDAO) {
+	pd.Score = newScore
+}
+
+func (pd *ProductDAO) UpdateInventory(newInven []InventoryDAO) {
+	pd.Inventory = newInven
+
+	isSoldout := true
+	for _, inv := range newInven {
+		if inv.Quantity > 0 {
+			isSoldout = false
+			break
+		}
+	}
+
+	pd.Soldout = isSoldout
+}
+
+func (pd *ProductDAO) UpdateAlloffCategory(cat *ProductAlloffCategoryDAO) {
+	pd.AlloffCategories = cat
+}
+
+func (pd *ProductDAO) UpdateInstruction(instruction *AlloffInstructionDAO) {
+	pd.SalesInstruction = instruction
 }
 
 type PriceDAO struct {
 	OriginalPrice float32
 	CurrencyType  CurrencyType
-	SellersPrice  float32
+	CurrentPrice  float32
+	History       []PriceHistoryDAO
 }
 
 type LikeProductDAO struct {

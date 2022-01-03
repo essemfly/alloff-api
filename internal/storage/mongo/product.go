@@ -20,6 +20,10 @@ type productDiffRepo struct {
 	col *mongo.Collection
 }
 
+type productMetaInfoRepo struct {
+	col *mongo.Collection
+}
+
 func (repo *productRepo) Get(ID string) (*domain.ProductDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -33,12 +37,13 @@ func (repo *productRepo) Get(ID string) (*domain.ProductDAO, error) {
 	return product, nil
 }
 
-func (repo *productRepo) GetByProductID(brandKeyname string, productID string) (*domain.ProductDAO, error) {
+func (repo *productRepo) GetByMetaID(MetaID string) (*domain.ProductDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
+	productObjectId, _ := primitive.ObjectIDFromHex(MetaID)
+	filter := bson.M{"brand._id": productObjectId}
 	var oldProduct domain.ProductDAO
-	filter := bson.M{"productid": productID, "brand.keyname": brandKeyname}
 	err := repo.col.FindOne(ctx, filter).Decode(&oldProduct)
 	if err != nil {
 		return nil, err
@@ -71,13 +76,32 @@ func (repo *productRepo) List(limit, offset int, filter, sortingOptions interfac
 	return products, int(totalCount), nil
 }
 
+func (repo *productRepo) Insert(product *domain.ProductDAO) (*domain.ProductDAO, error) {
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var oldProduct domain.ProductDAO
+	oid, err := repo.col.InsertOne(ctx, product)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"_id": oid.InsertedID}
+	err = repo.col.FindOne(ctx, filter).Decode(&oldProduct)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oldProduct, nil
+}
+
 func (repo *productRepo) Upsert(product *domain.ProductDAO) (*domain.ProductDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
 	defer cancel()
 
 	opts := options.Update().SetUpsert(true)
-	filter := bson.M{"alloffproductid": product.AlloffProductID}
-	product.ID = ""
+	filter := bson.M{"_id": product.ID}
 	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &product}, opts); err != nil {
 		return nil, err
 	}
@@ -128,5 +152,44 @@ func (repo *productDiffRepo) List(filter interface{}) ([]*domain.ProductDiffDAO,
 func MongoProductDiffsRepo(conn *MongoDB) repository.ProductDiffsRepository {
 	return &productDiffRepo{
 		col: conn.productDiffCol,
+	}
+}
+
+func (repo *productMetaInfoRepo) GetByProductID(brandKeyname string, productID string) (*domain.ProductMetaInfoDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	var oldProduct domain.ProductMetaInfoDAO
+	filter := bson.M{"productid": productID, "brand.keyname": brandKeyname}
+	err := repo.col.FindOne(ctx, filter).Decode(&oldProduct)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oldProduct, nil
+}
+
+func (repo *productMetaInfoRepo) Insert(pd *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	var oldProduct domain.ProductMetaInfoDAO
+	_, err := repo.col.InsertOne(ctx, pd)
+	if err != nil {
+		return nil, err
+	}
+
+	filter := bson.M{"productid": pd.ProductID, "brand.keyname": pd.Brand.KeyName}
+	err = repo.col.FindOne(ctx, filter).Decode(&oldProduct)
+	if err != nil {
+		return nil, err
+	}
+
+	return &oldProduct, nil
+}
+
+func MongoProductMetaInfosRepo(conn *MongoDB) repository.ProductMetaInfoRepository {
+	return &productMetaInfoRepo{
+		col: conn.productMetaInfoCol,
 	}
 }
