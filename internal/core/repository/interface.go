@@ -43,6 +43,7 @@ type CategoriesRepository interface {
 
 type AlloffCategoriesRepository interface {
 	Get(ID string) (*domain.AlloffCategoryDAO, error)
+	GetByName(name string) (*domain.AlloffCategoryDAO, error)
 	GetByKeyname(keyname string) (*domain.AlloffCategoryDAO, error)
 	List(parentID *string) ([]*domain.AlloffCategoryDAO, error)
 	Upsert(*domain.AlloffCategoryDAO) (*domain.AlloffCategoryDAO, error)

@@ -34,6 +34,17 @@ func (repo *alloffCategoryRepo) Get(ID string) (*domain.AlloffCategoryDAO, error
 
 	return cat, nil
 }
+func (repo *alloffCategoryRepo) GetByName(name string) (*domain.AlloffCategoryDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	var cat *domain.AlloffCategoryDAO
+	if err := repo.col.FindOne(ctx, bson.M{"name": name}).Decode(&cat); err != nil {
+		return nil, err
+	}
+
+	return cat, nil
+}
 
 func (repo *alloffCategoryRepo) GetByKeyname(keyname string) (*domain.AlloffCategoryDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)

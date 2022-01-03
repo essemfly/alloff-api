@@ -203,11 +203,12 @@ type ProductGroupDAO struct {
 	StartTime   time.Time
 	FinishTime  time.Time
 	Created     time.Time
+	Updated     time.Time
 }
 
 type ProductPriorityDAO struct {
-	Priority int
-	Product  *ProductDAO
+	Priority  int
+	ProductId primitive.ObjectID
 }
 
 type ProductDiffDAO struct {
