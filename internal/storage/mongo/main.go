@@ -25,8 +25,6 @@ type MongoDB struct {
 	classifyRuleCol      *mongo.Collection
 	featuredCol          *mongo.Collection
 	homeitemCol          *mongo.Collection
-	orderCol             *mongo.Collection
-	paymentCol           *mongo.Collection
 	userCol              *mongo.Collection
 	deviceCol            *mongo.Collection
 	notificationCol      *mongo.Collection
@@ -64,8 +62,6 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 		classifyRuleCol:      db.Collection("classifier"),
 		featuredCol:          db.Collection("featured"),
 		homeitemCol:          db.Collection("homeitems"),
-		orderCol:             db.Collection("orders"),
-		paymentCol:           db.Collection("payments"),
 		userCol:              db.Collection("users"),
 		deviceCol:            db.Collection("devices"),
 		notificationCol:      db.Collection("notifications"),
@@ -86,7 +82,14 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.AlloffCategories = MongoAlloffCategoriesRepo(conn)
 	ioc.Repo.ClassifyRules = MongoClassifyRulesRepo(conn)
 	ioc.Repo.ProductDiffs = MongoProductDiffsRepo(conn)
-
+	ioc.Repo.Featureds = MongoFeaturedsRepo(conn)
+	ioc.Repo.HomeItems = MongoHomeItemsRepo(conn)
+	ioc.Repo.LikeBrands = MongoBrandLikesRepo(conn)
+	ioc.Repo.LikeProducts = MongoProductLikesRepo(conn)
+	ioc.Repo.Users = MongoUsersRepo(conn)
+	ioc.Repo.Devices = MongoDevicesRepo(conn)
+	ioc.Repo.Alimtalks = MongoAlimtalksRepo(conn)
+	ioc.Repo.ProductGroups = MongoProductGroupsRepo(conn)
 }
 
 func checkErr(err error, location string) {

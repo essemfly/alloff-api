@@ -28,7 +28,7 @@ type SizeGuideDAO struct {
 	ImgUrl string
 }
 
-type LikeDAO struct {
+type LikeBrandDAO struct {
 	Userid  string
 	Brands  []*BrandDAO
 	Created time.Time

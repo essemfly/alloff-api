@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/core/repository"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,6 +22,10 @@ type productDiffRepo struct {
 }
 
 type productMetaInfoRepo struct {
+	col *mongo.Collection
+}
+
+type productLikeRepo struct {
 	col *mongo.Collection
 }
 
@@ -77,7 +82,6 @@ func (repo *productRepo) List(limit, offset int, filter, sortingOptions interfac
 }
 
 func (repo *productRepo) Insert(product *domain.ProductDAO) (*domain.ProductDAO, error) {
-
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -209,5 +213,34 @@ func (repo *productMetaInfoRepo) Upsert(product *domain.ProductMetaInfoDAO) (*do
 func MongoProductMetaInfosRepo(conn *MongoDB) repository.ProductMetaInfoRepository {
 	return &productMetaInfoRepo{
 		col: conn.productMetaInfoCol,
+	}
+}
+
+func (repo *productLikeRepo) Like(userID, productID string) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	product, err := ioc.Repo.Products.Get(productID)
+	if err != nil {
+		return false, err
+	}
+
+	var likes *domain.LikeProductDAO
+	if err := repo.col.FindOne(ctx, bson.M{"userid": userID, "productid": productID, "removed": false}).Decode(&likes); err != nil {
+		repo.col.InsertOne(
+			ctx,
+			bson.M{"userid": userID, "created": time.Now(), "updated": time.Now(), "productid": productID, "product": product, "removed": false, "ispushed": false, "lastprice": product.DiscountedPrice},
+		)
+		return true, nil
+	}
+
+	repo.col.FindOneAndUpdate(ctx, bson.M{"userid": userID, "productid": productID, "removed": false}, bson.M{"$set": bson.M{"removed": true, "updated": time.Now()}})
+
+	return false, nil
+}
+
+func MongoProductLikesRepo(conn *MongoDB) repository.LikeProductsRepository {
+	return &productLikeRepo{
+		col: conn.likeProductsCol,
 	}
 }

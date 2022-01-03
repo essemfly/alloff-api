@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
+	"github.com/lessbutter/alloff-api/internal/storage/postgres"
 	"github.com/lessbutter/alloff-api/pkg/crawler/malls"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -20,6 +21,9 @@ func main() {
 
 	conn := mongo.NewMongoDB(conf)
 	conn.RegisterRepos()
+
+	pgconn := postgres.NewPostgresDB(conf)
+	pgconn.RegisterRepos()
 
 	workers := make(chan bool, numWorkers)
 	done := make(chan bool, numWorkers)

@@ -28,9 +28,6 @@ type ProductDiffsRepository interface {
 	List(filter interface{}) ([]*domain.ProductDiffDAO, error)
 }
 
-type ProductGroupsRepository interface {
-}
-
 type CrawlSourcesRepository interface {
 	List(filter interface{}) ([]*domain.CrawlSourceDAO, int, error)
 	Upsert(*domain.CrawlSourceDAO) (*domain.CrawlSourceDAO, error)
@@ -60,9 +57,17 @@ type CrawlRecordsRepository interface {
 }
 
 type FeaturedsRepository interface {
+	Insert(*domain.FeaturedDAO) error
+	List() ([]*domain.FeaturedDAO, error)
 }
 
 type HomeItemsRepository interface {
+	Insert(*domain.HomeItemDAO) error
+	Update(*domain.HomeItemDAO) error
+	List() ([]*domain.HomeItemDAO, error)
+}
+
+type ProductGroupsRepository interface {
 }
 
 type OrdersRepository interface {
@@ -72,22 +77,35 @@ type PaymentsRepository interface {
 }
 
 type UsersRepository interface {
+	Get(ID string) (*domain.UserDAO, error)
+	GetByMobile(mobile string) (*domain.UserDAO, error)
+	Insert(*domain.UserDAO) (*domain.UserDAO, error)
+	Update(*domain.UserDAO) (*domain.UserDAO, error)
 }
 
 type DevicesRepository interface {
-}
-
-type NotificationsRepository interface {
+	GetByDeviceID(deviceID string) (*domain.DeviceDAO, error)
+	ListAllowedByUser(userID string) ([]*domain.DeviceDAO, error)
+	ListAllowed() ([]*domain.DeviceDAO, error)
+	Upsert(*domain.DeviceDAO) (*domain.DeviceDAO, error)
 }
 
 type AlimtalksRepository interface {
+	// TO BE MODIFIED
 }
 
 type LikeBrandsRepository interface {
+	Like(userID, brandID string) (bool, error)
 }
 
 type LikeProductsRepository interface {
+	Like(userID, productID string) (bool, error)
+}
+
+type NotificationsRepository interface {
+	// NOT URGENT
 }
 
 type AlarmProductGroupsRepository interface {
+	// To BE REMOVED
 }
