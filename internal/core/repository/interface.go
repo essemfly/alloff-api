@@ -20,6 +20,7 @@ type ProductsRepository interface {
 type ProductMetaInfoRepository interface {
 	GetByProductID(brandKeyname string, productID string) (*domain.ProductMetaInfoDAO, error)
 	Insert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
+	Upsert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
 }
 
 type ProductDiffsRepository interface {

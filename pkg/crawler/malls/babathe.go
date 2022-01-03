@@ -1,4 +1,4 @@
-package crawler
+package malls
 
 import (
 	"encoding/json"
@@ -6,14 +6,12 @@ import (
 	"net/url"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/lessbutter/alloff-api/pkg/crawler"
 )
 
 type BabatheStokPostData struct {
@@ -59,68 +57,27 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			numProducts += 1
 			productName, productID, productUrl, origPrice, curPrice := ParseHtml(s)
 			images, sizes, colors, inventories, description := CrawlBabatheDetail(productUrl, productID, source)
-			_, err := ioc.Repo.ProductMetaInfos.GetByProductID(brand.KeyName, productID)
 
-			if err == mongo.ErrNoDocuments {
-				pdInfo := &domain.ProductMetaInfoDAO{
-					Created: time.Now(),
-					Updated: time.Now(),
-				}
-				pdInfo.SetBrandAndCategory(brand, source)
-				pdInfo.SetGeneralInfo(productName, productID, productUrl, images, sizes, colors, description)
-				pdInfo.SetPrices(origPrice, curPrice, domain.CurrencyKRW)
-
-				_, err = ioc.Repo.ProductMetaInfos.Insert(pdInfo)
-				if err != nil {
-					log.Println(err)
-				}
-			} else if err != nil {
-				log.Println(err)
+			addRequest := crawler.ProductsAddRequest{
+				Brand:         brand,
+				Source:        source,
+				ProductID:     productID,
+				ProductName:   productName,
+				ProductUrl:    productUrl,
+				Images:        images,
+				Sizes:         sizes,
+				Inventories:   inventories,
+				Colors:        colors,
+				Description:   description,
+				OriginalPrice: float32(origPrice),
+				SalesPrice:    float32(curPrice),
+				CurrencyType:  domain.CurrencyKRW,
 			}
 
-			pdInfo, err := ioc.Repo.ProductMetaInfos.GetByProductID(brand.KeyName, productID)
-			if err != nil {
-				log.Println("err", err)
-			}
-
-			pd, err := ioc.Repo.Products.GetByMetaID(pdInfo.ID.Hex())
-			if err == mongo.ErrNoDocuments {
-				pd = &domain.ProductDAO{
-					ProductInfo: pdInfo,
-					Removed:     false,
-					Created:     time.Now(),
-					Updated:     time.Now(),
-				}
-			} else if err != nil {
-				log.Println(err)
-			}
-
-			pd.UpdateInventory(inventories)
-
-			// TODO: Category classifier, Dynamic prices, Dynamic instruction, dynamic scores should be uploaded
-			alloffCat := GetAlloffCategory(pd)
-			alloffScore := GetProductScore(pd)
-			alloffPrice := GetProductPrice(pd)
-			alloffInstruction := GetProductDescription(pd)
-
-			pd.UpdateAlloffCategory(alloffCat)
-			pd.UpdateScore(alloffScore)
-			pd.UpdatePrice(pdInfo.Price.OriginalPrice, alloffPrice)
-			pd.UpdateInstruction(alloffInstruction)
-
-			if pd.ID == primitive.NilObjectID {
-				_, err = ioc.Repo.Products.Insert(pd)
-			} else {
-				_, err = ioc.Repo.Products.Upsert(pd)
-			}
-
-			if err != nil {
-				log.Println(err)
-			}
+			crawler.AddProduct(addRequest)
 		})
 
 		if numProducts > 0 {
-			log.Println("numProducts", numProducts)
 			pageNum += 1
 			numProducts = 0
 		} else {

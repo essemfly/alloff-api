@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type RequestType string
@@ -82,8 +83,26 @@ func GetHeader() map[string]string {
 	}
 }
 
+func GetGeneralHeader() map[string]string {
+	return map[string]string{
+		"accept":       "*/*",
+		"content-type": "application/json",
+		"connection":   "keep-alive",
+		"user-agent":   "Crawler",
+	}
+}
+
 func GetJsonHeader() map[string]string {
 	return map[string]string{
 		"accept": "application/json",
+	}
+}
+
+func GetSSFHeaders() map[string]string {
+	coockie := time.Now().UnixNano()
+	s := strconv.FormatInt(coockie, 10)
+	return map[string]string{
+		"accept": "application/json",
+		"Cookie": "PCID=" + s,
 	}
 }

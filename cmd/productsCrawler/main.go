@@ -8,11 +8,11 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
-	"github.com/lessbutter/alloff-api/pkg/crawler"
+	"github.com/lessbutter/alloff-api/pkg/crawler/malls"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const numWorkers = 10
+const numWorkers = 20
 
 func main() {
 	conf := config.GetConfiguration()
@@ -29,22 +29,21 @@ func main() {
 	}
 
 	crawlModules := []string{
-		// "lottefashion",
-		// "ssfmall",
-		// "idlook",
-		// "sivillage",
-		// "kolon",
-		// "michaa",
+		"lottefashion",
+		"ssfmall",
+		"idlook",
+		"sivillage",
+		"kolon",
 		"babathe",
-		// "idfmall",
-		// "daehyun",
-		// "niceclaup",
-		// "lacoste",
-		// "sisley",
-		// "benetton",
-		// "theamall",
-		// "loungeb",
-		// "bylynn",
+		"idfmall",
+		"daehyun",
+		"niceclaup",
+		"lacoste",
+		"sisley",
+		"benetton",
+		"theamall",
+		"loungeb",
+		"bylynn",
 	}
 
 	msg := "======== \n " + "Crawling Started: " + time.Now().String() + " for " + strings.Join(crawlModules[:], ", ")
@@ -63,42 +62,36 @@ func main() {
 			workers <- true
 			<-done
 			switch source.CrawlModuleName {
-			// case "lottefashion":
-			// 	go crawler.CrawlLotteFashion(workers, done, source)
-			// case "ssfmall":
-			// 	go crawler.CrawlSSFMall(workers, done, source)
-			// case "handsome":
-			// 	go crawler.CrawlHandsome(workers, done, source)
-			// case "idlook":
-			// 	go crawler.CrawlIdLook(workers, done, source)
-			// case "sivillage":
-			// 	go crawler.CrawlSiVillage(workers, done, source)
-			// case "kolon":
-			// 	go crawler.CrawlKolon(workers, done, source)
-			// case "michaa":
-			// 	go crawler.CrawlMichaa(workers, done, source)
+			case "lottefashion":
+				go malls.CrawlLotteFashion(workers, done, source)
+			case "ssfmall":
+				go malls.CrawlSSFMall(workers, done, source)
+			case "idlook":
+				go malls.CrawlIdLook(workers, done, source)
+			case "sivillage":
+				go malls.CrawlSiVillage(workers, done, source)
+			case "kolon":
+				go malls.CrawlKolon(workers, done, source)
 			case "babathe":
-				go crawler.CrawlBabathe(workers, done, source)
-			// case "hfashion":
-			// 	go crawler.CrawlHfashion(workers, done, source)
-			// case "idfmall":
-			// 	go crawler.CrawlIDFMall(workers, done, source)
-			// case "daehyun":
-			// 	go crawler.CrawlDaehyun(workers, done, source)
-			// case "niceclaup":
-			// 	go crawler.CrawlNiceClaup(workers, done, source)
-			// case "lacoste":
-			// 	go crawler.CrawlLacoste(workers, done, source)
-			// case "sisley":
-			// 	go crawler.CrawlSisley(workers, done, source)
-			// case "benetton":
-			// 	go crawler.CrawlBenetton(workers, done, source)
-			// case "theamall":
-			// 	go crawler.CrawlTheamall(workers, done, source)
-			// case "loungeb":
-			// 	go crawler.CrawlLoungeB(workers, done, source)
-			// case "bylynn":
-			// 	go crawler.CrawlBylynn(workers, done, source)
+				go malls.CrawlBabathe(workers, done, source)
+			case "idfmall":
+				go malls.CrawlIDFMall(workers, done, source)
+			case "daehyun":
+				go malls.CrawlDaehyun(workers, done, source)
+			case "niceclaup":
+				go malls.CrawlNiceClaup(workers, done, source)
+			case "lacoste":
+				go malls.CrawlLacoste(workers, done, source)
+			case "sisley":
+				go malls.CrawlSisley(workers, done, source)
+			case "benetton":
+				go malls.CrawlBenetton(workers, done, source)
+			case "theamall":
+				go malls.CrawlTheamall(workers, done, source)
+			case "loungeb":
+				go malls.CrawlLoungeB(workers, done, source)
+			case "bylynn":
+				go malls.CrawlBylynn(workers, done, source)
 			default:
 				log.Println("Empty Source")
 				<-workers

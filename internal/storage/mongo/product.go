@@ -188,6 +188,24 @@ func (repo *productMetaInfoRepo) Insert(pd *domain.ProductMetaInfoDAO) (*domain.
 	return &oldProduct, nil
 }
 
+func (repo *productMetaInfoRepo) Upsert(product *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	defer cancel()
+
+	opts := options.Update().SetUpsert(true)
+	filter := bson.M{"_id": product.ID}
+	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &product}, opts); err != nil {
+		return nil, err
+	}
+
+	var updatedProduct *domain.ProductMetaInfoDAO
+	if err := repo.col.FindOne(ctx, filter).Decode(&updatedProduct); err != nil {
+		return nil, err
+	}
+
+	return updatedProduct, nil
+}
+
 func MongoProductMetaInfosRepo(conn *MongoDB) repository.ProductMetaInfoRepository {
 	return &productMetaInfoRepo{
 		col: conn.productMetaInfoCol,
