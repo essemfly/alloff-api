@@ -85,12 +85,12 @@ func (repo *productRepo) Insert(product *domain.ProductDAO) (*domain.ProductDAO,
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var oldProduct domain.ProductDAO
 	oid, err := repo.col.InsertOne(ctx, product)
 	if err != nil {
 		return nil, err
 	}
 
+	var oldProduct domain.ProductDAO
 	filter := bson.M{"_id": oid.InsertedID}
 	err = repo.col.FindOne(ctx, filter).Decode(&oldProduct)
 	if err != nil {

@@ -22,8 +22,8 @@ type ProductGroupDAO struct {
 }
 
 type ProductPriorityDAO struct {
-	Priority  int
-	ProductId primitive.ObjectID
+	Priority int
+	Product  *ProductDAO
 }
 
 type SpecialExhibitionDAO struct {

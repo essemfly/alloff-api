@@ -68,6 +68,9 @@ type HomeItemsRepository interface {
 }
 
 type ProductGroupsRepository interface {
+	Get(ID string) (*domain.ProductGroupDAO, error)
+	List() ([]*domain.ProductGroupDAO, error)
+	Upsert(*domain.ProductGroupDAO) (*domain.ProductGroupDAO, error)
 }
 
 type OrdersRepository interface {
@@ -87,10 +90,13 @@ type DevicesRepository interface {
 	GetByDeviceID(deviceID string) (*domain.DeviceDAO, error)
 	ListAllowedByUser(userID string) ([]*domain.DeviceDAO, error)
 	ListAllowed() ([]*domain.DeviceDAO, error)
-	Upsert(*domain.DeviceDAO) (*domain.DeviceDAO, error)
+	UpdateDevices(deviceID string, allowNotification bool, userID *string) error
 }
 
 type AlimtalksRepository interface {
+	GetByDetail(userID, templateCode, referenceID string) (*domain.AlimtalkDAO, error)
+	Insert(*domain.AlimtalkDAO) (*domain.AlimtalkDAO, error)
+	Update(*domain.AlimtalkDAO) (*domain.AlimtalkDAO, error)
 	// TO BE MODIFIED
 }
 
