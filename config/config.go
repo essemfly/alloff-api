@@ -17,12 +17,15 @@ type Configuration struct {
 	MONGO_USERNAME     string
 	MONGO_PASSWORD     string
 	MONGO_URL          string
-	PORT               int
 	IAMPORT_API_KEY    string
 	IAMPORT_SECRET_KEY string
 	IAMPORT_IMP_CODE   string
 	PUSH_SERVER_URL    string
 	PUSH_NAVIGATE_URL  string
+	POSTGRES_URL       string
+	POSTGRES_USER      string
+	POSTGRES_PASSWORD  string
+	POSTGRES_DB_NAME   string
 }
 
 func GetConfiguration() Configuration {
