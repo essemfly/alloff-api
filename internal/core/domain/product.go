@@ -172,6 +172,11 @@ func (pd *ProductDAO) UpdateInstruction(instruction *AlloffInstructionDAO) {
 	pd.SalesInstruction = instruction
 }
 
+func (pdDao *ProductDAO) ToEntity() *model.Product {
+	var pd *model.Product
+	return pd
+}
+
 type PriceDAO struct {
 	OriginalPrice float32
 	CurrencyType  CurrencyType
@@ -191,35 +196,10 @@ type LikeProductDAO struct {
 	Updated    time.Time
 }
 
-type ProductGroupDAO struct {
-	ID          primitive.ObjectID `bson:"_id, omitempty"`
-	Hidden      bool               `json:"hidden"`
-	Instruction []string           `json:"instruction"`
-	ShortTitle  string             `json:"shorttitle"`
-	Title       string             `json:"title"`
-	ImgUrl      string             `json:"imgurl"`
-	NumAlarms   int
-	Products    []*ProductPriorityDAO
-	StartTime   time.Time
-	FinishTime  time.Time
-	Created     time.Time
-	Updated     time.Time
-}
-
-type ProductPriorityDAO struct {
-	Priority  int
-	ProductId primitive.ObjectID
-}
-
 type ProductDiffDAO struct {
-	ID         string      `bson:"_id,omitempty"`
-	OldProduct *ProductDAO `json:"oldproduct"`
-	NewProduct *ProductDAO `json:"newproduct"`
-	Type       string      `json:"type"`
+	ID         primitive.ObjectID `bson:"_id,omitempty"`
+	OldProduct *ProductDAO        `json:"oldproduct"`
+	NewProduct *ProductDAO        `json:"newproduct"`
+	Type       string             `json:"type"`
 	IsPushed   bool
-}
-
-func (pdDao *ProductDAO) ToEntity() *model.Product {
-	var pd *model.Product
-	return pd
 }

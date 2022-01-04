@@ -80,7 +80,6 @@ func (repo *brandsRepo) Upsert(brand *domain.BrandDAO) (*domain.BrandDAO, error)
 
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"keyname": &brand.KeyName}
-	brand.ID = ""
 
 	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &brand}, opts); err != nil {
 		return nil, err
@@ -123,9 +122,10 @@ func (repo *brandLikeRepo) Like(userID, brandID string) (bool, error) {
 		return true, nil
 	}
 
+	brandObjectId, _ := primitive.ObjectIDFromHex(brandID)
 	brandIndexInLikes := -1
 	for i, brand := range likes.Brands {
-		if brand.ID == brandID {
+		if brand.ID == brandObjectId {
 			brandIndexInLikes = i
 			break
 		}

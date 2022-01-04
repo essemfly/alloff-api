@@ -1,9 +1,13 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type CrawlSourceDAO struct {
-	ID string `bson:"_id,omitempty"`
+	ID primitive.ObjectID `bson:"_id,omitempty"`
 	// 크롤링하는 브랜드의  Keyname
 	BrandKeyname string
 	// 브랜드 Identifier
@@ -23,9 +27,9 @@ type CrawlSourceDAO struct {
 }
 
 type CrawlRecordDAO struct {
-	ID            string    `bson:"_id,omitempty"`
-	Date          time.Time `json:"date"`
-	NewProducts   int       `json:"newproducts"`
-	OldProducts   int       `json:"oldproducts"`
-	CrawledBrands []string  `json:"crawledbrands"`
+	ID            primitive.ObjectID `bson:"_id,omitempty"`
+	Date          time.Time          `json:"date"`
+	NewProducts   int                `json:"newproducts"`
+	OldProducts   int                `json:"oldproducts"`
+	CrawledBrands []string           `json:"crawledbrands"`
 }

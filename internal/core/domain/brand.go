@@ -2,10 +2,12 @@ package domain
 
 import (
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type BrandDAO struct {
-	ID              string `bson:"_id,omitempty"`
+	ID              primitive.ObjectID `bson:"_id,omitempty"`
 	KorName         string
 	EngName         string
 	KeyName         string

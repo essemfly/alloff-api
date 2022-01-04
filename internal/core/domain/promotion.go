@@ -4,10 +4,11 @@ import (
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/server/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type HomeItemDAO struct {
-	ID             string                  `bson:"_id,omitempty"`
+	ID             primitive.ObjectID      `bson:"_id,omitempty"`
 	Priority       int                     `json:"priority"`
 	Title          string                  `json:"title"`
 	ItemType       model.HomeItemType      `json:"itemType"`
@@ -34,11 +35,11 @@ type HomeCommunityItemDAO struct {
 }
 
 type FeaturedDAO struct {
-	ID           string       `json:"id"`
-	IdentifyName string       `json:"identifyname"`
-	Order        int          `json:"order"`
-	Brand        *BrandDAO    `json:"brand"`
-	Img          string       `json:"img"`
-	Category     *CategoryDAO `json:"category"`
+	ID           primitive.ObjectID `bson:"_id,omitempty"`
+	IdentifyName string             `json:"identifyname"`
+	Order        int                `json:"order"`
+	Brand        *BrandDAO          `json:"brand"`
+	Img          string             `json:"img"`
+	Category     *CategoryDAO       `json:"category"`
 	EndDate      time.Time
 }

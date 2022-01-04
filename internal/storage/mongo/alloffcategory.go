@@ -93,7 +93,6 @@ func (repo *alloffCategoryRepo) Upsert(cat *domain.AlloffCategoryDAO) (*domain.A
 
 	opts := options.Update().SetUpsert(true)
 	filter := bson.M{"keyname": cat.KeyName}
-	cat.ID = ""
 
 	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &cat}, opts); err != nil {
 		return nil, err

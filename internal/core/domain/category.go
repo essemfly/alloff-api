@@ -3,7 +3,7 @@ package domain
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type CategoryDAO struct {
-	ID string `bson:"_id,omitempty"`
+	ID primitive.ObjectID `bson:"_id,omitempty"`
 	// 사용자에게 보여지는 Category name
 	Name string
 	// Category 식별 identifier key name
@@ -25,7 +25,7 @@ type ClassifierDAO struct {
 }
 
 type AlloffCategoryDAO struct {
-	ID           string `bson:"_id, omitempty"`
+	ID           primitive.ObjectID `bson:"_id,omitempty"`
 	Name         string
 	KeyName      string
 	Level        int
