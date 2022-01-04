@@ -7,10 +7,10 @@ import (
 	"context"
 	"fmt"
 
-	server "github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/server/model"
 )
 
-func (r *mutationResolver) AddAlloffProduct(ctx context.Context, input *server.AlloffProductInput) (*server.AlloffProduct, error) {
+func (r *mutationResolver) AddAlloffProduct(ctx context.Context, input *model.AlloffProductInput) (*model.AlloffProduct, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -18,14 +18,14 @@ func (r *mutationResolver) AlarmProductGroup(ctx context.Context, groupID string
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Alloffproduct(ctx context.Context, id string) (*server.AlloffProduct, error) {
+func (r *queryResolver) Alloffproduct(ctx context.Context, id string) (*model.AlloffProduct, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) ProductGroup(ctx context.Context, id string) (*server.ProductGroup, error) {
+func (r *queryResolver) ProductGroup(ctx context.Context, id string) (*model.ProductGroup, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) ProductGroups(ctx context.Context) ([]*server.ProductGroup, error) {
+func (r *queryResolver) ProductGroups(ctx context.Context) ([]*model.ProductGroup, error) {
 	panic(fmt.Errorf("not implemented"))
 }

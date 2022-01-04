@@ -7,17 +7,17 @@ import (
 	"context"
 	"fmt"
 
-	server "github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/server/model"
 )
 
-func (r *queryResolver) Featureds(ctx context.Context) ([]*server.FeaturedItem, error) {
+func (r *queryResolver) Featureds(ctx context.Context) ([]*model.FeaturedItem, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Curations(ctx context.Context) ([]*server.Curation, error) {
+func (r *queryResolver) Curations(ctx context.Context) ([]*model.Curation, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Homeitems(ctx context.Context) ([]*server.HomeItem, error) {
+func (r *queryResolver) Homeitems(ctx context.Context) ([]*model.HomeItem, error) {
 	panic(fmt.Errorf("not implemented"))
 }

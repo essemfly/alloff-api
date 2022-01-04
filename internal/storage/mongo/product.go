@@ -57,14 +57,14 @@ func (repo *productRepo) GetByMetaID(MetaID string) (*domain.ProductDAO, error) 
 	return &oldProduct, nil
 }
 
-func (repo *productRepo) List(limit, offset int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error) {
+func (repo *productRepo) List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	options := options.Find()
 	options.SetSort(sortingOptions)
-	options.SetLimit(int64(limit))
 	options.SetSkip(int64(offset))
+	options.SetLimit(int64(limit))
 
 	totalCount, _ := repo.col.CountDocuments(ctx, filter)
 	cursor, err := repo.col.Find(ctx, filter, options)
@@ -237,6 +237,25 @@ func (repo *productLikeRepo) Like(userID, productID string) (bool, error) {
 	repo.col.FindOneAndUpdate(ctx, bson.M{"userid": userID, "productid": productID, "removed": false}, bson.M{"$set": bson.M{"removed": true, "updated": time.Now()}})
 
 	return false, nil
+}
+
+func (repo *productLikeRepo) List(userID string) ([]*domain.LikeProductDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{"userid": userID, "removed": false}
+	cursor, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var likes []*domain.LikeProductDAO
+	err = cursor.All(ctx, &likes)
+	if err != nil {
+		return nil, err
+	}
+
+	return likes, nil
 }
 
 func MongoProductLikesRepo(conn *MongoDB) repository.LikeProductsRepository {

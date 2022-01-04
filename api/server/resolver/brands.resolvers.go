@@ -7,17 +7,17 @@ import (
 	"context"
 	"fmt"
 
-	server "github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/server/model"
 )
 
-func (r *mutationResolver) LikeBrand(ctx context.Context, input *server.LikeBrandInput) (bool, error) {
+func (r *mutationResolver) LikeBrand(ctx context.Context, input *model.LikeBrandInput) (bool, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Brand(ctx context.Context, input *server.BrandInput) (*server.Brand, error) {
+func (r *queryResolver) Brand(ctx context.Context, input *model.BrandInput) (*model.Brand, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Brands(ctx context.Context, input *server.BrandsInput) ([]*server.Brand, error) {
+func (r *queryResolver) Brands(ctx context.Context, input *model.BrandsInput) ([]*model.Brand, error) {
 	panic(fmt.Errorf("not implemented"))
 }

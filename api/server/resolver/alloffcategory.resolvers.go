@@ -7,23 +7,23 @@ import (
 	"context"
 	"fmt"
 
-	server1 "github.com/lessbutter/alloff-api/api/server"
-	server "github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/server"
+	"github.com/lessbutter/alloff-api/api/server/model"
 )
 
-func (r *queryResolver) Alloffcategories(ctx context.Context, input *server.AlloffCategoryInput) ([]*server.AlloffCategory, error) {
+func (r *queryResolver) Alloffcategories(ctx context.Context, input *model.AlloffCategoryInput) ([]*model.AlloffCategory, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Alloffcategory(ctx context.Context, input *server.AlloffCategoryID) (*server.AlloffCategory, error) {
+func (r *queryResolver) Alloffcategory(ctx context.Context, input *model.AlloffCategoryID) (*model.AlloffCategory, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) AlloffcategoryProducts(ctx context.Context, input server.CategoryProductsInput) (*server.AlloffCategoryProducts, error) {
+func (r *queryResolver) AlloffcategoryProducts(ctx context.Context, input model.CategoryProductsInput) (*model.AlloffCategoryProducts, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-// Query returns server1.QueryResolver implementation.
-func (r *Resolver) Query() server1.QueryResolver { return &queryResolver{r} }
+// Query returns server.QueryResolver implementation.
+func (r *Resolver) Query() server.QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }

@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	"github.com/99designs/gqlgen/example/federation/reviews/graph/model"
+	"github.com/lessbutter/alloff-api/api/server/model"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -172,7 +172,7 @@ func (pd *ProductDAO) UpdateInstruction(instruction *AlloffInstructionDAO) {
 	pd.SalesInstruction = instruction
 }
 
-func (pdDao *ProductDAO) ToEntity() *model.Product {
+func (pdDao *ProductDAO) ToDTO() *model.Product {
 	var pd *model.Product
 	return pd
 }

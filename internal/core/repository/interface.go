@@ -5,14 +5,14 @@ import "github.com/lessbutter/alloff-api/internal/core/domain"
 type BrandsRepository interface {
 	Get(ID string) (*domain.BrandDAO, error)
 	GetByKeyname(keyname string) (*domain.BrandDAO, error)
-	List(limit, offset int, filter, sortingOptions interface{}) ([]*domain.BrandDAO, int, error)
+	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.BrandDAO, int, error)
 	Upsert(*domain.BrandDAO) (*domain.BrandDAO, error)
 }
 
 type ProductsRepository interface {
 	Get(ID string) (*domain.ProductDAO, error)
 	GetByMetaID(MetaID string) (*domain.ProductDAO, error)
-	List(limit, offset int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
+	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
 	Insert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	Upsert(*domain.ProductDAO) (*domain.ProductDAO, error)
 }
@@ -106,6 +106,7 @@ type LikeBrandsRepository interface {
 
 type LikeProductsRepository interface {
 	Like(userID, productID string) (bool, error)
+	List(userID string) ([]*domain.LikeProductDAO, error)
 }
 
 type NotificationsRepository interface {

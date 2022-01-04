@@ -50,7 +50,7 @@ func (repo *brandsRepo) GetByKeyname(keyname string) (*domain.BrandDAO, error) {
 	return brand, nil
 }
 
-func (repo *brandsRepo) List(limit, offset int, filter, sortingOptions interface{}) ([]*domain.BrandDAO, int, error) {
+func (repo *brandsRepo) List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.BrandDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 

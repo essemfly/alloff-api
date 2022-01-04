@@ -7,35 +7,35 @@ import (
 	"context"
 	"fmt"
 
-	server1 "github.com/lessbutter/alloff-api/api/server"
-	server "github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/server"
+	"github.com/lessbutter/alloff-api/api/server/model"
 )
 
-func (r *mutationResolver) RegisterNotification(ctx context.Context, deviceID string, allowNotification bool, userID *string) (*server.Device, error) {
+func (r *mutationResolver) RegisterNotification(ctx context.Context, deviceID string, allowNotification bool, userID *string) (*model.Device, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) CreateUser(ctx context.Context, input server.NewUser) (string, error) {
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) UpdateUserInfo(ctx context.Context, input server.UserInfoInput) (*server.User, error) {
+func (r *mutationResolver) UpdateUserInfo(ctx context.Context, input model.UserInfoInput) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) Login(ctx context.Context, input server.Login) (string, error) {
+func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *mutationResolver) RefreshToken(ctx context.Context, input server.RefreshTokenInput) (string, error) {
+func (r *mutationResolver) RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) User(ctx context.Context) (*server.User, error) {
+func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-// Mutation returns server1.MutationResolver implementation.
-func (r *Resolver) Mutation() server1.MutationResolver { return &mutationResolver{r} }
+// Mutation returns server.MutationResolver implementation.
+func (r *Resolver) Mutation() server.MutationResolver { return &mutationResolver{r} }
 
 type mutationResolver struct{ *Resolver }

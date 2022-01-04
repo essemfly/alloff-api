@@ -12,7 +12,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	server "github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/server/model"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
 )
@@ -188,22 +188,22 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddAlloffProduct      func(childComplexity int, input *server.AlloffProductInput) int
+		AddAlloffProduct      func(childComplexity int, input *model.AlloffProductInput) int
 		AlarmProductGroup     func(childComplexity int, groupID string) int
 		CancelOrder           func(childComplexity int, orderID string) int
-		CancelPayment         func(childComplexity int, input *server.PaymentClientInput) int
-		CheckOrder            func(childComplexity int, input *server.OrderInput) int
+		CancelPayment         func(childComplexity int, input *model.PaymentClientInput) int
+		CheckOrder            func(childComplexity int, input *model.OrderInput) int
 		ConfirmOrder          func(childComplexity int, orderID string) int
-		CreateUser            func(childComplexity int, input server.NewUser) int
-		HandlePaymentResponse func(childComplexity int, input *server.OrderResponse) int
-		LikeBrand             func(childComplexity int, input *server.LikeBrandInput) int
-		LikeProduct           func(childComplexity int, input *server.LikeProductInput) int
-		Login                 func(childComplexity int, input server.Login) int
-		RefreshToken          func(childComplexity int, input server.RefreshTokenInput) int
+		CreateUser            func(childComplexity int, input model.NewUser) int
+		HandlePaymentResponse func(childComplexity int, input *model.OrderResponse) int
+		LikeBrand             func(childComplexity int, input *model.LikeBrandInput) int
+		LikeProduct           func(childComplexity int, input *model.LikeProductInput) int
+		Login                 func(childComplexity int, input model.Login) int
+		RefreshToken          func(childComplexity int, input model.RefreshTokenInput) int
 		RegisterNotification  func(childComplexity int, deviceID string, allowNotification bool, userID *string) int
-		RequestOrder          func(childComplexity int, input *server.OrderInput) int
-		RequestPayment        func(childComplexity int, input *server.PaymentClientInput) int
-		UpdateUserInfo        func(childComplexity int, input server.UserInfoInput) int
+		RequestOrder          func(childComplexity int, input *model.OrderInput) int
+		RequestPayment        func(childComplexity int, input *model.PaymentClientInput) int
+		UpdateUserInfo        func(childComplexity int, input model.UserInfoInput) int
 	}
 
 	OrderInfo struct {
@@ -325,12 +325,12 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Alloffcategories       func(childComplexity int, input *server.AlloffCategoryInput) int
-		Alloffcategory         func(childComplexity int, input *server.AlloffCategoryID) int
-		AlloffcategoryProducts func(childComplexity int, input server.CategoryProductsInput) int
+		Alloffcategories       func(childComplexity int, input *model.AlloffCategoryInput) int
+		Alloffcategory         func(childComplexity int, input *model.AlloffCategoryID) int
+		AlloffcategoryProducts func(childComplexity int, input model.CategoryProductsInput) int
 		Alloffproduct          func(childComplexity int, id string) int
-		Brand                  func(childComplexity int, input *server.BrandInput) int
-		Brands                 func(childComplexity int, input *server.BrandsInput) int
+		Brand                  func(childComplexity int, input *model.BrandInput) int
+		Brands                 func(childComplexity int, input *model.BrandsInput) int
 		Curations              func(childComplexity int) int
 		Featureds              func(childComplexity int) int
 		Homeitems              func(childComplexity int) int
@@ -340,7 +340,7 @@ type ComplexityRoot struct {
 		Product                func(childComplexity int, id string) int
 		ProductGroup           func(childComplexity int, id string) int
 		ProductGroups          func(childComplexity int) int
-		Products               func(childComplexity int, input server.ProductsInput) int
+		Products               func(childComplexity int, input model.ProductsInput) int
 		User                   func(childComplexity int) int
 	}
 
@@ -370,41 +370,41 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	RegisterNotification(ctx context.Context, deviceID string, allowNotification bool, userID *string) (*server.Device, error)
-	CreateUser(ctx context.Context, input server.NewUser) (string, error)
-	UpdateUserInfo(ctx context.Context, input server.UserInfoInput) (*server.User, error)
-	Login(ctx context.Context, input server.Login) (string, error)
-	RefreshToken(ctx context.Context, input server.RefreshTokenInput) (string, error)
-	LikeBrand(ctx context.Context, input *server.LikeBrandInput) (bool, error)
-	CheckOrder(ctx context.Context, input *server.OrderInput) (*server.OrderValidityResult, error)
-	RequestOrder(ctx context.Context, input *server.OrderInput) (*server.OrderWithPayment, error)
-	CancelOrder(ctx context.Context, orderID string) (*server.PaymentStatus, error)
-	ConfirmOrder(ctx context.Context, orderID string) (*server.PaymentStatus, error)
-	RequestPayment(ctx context.Context, input *server.PaymentClientInput) (*server.PaymentStatus, error)
-	CancelPayment(ctx context.Context, input *server.PaymentClientInput) (*server.PaymentStatus, error)
-	HandlePaymentResponse(ctx context.Context, input *server.OrderResponse) (*server.PaymentResult, error)
-	AddAlloffProduct(ctx context.Context, input *server.AlloffProductInput) (*server.AlloffProduct, error)
+	RegisterNotification(ctx context.Context, deviceID string, allowNotification bool, userID *string) (*model.Device, error)
+	CreateUser(ctx context.Context, input model.NewUser) (string, error)
+	UpdateUserInfo(ctx context.Context, input model.UserInfoInput) (*model.User, error)
+	Login(ctx context.Context, input model.Login) (string, error)
+	RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error)
+	LikeBrand(ctx context.Context, input *model.LikeBrandInput) (bool, error)
+	CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error)
+	RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error)
+	CancelOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error)
+	ConfirmOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error)
+	RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
+	CancelPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
+	HandlePaymentResponse(ctx context.Context, input *model.OrderResponse) (*model.PaymentResult, error)
+	AddAlloffProduct(ctx context.Context, input *model.AlloffProductInput) (*model.AlloffProduct, error)
 	AlarmProductGroup(ctx context.Context, groupID string) (bool, error)
-	LikeProduct(ctx context.Context, input *server.LikeProductInput) (bool, error)
+	LikeProduct(ctx context.Context, input *model.LikeProductInput) (bool, error)
 }
 type QueryResolver interface {
-	Alloffcategories(ctx context.Context, input *server.AlloffCategoryInput) ([]*server.AlloffCategory, error)
-	Alloffcategory(ctx context.Context, input *server.AlloffCategoryID) (*server.AlloffCategory, error)
-	AlloffcategoryProducts(ctx context.Context, input server.CategoryProductsInput) (*server.AlloffCategoryProducts, error)
-	User(ctx context.Context) (*server.User, error)
-	Brand(ctx context.Context, input *server.BrandInput) (*server.Brand, error)
-	Brands(ctx context.Context, input *server.BrandsInput) ([]*server.Brand, error)
-	Order(ctx context.Context, id string) (*server.OrderInfo, error)
-	Orders(ctx context.Context) ([]*server.OrderInfo, error)
-	Alloffproduct(ctx context.Context, id string) (*server.AlloffProduct, error)
-	ProductGroup(ctx context.Context, id string) (*server.ProductGroup, error)
-	ProductGroups(ctx context.Context) ([]*server.ProductGroup, error)
-	Product(ctx context.Context, id string) (*server.Product, error)
-	Products(ctx context.Context, input server.ProductsInput) (*server.ProductsOutput, error)
-	Likeproducts(ctx context.Context) ([]*server.LikeProductOutput, error)
-	Featureds(ctx context.Context) ([]*server.FeaturedItem, error)
-	Curations(ctx context.Context) ([]*server.Curation, error)
-	Homeitems(ctx context.Context) ([]*server.HomeItem, error)
+	Alloffcategories(ctx context.Context, input *model.AlloffCategoryInput) ([]*model.AlloffCategory, error)
+	Alloffcategory(ctx context.Context, input *model.AlloffCategoryID) (*model.AlloffCategory, error)
+	AlloffcategoryProducts(ctx context.Context, input model.CategoryProductsInput) (*model.AlloffCategoryProducts, error)
+	User(ctx context.Context) (*model.User, error)
+	Brand(ctx context.Context, input *model.BrandInput) (*model.Brand, error)
+	Brands(ctx context.Context, input *model.BrandsInput) ([]*model.Brand, error)
+	Order(ctx context.Context, id string) (*model.OrderInfo, error)
+	Orders(ctx context.Context) ([]*model.OrderInfo, error)
+	Alloffproduct(ctx context.Context, id string) (*model.AlloffProduct, error)
+	ProductGroup(ctx context.Context, id string) (*model.ProductGroup, error)
+	ProductGroups(ctx context.Context) ([]*model.ProductGroup, error)
+	Product(ctx context.Context, id string) (*model.Product, error)
+	Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error)
+	Likeproducts(ctx context.Context) ([]*model.LikeProductOutput, error)
+	Featureds(ctx context.Context) ([]*model.FeaturedItem, error)
+	Curations(ctx context.Context) ([]*model.Curation, error)
+	Homeitems(ctx context.Context) ([]*model.HomeItem, error)
 }
 
 type executableSchema struct {
@@ -1083,7 +1083,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddAlloffProduct(childComplexity, args["input"].(*server.AlloffProductInput)), true
+		return e.complexity.Mutation.AddAlloffProduct(childComplexity, args["input"].(*model.AlloffProductInput)), true
 
 	case "Mutation.alarmProductGroup":
 		if e.complexity.Mutation.AlarmProductGroup == nil {
@@ -1119,7 +1119,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CancelPayment(childComplexity, args["input"].(*server.PaymentClientInput)), true
+		return e.complexity.Mutation.CancelPayment(childComplexity, args["input"].(*model.PaymentClientInput)), true
 
 	case "Mutation.checkOrder":
 		if e.complexity.Mutation.CheckOrder == nil {
@@ -1131,7 +1131,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CheckOrder(childComplexity, args["input"].(*server.OrderInput)), true
+		return e.complexity.Mutation.CheckOrder(childComplexity, args["input"].(*model.OrderInput)), true
 
 	case "Mutation.confirmOrder":
 		if e.complexity.Mutation.ConfirmOrder == nil {
@@ -1155,7 +1155,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(server.NewUser)), true
+		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.NewUser)), true
 
 	case "Mutation.handlePaymentResponse":
 		if e.complexity.Mutation.HandlePaymentResponse == nil {
@@ -1167,7 +1167,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.HandlePaymentResponse(childComplexity, args["input"].(*server.OrderResponse)), true
+		return e.complexity.Mutation.HandlePaymentResponse(childComplexity, args["input"].(*model.OrderResponse)), true
 
 	case "Mutation.likeBrand":
 		if e.complexity.Mutation.LikeBrand == nil {
@@ -1179,7 +1179,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.LikeBrand(childComplexity, args["input"].(*server.LikeBrandInput)), true
+		return e.complexity.Mutation.LikeBrand(childComplexity, args["input"].(*model.LikeBrandInput)), true
 
 	case "Mutation.likeProduct":
 		if e.complexity.Mutation.LikeProduct == nil {
@@ -1191,7 +1191,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.LikeProduct(childComplexity, args["input"].(*server.LikeProductInput)), true
+		return e.complexity.Mutation.LikeProduct(childComplexity, args["input"].(*model.LikeProductInput)), true
 
 	case "Mutation.login":
 		if e.complexity.Mutation.Login == nil {
@@ -1203,7 +1203,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.Login(childComplexity, args["input"].(server.Login)), true
+		return e.complexity.Mutation.Login(childComplexity, args["input"].(model.Login)), true
 
 	case "Mutation.refreshToken":
 		if e.complexity.Mutation.RefreshToken == nil {
@@ -1215,7 +1215,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RefreshToken(childComplexity, args["input"].(server.RefreshTokenInput)), true
+		return e.complexity.Mutation.RefreshToken(childComplexity, args["input"].(model.RefreshTokenInput)), true
 
 	case "Mutation.registerNotification":
 		if e.complexity.Mutation.RegisterNotification == nil {
@@ -1239,7 +1239,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RequestOrder(childComplexity, args["input"].(*server.OrderInput)), true
+		return e.complexity.Mutation.RequestOrder(childComplexity, args["input"].(*model.OrderInput)), true
 
 	case "Mutation.requestPayment":
 		if e.complexity.Mutation.RequestPayment == nil {
@@ -1251,7 +1251,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RequestPayment(childComplexity, args["input"].(*server.PaymentClientInput)), true
+		return e.complexity.Mutation.RequestPayment(childComplexity, args["input"].(*model.PaymentClientInput)), true
 
 	case "Mutation.updateUserInfo":
 		if e.complexity.Mutation.UpdateUserInfo == nil {
@@ -1263,7 +1263,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateUserInfo(childComplexity, args["input"].(server.UserInfoInput)), true
+		return e.complexity.Mutation.UpdateUserInfo(childComplexity, args["input"].(model.UserInfoInput)), true
 
 	case "OrderInfo.cancelFinishedAt":
 		if e.complexity.OrderInfo.CancelFinishedAt == nil {
@@ -1870,7 +1870,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Alloffcategories(childComplexity, args["input"].(*server.AlloffCategoryInput)), true
+		return e.complexity.Query.Alloffcategories(childComplexity, args["input"].(*model.AlloffCategoryInput)), true
 
 	case "Query.alloffcategory":
 		if e.complexity.Query.Alloffcategory == nil {
@@ -1882,7 +1882,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Alloffcategory(childComplexity, args["input"].(*server.AlloffCategoryID)), true
+		return e.complexity.Query.Alloffcategory(childComplexity, args["input"].(*model.AlloffCategoryID)), true
 
 	case "Query.alloffcategoryProducts":
 		if e.complexity.Query.AlloffcategoryProducts == nil {
@@ -1894,7 +1894,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.AlloffcategoryProducts(childComplexity, args["input"].(server.CategoryProductsInput)), true
+		return e.complexity.Query.AlloffcategoryProducts(childComplexity, args["input"].(model.CategoryProductsInput)), true
 
 	case "Query.alloffproduct":
 		if e.complexity.Query.Alloffproduct == nil {
@@ -1918,7 +1918,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Brand(childComplexity, args["input"].(*server.BrandInput)), true
+		return e.complexity.Query.Brand(childComplexity, args["input"].(*model.BrandInput)), true
 
 	case "Query.brands":
 		if e.complexity.Query.Brands == nil {
@@ -1930,7 +1930,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Brands(childComplexity, args["input"].(*server.BrandsInput)), true
+		return e.complexity.Query.Brands(childComplexity, args["input"].(*model.BrandsInput)), true
 
 	case "Query.curations":
 		if e.complexity.Query.Curations == nil {
@@ -2020,7 +2020,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Products(childComplexity, args["input"].(server.ProductsInput)), true
+		return e.complexity.Query.Products(childComplexity, args["input"].(model.ProductsInput)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -2741,7 +2741,7 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_addAlloffProduct_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.AlloffProductInput
+	var arg0 *model.AlloffProductInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOAlloffProductInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProductInput(ctx, tmp)
@@ -2786,7 +2786,7 @@ func (ec *executionContext) field_Mutation_cancelOrder_args(ctx context.Context,
 func (ec *executionContext) field_Mutation_cancelPayment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.PaymentClientInput
+	var arg0 *model.PaymentClientInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOPaymentClientInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentClientInput(ctx, tmp)
@@ -2801,7 +2801,7 @@ func (ec *executionContext) field_Mutation_cancelPayment_args(ctx context.Contex
 func (ec *executionContext) field_Mutation_checkOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.OrderInput
+	var arg0 *model.OrderInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOOrderInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInput(ctx, tmp)
@@ -2831,7 +2831,7 @@ func (ec *executionContext) field_Mutation_confirmOrder_args(ctx context.Context
 func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 server.NewUser
+	var arg0 model.NewUser
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNNewUser2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐNewUser(ctx, tmp)
@@ -2846,7 +2846,7 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_handlePaymentResponse_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.OrderResponse
+	var arg0 *model.OrderResponse
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOOrderResponse2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderResponse(ctx, tmp)
@@ -2861,7 +2861,7 @@ func (ec *executionContext) field_Mutation_handlePaymentResponse_args(ctx contex
 func (ec *executionContext) field_Mutation_likeBrand_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.LikeBrandInput
+	var arg0 *model.LikeBrandInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOLikeBrandInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeBrandInput(ctx, tmp)
@@ -2876,7 +2876,7 @@ func (ec *executionContext) field_Mutation_likeBrand_args(ctx context.Context, r
 func (ec *executionContext) field_Mutation_likeProduct_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.LikeProductInput
+	var arg0 *model.LikeProductInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOLikeProductInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeProductInput(ctx, tmp)
@@ -2891,7 +2891,7 @@ func (ec *executionContext) field_Mutation_likeProduct_args(ctx context.Context,
 func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 server.Login
+	var arg0 model.Login
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNLogin2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLogin(ctx, tmp)
@@ -2906,7 +2906,7 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 func (ec *executionContext) field_Mutation_refreshToken_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 server.RefreshTokenInput
+	var arg0 model.RefreshTokenInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNRefreshTokenInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefreshTokenInput(ctx, tmp)
@@ -2954,7 +2954,7 @@ func (ec *executionContext) field_Mutation_registerNotification_args(ctx context
 func (ec *executionContext) field_Mutation_requestOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.OrderInput
+	var arg0 *model.OrderInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOOrderInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInput(ctx, tmp)
@@ -2969,7 +2969,7 @@ func (ec *executionContext) field_Mutation_requestOrder_args(ctx context.Context
 func (ec *executionContext) field_Mutation_requestPayment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.PaymentClientInput
+	var arg0 *model.PaymentClientInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOPaymentClientInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentClientInput(ctx, tmp)
@@ -2984,7 +2984,7 @@ func (ec *executionContext) field_Mutation_requestPayment_args(ctx context.Conte
 func (ec *executionContext) field_Mutation_updateUserInfo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 server.UserInfoInput
+	var arg0 model.UserInfoInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNUserInfoInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUserInfoInput(ctx, tmp)
@@ -3014,7 +3014,7 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 func (ec *executionContext) field_Query_alloffcategories_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.AlloffCategoryInput
+	var arg0 *model.AlloffCategoryInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOAlloffCategoryInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryInput(ctx, tmp)
@@ -3029,7 +3029,7 @@ func (ec *executionContext) field_Query_alloffcategories_args(ctx context.Contex
 func (ec *executionContext) field_Query_alloffcategoryProducts_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 server.CategoryProductsInput
+	var arg0 model.CategoryProductsInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNCategoryProductsInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategoryProductsInput(ctx, tmp)
@@ -3044,7 +3044,7 @@ func (ec *executionContext) field_Query_alloffcategoryProducts_args(ctx context.
 func (ec *executionContext) field_Query_alloffcategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.AlloffCategoryID
+	var arg0 *model.AlloffCategoryID
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOAlloffCategoryId2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryID(ctx, tmp)
@@ -3074,7 +3074,7 @@ func (ec *executionContext) field_Query_alloffproduct_args(ctx context.Context, 
 func (ec *executionContext) field_Query_brand_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.BrandInput
+	var arg0 *model.BrandInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOBrandInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandInput(ctx, tmp)
@@ -3089,7 +3089,7 @@ func (ec *executionContext) field_Query_brand_args(ctx context.Context, rawArgs 
 func (ec *executionContext) field_Query_brands_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *server.BrandsInput
+	var arg0 *model.BrandsInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOBrandsInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandsInput(ctx, tmp)
@@ -3149,7 +3149,7 @@ func (ec *executionContext) field_Query_product_args(ctx context.Context, rawArg
 func (ec *executionContext) field_Query_products_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 server.ProductsInput
+	var arg0 model.ProductsInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNProductsInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductsInput(ctx, tmp)
@@ -3199,7 +3199,7 @@ func (ec *executionContext) field___Type_fields_args(ctx context.Context, rawArg
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _AlloffCategory_id(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategory) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategory_id(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3234,7 +3234,7 @@ func (ec *executionContext) _AlloffCategory_id(ctx context.Context, field graphq
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategory_name(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategory) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategory_name(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3269,7 +3269,7 @@ func (ec *executionContext) _AlloffCategory_name(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategory_keyName(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategory) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategory_keyName(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3304,7 +3304,7 @@ func (ec *executionContext) _AlloffCategory_keyName(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategory_level(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategory) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategory_level(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3339,7 +3339,7 @@ func (ec *executionContext) _AlloffCategory_level(ctx context.Context, field gra
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategory_parentId(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategory) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategory_parentId(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3374,7 +3374,7 @@ func (ec *executionContext) _AlloffCategory_parentId(ctx context.Context, field 
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategory_imgUrl(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategory) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategory_imgUrl(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3409,7 +3409,7 @@ func (ec *executionContext) _AlloffCategory_imgUrl(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategoryProducts_alloffcategory(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategoryProducts) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategoryProducts_alloffcategory(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategoryProducts) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3439,12 +3439,12 @@ func (ec *executionContext) _AlloffCategoryProducts_alloffcategory(ctx context.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.AlloffCategory)
+	res := resTmp.(*model.AlloffCategory)
 	fc.Result = res
 	return ec.marshalNAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategoryProducts_products(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategoryProducts) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategoryProducts_products(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategoryProducts) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3471,12 +3471,12 @@ func (ec *executionContext) _AlloffCategoryProducts_products(ctx context.Context
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*server.Product)
+	res := resTmp.([]*model.Product)
 	fc.Result = res
 	return ec.marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategoryProducts_allBrands(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategoryProducts) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategoryProducts_allBrands(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategoryProducts) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3503,12 +3503,12 @@ func (ec *executionContext) _AlloffCategoryProducts_allBrands(ctx context.Contex
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*server.Brand)
+	res := resTmp.([]*model.Brand)
 	fc.Result = res
 	return ec.marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategoryProducts_totalCount(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategoryProducts) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategoryProducts_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategoryProducts) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3543,7 +3543,7 @@ func (ec *executionContext) _AlloffCategoryProducts_totalCount(ctx context.Conte
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategoryProducts_offset(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategoryProducts) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategoryProducts_offset(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategoryProducts) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3578,7 +3578,7 @@ func (ec *executionContext) _AlloffCategoryProducts_offset(ctx context.Context, 
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategoryProducts_limit(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategoryProducts) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategoryProducts_limit(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategoryProducts) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3613,7 +3613,7 @@ func (ec *executionContext) _AlloffCategoryProducts_limit(ctx context.Context, f
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffCategoryProducts_selectedBrands(ctx context.Context, field graphql.CollectedField, obj *server.AlloffCategoryProducts) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffCategoryProducts_selectedBrands(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategoryProducts) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3645,7 +3645,7 @@ func (ec *executionContext) _AlloffCategoryProducts_selectedBrands(ctx context.C
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_id(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_id(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3680,7 +3680,7 @@ func (ec *executionContext) _AlloffProduct_id(ctx context.Context, field graphql
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_brand(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_brand(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3710,12 +3710,12 @@ func (ec *executionContext) _AlloffProduct_brand(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Brand)
+	res := resTmp.(*model.Brand)
 	fc.Result = res
 	return ec.marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_name(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_name(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3750,7 +3750,7 @@ func (ec *executionContext) _AlloffProduct_name(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_productGroupId(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_productGroupId(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3785,7 +3785,7 @@ func (ec *executionContext) _AlloffProduct_productGroupId(ctx context.Context, f
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_producttype(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_producttype(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3820,7 +3820,7 @@ func (ec *executionContext) _AlloffProduct_producttype(ctx context.Context, fiel
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_description(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_description(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3852,7 +3852,7 @@ func (ec *executionContext) _AlloffProduct_description(ctx context.Context, fiel
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_originalPrice(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_originalPrice(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3887,7 +3887,7 @@ func (ec *executionContext) _AlloffProduct_originalPrice(ctx context.Context, fi
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_discountedPrice(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_discountedPrice(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3922,7 +3922,7 @@ func (ec *executionContext) _AlloffProduct_discountedPrice(ctx context.Context, 
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_discountRate(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_discountRate(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3957,7 +3957,7 @@ func (ec *executionContext) _AlloffProduct_discountRate(ctx context.Context, fie
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_images(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_images(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -3992,7 +3992,7 @@ func (ec *executionContext) _AlloffProduct_images(ctx context.Context, field gra
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_removed(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_removed(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4027,7 +4027,7 @@ func (ec *executionContext) _AlloffProduct_removed(ctx context.Context, field gr
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_soldout(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_soldout(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4062,7 +4062,7 @@ func (ec *executionContext) _AlloffProduct_soldout(ctx context.Context, field gr
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_inventory(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_inventory(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4092,12 +4092,12 @@ func (ec *executionContext) _AlloffProduct_inventory(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.Inventory)
+	res := resTmp.([]*model.Inventory)
 	fc.Result = res
 	return ec.marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInventory(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_instruction(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_instruction(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4127,12 +4127,12 @@ func (ec *executionContext) _AlloffProduct_instruction(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Instruction)
+	res := resTmp.(*model.Instruction)
 	fc.Result = res
 	return ec.marshalNInstruction2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInstruction(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_faults(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_faults(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4159,12 +4159,12 @@ func (ec *executionContext) _AlloffProduct_faults(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*server.Faults)
+	res := resTmp.([]*model.Faults)
 	fc.Result = res
 	return ec.marshalOFaults2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFaultsᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_sizeDescription(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_sizeDescription(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4196,7 +4196,7 @@ func (ec *executionContext) _AlloffProduct_sizeDescription(ctx context.Context, 
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_cancelDescription(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_cancelDescription(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4228,7 +4228,7 @@ func (ec *executionContext) _AlloffProduct_cancelDescription(ctx context.Context
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffProduct_deliveryDescription(ctx context.Context, field graphql.CollectedField, obj *server.AlloffProduct) (ret graphql.Marshaler) {
+func (ec *executionContext) _AlloffProduct_deliveryDescription(ctx context.Context, field graphql.CollectedField, obj *model.AlloffProduct) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4260,7 +4260,7 @@ func (ec *executionContext) _AlloffProduct_deliveryDescription(ctx context.Conte
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_id(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_id(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4295,7 +4295,7 @@ func (ec *executionContext) _Brand_id(ctx context.Context, field graphql.Collect
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_korName(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_korName(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4330,7 +4330,7 @@ func (ec *executionContext) _Brand_korName(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_engName(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_engName(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4365,7 +4365,7 @@ func (ec *executionContext) _Brand_engName(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_keyName(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_keyName(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4400,7 +4400,7 @@ func (ec *executionContext) _Brand_keyName(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_logoImgUrl(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_logoImgUrl(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4435,7 +4435,7 @@ func (ec *executionContext) _Brand_logoImgUrl(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_categories(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_categories(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4465,12 +4465,12 @@ func (ec *executionContext) _Brand_categories(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.Category)
+	res := resTmp.([]*model.Category)
 	fc.Result = res
 	return ec.marshalNCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategoryᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_onPopular(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_onPopular(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4505,7 +4505,7 @@ func (ec *executionContext) _Brand_onPopular(ctx context.Context, field graphql.
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_description(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_description(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4540,7 +4540,7 @@ func (ec *executionContext) _Brand_description(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_maxDiscountRate(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_maxDiscountRate(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4575,7 +4575,7 @@ func (ec *executionContext) _Brand_maxDiscountRate(ctx context.Context, field gr
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_isOpen(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_isOpen(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4610,7 +4610,7 @@ func (ec *executionContext) _Brand_isOpen(ctx context.Context, field graphql.Col
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_inMaintenance(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_inMaintenance(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4645,7 +4645,7 @@ func (ec *executionContext) _Brand_inMaintenance(ctx context.Context, field grap
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_numNewProducts(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_numNewProducts(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4680,7 +4680,7 @@ func (ec *executionContext) _Brand_numNewProducts(ctx context.Context, field gra
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Brand_sizeGuide(ctx context.Context, field graphql.CollectedField, obj *server.Brand) (ret graphql.Marshaler) {
+func (ec *executionContext) _Brand_sizeGuide(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4710,12 +4710,12 @@ func (ec *executionContext) _Brand_sizeGuide(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.SizeGuide)
+	res := resTmp.([]*model.SizeGuide)
 	fc.Result = res
 	return ec.marshalNSizeGuide2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSizeGuide(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _BrandItem_imgUrl(ctx context.Context, field graphql.CollectedField, obj *server.BrandItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _BrandItem_imgUrl(ctx context.Context, field graphql.CollectedField, obj *model.BrandItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4750,7 +4750,7 @@ func (ec *executionContext) _BrandItem_imgUrl(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _BrandItem_brand(ctx context.Context, field graphql.CollectedField, obj *server.BrandItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _BrandItem_brand(ctx context.Context, field graphql.CollectedField, obj *model.BrandItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4780,12 +4780,12 @@ func (ec *executionContext) _BrandItem_brand(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Brand)
+	res := resTmp.(*model.Brand)
 	fc.Result = res
 	return ec.marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Category_id(ctx context.Context, field graphql.CollectedField, obj *server.Category) (ret graphql.Marshaler) {
+func (ec *executionContext) _Category_id(ctx context.Context, field graphql.CollectedField, obj *model.Category) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4820,7 +4820,7 @@ func (ec *executionContext) _Category_id(ctx context.Context, field graphql.Coll
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Category_keyName(ctx context.Context, field graphql.CollectedField, obj *server.Category) (ret graphql.Marshaler) {
+func (ec *executionContext) _Category_keyName(ctx context.Context, field graphql.CollectedField, obj *model.Category) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4855,7 +4855,7 @@ func (ec *executionContext) _Category_keyName(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Category_name(ctx context.Context, field graphql.CollectedField, obj *server.Category) (ret graphql.Marshaler) {
+func (ec *executionContext) _Category_name(ctx context.Context, field graphql.CollectedField, obj *model.Category) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4890,7 +4890,7 @@ func (ec *executionContext) _Category_name(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CommunityItem_name(ctx context.Context, field graphql.CollectedField, obj *server.CommunityItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _CommunityItem_name(ctx context.Context, field graphql.CollectedField, obj *model.CommunityItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4925,7 +4925,7 @@ func (ec *executionContext) _CommunityItem_name(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CommunityItem_target(ctx context.Context, field graphql.CollectedField, obj *server.CommunityItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _CommunityItem_target(ctx context.Context, field graphql.CollectedField, obj *model.CommunityItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4960,7 +4960,7 @@ func (ec *executionContext) _CommunityItem_target(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CommunityItem_targetType(ctx context.Context, field graphql.CollectedField, obj *server.CommunityItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _CommunityItem_targetType(ctx context.Context, field graphql.CollectedField, obj *model.CommunityItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4990,12 +4990,12 @@ func (ec *executionContext) _CommunityItem_targetType(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(server.CommunityItemType)
+	res := resTmp.(model.CommunityItemType)
 	fc.Result = res
 	return ec.marshalNCommunityItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItemType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CommunityItem_imgUrl(ctx context.Context, field graphql.CollectedField, obj *server.CommunityItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _CommunityItem_imgUrl(ctx context.Context, field graphql.CollectedField, obj *model.CommunityItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5030,7 +5030,7 @@ func (ec *executionContext) _CommunityItem_imgUrl(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Curation_id(ctx context.Context, field graphql.CollectedField, obj *server.Curation) (ret graphql.Marshaler) {
+func (ec *executionContext) _Curation_id(ctx context.Context, field graphql.CollectedField, obj *model.Curation) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5065,7 +5065,7 @@ func (ec *executionContext) _Curation_id(ctx context.Context, field graphql.Coll
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Curation_order(ctx context.Context, field graphql.CollectedField, obj *server.Curation) (ret graphql.Marshaler) {
+func (ec *executionContext) _Curation_order(ctx context.Context, field graphql.CollectedField, obj *model.Curation) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5100,7 +5100,7 @@ func (ec *executionContext) _Curation_order(ctx context.Context, field graphql.C
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Curation_title(ctx context.Context, field graphql.CollectedField, obj *server.Curation) (ret graphql.Marshaler) {
+func (ec *executionContext) _Curation_title(ctx context.Context, field graphql.CollectedField, obj *model.Curation) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5135,7 +5135,7 @@ func (ec *executionContext) _Curation_title(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Curation_items(ctx context.Context, field graphql.CollectedField, obj *server.Curation) (ret graphql.Marshaler) {
+func (ec *executionContext) _Curation_items(ctx context.Context, field graphql.CollectedField, obj *model.Curation) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5165,12 +5165,12 @@ func (ec *executionContext) _Curation_items(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.CurationItem)
+	res := resTmp.([]*model.CurationItem)
 	fc.Result = res
 	return ec.marshalNCurationItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCurationItemᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CurationItem_id(ctx context.Context, field graphql.CollectedField, obj *server.CurationItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _CurationItem_id(ctx context.Context, field graphql.CollectedField, obj *model.CurationItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5205,7 +5205,7 @@ func (ec *executionContext) _CurationItem_id(ctx context.Context, field graphql.
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CurationItem_img(ctx context.Context, field graphql.CollectedField, obj *server.CurationItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _CurationItem_img(ctx context.Context, field graphql.CollectedField, obj *model.CurationItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5240,7 +5240,7 @@ func (ec *executionContext) _CurationItem_img(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CurationItem_brand(ctx context.Context, field graphql.CollectedField, obj *server.CurationItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _CurationItem_brand(ctx context.Context, field graphql.CollectedField, obj *model.CurationItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5270,12 +5270,12 @@ func (ec *executionContext) _CurationItem_brand(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Brand)
+	res := resTmp.(*model.Brand)
 	fc.Result = res
 	return ec.marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CurationItem_category(ctx context.Context, field graphql.CollectedField, obj *server.CurationItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _CurationItem_category(ctx context.Context, field graphql.CollectedField, obj *model.CurationItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5302,12 +5302,12 @@ func (ec *executionContext) _CurationItem_category(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.Category)
+	res := resTmp.(*model.Category)
 	fc.Result = res
 	return ec.marshalOCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategory(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Device_id(ctx context.Context, field graphql.CollectedField, obj *server.Device) (ret graphql.Marshaler) {
+func (ec *executionContext) _Device_id(ctx context.Context, field graphql.CollectedField, obj *model.Device) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5342,7 +5342,7 @@ func (ec *executionContext) _Device_id(ctx context.Context, field graphql.Collec
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Device_deviceId(ctx context.Context, field graphql.CollectedField, obj *server.Device) (ret graphql.Marshaler) {
+func (ec *executionContext) _Device_deviceId(ctx context.Context, field graphql.CollectedField, obj *model.Device) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5377,7 +5377,7 @@ func (ec *executionContext) _Device_deviceId(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Device_allowNotification(ctx context.Context, field graphql.CollectedField, obj *server.Device) (ret graphql.Marshaler) {
+func (ec *executionContext) _Device_allowNotification(ctx context.Context, field graphql.CollectedField, obj *model.Device) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5412,7 +5412,7 @@ func (ec *executionContext) _Device_allowNotification(ctx context.Context, field
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Device_userId(ctx context.Context, field graphql.CollectedField, obj *server.Device) (ret graphql.Marshaler) {
+func (ec *executionContext) _Device_userId(ctx context.Context, field graphql.CollectedField, obj *model.Device) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5444,7 +5444,7 @@ func (ec *executionContext) _Device_userId(ctx context.Context, field graphql.Co
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Faults_image(ctx context.Context, field graphql.CollectedField, obj *server.Faults) (ret graphql.Marshaler) {
+func (ec *executionContext) _Faults_image(ctx context.Context, field graphql.CollectedField, obj *model.Faults) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5476,7 +5476,7 @@ func (ec *executionContext) _Faults_image(ctx context.Context, field graphql.Col
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Faults_description(ctx context.Context, field graphql.CollectedField, obj *server.Faults) (ret graphql.Marshaler) {
+func (ec *executionContext) _Faults_description(ctx context.Context, field graphql.CollectedField, obj *model.Faults) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5511,7 +5511,7 @@ func (ec *executionContext) _Faults_description(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _FeaturedItem_id(ctx context.Context, field graphql.CollectedField, obj *server.FeaturedItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _FeaturedItem_id(ctx context.Context, field graphql.CollectedField, obj *model.FeaturedItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5546,7 +5546,7 @@ func (ec *executionContext) _FeaturedItem_id(ctx context.Context, field graphql.
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _FeaturedItem_order(ctx context.Context, field graphql.CollectedField, obj *server.FeaturedItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _FeaturedItem_order(ctx context.Context, field graphql.CollectedField, obj *model.FeaturedItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5581,7 +5581,7 @@ func (ec *executionContext) _FeaturedItem_order(ctx context.Context, field graph
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _FeaturedItem_brand(ctx context.Context, field graphql.CollectedField, obj *server.FeaturedItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _FeaturedItem_brand(ctx context.Context, field graphql.CollectedField, obj *model.FeaturedItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5611,12 +5611,12 @@ func (ec *executionContext) _FeaturedItem_brand(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Brand)
+	res := resTmp.(*model.Brand)
 	fc.Result = res
 	return ec.marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _FeaturedItem_img(ctx context.Context, field graphql.CollectedField, obj *server.FeaturedItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _FeaturedItem_img(ctx context.Context, field graphql.CollectedField, obj *model.FeaturedItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5651,7 +5651,7 @@ func (ec *executionContext) _FeaturedItem_img(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _FeaturedItem_category(ctx context.Context, field graphql.CollectedField, obj *server.FeaturedItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _FeaturedItem_category(ctx context.Context, field graphql.CollectedField, obj *model.FeaturedItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5678,12 +5678,12 @@ func (ec *executionContext) _FeaturedItem_category(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.Category)
+	res := resTmp.(*model.Category)
 	fc.Result = res
 	return ec.marshalOCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategory(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_id(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_id(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5718,7 +5718,7 @@ func (ec *executionContext) _HomeItem_id(ctx context.Context, field graphql.Coll
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_priority(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_priority(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5753,7 +5753,7 @@ func (ec *executionContext) _HomeItem_priority(ctx context.Context, field graphq
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_title(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_title(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5788,7 +5788,7 @@ func (ec *executionContext) _HomeItem_title(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_itemType(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_itemType(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5818,12 +5818,12 @@ func (ec *executionContext) _HomeItem_itemType(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(server.HomeItemType)
+	res := resTmp.(model.HomeItemType)
 	fc.Result = res
 	return ec.marshalNHomeItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐHomeItemType(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_targetId(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_targetId(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5858,7 +5858,7 @@ func (ec *executionContext) _HomeItem_targetId(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_sorting(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_sorting(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5885,12 +5885,12 @@ func (ec *executionContext) _HomeItem_sorting(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]server.SortingType)
+	res := resTmp.([]model.SortingType)
 	fc.Result = res
 	return ec.marshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingTypeᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_images(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_images(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5922,7 +5922,7 @@ func (ec *executionContext) _HomeItem_images(ctx context.Context, field graphql.
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_communityItems(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_communityItems(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5949,12 +5949,12 @@ func (ec *executionContext) _HomeItem_communityItems(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*server.CommunityItem)
+	res := resTmp.([]*model.CommunityItem)
 	fc.Result = res
 	return ec.marshalOCommunityItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItem(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_brands(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_brands(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5981,12 +5981,12 @@ func (ec *executionContext) _HomeItem_brands(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*server.BrandItem)
+	res := resTmp.([]*model.BrandItem)
 	fc.Result = res
 	return ec.marshalOBrandItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandItem(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_products(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_products(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6013,12 +6013,12 @@ func (ec *executionContext) _HomeItem_products(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*server.Product)
+	res := resTmp.([]*model.Product)
 	fc.Result = res
 	return ec.marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeItem_productGroups(ctx context.Context, field graphql.CollectedField, obj *server.HomeItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeItem_productGroups(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6045,12 +6045,12 @@ func (ec *executionContext) _HomeItem_productGroups(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*server.ProductGroup)
+	res := resTmp.([]*model.ProductGroup)
 	fc.Result = res
 	return ec.marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Instruction_thumbnail(ctx context.Context, field graphql.CollectedField, obj *server.Instruction) (ret graphql.Marshaler) {
+func (ec *executionContext) _Instruction_thumbnail(ctx context.Context, field graphql.CollectedField, obj *model.Instruction) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6085,7 +6085,7 @@ func (ec *executionContext) _Instruction_thumbnail(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Instruction_title(ctx context.Context, field graphql.CollectedField, obj *server.Instruction) (ret graphql.Marshaler) {
+func (ec *executionContext) _Instruction_title(ctx context.Context, field graphql.CollectedField, obj *model.Instruction) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6120,7 +6120,7 @@ func (ec *executionContext) _Instruction_title(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Instruction_description(ctx context.Context, field graphql.CollectedField, obj *server.Instruction) (ret graphql.Marshaler) {
+func (ec *executionContext) _Instruction_description(ctx context.Context, field graphql.CollectedField, obj *model.Instruction) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6152,7 +6152,7 @@ func (ec *executionContext) _Instruction_description(ctx context.Context, field 
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Instruction_images(ctx context.Context, field graphql.CollectedField, obj *server.Instruction) (ret graphql.Marshaler) {
+func (ec *executionContext) _Instruction_images(ctx context.Context, field graphql.CollectedField, obj *model.Instruction) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6184,7 +6184,7 @@ func (ec *executionContext) _Instruction_images(ctx context.Context, field graph
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Inventory_size(ctx context.Context, field graphql.CollectedField, obj *server.Inventory) (ret graphql.Marshaler) {
+func (ec *executionContext) _Inventory_size(ctx context.Context, field graphql.CollectedField, obj *model.Inventory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6219,7 +6219,7 @@ func (ec *executionContext) _Inventory_size(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Inventory_quantity(ctx context.Context, field graphql.CollectedField, obj *server.Inventory) (ret graphql.Marshaler) {
+func (ec *executionContext) _Inventory_quantity(ctx context.Context, field graphql.CollectedField, obj *model.Inventory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6254,7 +6254,7 @@ func (ec *executionContext) _Inventory_quantity(ctx context.Context, field graph
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _KeyValueInfo_key(ctx context.Context, field graphql.CollectedField, obj *server.KeyValueInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _KeyValueInfo_key(ctx context.Context, field graphql.CollectedField, obj *model.KeyValueInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6289,7 +6289,7 @@ func (ec *executionContext) _KeyValueInfo_key(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _KeyValueInfo_value(ctx context.Context, field graphql.CollectedField, obj *server.KeyValueInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _KeyValueInfo_value(ctx context.Context, field graphql.CollectedField, obj *model.KeyValueInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6324,7 +6324,7 @@ func (ec *executionContext) _KeyValueInfo_value(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _LikeProductOutput_oldProduct(ctx context.Context, field graphql.CollectedField, obj *server.LikeProductOutput) (ret graphql.Marshaler) {
+func (ec *executionContext) _LikeProductOutput_oldProduct(ctx context.Context, field graphql.CollectedField, obj *model.LikeProductOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6354,12 +6354,12 @@ func (ec *executionContext) _LikeProductOutput_oldProduct(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Product)
+	res := resTmp.(*model.Product)
 	fc.Result = res
 	return ec.marshalNProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _LikeProductOutput_newProduct(ctx context.Context, field graphql.CollectedField, obj *server.LikeProductOutput) (ret graphql.Marshaler) {
+func (ec *executionContext) _LikeProductOutput_newProduct(ctx context.Context, field graphql.CollectedField, obj *model.LikeProductOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6389,7 +6389,7 @@ func (ec *executionContext) _LikeProductOutput_newProduct(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Product)
+	res := resTmp.(*model.Product)
 	fc.Result = res
 	return ec.marshalNProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx, field.Selections, res)
 }
@@ -6431,7 +6431,7 @@ func (ec *executionContext) _Mutation_registerNotification(ctx context.Context, 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Device)
+	res := resTmp.(*model.Device)
 	fc.Result = res
 	return ec.marshalNDevice2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDevice(ctx, field.Selections, res)
 }
@@ -6461,7 +6461,7 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUser(rctx, args["input"].(server.NewUser))
+		return ec.resolvers.Mutation().CreateUser(rctx, args["input"].(model.NewUser))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6503,7 +6503,7 @@ func (ec *executionContext) _Mutation_updateUserInfo(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUserInfo(rctx, args["input"].(server.UserInfoInput))
+		return ec.resolvers.Mutation().UpdateUserInfo(rctx, args["input"].(model.UserInfoInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6515,7 +6515,7 @@ func (ec *executionContext) _Mutation_updateUserInfo(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.User)
+	res := resTmp.(*model.User)
 	fc.Result = res
 	return ec.marshalNUser2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUser(ctx, field.Selections, res)
 }
@@ -6545,7 +6545,7 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().Login(rctx, args["input"].(server.Login))
+		return ec.resolvers.Mutation().Login(rctx, args["input"].(model.Login))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6587,7 +6587,7 @@ func (ec *executionContext) _Mutation_refreshToken(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RefreshToken(rctx, args["input"].(server.RefreshTokenInput))
+		return ec.resolvers.Mutation().RefreshToken(rctx, args["input"].(model.RefreshTokenInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6629,7 +6629,7 @@ func (ec *executionContext) _Mutation_likeBrand(ctx context.Context, field graph
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().LikeBrand(rctx, args["input"].(*server.LikeBrandInput))
+		return ec.resolvers.Mutation().LikeBrand(rctx, args["input"].(*model.LikeBrandInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6671,7 +6671,7 @@ func (ec *executionContext) _Mutation_checkOrder(ctx context.Context, field grap
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CheckOrder(rctx, args["input"].(*server.OrderInput))
+		return ec.resolvers.Mutation().CheckOrder(rctx, args["input"].(*model.OrderInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6683,7 +6683,7 @@ func (ec *executionContext) _Mutation_checkOrder(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.OrderValidityResult)
+	res := resTmp.(*model.OrderValidityResult)
 	fc.Result = res
 	return ec.marshalNOrderValidityResult2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderValidityResult(ctx, field.Selections, res)
 }
@@ -6713,7 +6713,7 @@ func (ec *executionContext) _Mutation_requestOrder(ctx context.Context, field gr
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RequestOrder(rctx, args["input"].(*server.OrderInput))
+		return ec.resolvers.Mutation().RequestOrder(rctx, args["input"].(*model.OrderInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6725,7 +6725,7 @@ func (ec *executionContext) _Mutation_requestOrder(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.OrderWithPayment)
+	res := resTmp.(*model.OrderWithPayment)
 	fc.Result = res
 	return ec.marshalNOrderWithPayment2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderWithPayment(ctx, field.Selections, res)
 }
@@ -6767,7 +6767,7 @@ func (ec *executionContext) _Mutation_cancelOrder(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.PaymentStatus)
+	res := resTmp.(*model.PaymentStatus)
 	fc.Result = res
 	return ec.marshalNPaymentStatus2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentStatus(ctx, field.Selections, res)
 }
@@ -6809,7 +6809,7 @@ func (ec *executionContext) _Mutation_confirmOrder(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.PaymentStatus)
+	res := resTmp.(*model.PaymentStatus)
 	fc.Result = res
 	return ec.marshalNPaymentStatus2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentStatus(ctx, field.Selections, res)
 }
@@ -6839,7 +6839,7 @@ func (ec *executionContext) _Mutation_requestPayment(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RequestPayment(rctx, args["input"].(*server.PaymentClientInput))
+		return ec.resolvers.Mutation().RequestPayment(rctx, args["input"].(*model.PaymentClientInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6851,7 +6851,7 @@ func (ec *executionContext) _Mutation_requestPayment(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.PaymentStatus)
+	res := resTmp.(*model.PaymentStatus)
 	fc.Result = res
 	return ec.marshalNPaymentStatus2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentStatus(ctx, field.Selections, res)
 }
@@ -6881,7 +6881,7 @@ func (ec *executionContext) _Mutation_cancelPayment(ctx context.Context, field g
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CancelPayment(rctx, args["input"].(*server.PaymentClientInput))
+		return ec.resolvers.Mutation().CancelPayment(rctx, args["input"].(*model.PaymentClientInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6893,7 +6893,7 @@ func (ec *executionContext) _Mutation_cancelPayment(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.PaymentStatus)
+	res := resTmp.(*model.PaymentStatus)
 	fc.Result = res
 	return ec.marshalNPaymentStatus2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentStatus(ctx, field.Selections, res)
 }
@@ -6923,7 +6923,7 @@ func (ec *executionContext) _Mutation_handlePaymentResponse(ctx context.Context,
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().HandlePaymentResponse(rctx, args["input"].(*server.OrderResponse))
+		return ec.resolvers.Mutation().HandlePaymentResponse(rctx, args["input"].(*model.OrderResponse))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6935,7 +6935,7 @@ func (ec *executionContext) _Mutation_handlePaymentResponse(ctx context.Context,
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.PaymentResult)
+	res := resTmp.(*model.PaymentResult)
 	fc.Result = res
 	return ec.marshalNPaymentResult2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentResult(ctx, field.Selections, res)
 }
@@ -6965,7 +6965,7 @@ func (ec *executionContext) _Mutation_addAlloffProduct(ctx context.Context, fiel
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddAlloffProduct(rctx, args["input"].(*server.AlloffProductInput))
+		return ec.resolvers.Mutation().AddAlloffProduct(rctx, args["input"].(*model.AlloffProductInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6977,7 +6977,7 @@ func (ec *executionContext) _Mutation_addAlloffProduct(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.AlloffProduct)
+	res := resTmp.(*model.AlloffProduct)
 	fc.Result = res
 	return ec.marshalNAlloffProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx, field.Selections, res)
 }
@@ -7049,7 +7049,7 @@ func (ec *executionContext) _Mutation_likeProduct(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().LikeProduct(rctx, args["input"].(*server.LikeProductInput))
+		return ec.resolvers.Mutation().LikeProduct(rctx, args["input"].(*model.LikeProductInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7066,7 +7066,7 @@ func (ec *executionContext) _Mutation_likeProduct(ctx context.Context, field gra
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_id(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_id(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7101,7 +7101,7 @@ func (ec *executionContext) _OrderInfo_id(ctx context.Context, field graphql.Col
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_orders(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_orders(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7131,12 +7131,12 @@ func (ec *executionContext) _OrderInfo_orders(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.ProductOption)
+	res := resTmp.([]*model.ProductOption)
 	fc.Result = res
 	return ec.marshalNProductOption2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOption(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_orderType(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_orderType(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7166,12 +7166,12 @@ func (ec *executionContext) _OrderInfo_orderType(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(server.OrderTypeEnum)
+	res := resTmp.(model.OrderTypeEnum)
 	fc.Result = res
 	return ec.marshalNOrderTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderTypeEnum(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_productPrice(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_productPrice(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7206,7 +7206,7 @@ func (ec *executionContext) _OrderInfo_productPrice(ctx context.Context, field g
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_deliveryPrice(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_deliveryPrice(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7241,7 +7241,7 @@ func (ec *executionContext) _OrderInfo_deliveryPrice(ctx context.Context, field 
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_totalPrice(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_totalPrice(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7276,7 +7276,7 @@ func (ec *executionContext) _OrderInfo_totalPrice(ctx context.Context, field gra
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_orderStatus(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_orderStatus(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7306,12 +7306,12 @@ func (ec *executionContext) _OrderInfo_orderStatus(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(server.OrderStatusEnum)
+	res := resTmp.(model.OrderStatusEnum)
 	fc.Result = res
 	return ec.marshalNOrderStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderStatusEnum(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_memo(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_memo(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7346,7 +7346,7 @@ func (ec *executionContext) _OrderInfo_memo(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_deliveryTrackingUrl(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_deliveryTrackingUrl(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7381,7 +7381,7 @@ func (ec *executionContext) _OrderInfo_deliveryTrackingUrl(ctx context.Context, 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_created(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_created(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7416,7 +7416,7 @@ func (ec *executionContext) _OrderInfo_created(ctx context.Context, field graphq
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_updated(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_updated(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7451,7 +7451,7 @@ func (ec *executionContext) _OrderInfo_updated(ctx context.Context, field graphq
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_finished(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_finished(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7486,7 +7486,7 @@ func (ec *executionContext) _OrderInfo_finished(ctx context.Context, field graph
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_orderedAt(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_orderedAt(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7521,7 +7521,7 @@ func (ec *executionContext) _OrderInfo_orderedAt(ctx context.Context, field grap
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_deliveryStartedAt(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_deliveryStartedAt(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7556,7 +7556,7 @@ func (ec *executionContext) _OrderInfo_deliveryStartedAt(ctx context.Context, fi
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_deliveryFinishedAt(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_deliveryFinishedAt(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7591,7 +7591,7 @@ func (ec *executionContext) _OrderInfo_deliveryFinishedAt(ctx context.Context, f
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_cancelRequestedAt(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_cancelRequestedAt(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7626,7 +7626,7 @@ func (ec *executionContext) _OrderInfo_cancelRequestedAt(ctx context.Context, fi
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_cancelFinishedAt(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_cancelFinishedAt(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7661,7 +7661,7 @@ func (ec *executionContext) _OrderInfo_cancelFinishedAt(ctx context.Context, fie
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_confirmedAt(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_confirmedAt(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7696,7 +7696,7 @@ func (ec *executionContext) _OrderInfo_confirmedAt(ctx context.Context, field gr
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_refundInfo(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_refundInfo(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7723,12 +7723,12 @@ func (ec *executionContext) _OrderInfo_refundInfo(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.RefundInfo)
+	res := resTmp.(*model.RefundInfo)
 	fc.Result = res
 	return ec.marshalORefundInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefundInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_cancelOrders(ctx context.Context, field graphql.CollectedField, obj *server.OrderInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderInfo_cancelOrders(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7755,12 +7755,12 @@ func (ec *executionContext) _OrderInfo_cancelOrders(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*server.ProductOption)
+	res := resTmp.([]*model.ProductOption)
 	fc.Result = res
 	return ec.marshalOProductOption2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOption(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderValidityResult_available(ctx context.Context, field graphql.CollectedField, obj *server.OrderValidityResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderValidityResult_available(ctx context.Context, field graphql.CollectedField, obj *model.OrderValidityResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7795,7 +7795,7 @@ func (ec *executionContext) _OrderValidityResult_available(ctx context.Context, 
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderValidityResult_errorMsgs(ctx context.Context, field graphql.CollectedField, obj *server.OrderValidityResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderValidityResult_errorMsgs(ctx context.Context, field graphql.CollectedField, obj *model.OrderValidityResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7827,7 +7827,7 @@ func (ec *executionContext) _OrderValidityResult_errorMsgs(ctx context.Context, 
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderValidityResult_order(ctx context.Context, field graphql.CollectedField, obj *server.OrderValidityResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderValidityResult_order(ctx context.Context, field graphql.CollectedField, obj *model.OrderValidityResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7857,12 +7857,12 @@ func (ec *executionContext) _OrderValidityResult_order(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.OrderInfo)
+	res := resTmp.(*model.OrderInfo)
 	fc.Result = res
 	return ec.marshalNOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderWithPayment_success(ctx context.Context, field graphql.CollectedField, obj *server.OrderWithPayment) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderWithPayment_success(ctx context.Context, field graphql.CollectedField, obj *model.OrderWithPayment) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7897,7 +7897,7 @@ func (ec *executionContext) _OrderWithPayment_success(ctx context.Context, field
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderWithPayment_errorMsg(ctx context.Context, field graphql.CollectedField, obj *server.OrderWithPayment) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderWithPayment_errorMsg(ctx context.Context, field graphql.CollectedField, obj *model.OrderWithPayment) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7932,7 +7932,7 @@ func (ec *executionContext) _OrderWithPayment_errorMsg(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderWithPayment_paymentMethods(ctx context.Context, field graphql.CollectedField, obj *server.OrderWithPayment) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderWithPayment_paymentMethods(ctx context.Context, field graphql.CollectedField, obj *model.OrderWithPayment) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7962,12 +7962,12 @@ func (ec *executionContext) _OrderWithPayment_paymentMethods(ctx context.Context
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.PaymentMethod)
+	res := resTmp.([]*model.PaymentMethod)
 	fc.Result = res
 	return ec.marshalNPaymentMethod2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentMethod(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderWithPayment_user(ctx context.Context, field graphql.CollectedField, obj *server.OrderWithPayment) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderWithPayment_user(ctx context.Context, field graphql.CollectedField, obj *model.OrderWithPayment) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7997,12 +7997,12 @@ func (ec *executionContext) _OrderWithPayment_user(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.User)
+	res := resTmp.(*model.User)
 	fc.Result = res
 	return ec.marshalNUser2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderWithPayment_paymentInfo(ctx context.Context, field graphql.CollectedField, obj *server.OrderWithPayment) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderWithPayment_paymentInfo(ctx context.Context, field graphql.CollectedField, obj *model.OrderWithPayment) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8029,12 +8029,12 @@ func (ec *executionContext) _OrderWithPayment_paymentInfo(ctx context.Context, f
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.PaymentInfo)
+	res := resTmp.(*model.PaymentInfo)
 	fc.Result = res
 	return ec.marshalOPaymentInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderWithPayment_order(ctx context.Context, field graphql.CollectedField, obj *server.OrderWithPayment) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderWithPayment_order(ctx context.Context, field graphql.CollectedField, obj *model.OrderWithPayment) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8061,12 +8061,12 @@ func (ec *executionContext) _OrderWithPayment_order(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.OrderInfo)
+	res := resTmp.(*model.OrderInfo)
 	fc.Result = res
 	return ec.marshalOOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_pg(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_pg(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8101,7 +8101,7 @@ func (ec *executionContext) _PaymentInfo_pg(ctx context.Context, field graphql.C
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_payMethod(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_payMethod(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8136,7 +8136,7 @@ func (ec *executionContext) _PaymentInfo_payMethod(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_merchantUid(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_merchantUid(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8171,7 +8171,7 @@ func (ec *executionContext) _PaymentInfo_merchantUid(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_amount(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_amount(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8206,7 +8206,7 @@ func (ec *executionContext) _PaymentInfo_amount(ctx context.Context, field graph
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_name(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_name(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8241,7 +8241,7 @@ func (ec *executionContext) _PaymentInfo_name(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_buyerName(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_buyerName(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8276,7 +8276,7 @@ func (ec *executionContext) _PaymentInfo_buyerName(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_buyerMobile(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_buyerMobile(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8311,7 +8311,7 @@ func (ec *executionContext) _PaymentInfo_buyerMobile(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_buyerAddress(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_buyerAddress(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8346,7 +8346,7 @@ func (ec *executionContext) _PaymentInfo_buyerAddress(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_buyerPostCode(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_buyerPostCode(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8381,7 +8381,7 @@ func (ec *executionContext) _PaymentInfo_buyerPostCode(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_company(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_company(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8416,7 +8416,7 @@ func (ec *executionContext) _PaymentInfo_company(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentInfo_appScheme(ctx context.Context, field graphql.CollectedField, obj *server.PaymentInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentInfo_appScheme(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8451,7 +8451,7 @@ func (ec *executionContext) _PaymentInfo_appScheme(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentMethod_label(ctx context.Context, field graphql.CollectedField, obj *server.PaymentMethod) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentMethod_label(ctx context.Context, field graphql.CollectedField, obj *model.PaymentMethod) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8486,7 +8486,7 @@ func (ec *executionContext) _PaymentMethod_label(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentMethod_code(ctx context.Context, field graphql.CollectedField, obj *server.PaymentMethod) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentMethod_code(ctx context.Context, field graphql.CollectedField, obj *model.PaymentMethod) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8521,7 +8521,7 @@ func (ec *executionContext) _PaymentMethod_code(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentResult_success(ctx context.Context, field graphql.CollectedField, obj *server.PaymentResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentResult_success(ctx context.Context, field graphql.CollectedField, obj *model.PaymentResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8556,7 +8556,7 @@ func (ec *executionContext) _PaymentResult_success(ctx context.Context, field gr
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentResult_errorMsg(ctx context.Context, field graphql.CollectedField, obj *server.PaymentResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentResult_errorMsg(ctx context.Context, field graphql.CollectedField, obj *model.PaymentResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8591,7 +8591,7 @@ func (ec *executionContext) _PaymentResult_errorMsg(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentResult_order(ctx context.Context, field graphql.CollectedField, obj *server.PaymentResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentResult_order(ctx context.Context, field graphql.CollectedField, obj *model.PaymentResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8618,12 +8618,12 @@ func (ec *executionContext) _PaymentResult_order(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.OrderInfo)
+	res := resTmp.(*model.OrderInfo)
 	fc.Result = res
 	return ec.marshalOOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentResult_paymentInfo(ctx context.Context, field graphql.CollectedField, obj *server.PaymentResult) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentResult_paymentInfo(ctx context.Context, field graphql.CollectedField, obj *model.PaymentResult) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8650,12 +8650,12 @@ func (ec *executionContext) _PaymentResult_paymentInfo(ctx context.Context, fiel
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.PaymentInfo)
+	res := resTmp.(*model.PaymentInfo)
 	fc.Result = res
 	return ec.marshalOPaymentInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentStatus_success(ctx context.Context, field graphql.CollectedField, obj *server.PaymentStatus) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentStatus_success(ctx context.Context, field graphql.CollectedField, obj *model.PaymentStatus) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8690,7 +8690,7 @@ func (ec *executionContext) _PaymentStatus_success(ctx context.Context, field gr
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentStatus_errorMsg(ctx context.Context, field graphql.CollectedField, obj *server.PaymentStatus) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentStatus_errorMsg(ctx context.Context, field graphql.CollectedField, obj *model.PaymentStatus) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8725,7 +8725,7 @@ func (ec *executionContext) _PaymentStatus_errorMsg(ctx context.Context, field g
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentStatus_order(ctx context.Context, field graphql.CollectedField, obj *server.PaymentStatus) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentStatus_order(ctx context.Context, field graphql.CollectedField, obj *model.PaymentStatus) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8752,12 +8752,12 @@ func (ec *executionContext) _PaymentStatus_order(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.OrderInfo)
+	res := resTmp.(*model.OrderInfo)
 	fc.Result = res
 	return ec.marshalOOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _PaymentStatus_paymentInfo(ctx context.Context, field graphql.CollectedField, obj *server.PaymentStatus) (ret graphql.Marshaler) {
+func (ec *executionContext) _PaymentStatus_paymentInfo(ctx context.Context, field graphql.CollectedField, obj *model.PaymentStatus) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8784,12 +8784,12 @@ func (ec *executionContext) _PaymentStatus_paymentInfo(ctx context.Context, fiel
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.PaymentInfo)
+	res := resTmp.(*model.PaymentInfo)
 	fc.Result = res
 	return ec.marshalOPaymentInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_id(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_id(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8824,7 +8824,7 @@ func (ec *executionContext) _Product_id(ctx context.Context, field graphql.Colle
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_category(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_category(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8854,12 +8854,12 @@ func (ec *executionContext) _Product_category(ctx context.Context, field graphql
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Category)
+	res := resTmp.(*model.Category)
 	fc.Result = res
 	return ec.marshalNCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategory(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_brand(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_brand(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8889,12 +8889,12 @@ func (ec *executionContext) _Product_brand(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Brand)
+	res := resTmp.(*model.Brand)
 	fc.Result = res
 	return ec.marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_name(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_name(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8929,7 +8929,7 @@ func (ec *executionContext) _Product_name(ctx context.Context, field graphql.Col
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_originalPrice(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_originalPrice(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8964,7 +8964,7 @@ func (ec *executionContext) _Product_originalPrice(ctx context.Context, field gr
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_soldout(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_soldout(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8999,7 +8999,7 @@ func (ec *executionContext) _Product_soldout(ctx context.Context, field graphql.
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_images(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_images(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9034,7 +9034,7 @@ func (ec *executionContext) _Product_images(ctx context.Context, field graphql.C
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_discountedPrice(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_discountedPrice(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9066,7 +9066,7 @@ func (ec *executionContext) _Product_discountedPrice(ctx context.Context, field 
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_discountRate(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_discountRate(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9098,7 +9098,7 @@ func (ec *executionContext) _Product_discountRate(ctx context.Context, field gra
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_productUrl(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_productUrl(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9133,7 +9133,7 @@ func (ec *executionContext) _Product_productUrl(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_sizeAvailable(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_sizeAvailable(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9168,7 +9168,7 @@ func (ec *executionContext) _Product_sizeAvailable(ctx context.Context, field gr
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_isUpdated(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_isUpdated(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9203,7 +9203,7 @@ func (ec *executionContext) _Product_isUpdated(ctx context.Context, field graphq
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_isNewProduct(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_isNewProduct(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9238,7 +9238,7 @@ func (ec *executionContext) _Product_isNewProduct(ctx context.Context, field gra
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_removed(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_removed(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9273,7 +9273,7 @@ func (ec *executionContext) _Product_removed(ctx context.Context, field graphql.
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_description(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_description(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9300,12 +9300,12 @@ func (ec *executionContext) _Product_description(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*server.KeyValueInfo)
+	res := resTmp.([]*model.KeyValueInfo)
 	fc.Result = res
 	return ec.marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐKeyValueInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_deliveryDescription(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_deliveryDescription(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9337,7 +9337,7 @@ func (ec *executionContext) _Product_deliveryDescription(ctx context.Context, fi
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_cancelDescription(ctx context.Context, field graphql.CollectedField, obj *server.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_cancelDescription(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9369,7 +9369,7 @@ func (ec *executionContext) _Product_cancelDescription(ctx context.Context, fiel
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductGroup_id(ctx context.Context, field graphql.CollectedField, obj *server.ProductGroup) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductGroup_id(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9404,7 +9404,7 @@ func (ec *executionContext) _ProductGroup_id(ctx context.Context, field graphql.
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductGroup_title(ctx context.Context, field graphql.CollectedField, obj *server.ProductGroup) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductGroup_title(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9439,7 +9439,7 @@ func (ec *executionContext) _ProductGroup_title(ctx context.Context, field graph
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductGroup_shortTitle(ctx context.Context, field graphql.CollectedField, obj *server.ProductGroup) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductGroup_shortTitle(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9474,7 +9474,7 @@ func (ec *executionContext) _ProductGroup_shortTitle(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductGroup_instruction(ctx context.Context, field graphql.CollectedField, obj *server.ProductGroup) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductGroup_instruction(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9509,7 +9509,7 @@ func (ec *executionContext) _ProductGroup_instruction(ctx context.Context, field
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductGroup_imgUrl(ctx context.Context, field graphql.CollectedField, obj *server.ProductGroup) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductGroup_imgUrl(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9544,7 +9544,7 @@ func (ec *executionContext) _ProductGroup_imgUrl(ctx context.Context, field grap
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductGroup_alloffproducts(ctx context.Context, field graphql.CollectedField, obj *server.ProductGroup) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductGroup_alloffproducts(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9574,12 +9574,12 @@ func (ec *executionContext) _ProductGroup_alloffproducts(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.AlloffProduct)
+	res := resTmp.([]*model.AlloffProduct)
 	fc.Result = res
 	return ec.marshalNAlloffProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductGroup_startTime(ctx context.Context, field graphql.CollectedField, obj *server.ProductGroup) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductGroup_startTime(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9614,7 +9614,7 @@ func (ec *executionContext) _ProductGroup_startTime(ctx context.Context, field g
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductGroup_finishTime(ctx context.Context, field graphql.CollectedField, obj *server.ProductGroup) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductGroup_finishTime(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9649,7 +9649,7 @@ func (ec *executionContext) _ProductGroup_finishTime(ctx context.Context, field 
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductGroup_numAlarms(ctx context.Context, field graphql.CollectedField, obj *server.ProductGroup) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductGroup_numAlarms(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9684,7 +9684,7 @@ func (ec *executionContext) _ProductGroup_numAlarms(ctx context.Context, field g
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductGroup_setAlarm(ctx context.Context, field graphql.CollectedField, obj *server.ProductGroup) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductGroup_setAlarm(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9719,7 +9719,7 @@ func (ec *executionContext) _ProductGroup_setAlarm(ctx context.Context, field gr
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductOption_alloffProduct(ctx context.Context, field graphql.CollectedField, obj *server.ProductOption) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductOption_alloffProduct(ctx context.Context, field graphql.CollectedField, obj *model.ProductOption) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9746,12 +9746,12 @@ func (ec *executionContext) _ProductOption_alloffProduct(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.AlloffProduct)
+	res := resTmp.(*model.AlloffProduct)
 	fc.Result = res
 	return ec.marshalOAlloffProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductOption_product(ctx context.Context, field graphql.CollectedField, obj *server.ProductOption) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductOption_product(ctx context.Context, field graphql.CollectedField, obj *model.ProductOption) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9778,12 +9778,12 @@ func (ec *executionContext) _ProductOption_product(ctx context.Context, field gr
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.Product)
+	res := resTmp.(*model.Product)
 	fc.Result = res
 	return ec.marshalOProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductOption_selectsize(ctx context.Context, field graphql.CollectedField, obj *server.ProductOption) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductOption_selectsize(ctx context.Context, field graphql.CollectedField, obj *model.ProductOption) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9818,7 +9818,7 @@ func (ec *executionContext) _ProductOption_selectsize(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductOption_quantity(ctx context.Context, field graphql.CollectedField, obj *server.ProductOption) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductOption_quantity(ctx context.Context, field graphql.CollectedField, obj *model.ProductOption) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9853,7 +9853,7 @@ func (ec *executionContext) _ProductOption_quantity(ctx context.Context, field g
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductsOutput_totalCount(ctx context.Context, field graphql.CollectedField, obj *server.ProductsOutput) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductsOutput_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.ProductsOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9888,7 +9888,7 @@ func (ec *executionContext) _ProductsOutput_totalCount(ctx context.Context, fiel
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductsOutput_offset(ctx context.Context, field graphql.CollectedField, obj *server.ProductsOutput) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductsOutput_offset(ctx context.Context, field graphql.CollectedField, obj *model.ProductsOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9923,7 +9923,7 @@ func (ec *executionContext) _ProductsOutput_offset(ctx context.Context, field gr
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductsOutput_limit(ctx context.Context, field graphql.CollectedField, obj *server.ProductsOutput) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductsOutput_limit(ctx context.Context, field graphql.CollectedField, obj *model.ProductsOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9958,7 +9958,7 @@ func (ec *executionContext) _ProductsOutput_limit(ctx context.Context, field gra
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductsOutput_products(ctx context.Context, field graphql.CollectedField, obj *server.ProductsOutput) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductsOutput_products(ctx context.Context, field graphql.CollectedField, obj *model.ProductsOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -9988,7 +9988,7 @@ func (ec *executionContext) _ProductsOutput_products(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.Product)
+	res := resTmp.([]*model.Product)
 	fc.Result = res
 	return ec.marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx, field.Selections, res)
 }
@@ -10018,7 +10018,7 @@ func (ec *executionContext) _Query_alloffcategories(ctx context.Context, field g
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Alloffcategories(rctx, args["input"].(*server.AlloffCategoryInput))
+		return ec.resolvers.Query().Alloffcategories(rctx, args["input"].(*model.AlloffCategoryInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10030,7 +10030,7 @@ func (ec *executionContext) _Query_alloffcategories(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.AlloffCategory)
+	res := resTmp.([]*model.AlloffCategory)
 	fc.Result = res
 	return ec.marshalNAlloffCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx, field.Selections, res)
 }
@@ -10060,7 +10060,7 @@ func (ec *executionContext) _Query_alloffcategory(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Alloffcategory(rctx, args["input"].(*server.AlloffCategoryID))
+		return ec.resolvers.Query().Alloffcategory(rctx, args["input"].(*model.AlloffCategoryID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10072,7 +10072,7 @@ func (ec *executionContext) _Query_alloffcategory(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.AlloffCategory)
+	res := resTmp.(*model.AlloffCategory)
 	fc.Result = res
 	return ec.marshalNAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx, field.Selections, res)
 }
@@ -10102,7 +10102,7 @@ func (ec *executionContext) _Query_alloffcategoryProducts(ctx context.Context, f
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().AlloffcategoryProducts(rctx, args["input"].(server.CategoryProductsInput))
+		return ec.resolvers.Query().AlloffcategoryProducts(rctx, args["input"].(model.CategoryProductsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10114,7 +10114,7 @@ func (ec *executionContext) _Query_alloffcategoryProducts(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.AlloffCategoryProducts)
+	res := resTmp.(*model.AlloffCategoryProducts)
 	fc.Result = res
 	return ec.marshalNAlloffCategoryProducts2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryProducts(ctx, field.Selections, res)
 }
@@ -10146,7 +10146,7 @@ func (ec *executionContext) _Query_user(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*server.User)
+	res := resTmp.(*model.User)
 	fc.Result = res
 	return ec.marshalOUser2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUser(ctx, field.Selections, res)
 }
@@ -10176,7 +10176,7 @@ func (ec *executionContext) _Query_brand(ctx context.Context, field graphql.Coll
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Brand(rctx, args["input"].(*server.BrandInput))
+		return ec.resolvers.Query().Brand(rctx, args["input"].(*model.BrandInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10188,7 +10188,7 @@ func (ec *executionContext) _Query_brand(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Brand)
+	res := resTmp.(*model.Brand)
 	fc.Result = res
 	return ec.marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx, field.Selections, res)
 }
@@ -10218,7 +10218,7 @@ func (ec *executionContext) _Query_brands(ctx context.Context, field graphql.Col
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Brands(rctx, args["input"].(*server.BrandsInput))
+		return ec.resolvers.Query().Brands(rctx, args["input"].(*model.BrandsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10230,7 +10230,7 @@ func (ec *executionContext) _Query_brands(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.Brand)
+	res := resTmp.([]*model.Brand)
 	fc.Result = res
 	return ec.marshalNBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandᚄ(ctx, field.Selections, res)
 }
@@ -10272,7 +10272,7 @@ func (ec *executionContext) _Query_order(ctx context.Context, field graphql.Coll
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.OrderInfo)
+	res := resTmp.(*model.OrderInfo)
 	fc.Result = res
 	return ec.marshalNOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx, field.Selections, res)
 }
@@ -10307,7 +10307,7 @@ func (ec *executionContext) _Query_orders(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.OrderInfo)
+	res := resTmp.([]*model.OrderInfo)
 	fc.Result = res
 	return ec.marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx, field.Selections, res)
 }
@@ -10349,7 +10349,7 @@ func (ec *executionContext) _Query_alloffproduct(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.AlloffProduct)
+	res := resTmp.(*model.AlloffProduct)
 	fc.Result = res
 	return ec.marshalNAlloffProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx, field.Selections, res)
 }
@@ -10391,7 +10391,7 @@ func (ec *executionContext) _Query_productGroup(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.ProductGroup)
+	res := resTmp.(*model.ProductGroup)
 	fc.Result = res
 	return ec.marshalNProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx, field.Selections, res)
 }
@@ -10426,7 +10426,7 @@ func (ec *executionContext) _Query_productGroups(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.ProductGroup)
+	res := resTmp.([]*model.ProductGroup)
 	fc.Result = res
 	return ec.marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx, field.Selections, res)
 }
@@ -10468,7 +10468,7 @@ func (ec *executionContext) _Query_product(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.Product)
+	res := resTmp.(*model.Product)
 	fc.Result = res
 	return ec.marshalNProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx, field.Selections, res)
 }
@@ -10498,7 +10498,7 @@ func (ec *executionContext) _Query_products(ctx context.Context, field graphql.C
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Products(rctx, args["input"].(server.ProductsInput))
+		return ec.resolvers.Query().Products(rctx, args["input"].(model.ProductsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10510,7 +10510,7 @@ func (ec *executionContext) _Query_products(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*server.ProductsOutput)
+	res := resTmp.(*model.ProductsOutput)
 	fc.Result = res
 	return ec.marshalNProductsOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductsOutput(ctx, field.Selections, res)
 }
@@ -10545,7 +10545,7 @@ func (ec *executionContext) _Query_likeproducts(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.LikeProductOutput)
+	res := resTmp.([]*model.LikeProductOutput)
 	fc.Result = res
 	return ec.marshalNLikeProductOutput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeProductOutput(ctx, field.Selections, res)
 }
@@ -10580,7 +10580,7 @@ func (ec *executionContext) _Query_featureds(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.FeaturedItem)
+	res := resTmp.([]*model.FeaturedItem)
 	fc.Result = res
 	return ec.marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFeaturedItem(ctx, field.Selections, res)
 }
@@ -10615,7 +10615,7 @@ func (ec *executionContext) _Query_curations(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.Curation)
+	res := resTmp.([]*model.Curation)
 	fc.Result = res
 	return ec.marshalNCuration2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCuration(ctx, field.Selections, res)
 }
@@ -10650,7 +10650,7 @@ func (ec *executionContext) _Query_homeitems(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*server.HomeItem)
+	res := resTmp.([]*model.HomeItem)
 	fc.Result = res
 	return ec.marshalNHomeItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐHomeItem(ctx, field.Selections, res)
 }
@@ -10726,7 +10726,7 @@ func (ec *executionContext) _Query___schema(ctx context.Context, field graphql.C
 	return ec.marshalO__Schema2ᚖgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐSchema(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _RefundInfo_refundDeliveryPrice(ctx context.Context, field graphql.CollectedField, obj *server.RefundInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _RefundInfo_refundDeliveryPrice(ctx context.Context, field graphql.CollectedField, obj *model.RefundInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10761,7 +10761,7 @@ func (ec *executionContext) _RefundInfo_refundDeliveryPrice(ctx context.Context,
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _RefundInfo_refundPrice(ctx context.Context, field graphql.CollectedField, obj *server.RefundInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _RefundInfo_refundPrice(ctx context.Context, field graphql.CollectedField, obj *model.RefundInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10796,7 +10796,7 @@ func (ec *executionContext) _RefundInfo_refundPrice(ctx context.Context, field g
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _RefundInfo_refundAmount(ctx context.Context, field graphql.CollectedField, obj *server.RefundInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _RefundInfo_refundAmount(ctx context.Context, field graphql.CollectedField, obj *model.RefundInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10831,7 +10831,7 @@ func (ec *executionContext) _RefundInfo_refundAmount(ctx context.Context, field 
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _RefundInfo_created(ctx context.Context, field graphql.CollectedField, obj *server.RefundInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _RefundInfo_created(ctx context.Context, field graphql.CollectedField, obj *model.RefundInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10866,7 +10866,7 @@ func (ec *executionContext) _RefundInfo_created(ctx context.Context, field graph
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _RefundInfo_updated(ctx context.Context, field graphql.CollectedField, obj *server.RefundInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _RefundInfo_updated(ctx context.Context, field graphql.CollectedField, obj *model.RefundInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10901,7 +10901,7 @@ func (ec *executionContext) _RefundInfo_updated(ctx context.Context, field graph
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _SizeGuide_label(ctx context.Context, field graphql.CollectedField, obj *server.SizeGuide) (ret graphql.Marshaler) {
+func (ec *executionContext) _SizeGuide_label(ctx context.Context, field graphql.CollectedField, obj *model.SizeGuide) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10936,7 +10936,7 @@ func (ec *executionContext) _SizeGuide_label(ctx context.Context, field graphql.
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _SizeGuide_imgUrl(ctx context.Context, field graphql.CollectedField, obj *server.SizeGuide) (ret graphql.Marshaler) {
+func (ec *executionContext) _SizeGuide_imgUrl(ctx context.Context, field graphql.CollectedField, obj *model.SizeGuide) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10971,7 +10971,7 @@ func (ec *executionContext) _SizeGuide_imgUrl(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *server.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11006,7 +11006,7 @@ func (ec *executionContext) _User_id(ctx context.Context, field graphql.Collecte
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_uuid(ctx context.Context, field graphql.CollectedField, obj *server.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_uuid(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11041,7 +11041,7 @@ func (ec *executionContext) _User_uuid(ctx context.Context, field graphql.Collec
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_mobile(ctx context.Context, field graphql.CollectedField, obj *server.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_mobile(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11076,7 +11076,7 @@ func (ec *executionContext) _User_mobile(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *server.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_name(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11108,7 +11108,7 @@ func (ec *executionContext) _User_name(ctx context.Context, field graphql.Collec
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *server.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11140,7 +11140,7 @@ func (ec *executionContext) _User_email(ctx context.Context, field graphql.Colle
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_baseAddress(ctx context.Context, field graphql.CollectedField, obj *server.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_baseAddress(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11172,7 +11172,7 @@ func (ec *executionContext) _User_baseAddress(ctx context.Context, field graphql
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_detailAddress(ctx context.Context, field graphql.CollectedField, obj *server.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_detailAddress(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11204,7 +11204,7 @@ func (ec *executionContext) _User_detailAddress(ctx context.Context, field graph
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _User_postcode(ctx context.Context, field graphql.CollectedField, obj *server.User) (ret graphql.Marshaler) {
+func (ec *executionContext) _User_postcode(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -12358,8 +12358,8 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputAlloffCategoryId(ctx context.Context, obj interface{}) (server.AlloffCategoryID, error) {
-	var it server.AlloffCategoryID
+func (ec *executionContext) unmarshalInputAlloffCategoryId(ctx context.Context, obj interface{}) (model.AlloffCategoryID, error) {
+	var it model.AlloffCategoryID
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12381,8 +12381,8 @@ func (ec *executionContext) unmarshalInputAlloffCategoryId(ctx context.Context, 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputAlloffCategoryInput(ctx context.Context, obj interface{}) (server.AlloffCategoryInput, error) {
-	var it server.AlloffCategoryInput
+func (ec *executionContext) unmarshalInputAlloffCategoryInput(ctx context.Context, obj interface{}) (model.AlloffCategoryInput, error) {
+	var it model.AlloffCategoryInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12404,8 +12404,8 @@ func (ec *executionContext) unmarshalInputAlloffCategoryInput(ctx context.Contex
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputAlloffProductInput(ctx context.Context, obj interface{}) (server.AlloffProductInput, error) {
-	var it server.AlloffProductInput
+func (ec *executionContext) unmarshalInputAlloffProductInput(ctx context.Context, obj interface{}) (model.AlloffProductInput, error) {
+	var it model.AlloffProductInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12483,8 +12483,8 @@ func (ec *executionContext) unmarshalInputAlloffProductInput(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputBrandInput(ctx context.Context, obj interface{}) (server.BrandInput, error) {
-	var it server.BrandInput
+func (ec *executionContext) unmarshalInputBrandInput(ctx context.Context, obj interface{}) (model.BrandInput, error) {
+	var it model.BrandInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12506,8 +12506,8 @@ func (ec *executionContext) unmarshalInputBrandInput(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputBrandsInput(ctx context.Context, obj interface{}) (server.BrandsInput, error) {
-	var it server.BrandsInput
+func (ec *executionContext) unmarshalInputBrandsInput(ctx context.Context, obj interface{}) (model.BrandsInput, error) {
+	var it model.BrandsInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12529,8 +12529,8 @@ func (ec *executionContext) unmarshalInputBrandsInput(ctx context.Context, obj i
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCategoryProductsInput(ctx context.Context, obj interface{}) (server.CategoryProductsInput, error) {
-	var it server.CategoryProductsInput
+func (ec *executionContext) unmarshalInputCategoryProductsInput(ctx context.Context, obj interface{}) (model.CategoryProductsInput, error) {
+	var it model.CategoryProductsInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12584,8 +12584,8 @@ func (ec *executionContext) unmarshalInputCategoryProductsInput(ctx context.Cont
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputInventoryInput(ctx context.Context, obj interface{}) (server.InventoryInput, error) {
-	var it server.InventoryInput
+func (ec *executionContext) unmarshalInputInventoryInput(ctx context.Context, obj interface{}) (model.InventoryInput, error) {
+	var it model.InventoryInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12615,8 +12615,8 @@ func (ec *executionContext) unmarshalInputInventoryInput(ctx context.Context, ob
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputLikeBrandInput(ctx context.Context, obj interface{}) (server.LikeBrandInput, error) {
-	var it server.LikeBrandInput
+func (ec *executionContext) unmarshalInputLikeBrandInput(ctx context.Context, obj interface{}) (model.LikeBrandInput, error) {
+	var it model.LikeBrandInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12638,8 +12638,8 @@ func (ec *executionContext) unmarshalInputLikeBrandInput(ctx context.Context, ob
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputLikeProductInput(ctx context.Context, obj interface{}) (server.LikeProductInput, error) {
-	var it server.LikeProductInput
+func (ec *executionContext) unmarshalInputLikeProductInput(ctx context.Context, obj interface{}) (model.LikeProductInput, error) {
+	var it model.LikeProductInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12661,8 +12661,8 @@ func (ec *executionContext) unmarshalInputLikeProductInput(ctx context.Context, 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputLogin(ctx context.Context, obj interface{}) (server.Login, error) {
-	var it server.Login
+func (ec *executionContext) unmarshalInputLogin(ctx context.Context, obj interface{}) (model.Login, error) {
+	var it model.Login
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12692,8 +12692,8 @@ func (ec *executionContext) unmarshalInputLogin(ctx context.Context, obj interfa
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj interface{}) (server.NewUser, error) {
-	var it server.NewUser
+func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj interface{}) (model.NewUser, error) {
+	var it model.NewUser
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12763,8 +12763,8 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputOrderInput(ctx context.Context, obj interface{}) (server.OrderInput, error) {
-	var it server.OrderInput
+func (ec *executionContext) unmarshalInputOrderInput(ctx context.Context, obj interface{}) (model.OrderInput, error) {
+	var it model.OrderInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12794,8 +12794,8 @@ func (ec *executionContext) unmarshalInputOrderInput(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputOrderResponse(ctx context.Context, obj interface{}) (server.OrderResponse, error) {
-	var it server.OrderResponse
+func (ec *executionContext) unmarshalInputOrderResponse(ctx context.Context, obj interface{}) (model.OrderResponse, error) {
+	var it model.OrderResponse
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12841,8 +12841,8 @@ func (ec *executionContext) unmarshalInputOrderResponse(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputPaymentClientInput(ctx context.Context, obj interface{}) (server.PaymentClientInput, error) {
-	var it server.PaymentClientInput
+func (ec *executionContext) unmarshalInputPaymentClientInput(ctx context.Context, obj interface{}) (model.PaymentClientInput, error) {
+	var it model.PaymentClientInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12944,8 +12944,8 @@ func (ec *executionContext) unmarshalInputPaymentClientInput(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputProductOptionInput(ctx context.Context, obj interface{}) (server.ProductOptionInput, error) {
-	var it server.ProductOptionInput
+func (ec *executionContext) unmarshalInputProductOptionInput(ctx context.Context, obj interface{}) (model.ProductOptionInput, error) {
+	var it model.ProductOptionInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12991,8 +12991,8 @@ func (ec *executionContext) unmarshalInputProductOptionInput(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputProductsInput(ctx context.Context, obj interface{}) (server.ProductsInput, error) {
-	var it server.ProductsInput
+func (ec *executionContext) unmarshalInputProductsInput(ctx context.Context, obj interface{}) (model.ProductsInput, error) {
+	var it model.ProductsInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -13054,8 +13054,8 @@ func (ec *executionContext) unmarshalInputProductsInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputRefreshTokenInput(ctx context.Context, obj interface{}) (server.RefreshTokenInput, error) {
-	var it server.RefreshTokenInput
+func (ec *executionContext) unmarshalInputRefreshTokenInput(ctx context.Context, obj interface{}) (model.RefreshTokenInput, error) {
+	var it model.RefreshTokenInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -13077,8 +13077,8 @@ func (ec *executionContext) unmarshalInputRefreshTokenInput(ctx context.Context,
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUserInfoInput(ctx context.Context, obj interface{}) (server.UserInfoInput, error) {
-	var it server.UserInfoInput
+func (ec *executionContext) unmarshalInputUserInfoInput(ctx context.Context, obj interface{}) (model.UserInfoInput, error) {
+	var it model.UserInfoInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -13158,7 +13158,7 @@ func (ec *executionContext) unmarshalInputUserInfoInput(ctx context.Context, obj
 
 var alloffCategoryImplementors = []string{"AlloffCategory"}
 
-func (ec *executionContext) _AlloffCategory(ctx context.Context, sel ast.SelectionSet, obj *server.AlloffCategory) graphql.Marshaler {
+func (ec *executionContext) _AlloffCategory(ctx context.Context, sel ast.SelectionSet, obj *model.AlloffCategory) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, alloffCategoryImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13210,7 +13210,7 @@ func (ec *executionContext) _AlloffCategory(ctx context.Context, sel ast.Selecti
 
 var alloffCategoryProductsImplementors = []string{"AlloffCategoryProducts"}
 
-func (ec *executionContext) _AlloffCategoryProducts(ctx context.Context, sel ast.SelectionSet, obj *server.AlloffCategoryProducts) graphql.Marshaler {
+func (ec *executionContext) _AlloffCategoryProducts(ctx context.Context, sel ast.SelectionSet, obj *model.AlloffCategoryProducts) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, alloffCategoryProductsImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13258,7 +13258,7 @@ func (ec *executionContext) _AlloffCategoryProducts(ctx context.Context, sel ast
 
 var alloffProductImplementors = []string{"AlloffProduct"}
 
-func (ec *executionContext) _AlloffProduct(ctx context.Context, sel ast.SelectionSet, obj *server.AlloffProduct) graphql.Marshaler {
+func (ec *executionContext) _AlloffProduct(ctx context.Context, sel ast.SelectionSet, obj *model.AlloffProduct) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, alloffProductImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13355,7 +13355,7 @@ func (ec *executionContext) _AlloffProduct(ctx context.Context, sel ast.Selectio
 
 var brandImplementors = []string{"Brand"}
 
-func (ec *executionContext) _Brand(ctx context.Context, sel ast.SelectionSet, obj *server.Brand) graphql.Marshaler {
+func (ec *executionContext) _Brand(ctx context.Context, sel ast.SelectionSet, obj *model.Brand) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, brandImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13442,7 +13442,7 @@ func (ec *executionContext) _Brand(ctx context.Context, sel ast.SelectionSet, ob
 
 var brandItemImplementors = []string{"BrandItem"}
 
-func (ec *executionContext) _BrandItem(ctx context.Context, sel ast.SelectionSet, obj *server.BrandItem) graphql.Marshaler {
+func (ec *executionContext) _BrandItem(ctx context.Context, sel ast.SelectionSet, obj *model.BrandItem) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, brandItemImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13474,7 +13474,7 @@ func (ec *executionContext) _BrandItem(ctx context.Context, sel ast.SelectionSet
 
 var categoryImplementors = []string{"Category"}
 
-func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet, obj *server.Category) graphql.Marshaler {
+func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet, obj *model.Category) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, categoryImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13511,7 +13511,7 @@ func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet,
 
 var communityItemImplementors = []string{"CommunityItem"}
 
-func (ec *executionContext) _CommunityItem(ctx context.Context, sel ast.SelectionSet, obj *server.CommunityItem) graphql.Marshaler {
+func (ec *executionContext) _CommunityItem(ctx context.Context, sel ast.SelectionSet, obj *model.CommunityItem) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, communityItemImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13553,7 +13553,7 @@ func (ec *executionContext) _CommunityItem(ctx context.Context, sel ast.Selectio
 
 var curationImplementors = []string{"Curation"}
 
-func (ec *executionContext) _Curation(ctx context.Context, sel ast.SelectionSet, obj *server.Curation) graphql.Marshaler {
+func (ec *executionContext) _Curation(ctx context.Context, sel ast.SelectionSet, obj *model.Curation) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, curationImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13595,7 +13595,7 @@ func (ec *executionContext) _Curation(ctx context.Context, sel ast.SelectionSet,
 
 var curationItemImplementors = []string{"CurationItem"}
 
-func (ec *executionContext) _CurationItem(ctx context.Context, sel ast.SelectionSet, obj *server.CurationItem) graphql.Marshaler {
+func (ec *executionContext) _CurationItem(ctx context.Context, sel ast.SelectionSet, obj *model.CurationItem) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, curationItemImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13634,7 +13634,7 @@ func (ec *executionContext) _CurationItem(ctx context.Context, sel ast.Selection
 
 var deviceImplementors = []string{"Device"}
 
-func (ec *executionContext) _Device(ctx context.Context, sel ast.SelectionSet, obj *server.Device) graphql.Marshaler {
+func (ec *executionContext) _Device(ctx context.Context, sel ast.SelectionSet, obj *model.Device) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, deviceImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13673,7 +13673,7 @@ func (ec *executionContext) _Device(ctx context.Context, sel ast.SelectionSet, o
 
 var faultsImplementors = []string{"Faults"}
 
-func (ec *executionContext) _Faults(ctx context.Context, sel ast.SelectionSet, obj *server.Faults) graphql.Marshaler {
+func (ec *executionContext) _Faults(ctx context.Context, sel ast.SelectionSet, obj *model.Faults) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, faultsImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13702,7 +13702,7 @@ func (ec *executionContext) _Faults(ctx context.Context, sel ast.SelectionSet, o
 
 var featuredItemImplementors = []string{"FeaturedItem"}
 
-func (ec *executionContext) _FeaturedItem(ctx context.Context, sel ast.SelectionSet, obj *server.FeaturedItem) graphql.Marshaler {
+func (ec *executionContext) _FeaturedItem(ctx context.Context, sel ast.SelectionSet, obj *model.FeaturedItem) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, featuredItemImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13746,7 +13746,7 @@ func (ec *executionContext) _FeaturedItem(ctx context.Context, sel ast.Selection
 
 var homeItemImplementors = []string{"HomeItem"}
 
-func (ec *executionContext) _HomeItem(ctx context.Context, sel ast.SelectionSet, obj *server.HomeItem) graphql.Marshaler {
+func (ec *executionContext) _HomeItem(ctx context.Context, sel ast.SelectionSet, obj *model.HomeItem) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, homeItemImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13805,7 +13805,7 @@ func (ec *executionContext) _HomeItem(ctx context.Context, sel ast.SelectionSet,
 
 var instructionImplementors = []string{"Instruction"}
 
-func (ec *executionContext) _Instruction(ctx context.Context, sel ast.SelectionSet, obj *server.Instruction) graphql.Marshaler {
+func (ec *executionContext) _Instruction(ctx context.Context, sel ast.SelectionSet, obj *model.Instruction) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, instructionImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13841,7 +13841,7 @@ func (ec *executionContext) _Instruction(ctx context.Context, sel ast.SelectionS
 
 var inventoryImplementors = []string{"Inventory"}
 
-func (ec *executionContext) _Inventory(ctx context.Context, sel ast.SelectionSet, obj *server.Inventory) graphql.Marshaler {
+func (ec *executionContext) _Inventory(ctx context.Context, sel ast.SelectionSet, obj *model.Inventory) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, inventoryImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13873,7 +13873,7 @@ func (ec *executionContext) _Inventory(ctx context.Context, sel ast.SelectionSet
 
 var keyValueInfoImplementors = []string{"KeyValueInfo"}
 
-func (ec *executionContext) _KeyValueInfo(ctx context.Context, sel ast.SelectionSet, obj *server.KeyValueInfo) graphql.Marshaler {
+func (ec *executionContext) _KeyValueInfo(ctx context.Context, sel ast.SelectionSet, obj *model.KeyValueInfo) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, keyValueInfoImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -13905,7 +13905,7 @@ func (ec *executionContext) _KeyValueInfo(ctx context.Context, sel ast.Selection
 
 var likeProductOutputImplementors = []string{"LikeProductOutput"}
 
-func (ec *executionContext) _LikeProductOutput(ctx context.Context, sel ast.SelectionSet, obj *server.LikeProductOutput) graphql.Marshaler {
+func (ec *executionContext) _LikeProductOutput(ctx context.Context, sel ast.SelectionSet, obj *model.LikeProductOutput) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, likeProductOutputImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14043,7 +14043,7 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 var orderInfoImplementors = []string{"OrderInfo"}
 
-func (ec *executionContext) _OrderInfo(ctx context.Context, sel ast.SelectionSet, obj *server.OrderInfo) graphql.Marshaler {
+func (ec *executionContext) _OrderInfo(ctx context.Context, sel ast.SelectionSet, obj *model.OrderInfo) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, orderInfoImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14159,7 +14159,7 @@ func (ec *executionContext) _OrderInfo(ctx context.Context, sel ast.SelectionSet
 
 var orderValidityResultImplementors = []string{"OrderValidityResult"}
 
-func (ec *executionContext) _OrderValidityResult(ctx context.Context, sel ast.SelectionSet, obj *server.OrderValidityResult) graphql.Marshaler {
+func (ec *executionContext) _OrderValidityResult(ctx context.Context, sel ast.SelectionSet, obj *model.OrderValidityResult) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, orderValidityResultImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14193,7 +14193,7 @@ func (ec *executionContext) _OrderValidityResult(ctx context.Context, sel ast.Se
 
 var orderWithPaymentImplementors = []string{"OrderWithPayment"}
 
-func (ec *executionContext) _OrderWithPayment(ctx context.Context, sel ast.SelectionSet, obj *server.OrderWithPayment) graphql.Marshaler {
+func (ec *executionContext) _OrderWithPayment(ctx context.Context, sel ast.SelectionSet, obj *model.OrderWithPayment) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, orderWithPaymentImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14239,7 +14239,7 @@ func (ec *executionContext) _OrderWithPayment(ctx context.Context, sel ast.Selec
 
 var paymentInfoImplementors = []string{"PaymentInfo"}
 
-func (ec *executionContext) _PaymentInfo(ctx context.Context, sel ast.SelectionSet, obj *server.PaymentInfo) graphql.Marshaler {
+func (ec *executionContext) _PaymentInfo(ctx context.Context, sel ast.SelectionSet, obj *model.PaymentInfo) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, paymentInfoImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14316,7 +14316,7 @@ func (ec *executionContext) _PaymentInfo(ctx context.Context, sel ast.SelectionS
 
 var paymentMethodImplementors = []string{"PaymentMethod"}
 
-func (ec *executionContext) _PaymentMethod(ctx context.Context, sel ast.SelectionSet, obj *server.PaymentMethod) graphql.Marshaler {
+func (ec *executionContext) _PaymentMethod(ctx context.Context, sel ast.SelectionSet, obj *model.PaymentMethod) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, paymentMethodImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14348,7 +14348,7 @@ func (ec *executionContext) _PaymentMethod(ctx context.Context, sel ast.Selectio
 
 var paymentResultImplementors = []string{"PaymentResult"}
 
-func (ec *executionContext) _PaymentResult(ctx context.Context, sel ast.SelectionSet, obj *server.PaymentResult) graphql.Marshaler {
+func (ec *executionContext) _PaymentResult(ctx context.Context, sel ast.SelectionSet, obj *model.PaymentResult) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, paymentResultImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14384,7 +14384,7 @@ func (ec *executionContext) _PaymentResult(ctx context.Context, sel ast.Selectio
 
 var paymentStatusImplementors = []string{"PaymentStatus"}
 
-func (ec *executionContext) _PaymentStatus(ctx context.Context, sel ast.SelectionSet, obj *server.PaymentStatus) graphql.Marshaler {
+func (ec *executionContext) _PaymentStatus(ctx context.Context, sel ast.SelectionSet, obj *model.PaymentStatus) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, paymentStatusImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14420,7 +14420,7 @@ func (ec *executionContext) _PaymentStatus(ctx context.Context, sel ast.Selectio
 
 var productImplementors = []string{"Product"}
 
-func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, obj *server.Product) graphql.Marshaler {
+func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, obj *model.Product) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, productImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14512,7 +14512,7 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 
 var productGroupImplementors = []string{"ProductGroup"}
 
-func (ec *executionContext) _ProductGroup(ctx context.Context, sel ast.SelectionSet, obj *server.ProductGroup) graphql.Marshaler {
+func (ec *executionContext) _ProductGroup(ctx context.Context, sel ast.SelectionSet, obj *model.ProductGroup) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, productGroupImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14584,7 +14584,7 @@ func (ec *executionContext) _ProductGroup(ctx context.Context, sel ast.Selection
 
 var productOptionImplementors = []string{"ProductOption"}
 
-func (ec *executionContext) _ProductOption(ctx context.Context, sel ast.SelectionSet, obj *server.ProductOption) graphql.Marshaler {
+func (ec *executionContext) _ProductOption(ctx context.Context, sel ast.SelectionSet, obj *model.ProductOption) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, productOptionImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14620,7 +14620,7 @@ func (ec *executionContext) _ProductOption(ctx context.Context, sel ast.Selectio
 
 var productsOutputImplementors = []string{"ProductsOutput"}
 
-func (ec *executionContext) _ProductsOutput(ctx context.Context, sel ast.SelectionSet, obj *server.ProductsOutput) graphql.Marshaler {
+func (ec *executionContext) _ProductsOutput(ctx context.Context, sel ast.SelectionSet, obj *model.ProductsOutput) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, productsOutputImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14927,7 +14927,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 
 var refundInfoImplementors = []string{"RefundInfo"}
 
-func (ec *executionContext) _RefundInfo(ctx context.Context, sel ast.SelectionSet, obj *server.RefundInfo) graphql.Marshaler {
+func (ec *executionContext) _RefundInfo(ctx context.Context, sel ast.SelectionSet, obj *model.RefundInfo) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, refundInfoImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -14974,7 +14974,7 @@ func (ec *executionContext) _RefundInfo(ctx context.Context, sel ast.SelectionSe
 
 var sizeGuideImplementors = []string{"SizeGuide"}
 
-func (ec *executionContext) _SizeGuide(ctx context.Context, sel ast.SelectionSet, obj *server.SizeGuide) graphql.Marshaler {
+func (ec *executionContext) _SizeGuide(ctx context.Context, sel ast.SelectionSet, obj *model.SizeGuide) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, sizeGuideImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -15006,7 +15006,7 @@ func (ec *executionContext) _SizeGuide(ctx context.Context, sel ast.SelectionSet
 
 var userImplementors = []string{"User"}
 
-func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *server.User) graphql.Marshaler {
+func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj *model.User) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, userImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -15301,11 +15301,11 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNAlloffCategory2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx context.Context, sel ast.SelectionSet, v server.AlloffCategory) graphql.Marshaler {
+func (ec *executionContext) marshalNAlloffCategory2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx context.Context, sel ast.SelectionSet, v model.AlloffCategory) graphql.Marshaler {
 	return ec._AlloffCategory(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNAlloffCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx context.Context, sel ast.SelectionSet, v []*server.AlloffCategory) graphql.Marshaler {
+func (ec *executionContext) marshalNAlloffCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx context.Context, sel ast.SelectionSet, v []*model.AlloffCategory) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15343,7 +15343,7 @@ func (ec *executionContext) marshalNAlloffCategory2ᚕᚖgithubᚗcomᚋlessbutt
 	return ret
 }
 
-func (ec *executionContext) marshalNAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx context.Context, sel ast.SelectionSet, v *server.AlloffCategory) graphql.Marshaler {
+func (ec *executionContext) marshalNAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx context.Context, sel ast.SelectionSet, v *model.AlloffCategory) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -15353,11 +15353,11 @@ func (ec *executionContext) marshalNAlloffCategory2ᚖgithubᚗcomᚋlessbutter�
 	return ec._AlloffCategory(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNAlloffCategoryProducts2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryProducts(ctx context.Context, sel ast.SelectionSet, v server.AlloffCategoryProducts) graphql.Marshaler {
+func (ec *executionContext) marshalNAlloffCategoryProducts2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryProducts(ctx context.Context, sel ast.SelectionSet, v model.AlloffCategoryProducts) graphql.Marshaler {
 	return ec._AlloffCategoryProducts(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNAlloffCategoryProducts2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryProducts(ctx context.Context, sel ast.SelectionSet, v *server.AlloffCategoryProducts) graphql.Marshaler {
+func (ec *executionContext) marshalNAlloffCategoryProducts2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryProducts(ctx context.Context, sel ast.SelectionSet, v *model.AlloffCategoryProducts) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -15367,11 +15367,11 @@ func (ec *executionContext) marshalNAlloffCategoryProducts2ᚖgithubᚗcomᚋles
 	return ec._AlloffCategoryProducts(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNAlloffProduct2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx context.Context, sel ast.SelectionSet, v server.AlloffProduct) graphql.Marshaler {
+func (ec *executionContext) marshalNAlloffProduct2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx context.Context, sel ast.SelectionSet, v model.AlloffProduct) graphql.Marshaler {
 	return ec._AlloffProduct(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNAlloffProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx context.Context, sel ast.SelectionSet, v []*server.AlloffProduct) graphql.Marshaler {
+func (ec *executionContext) marshalNAlloffProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx context.Context, sel ast.SelectionSet, v []*model.AlloffProduct) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15409,7 +15409,7 @@ func (ec *executionContext) marshalNAlloffProduct2ᚕᚖgithubᚗcomᚋlessbutte
 	return ret
 }
 
-func (ec *executionContext) marshalNAlloffProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx context.Context, sel ast.SelectionSet, v *server.AlloffProduct) graphql.Marshaler {
+func (ec *executionContext) marshalNAlloffProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx context.Context, sel ast.SelectionSet, v *model.AlloffProduct) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -15434,11 +15434,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) marshalNBrand2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx context.Context, sel ast.SelectionSet, v server.Brand) graphql.Marshaler {
+func (ec *executionContext) marshalNBrand2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx context.Context, sel ast.SelectionSet, v model.Brand) graphql.Marshaler {
 	return ec._Brand(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandᚄ(ctx context.Context, sel ast.SelectionSet, v []*server.Brand) graphql.Marshaler {
+func (ec *executionContext) marshalNBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Brand) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15482,7 +15482,7 @@ func (ec *executionContext) marshalNBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋallo
 	return ret
 }
 
-func (ec *executionContext) marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx context.Context, sel ast.SelectionSet, v *server.Brand) graphql.Marshaler {
+func (ec *executionContext) marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx context.Context, sel ast.SelectionSet, v *model.Brand) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -15492,7 +15492,7 @@ func (ec *executionContext) marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloff�
 	return ec._Brand(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*server.Category) graphql.Marshaler {
+func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Category) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15536,7 +15536,7 @@ func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋa
 	return ret
 }
 
-func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *server.Category) graphql.Marshaler {
+func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -15546,22 +15546,22 @@ func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlessbutterᚋallo
 	return ec._Category(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCategoryProductsInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategoryProductsInput(ctx context.Context, v interface{}) (server.CategoryProductsInput, error) {
+func (ec *executionContext) unmarshalNCategoryProductsInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategoryProductsInput(ctx context.Context, v interface{}) (model.CategoryProductsInput, error) {
 	res, err := ec.unmarshalInputCategoryProductsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCommunityItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItemType(ctx context.Context, v interface{}) (server.CommunityItemType, error) {
-	var res server.CommunityItemType
+func (ec *executionContext) unmarshalNCommunityItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItemType(ctx context.Context, v interface{}) (model.CommunityItemType, error) {
+	var res model.CommunityItemType
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNCommunityItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItemType(ctx context.Context, sel ast.SelectionSet, v server.CommunityItemType) graphql.Marshaler {
+func (ec *executionContext) marshalNCommunityItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItemType(ctx context.Context, sel ast.SelectionSet, v model.CommunityItemType) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) marshalNCuration2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCuration(ctx context.Context, sel ast.SelectionSet, v []*server.Curation) graphql.Marshaler {
+func (ec *executionContext) marshalNCuration2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCuration(ctx context.Context, sel ast.SelectionSet, v []*model.Curation) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15599,7 +15599,7 @@ func (ec *executionContext) marshalNCuration2ᚕᚖgithubᚗcomᚋlessbutterᚋa
 	return ret
 }
 
-func (ec *executionContext) marshalNCurationItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCurationItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*server.CurationItem) graphql.Marshaler {
+func (ec *executionContext) marshalNCurationItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCurationItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CurationItem) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15643,7 +15643,7 @@ func (ec *executionContext) marshalNCurationItem2ᚕᚖgithubᚗcomᚋlessbutter
 	return ret
 }
 
-func (ec *executionContext) marshalNCurationItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCurationItem(ctx context.Context, sel ast.SelectionSet, v *server.CurationItem) graphql.Marshaler {
+func (ec *executionContext) marshalNCurationItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCurationItem(ctx context.Context, sel ast.SelectionSet, v *model.CurationItem) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -15668,11 +15668,11 @@ func (ec *executionContext) marshalNDate2string(ctx context.Context, sel ast.Sel
 	return res
 }
 
-func (ec *executionContext) marshalNDevice2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDevice(ctx context.Context, sel ast.SelectionSet, v server.Device) graphql.Marshaler {
+func (ec *executionContext) marshalNDevice2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDevice(ctx context.Context, sel ast.SelectionSet, v model.Device) graphql.Marshaler {
 	return ec._Device(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNDevice2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDevice(ctx context.Context, sel ast.SelectionSet, v *server.Device) graphql.Marshaler {
+func (ec *executionContext) marshalNDevice2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDevice(ctx context.Context, sel ast.SelectionSet, v *model.Device) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -15682,7 +15682,7 @@ func (ec *executionContext) marshalNDevice2ᚖgithubᚗcomᚋlessbutterᚋalloff
 	return ec._Device(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNFaults2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFaults(ctx context.Context, sel ast.SelectionSet, v *server.Faults) graphql.Marshaler {
+func (ec *executionContext) marshalNFaults2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFaults(ctx context.Context, sel ast.SelectionSet, v *model.Faults) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -15692,7 +15692,7 @@ func (ec *executionContext) marshalNFaults2ᚖgithubᚗcomᚋlessbutterᚋalloff
 	return ec._Faults(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFeaturedItem(ctx context.Context, sel ast.SelectionSet, v []*server.FeaturedItem) graphql.Marshaler {
+func (ec *executionContext) marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFeaturedItem(ctx context.Context, sel ast.SelectionSet, v []*model.FeaturedItem) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15730,7 +15730,7 @@ func (ec *executionContext) marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutter
 	return ret
 }
 
-func (ec *executionContext) marshalNHomeItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐHomeItem(ctx context.Context, sel ast.SelectionSet, v []*server.HomeItem) graphql.Marshaler {
+func (ec *executionContext) marshalNHomeItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐHomeItem(ctx context.Context, sel ast.SelectionSet, v []*model.HomeItem) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15768,13 +15768,13 @@ func (ec *executionContext) marshalNHomeItem2ᚕᚖgithubᚗcomᚋlessbutterᚋa
 	return ret
 }
 
-func (ec *executionContext) unmarshalNHomeItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐHomeItemType(ctx context.Context, v interface{}) (server.HomeItemType, error) {
-	var res server.HomeItemType
+func (ec *executionContext) unmarshalNHomeItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐHomeItemType(ctx context.Context, v interface{}) (model.HomeItemType, error) {
+	var res model.HomeItemType
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNHomeItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐHomeItemType(ctx context.Context, sel ast.SelectionSet, v server.HomeItemType) graphql.Marshaler {
+func (ec *executionContext) marshalNHomeItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐHomeItemType(ctx context.Context, sel ast.SelectionSet, v model.HomeItemType) graphql.Marshaler {
 	return v
 }
 
@@ -15793,7 +15793,7 @@ func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNInstruction2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInstruction(ctx context.Context, sel ast.SelectionSet, v *server.Instruction) graphql.Marshaler {
+func (ec *executionContext) marshalNInstruction2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInstruction(ctx context.Context, sel ast.SelectionSet, v *model.Instruction) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -15818,7 +15818,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInventory(ctx context.Context, sel ast.SelectionSet, v []*server.Inventory) graphql.Marshaler {
+func (ec *executionContext) marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInventory(ctx context.Context, sel ast.SelectionSet, v []*model.Inventory) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15856,7 +15856,7 @@ func (ec *executionContext) marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 	return ret
 }
 
-func (ec *executionContext) unmarshalNInventoryInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInventoryInput(ctx context.Context, v interface{}) ([]*server.InventoryInput, error) {
+func (ec *executionContext) unmarshalNInventoryInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInventoryInput(ctx context.Context, v interface{}) ([]*model.InventoryInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -15866,7 +15866,7 @@ func (ec *executionContext) unmarshalNInventoryInput2ᚕᚖgithubᚗcomᚋlessbu
 		}
 	}
 	var err error
-	res := make([]*server.InventoryInput, len(vSlice))
+	res := make([]*model.InventoryInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
 		res[i], err = ec.unmarshalOInventoryInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInventoryInput(ctx, vSlice[i])
@@ -15877,7 +15877,7 @@ func (ec *executionContext) unmarshalNInventoryInput2ᚕᚖgithubᚗcomᚋlessbu
 	return res, nil
 }
 
-func (ec *executionContext) marshalNLikeProductOutput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeProductOutput(ctx context.Context, sel ast.SelectionSet, v []*server.LikeProductOutput) graphql.Marshaler {
+func (ec *executionContext) marshalNLikeProductOutput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeProductOutput(ctx context.Context, sel ast.SelectionSet, v []*model.LikeProductOutput) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15915,21 +15915,21 @@ func (ec *executionContext) marshalNLikeProductOutput2ᚕᚖgithubᚗcomᚋlessb
 	return ret
 }
 
-func (ec *executionContext) unmarshalNLogin2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLogin(ctx context.Context, v interface{}) (server.Login, error) {
+func (ec *executionContext) unmarshalNLogin2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLogin(ctx context.Context, v interface{}) (model.Login, error) {
 	res, err := ec.unmarshalInputLogin(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNNewUser2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐNewUser(ctx context.Context, v interface{}) (server.NewUser, error) {
+func (ec *executionContext) unmarshalNNewUser2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐNewUser(ctx context.Context, v interface{}) (model.NewUser, error) {
 	res, err := ec.unmarshalInputNewUser(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNOrderInfo2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx context.Context, sel ast.SelectionSet, v server.OrderInfo) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderInfo2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx context.Context, sel ast.SelectionSet, v model.OrderInfo) graphql.Marshaler {
 	return ec._OrderInfo(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx context.Context, sel ast.SelectionSet, v []*server.OrderInfo) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx context.Context, sel ast.SelectionSet, v []*model.OrderInfo) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15967,7 +15967,7 @@ func (ec *executionContext) marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx context.Context, sel ast.SelectionSet, v *server.OrderInfo) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx context.Context, sel ast.SelectionSet, v *model.OrderInfo) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -15977,31 +15977,31 @@ func (ec *executionContext) marshalNOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋall
 	return ec._OrderInfo(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNOrderStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderStatusEnum(ctx context.Context, v interface{}) (server.OrderStatusEnum, error) {
-	var res server.OrderStatusEnum
+func (ec *executionContext) unmarshalNOrderStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderStatusEnum(ctx context.Context, v interface{}) (model.OrderStatusEnum, error) {
+	var res model.OrderStatusEnum
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNOrderStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderStatusEnum(ctx context.Context, sel ast.SelectionSet, v server.OrderStatusEnum) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderStatusEnum(ctx context.Context, sel ast.SelectionSet, v model.OrderStatusEnum) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNOrderTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderTypeEnum(ctx context.Context, v interface{}) (server.OrderTypeEnum, error) {
-	var res server.OrderTypeEnum
+func (ec *executionContext) unmarshalNOrderTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderTypeEnum(ctx context.Context, v interface{}) (model.OrderTypeEnum, error) {
+	var res model.OrderTypeEnum
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNOrderTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderTypeEnum(ctx context.Context, sel ast.SelectionSet, v server.OrderTypeEnum) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderTypeEnum(ctx context.Context, sel ast.SelectionSet, v model.OrderTypeEnum) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) marshalNOrderValidityResult2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderValidityResult(ctx context.Context, sel ast.SelectionSet, v server.OrderValidityResult) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderValidityResult2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderValidityResult(ctx context.Context, sel ast.SelectionSet, v model.OrderValidityResult) graphql.Marshaler {
 	return ec._OrderValidityResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNOrderValidityResult2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderValidityResult(ctx context.Context, sel ast.SelectionSet, v *server.OrderValidityResult) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderValidityResult2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderValidityResult(ctx context.Context, sel ast.SelectionSet, v *model.OrderValidityResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -16011,11 +16011,11 @@ func (ec *executionContext) marshalNOrderValidityResult2ᚖgithubᚗcomᚋlessbu
 	return ec._OrderValidityResult(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNOrderWithPayment2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderWithPayment(ctx context.Context, sel ast.SelectionSet, v server.OrderWithPayment) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderWithPayment2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderWithPayment(ctx context.Context, sel ast.SelectionSet, v model.OrderWithPayment) graphql.Marshaler {
 	return ec._OrderWithPayment(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNOrderWithPayment2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderWithPayment(ctx context.Context, sel ast.SelectionSet, v *server.OrderWithPayment) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderWithPayment2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderWithPayment(ctx context.Context, sel ast.SelectionSet, v *model.OrderWithPayment) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -16025,7 +16025,7 @@ func (ec *executionContext) marshalNOrderWithPayment2ᚖgithubᚗcomᚋlessbutte
 	return ec._OrderWithPayment(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPaymentMethod2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentMethod(ctx context.Context, sel ast.SelectionSet, v []*server.PaymentMethod) graphql.Marshaler {
+func (ec *executionContext) marshalNPaymentMethod2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentMethod(ctx context.Context, sel ast.SelectionSet, v []*model.PaymentMethod) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16063,11 +16063,11 @@ func (ec *executionContext) marshalNPaymentMethod2ᚕᚖgithubᚗcomᚋlessbutte
 	return ret
 }
 
-func (ec *executionContext) marshalNPaymentResult2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentResult(ctx context.Context, sel ast.SelectionSet, v server.PaymentResult) graphql.Marshaler {
+func (ec *executionContext) marshalNPaymentResult2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentResult(ctx context.Context, sel ast.SelectionSet, v model.PaymentResult) graphql.Marshaler {
 	return ec._PaymentResult(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPaymentResult2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentResult(ctx context.Context, sel ast.SelectionSet, v *server.PaymentResult) graphql.Marshaler {
+func (ec *executionContext) marshalNPaymentResult2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentResult(ctx context.Context, sel ast.SelectionSet, v *model.PaymentResult) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -16077,11 +16077,11 @@ func (ec *executionContext) marshalNPaymentResult2ᚖgithubᚗcomᚋlessbutter�
 	return ec._PaymentResult(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPaymentStatus2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentStatus(ctx context.Context, sel ast.SelectionSet, v server.PaymentStatus) graphql.Marshaler {
+func (ec *executionContext) marshalNPaymentStatus2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentStatus(ctx context.Context, sel ast.SelectionSet, v model.PaymentStatus) graphql.Marshaler {
 	return ec._PaymentStatus(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNPaymentStatus2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentStatus(ctx context.Context, sel ast.SelectionSet, v *server.PaymentStatus) graphql.Marshaler {
+func (ec *executionContext) marshalNPaymentStatus2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentStatus(ctx context.Context, sel ast.SelectionSet, v *model.PaymentStatus) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -16091,11 +16091,11 @@ func (ec *executionContext) marshalNPaymentStatus2ᚖgithubᚗcomᚋlessbutter�
 	return ec._PaymentStatus(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNProduct2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v server.Product) graphql.Marshaler {
+func (ec *executionContext) marshalNProduct2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v model.Product) graphql.Marshaler {
 	return ec._Product(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v []*server.Product) graphql.Marshaler {
+func (ec *executionContext) marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v []*model.Product) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16133,7 +16133,7 @@ func (ec *executionContext) marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋal
 	return ret
 }
 
-func (ec *executionContext) marshalNProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v *server.Product) graphql.Marshaler {
+func (ec *executionContext) marshalNProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v *model.Product) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -16143,11 +16143,11 @@ func (ec *executionContext) marshalNProduct2ᚖgithubᚗcomᚋlessbutterᚋallof
 	return ec._Product(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNProductGroup2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v server.ProductGroup) graphql.Marshaler {
+func (ec *executionContext) marshalNProductGroup2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v model.ProductGroup) graphql.Marshaler {
 	return ec._ProductGroup(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v []*server.ProductGroup) graphql.Marshaler {
+func (ec *executionContext) marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v []*model.ProductGroup) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16185,7 +16185,7 @@ func (ec *executionContext) marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutter
 	return ret
 }
 
-func (ec *executionContext) marshalNProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v *server.ProductGroup) graphql.Marshaler {
+func (ec *executionContext) marshalNProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v *model.ProductGroup) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -16195,7 +16195,7 @@ func (ec *executionContext) marshalNProductGroup2ᚖgithubᚗcomᚋlessbutterᚋ
 	return ec._ProductGroup(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNProductOption2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOption(ctx context.Context, sel ast.SelectionSet, v []*server.ProductOption) graphql.Marshaler {
+func (ec *executionContext) marshalNProductOption2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOption(ctx context.Context, sel ast.SelectionSet, v []*model.ProductOption) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16233,7 +16233,7 @@ func (ec *executionContext) marshalNProductOption2ᚕᚖgithubᚗcomᚋlessbutte
 	return ret
 }
 
-func (ec *executionContext) unmarshalNProductOptionInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOptionInput(ctx context.Context, v interface{}) ([]*server.ProductOptionInput, error) {
+func (ec *executionContext) unmarshalNProductOptionInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOptionInput(ctx context.Context, v interface{}) ([]*model.ProductOptionInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -16243,7 +16243,7 @@ func (ec *executionContext) unmarshalNProductOptionInput2ᚕᚖgithubᚗcomᚋle
 		}
 	}
 	var err error
-	res := make([]*server.ProductOptionInput, len(vSlice))
+	res := make([]*model.ProductOptionInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
 		res[i], err = ec.unmarshalOProductOptionInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOptionInput(ctx, vSlice[i])
@@ -16254,16 +16254,16 @@ func (ec *executionContext) unmarshalNProductOptionInput2ᚕᚖgithubᚗcomᚋle
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNProductsInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductsInput(ctx context.Context, v interface{}) (server.ProductsInput, error) {
+func (ec *executionContext) unmarshalNProductsInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductsInput(ctx context.Context, v interface{}) (model.ProductsInput, error) {
 	res, err := ec.unmarshalInputProductsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNProductsOutput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductsOutput(ctx context.Context, sel ast.SelectionSet, v server.ProductsOutput) graphql.Marshaler {
+func (ec *executionContext) marshalNProductsOutput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductsOutput(ctx context.Context, sel ast.SelectionSet, v model.ProductsOutput) graphql.Marshaler {
 	return ec._ProductsOutput(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNProductsOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductsOutput(ctx context.Context, sel ast.SelectionSet, v *server.ProductsOutput) graphql.Marshaler {
+func (ec *executionContext) marshalNProductsOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductsOutput(ctx context.Context, sel ast.SelectionSet, v *model.ProductsOutput) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -16273,12 +16273,12 @@ func (ec *executionContext) marshalNProductsOutput2ᚖgithubᚗcomᚋlessbutter�
 	return ec._ProductsOutput(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNRefreshTokenInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefreshTokenInput(ctx context.Context, v interface{}) (server.RefreshTokenInput, error) {
+func (ec *executionContext) unmarshalNRefreshTokenInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefreshTokenInput(ctx context.Context, v interface{}) (model.RefreshTokenInput, error) {
 	res, err := ec.unmarshalInputRefreshTokenInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNSizeGuide2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSizeGuide(ctx context.Context, sel ast.SelectionSet, v []*server.SizeGuide) graphql.Marshaler {
+func (ec *executionContext) marshalNSizeGuide2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSizeGuide(ctx context.Context, sel ast.SelectionSet, v []*model.SizeGuide) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16316,13 +16316,13 @@ func (ec *executionContext) marshalNSizeGuide2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 	return ret
 }
 
-func (ec *executionContext) unmarshalNSortingType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, v interface{}) (server.SortingType, error) {
-	var res server.SortingType
+func (ec *executionContext) unmarshalNSortingType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, v interface{}) (model.SortingType, error) {
+	var res model.SortingType
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNSortingType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, sel ast.SelectionSet, v server.SortingType) graphql.Marshaler {
+func (ec *executionContext) marshalNSortingType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, sel ast.SelectionSet, v model.SortingType) graphql.Marshaler {
 	return v
 }
 
@@ -16407,11 +16407,11 @@ func (ec *executionContext) marshalNString2ᚕᚖstring(ctx context.Context, sel
 	return ret
 }
 
-func (ec *executionContext) marshalNUser2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v server.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
 	return ec._User(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *server.User) graphql.Marshaler {
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "must not be null")
@@ -16421,7 +16421,7 @@ func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋlessbutterᚋalloff�
 	return ec._User(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNUserInfoInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUserInfoInput(ctx context.Context, v interface{}) (server.UserInfoInput, error) {
+func (ec *executionContext) unmarshalNUserInfoInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUserInfoInput(ctx context.Context, v interface{}) (model.UserInfoInput, error) {
 	res, err := ec.unmarshalInputUserInfoInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -16683,14 +16683,14 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) marshalOAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx context.Context, sel ast.SelectionSet, v *server.AlloffCategory) graphql.Marshaler {
+func (ec *executionContext) marshalOAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategory(ctx context.Context, sel ast.SelectionSet, v *model.AlloffCategory) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._AlloffCategory(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOAlloffCategoryId2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryID(ctx context.Context, v interface{}) (*server.AlloffCategoryID, error) {
+func (ec *executionContext) unmarshalOAlloffCategoryId2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryID(ctx context.Context, v interface{}) (*model.AlloffCategoryID, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -16698,7 +16698,7 @@ func (ec *executionContext) unmarshalOAlloffCategoryId2ᚖgithubᚗcomᚋlessbut
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOAlloffCategoryInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryInput(ctx context.Context, v interface{}) (*server.AlloffCategoryInput, error) {
+func (ec *executionContext) unmarshalOAlloffCategoryInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffCategoryInput(ctx context.Context, v interface{}) (*model.AlloffCategoryInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -16706,14 +16706,14 @@ func (ec *executionContext) unmarshalOAlloffCategoryInput2ᚖgithubᚗcomᚋless
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOAlloffProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx context.Context, sel ast.SelectionSet, v *server.AlloffProduct) graphql.Marshaler {
+func (ec *executionContext) marshalOAlloffProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProduct(ctx context.Context, sel ast.SelectionSet, v *model.AlloffProduct) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._AlloffProduct(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOAlloffProductInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProductInput(ctx context.Context, v interface{}) (*server.AlloffProductInput, error) {
+func (ec *executionContext) unmarshalOAlloffProductInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐAlloffProductInput(ctx context.Context, v interface{}) (*model.AlloffProductInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -16745,7 +16745,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
-func (ec *executionContext) marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx context.Context, sel ast.SelectionSet, v []*server.Brand) graphql.Marshaler {
+func (ec *executionContext) marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx context.Context, sel ast.SelectionSet, v []*model.Brand) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -16786,14 +16786,14 @@ func (ec *executionContext) marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋallo
 	return ret
 }
 
-func (ec *executionContext) marshalOBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx context.Context, sel ast.SelectionSet, v *server.Brand) graphql.Marshaler {
+func (ec *executionContext) marshalOBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx context.Context, sel ast.SelectionSet, v *model.Brand) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Brand(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOBrandInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandInput(ctx context.Context, v interface{}) (*server.BrandInput, error) {
+func (ec *executionContext) unmarshalOBrandInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandInput(ctx context.Context, v interface{}) (*model.BrandInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -16801,7 +16801,7 @@ func (ec *executionContext) unmarshalOBrandInput2ᚖgithubᚗcomᚋlessbutterᚋ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOBrandItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandItem(ctx context.Context, sel ast.SelectionSet, v []*server.BrandItem) graphql.Marshaler {
+func (ec *executionContext) marshalOBrandItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandItem(ctx context.Context, sel ast.SelectionSet, v []*model.BrandItem) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -16842,14 +16842,14 @@ func (ec *executionContext) marshalOBrandItem2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalOBrandItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandItem(ctx context.Context, sel ast.SelectionSet, v *server.BrandItem) graphql.Marshaler {
+func (ec *executionContext) marshalOBrandItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandItem(ctx context.Context, sel ast.SelectionSet, v *model.BrandItem) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._BrandItem(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOBrandsInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandsInput(ctx context.Context, v interface{}) (*server.BrandsInput, error) {
+func (ec *executionContext) unmarshalOBrandsInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrandsInput(ctx context.Context, v interface{}) (*model.BrandsInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -16857,14 +16857,14 @@ func (ec *executionContext) unmarshalOBrandsInput2ᚖgithubᚗcomᚋlessbutter�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *server.Category) graphql.Marshaler {
+func (ec *executionContext) marshalOCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategory(ctx context.Context, sel ast.SelectionSet, v *model.Category) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Category(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOCommunityItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItem(ctx context.Context, sel ast.SelectionSet, v []*server.CommunityItem) graphql.Marshaler {
+func (ec *executionContext) marshalOCommunityItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItem(ctx context.Context, sel ast.SelectionSet, v []*model.CommunityItem) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -16905,21 +16905,21 @@ func (ec *executionContext) marshalOCommunityItem2ᚕᚖgithubᚗcomᚋlessbutte
 	return ret
 }
 
-func (ec *executionContext) marshalOCommunityItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItem(ctx context.Context, sel ast.SelectionSet, v *server.CommunityItem) graphql.Marshaler {
+func (ec *executionContext) marshalOCommunityItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItem(ctx context.Context, sel ast.SelectionSet, v *model.CommunityItem) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._CommunityItem(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOCuration2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCuration(ctx context.Context, sel ast.SelectionSet, v *server.Curation) graphql.Marshaler {
+func (ec *executionContext) marshalOCuration2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCuration(ctx context.Context, sel ast.SelectionSet, v *model.Curation) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Curation(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOFaults2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFaultsᚄ(ctx context.Context, sel ast.SelectionSet, v []*server.Faults) graphql.Marshaler {
+func (ec *executionContext) marshalOFaults2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFaultsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Faults) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -16966,14 +16966,14 @@ func (ec *executionContext) marshalOFaults2ᚕᚖgithubᚗcomᚋlessbutterᚋall
 	return ret
 }
 
-func (ec *executionContext) marshalOFeaturedItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFeaturedItem(ctx context.Context, sel ast.SelectionSet, v *server.FeaturedItem) graphql.Marshaler {
+func (ec *executionContext) marshalOFeaturedItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFeaturedItem(ctx context.Context, sel ast.SelectionSet, v *model.FeaturedItem) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._FeaturedItem(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOHomeItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐHomeItem(ctx context.Context, sel ast.SelectionSet, v *server.HomeItem) graphql.Marshaler {
+func (ec *executionContext) marshalOHomeItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐHomeItem(ctx context.Context, sel ast.SelectionSet, v *model.HomeItem) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -16995,14 +16995,14 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return graphql.MarshalInt(*v)
 }
 
-func (ec *executionContext) marshalOInventory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInventory(ctx context.Context, sel ast.SelectionSet, v *server.Inventory) graphql.Marshaler {
+func (ec *executionContext) marshalOInventory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInventory(ctx context.Context, sel ast.SelectionSet, v *model.Inventory) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Inventory(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOInventoryInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInventoryInput(ctx context.Context, v interface{}) (*server.InventoryInput, error) {
+func (ec *executionContext) unmarshalOInventoryInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInventoryInput(ctx context.Context, v interface{}) (*model.InventoryInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -17010,7 +17010,7 @@ func (ec *executionContext) unmarshalOInventoryInput2ᚖgithubᚗcomᚋlessbutte
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐKeyValueInfo(ctx context.Context, sel ast.SelectionSet, v []*server.KeyValueInfo) graphql.Marshaler {
+func (ec *executionContext) marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐKeyValueInfo(ctx context.Context, sel ast.SelectionSet, v []*model.KeyValueInfo) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17051,14 +17051,14 @@ func (ec *executionContext) marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutter
 	return ret
 }
 
-func (ec *executionContext) marshalOKeyValueInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐKeyValueInfo(ctx context.Context, sel ast.SelectionSet, v *server.KeyValueInfo) graphql.Marshaler {
+func (ec *executionContext) marshalOKeyValueInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐKeyValueInfo(ctx context.Context, sel ast.SelectionSet, v *model.KeyValueInfo) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._KeyValueInfo(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOLikeBrandInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeBrandInput(ctx context.Context, v interface{}) (*server.LikeBrandInput, error) {
+func (ec *executionContext) unmarshalOLikeBrandInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeBrandInput(ctx context.Context, v interface{}) (*model.LikeBrandInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -17066,7 +17066,7 @@ func (ec *executionContext) unmarshalOLikeBrandInput2ᚖgithubᚗcomᚋlessbutte
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOLikeProductInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeProductInput(ctx context.Context, v interface{}) (*server.LikeProductInput, error) {
+func (ec *executionContext) unmarshalOLikeProductInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeProductInput(ctx context.Context, v interface{}) (*model.LikeProductInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -17074,21 +17074,21 @@ func (ec *executionContext) unmarshalOLikeProductInput2ᚖgithubᚗcomᚋlessbut
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOLikeProductOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeProductOutput(ctx context.Context, sel ast.SelectionSet, v *server.LikeProductOutput) graphql.Marshaler {
+func (ec *executionContext) marshalOLikeProductOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐLikeProductOutput(ctx context.Context, sel ast.SelectionSet, v *model.LikeProductOutput) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._LikeProductOutput(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx context.Context, sel ast.SelectionSet, v *server.OrderInfo) graphql.Marshaler {
+func (ec *executionContext) marshalOOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx context.Context, sel ast.SelectionSet, v *model.OrderInfo) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._OrderInfo(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOOrderInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInput(ctx context.Context, v interface{}) (*server.OrderInput, error) {
+func (ec *executionContext) unmarshalOOrderInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInput(ctx context.Context, v interface{}) (*model.OrderInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -17096,7 +17096,7 @@ func (ec *executionContext) unmarshalOOrderInput2ᚖgithubᚗcomᚋlessbutterᚋ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOOrderResponse2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderResponse(ctx context.Context, v interface{}) (*server.OrderResponse, error) {
+func (ec *executionContext) unmarshalOOrderResponse2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderResponse(ctx context.Context, v interface{}) (*model.OrderResponse, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -17104,7 +17104,7 @@ func (ec *executionContext) unmarshalOOrderResponse2ᚖgithubᚗcomᚋlessbutter
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOPaymentClientInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentClientInput(ctx context.Context, v interface{}) (*server.PaymentClientInput, error) {
+func (ec *executionContext) unmarshalOPaymentClientInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentClientInput(ctx context.Context, v interface{}) (*model.PaymentClientInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -17112,21 +17112,21 @@ func (ec *executionContext) unmarshalOPaymentClientInput2ᚖgithubᚗcomᚋlessb
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOPaymentInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentInfo(ctx context.Context, sel ast.SelectionSet, v *server.PaymentInfo) graphql.Marshaler {
+func (ec *executionContext) marshalOPaymentInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentInfo(ctx context.Context, sel ast.SelectionSet, v *model.PaymentInfo) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._PaymentInfo(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOPaymentMethod2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentMethod(ctx context.Context, sel ast.SelectionSet, v *server.PaymentMethod) graphql.Marshaler {
+func (ec *executionContext) marshalOPaymentMethod2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐPaymentMethod(ctx context.Context, sel ast.SelectionSet, v *model.PaymentMethod) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._PaymentMethod(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v []*server.Product) graphql.Marshaler {
+func (ec *executionContext) marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v []*model.Product) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17167,14 +17167,14 @@ func (ec *executionContext) marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋal
 	return ret
 }
 
-func (ec *executionContext) marshalOProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v *server.Product) graphql.Marshaler {
+func (ec *executionContext) marshalOProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v *model.Product) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._Product(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v []*server.ProductGroup) graphql.Marshaler {
+func (ec *executionContext) marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v []*model.ProductGroup) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17215,14 +17215,14 @@ func (ec *executionContext) marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutter
 	return ret
 }
 
-func (ec *executionContext) marshalOProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v *server.ProductGroup) graphql.Marshaler {
+func (ec *executionContext) marshalOProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v *model.ProductGroup) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._ProductGroup(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOProductOption2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOption(ctx context.Context, sel ast.SelectionSet, v []*server.ProductOption) graphql.Marshaler {
+func (ec *executionContext) marshalOProductOption2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOption(ctx context.Context, sel ast.SelectionSet, v []*model.ProductOption) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17263,14 +17263,14 @@ func (ec *executionContext) marshalOProductOption2ᚕᚖgithubᚗcomᚋlessbutte
 	return ret
 }
 
-func (ec *executionContext) marshalOProductOption2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOption(ctx context.Context, sel ast.SelectionSet, v *server.ProductOption) graphql.Marshaler {
+func (ec *executionContext) marshalOProductOption2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOption(ctx context.Context, sel ast.SelectionSet, v *model.ProductOption) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._ProductOption(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOProductOptionInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOptionInput(ctx context.Context, v interface{}) (*server.ProductOptionInput, error) {
+func (ec *executionContext) unmarshalOProductOptionInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductOptionInput(ctx context.Context, v interface{}) (*model.ProductOptionInput, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -17278,21 +17278,21 @@ func (ec *executionContext) unmarshalOProductOptionInput2ᚖgithubᚗcomᚋlessb
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalORefundInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefundInfo(ctx context.Context, sel ast.SelectionSet, v *server.RefundInfo) graphql.Marshaler {
+func (ec *executionContext) marshalORefundInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefundInfo(ctx context.Context, sel ast.SelectionSet, v *model.RefundInfo) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._RefundInfo(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOSizeGuide2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSizeGuide(ctx context.Context, sel ast.SelectionSet, v *server.SizeGuide) graphql.Marshaler {
+func (ec *executionContext) marshalOSizeGuide2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSizeGuide(ctx context.Context, sel ast.SelectionSet, v *model.SizeGuide) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._SizeGuide(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingTypeᚄ(ctx context.Context, v interface{}) ([]server.SortingType, error) {
+func (ec *executionContext) unmarshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingTypeᚄ(ctx context.Context, v interface{}) ([]model.SortingType, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -17305,7 +17305,7 @@ func (ec *executionContext) unmarshalOSortingType2ᚕgithubᚗcomᚋlessbutter�
 		}
 	}
 	var err error
-	res := make([]server.SortingType, len(vSlice))
+	res := make([]model.SortingType, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
 		res[i], err = ec.unmarshalNSortingType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx, vSlice[i])
@@ -17316,7 +17316,7 @@ func (ec *executionContext) unmarshalOSortingType2ᚕgithubᚗcomᚋlessbutter�
 	return res, nil
 }
 
-func (ec *executionContext) marshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []server.SortingType) graphql.Marshaler {
+func (ec *executionContext) marshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []model.SortingType) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17363,7 +17363,7 @@ func (ec *executionContext) marshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋa
 	return ret
 }
 
-func (ec *executionContext) unmarshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, v interface{}) ([]*server.SortingType, error) {
+func (ec *executionContext) unmarshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, v interface{}) ([]*model.SortingType, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -17376,7 +17376,7 @@ func (ec *executionContext) unmarshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutte
 		}
 	}
 	var err error
-	res := make([]*server.SortingType, len(vSlice))
+	res := make([]*model.SortingType, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
 		res[i], err = ec.unmarshalOSortingType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx, vSlice[i])
@@ -17387,7 +17387,7 @@ func (ec *executionContext) unmarshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutte
 	return res, nil
 }
 
-func (ec *executionContext) marshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, sel ast.SelectionSet, v []*server.SortingType) graphql.Marshaler {
+func (ec *executionContext) marshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, sel ast.SelectionSet, v []*model.SortingType) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17428,16 +17428,16 @@ func (ec *executionContext) marshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutter�
 	return ret
 }
 
-func (ec *executionContext) unmarshalOSortingType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, v interface{}) (*server.SortingType, error) {
+func (ec *executionContext) unmarshalOSortingType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, v interface{}) (*model.SortingType, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(server.SortingType)
+	var res = new(model.SortingType)
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOSortingType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, sel ast.SelectionSet, v *server.SortingType) graphql.Marshaler {
+func (ec *executionContext) marshalOSortingType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐSortingType(ctx context.Context, sel ast.SelectionSet, v *model.SortingType) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17510,7 +17510,7 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return graphql.MarshalString(*v)
 }
 
-func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *server.User) graphql.Marshaler {
+func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
