@@ -102,6 +102,7 @@ type AlimtalksRepository interface {
 
 type LikeBrandsRepository interface {
 	Like(userID, brandID string) (bool, error)
+	List(userID string) (*domain.LikeBrandDAO, error)
 }
 
 type LikeProductsRepository interface {

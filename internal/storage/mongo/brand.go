@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -142,6 +143,18 @@ func (repo *brandLikeRepo) Like(userID, brandID string) (bool, error) {
 	repo.col.FindOneAndUpdate(ctx, bson.M{"userid": userID}, bson.M{"$set": likes})
 
 	return result, nil
+}
+
+func (repo *brandLikeRepo) List(userID string) (*domain.LikeBrandDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	var likes *domain.LikeBrandDAO
+	if err := repo.col.FindOne(ctx, bson.M{"userid": userID}).Decode(&likes); err != nil {
+		return nil, errors.New("Like brand not found")
+	}
+
+	return likes, nil
 }
 
 func removeBrand(s []*domain.BrandDAO, i int) []*domain.BrandDAO {

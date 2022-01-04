@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	"github.com/lessbutter/alloff-api/api/server/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -35,4 +36,9 @@ type LikeBrandDAO struct {
 	Brands  []*BrandDAO
 	Created time.Time
 	Updated time.Time
+}
+
+func (brDao *BrandDAO) ToDTO(includeCategory bool) *model.Brand {
+	var brand *model.Brand
+	return brand
 }
