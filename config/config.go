@@ -17,6 +17,7 @@ type Configuration struct {
 	MONGO_USERNAME     string
 	MONGO_PASSWORD     string
 	MONGO_URL          string
+	PORT               int
 	IAMPORT_API_KEY    string
 	IAMPORT_SECRET_KEY string
 	IAMPORT_IMP_CODE   string
