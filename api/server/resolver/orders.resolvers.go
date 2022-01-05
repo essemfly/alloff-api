@@ -5,9 +5,12 @@ package resolver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"github.com/lessbutter/alloff-api/api/middleware"
 	"github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/config/ioc"
 )
 
 func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error) {
@@ -70,11 +73,12 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 }
 
 func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error) {
+	// 유저가 Order를 취소하고 싶을때 하는 취소요청 API
 	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *mutationResolver) ConfirmOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error) {
-	// Order Confirm하는 API 인데, 이걸 앱에서 쓰는 게 없을 것 같습니다.
+	// Order Confirm하는 API 인데, 유저가 앱에서 구매확정을 누르는 API
 	panic(fmt.Errorf("not implemented"))
 }
 
@@ -117,6 +121,7 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Payme
 			AppScheme     *string `json:"appScheme"`
 		}
 
+		0. 주문창까지 넘어갔다가 취소된 경우 발생하는 API
 		1. Payment가 취소 되면서, 재고가 다시 회복됩니다.
 		2. Order의 Status도 다시 돌아옵니다.
 	*/
@@ -137,9 +142,34 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 }
 
 func (r *queryResolver) Order(ctx context.Context, id string) (*model.OrderInfo, error) {
-	panic(fmt.Errorf("not implemented"))
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid token")
+	}
+
+	orderDao, err := ioc.Repo.Orders.GetByAlloffID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return orderDao.ToDTO(), nil
 }
 
 func (r *queryResolver) Orders(ctx context.Context) ([]*model.OrderInfo, error) {
-	panic(fmt.Errorf("not implemented"))
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid token")
+	}
+
+	orderDaos, err := ioc.Repo.Orders.List(user.ID.Hex())
+	if err != nil {
+		return nil, err
+	}
+
+	orders := []*model.OrderInfo{}
+	for _, orderDao := range orderDaos {
+		orders = append(orders, orderDao.ToDTO())
+	}
+
+	return orders, nil
 }

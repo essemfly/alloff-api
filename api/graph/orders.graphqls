@@ -31,44 +31,53 @@ enum PaymentStatusEnum {
   REFUND_FINISHED
 }
 
-type ProductOption {
-  product: Product
+type OrderItem {
+  productId: String!
+  productName: String!
+  brandKeyname: String!
+  salesPrice: Int!
   selectsize: String!
   quantity: Int!
-}
-
-input ProductOptionInput {
-  productId: String
-  selectsize: String!
-  quantity: Int!
-}
-
-input OrderInput {
-  orders: [ProductOptionInput]!
-  productPrice: Int!
-}
-
-type OrderInfo {
-  id: ID!
-  orders: [ProductOption]!
   orderType: OrderTypeEnum!
-  productPrice: Int!
-  deliveryPrice: Int!
-  totalPrice: Int!
   orderStatus: OrderStatusEnum!
-  memo: String!
+  sizeDescription: [String!]
+  cancelDescription: [String!]
+  deliveryDescription: [String!]
+  deliveryTrackingNumber: String!
   deliveryTrackingUrl: String!
-  created: Date!
-  updated: Date!
-  finished: Date!
+  createdAt: Date!
+  updatedAt: Date!
   orderedAt: Date!
   deliveryStartedAt: Date!
   deliveryFinishedAt: Date!
   cancelRequestedAt: Date!
   cancelFinishedAt: Date!
   confirmedAt: Date!
+}
+
+input OrderItemInput {
+  productId: String!
+  productGroupId: String
+  selectsize: String!
+  quantity: Int!
+}
+
+input OrderInput {
+  orders: [OrderItemInput]!
+  productPrice: Int!
+}
+
+type OrderInfo {
+  id: ID!
+  orders: [OrderItem]!
+  productPrice: Int!
+  deliveryPrice: Int!
+  totalPrice: Int!
+  userMemo: String!
+  createdAt: Date!
+  updatedAt: Date!
+  orderedAt: Date!
   refundInfo: RefundInfo
-  cancelOrders: [ProductOption]
 }
 
 type RefundInfo {

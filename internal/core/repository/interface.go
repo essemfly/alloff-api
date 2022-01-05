@@ -81,10 +81,20 @@ type ExhibitionsRepository interface {
 }
 
 type OrdersRepository interface {
+	Get(ID int) (*domain.OrderDAO, error)
+	GetByAlloffID(ID string) (*domain.OrderDAO, error)
+	List(userID string) ([]*domain.OrderDAO, error)
+	Insert(*domain.OrderDAO) error
 }
 
 type PaymentsRepository interface {
 }
+
+// type OrderWithPaymentRepository interface {
+// 	Confirm() error
+// }
+
+// type OrderWithPaymentUpdate func(*domain.OrderDAO) error
 
 type UsersRepository interface {
 	Get(ID string) (*domain.UserDAO, error)

@@ -173,31 +173,52 @@ type NewUser struct {
 }
 
 type OrderInfo struct {
-	ID                  string           `json:"id"`
-	Orders              []*ProductOption `json:"orders"`
-	OrderType           OrderTypeEnum    `json:"orderType"`
-	ProductPrice        int              `json:"productPrice"`
-	DeliveryPrice       int              `json:"deliveryPrice"`
-	TotalPrice          int              `json:"totalPrice"`
-	OrderStatus         OrderStatusEnum  `json:"orderStatus"`
-	Memo                string           `json:"memo"`
-	DeliveryTrackingURL string           `json:"deliveryTrackingUrl"`
-	Created             string           `json:"created"`
-	Updated             string           `json:"updated"`
-	Finished            string           `json:"finished"`
-	OrderedAt           string           `json:"orderedAt"`
-	DeliveryStartedAt   string           `json:"deliveryStartedAt"`
-	DeliveryFinishedAt  string           `json:"deliveryFinishedAt"`
-	CancelRequestedAt   string           `json:"cancelRequestedAt"`
-	CancelFinishedAt    string           `json:"cancelFinishedAt"`
-	ConfirmedAt         string           `json:"confirmedAt"`
-	RefundInfo          *RefundInfo      `json:"refundInfo"`
-	CancelOrders        []*ProductOption `json:"cancelOrders"`
+	ID            string       `json:"id"`
+	Orders        []*OrderItem `json:"orders"`
+	ProductPrice  int          `json:"productPrice"`
+	DeliveryPrice int          `json:"deliveryPrice"`
+	TotalPrice    int          `json:"totalPrice"`
+	UserMemo      string       `json:"userMemo"`
+	CreatedAt     string       `json:"createdAt"`
+	UpdatedAt     string       `json:"updatedAt"`
+	OrderedAt     string       `json:"orderedAt"`
+	RefundInfo    *RefundInfo  `json:"refundInfo"`
 }
 
 type OrderInput struct {
-	Orders       []*ProductOptionInput `json:"orders"`
-	ProductPrice int                   `json:"productPrice"`
+	Orders       []*OrderItemInput `json:"orders"`
+	ProductPrice int               `json:"productPrice"`
+}
+
+type OrderItem struct {
+	ProductID              string          `json:"productId"`
+	ProductName            string          `json:"productName"`
+	BrandKeyname           string          `json:"brandKeyname"`
+	SalesPrice             int             `json:"salesPrice"`
+	Selectsize             string          `json:"selectsize"`
+	Quantity               int             `json:"quantity"`
+	OrderType              OrderTypeEnum   `json:"orderType"`
+	OrderStatus            OrderStatusEnum `json:"orderStatus"`
+	SizeDescription        []string        `json:"sizeDescription"`
+	CancelDescription      []string        `json:"cancelDescription"`
+	DeliveryDescription    []string        `json:"deliveryDescription"`
+	DeliveryTrackingNumber string          `json:"deliveryTrackingNumber"`
+	DeliveryTrackingURL    string          `json:"deliveryTrackingUrl"`
+	CreatedAt              string          `json:"createdAt"`
+	UpdatedAt              string          `json:"updatedAt"`
+	OrderedAt              string          `json:"orderedAt"`
+	DeliveryStartedAt      string          `json:"deliveryStartedAt"`
+	DeliveryFinishedAt     string          `json:"deliveryFinishedAt"`
+	CancelRequestedAt      string          `json:"cancelRequestedAt"`
+	CancelFinishedAt       string          `json:"cancelFinishedAt"`
+	ConfirmedAt            string          `json:"confirmedAt"`
+}
+
+type OrderItemInput struct {
+	ProductID      string  `json:"productId"`
+	ProductGroupID *string `json:"productGroupId"`
+	Selectsize     string  `json:"selectsize"`
+	Quantity       int     `json:"quantity"`
 }
 
 type OrderResponse struct {
@@ -303,18 +324,6 @@ type ProductGroup struct {
 	FinishTime  string     `json:"finishTime"`
 	NumAlarms   int        `json:"numAlarms"`
 	SetAlarm    bool       `json:"setAlarm"`
-}
-
-type ProductOption struct {
-	Product    *Product `json:"product"`
-	Selectsize string   `json:"selectsize"`
-	Quantity   int      `json:"quantity"`
-}
-
-type ProductOptionInput struct {
-	ProductID  *string `json:"productId"`
-	Selectsize string  `json:"selectsize"`
-	Quantity   int     `json:"quantity"`
 }
 
 type ProductsInput struct {
