@@ -48,6 +48,28 @@ type ProductPriorityDAO struct {
 	Product  *ProductDAO
 }
 
-type SpecialExhibitionDAO struct {
-	ID primitive.ObjectID `bons:"_id, omitempty"`
+type ExhibitionDAO struct {
+	ID             primitive.ObjectID `bons:"_id, omitempty"`
+	BannerImage    string
+	ThumbnailImage string
+	Title          string
+	ShortTitle     string
+	ProductGroups  []*ProductGroupDAO
+}
+
+func (exDao *ExhibitionDAO) ToDTO() *model.Exhibition {
+	pgs := []*model.ProductGroup{}
+
+	for _, pg := range exDao.ProductGroups {
+		pgs = append(pgs, pg.ToDTO())
+	}
+
+	return &model.Exhibition{
+		ID:             exDao.ID.Hex(),
+		BannerImage:    exDao.BannerImage,
+		ThumbnailImage: exDao.ThumbnailImage,
+		Title:          exDao.Title,
+		ShortTitle:     exDao.ShortTitle,
+		ProductGroups:  pgs,
+	}
 }

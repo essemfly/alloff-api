@@ -12,10 +12,60 @@ import (
 
 func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error) {
 	panic(fmt.Errorf("not implemented"))
+	/*
+		type OrderInput struct {
+			Orders       []*ProductOptionInput `json:"orders"`
+			ProductPrice int                   `json:"productPrice"`
+		}
+
+		type ProductOptionInput struct {
+			ProductID  *string `json:"productId"`
+			Selectsize string  `json:"selectsize"`
+			Quantity   int     `json:"quantity"`
+		}
+
+		1. Order를 만든다.
+		2. Order가 Valid한지 Check를 한다.
+		3. Errors들을 모아서 보여준다.
+	*/
+
+	// orderDao, errs := order.CheckValidOrderInput(input)
+	// if len(errs) > 0 {
+	// 	var errString = []string{}
+	// 	for _, err := range errs {
+	// 		errString = append(errString, err.Error())
+	// 	}
+
+	// 	return &model.OrderValidityResult{
+	// 		Available: false,
+	// 		ErrorMsgs: errString,
+	// 		Order:     mapper.MapOrderToOrderInfo(orderDao),
+	// 	}, nil
+	// }
+	// return &model.OrderValidityResult{
+	// 	Available: true,
+	// 	ErrorMsgs: nil,
+	// 	Order:     mapper.MapOrderToOrderInfo(orderDao),
+	// }, nil
 }
 
 func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error) {
 	panic(fmt.Errorf("not implemented"))
+	/*
+		type OrderInput struct {
+				Orders       []*ProductOptionInput `json:"orders"`
+				ProductPrice int                   `json:"productPrice"`
+			}
+
+		type ProductOptionInput struct {
+			ProductID  *string `json:"productId"`
+			Selectsize string  `json:"selectsize"`
+			Quantity   int     `json:"quantity"`
+		}
+
+		1. 기본적으로 위와 동일하다 (Order 생성하고, Valid Check하고, Errors들을 모아서 보여준다.)
+		2.
+	*/
 }
 
 func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error) {

@@ -33,3 +33,27 @@ func (r *queryResolver) ProductGroups(ctx context.Context) ([]*model.ProductGrou
 
 	return pgs, nil
 }
+
+func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhibition, error) {
+	exhibitionDao, err := ioc.Repo.Exhibitions.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return exhibitionDao.ToDTO(), nil
+}
+
+func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, error) {
+	exhibitionDaos, err := ioc.Repo.Exhibitions.List()
+	if err != nil {
+		return nil, err
+	}
+
+	exs := []*model.Exhibition{}
+
+	for _, exexhibitionDao := range exhibitionDaos {
+		exs = append(exs, exexhibitionDao.ToDTO())
+	}
+
+	return exs, nil
+}

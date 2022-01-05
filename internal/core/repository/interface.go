@@ -74,6 +74,12 @@ type ProductGroupsRepository interface {
 	Upsert(*domain.ProductGroupDAO) (*domain.ProductGroupDAO, error)
 }
 
+type ExhibitionsRepository interface {
+	Get(ID string) (*domain.ExhibitionDAO, error)
+	List() ([]*domain.ExhibitionDAO, error)
+	Upsert(*domain.ExhibitionDAO) (*domain.ExhibitionDAO, error)
+}
+
 type OrdersRepository interface {
 }
 

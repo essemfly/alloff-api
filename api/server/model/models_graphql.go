@@ -92,9 +92,13 @@ type Device struct {
 	UserID            *string `json:"userId"`
 }
 
-type Faults struct {
-	Image       *string `json:"image"`
-	Description string  `json:"description"`
+type Exhibition struct {
+	ID             string          `json:"id"`
+	BannerImage    string          `json:"bannerImage"`
+	ThumbnailImage string          `json:"thumbnailImage"`
+	Title          string          `json:"title"`
+	ShortTitle     string          `json:"shortTitle"`
+	ProductGroups  []*ProductGroup `json:"productGroups"`
 }
 
 type FeaturedItem struct {
@@ -120,7 +124,6 @@ type HomeItem struct {
 }
 
 type Instruction struct {
-	Thumbnail   string   `json:"thumbnail"`
 	Title       string   `json:"title"`
 	Description []string `json:"description"`
 	Images      []string `json:"images"`
@@ -277,12 +280,13 @@ type Product struct {
 	DiscountedPrice     *int            `json:"discountedPrice"`
 	DiscountRate        *int            `json:"discountRate"`
 	ProductURL          string          `json:"productUrl"`
-	SizeAvailable       []string        `json:"sizeAvailable"`
 	Inventory           []*Inventory    `json:"inventory"`
 	IsUpdated           bool            `json:"isUpdated"`
 	IsNewProduct        bool            `json:"isNewProduct"`
 	Removed             bool            `json:"removed"`
-	Description         []*KeyValueInfo `json:"description"`
+	Description         []string        `json:"description"`
+	Information         []*KeyValueInfo `json:"information"`
+	Instruction         *Instruction    `json:"instruction"`
 	SizeDescription     []string        `json:"sizeDescription"`
 	CancelDescription   []string        `json:"cancelDescription"`
 	DeliveryDescription []string        `json:"deliveryDescription"`

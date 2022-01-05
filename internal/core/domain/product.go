@@ -24,12 +24,12 @@ type ProductMetaInfoDAO struct {
 	Price        *PriceDAO
 	Images       []string
 	ProductUrl   string
-	Description  map[string]string
 	Sizes        []string
 	Colors       []string
 	Created      time.Time
 	Updated      time.Time
 	Source       *CrawlSourceDAO
+	Information  map[string]string
 }
 
 func (pdInfo *ProductMetaInfoDAO) SetBrandAndCategory(brand *BrandDAO, source *CrawlSourceDAO) {
@@ -58,14 +58,14 @@ func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyTyp
 	}
 }
 
-func (pdInfo *ProductMetaInfoDAO) SetGeneralInfo(productName, productID, productUrl string, images, sizes, colors []string, description map[string]string) {
+func (pdInfo *ProductMetaInfoDAO) SetGeneralInfo(productName, productID, productUrl string, images, sizes, colors []string, information map[string]string) {
 	pdInfo.OriginalName = productName
 	pdInfo.ProductID = productID
 	pdInfo.ProductUrl = productUrl
 	pdInfo.Images = images
 	pdInfo.Sizes = sizes
 	pdInfo.Colors = colors
-	pdInfo.Description = description
+	pdInfo.Information = information
 }
 
 type PriceHistoryDAO struct {
@@ -96,16 +96,11 @@ type ProductAlloffCategoryDAO struct {
 }
 
 type AlloffInstructionDAO struct {
-	ProductType string
+	Description []string
 	Instruction struct {
 		Title       string
-		Thumbnail   string
 		Description []string
 		Images      []string
-	}
-	Faults []struct {
-		Image       string
-		Description string
 	}
 	SizeDescription     []string
 	DeliveryDescription []string
@@ -115,6 +110,7 @@ type AlloffInstructionDAO struct {
 type ProductDAO struct {
 	ID               primitive.ObjectID `bson:"_id,omitempty"`
 	ProductInfo      *ProductMetaInfoDAO
+	ProductGroupId   *primitive.ObjectID
 	AlloffName       string
 	DiscountedPrice  int
 	DiscountRate     int
@@ -174,18 +170,21 @@ func (pd *ProductDAO) UpdateInstruction(instruction *AlloffInstructionDAO) {
 }
 
 func (pdDao *ProductDAO) ToDTO() *model.Product {
-	sizeAvailables := []string{}
+	inventories := []*model.Inventory{}
 
 	for _, inv := range pdDao.Inventory {
-		sizeAvailables = append(sizeAvailables, inv.Size)
+		inventories = append(inventories, &model.Inventory{
+			Quantity: inv.Quantity,
+			Size:     inv.Size,
+		})
 	}
 
-	var desc []*model.KeyValueInfo
-	for k, v := range pdDao.ProductInfo.Description {
+	var information []*model.KeyValueInfo
+	for k, v := range pdDao.ProductInfo.Information {
 		var newInfo model.KeyValueInfo
 		newInfo.Key = k
 		newInfo.Value = v
-		desc = append(desc, &newInfo)
+		information = append(information, &newInfo)
 	}
 
 	return &model.Product{
@@ -193,19 +192,22 @@ func (pdDao *ProductDAO) ToDTO() *model.Product {
 		Category:            pdDao.ProductInfo.Category.ToDTO(),
 		Brand:               pdDao.ProductInfo.Brand.ToDTO(false),
 		Name:                pdDao.AlloffName,
-		Images:              pdDao.ProductInfo.Images,
-		SizeAvailable:       sizeAvailables,
-		ProductURL:          pdDao.ProductInfo.ProductUrl,
 		OriginalPrice:       int(pdDao.ProductInfo.Price.OriginalPrice),
+		Soldout:             pdDao.Soldout,
+		Images:              pdDao.ProductInfo.Images,
 		DiscountedPrice:     &pdDao.DiscountedPrice,
 		DiscountRate:        &pdDao.DiscountRate,
-		Description:         desc,
-		DeliveryDescription: pdDao.SalesInstruction.DeliveryDescription,
-		CancelDescription:   pdDao.SalesInstruction.CancelDescription,
-		Soldout:             pdDao.Soldout,
-		Removed:             pdDao.Removed,
+		ProductURL:          pdDao.ProductInfo.ProductUrl,
+		Inventory:           inventories,
 		IsUpdated:           pdDao.Score.IsUpdated,
 		IsNewProduct:        pdDao.Score.IsNewlyCrawled,
+		Removed:             pdDao.Removed,
+		Description:         pdDao.SalesInstruction.Description,
+		Information:         information,
+		Instruction:         (*model.Instruction)(&pdDao.SalesInstruction.Instruction),
+		SizeDescription:     pdDao.SalesInstruction.SizeDescription,
+		DeliveryDescription: pdDao.SalesInstruction.DeliveryDescription,
+		CancelDescription:   pdDao.SalesInstruction.CancelDescription,
 	}
 }
 

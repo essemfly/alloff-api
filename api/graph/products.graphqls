@@ -20,15 +20,22 @@ type Product {
   discountedPrice: Int
   discountRate: Int
   productUrl: String!
-  sizeAvailable: [String!]!
   inventory: [Inventory]!
   isUpdated: Boolean!
   isNewProduct: Boolean!
   removed: Boolean!
-  description: [KeyValueInfo]
+  description: [String!]
+  information: [KeyValueInfo]
+  instruction: Instruction
   sizeDescription: [String!]
   cancelDescription: [String!]
   deliveryDescription: [String!]
+}
+
+type Instruction {
+  title: String!
+  description: [String!]
+  images: [String!]
 }
 
 type Inventory {

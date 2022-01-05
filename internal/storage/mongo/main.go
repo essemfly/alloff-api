@@ -32,6 +32,7 @@ type MongoDB struct {
 	likeBrandsCol        *mongo.Collection
 	likeProductsCol      *mongo.Collection
 	alarmProductGroupCol *mongo.Collection
+	exhibitionCol        *mongo.Collection
 }
 
 func NewMongoDB(conf config.Configuration) *MongoDB {
@@ -90,6 +91,7 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.Devices = MongoDevicesRepo(conn)
 	ioc.Repo.Alimtalks = MongoAlimtalksRepo(conn)
 	ioc.Repo.ProductGroups = MongoProductGroupsRepo(conn)
+	ioc.Repo.Exhibitions = MongoExhibitionsRepo(conn)
 }
 
 func checkErr(err error, location string) {
