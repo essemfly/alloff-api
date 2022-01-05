@@ -11,7 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/server/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	pkg "github.com/lessbutter/alloff-api/pkg/product"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 func (r *mutationResolver) LikeProduct(ctx context.Context, input *model.LikeProductInput) (bool, error) {
@@ -60,14 +60,11 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 	}
 
 	totalCount := 0
-	if input.Alloffcategory == nil {
-		if input.Category == nil {
-			productDaos, totalCount, _ = pkg.ProductsListing(input.Offset, input.Limit, *input.Brand, "", "", priceSorting, priceRange)
-		} else {
-			productDaos, totalCount, _ = pkg.ProductsListing(input.Offset, input.Limit, *input.Brand, *input.Category, "", priceSorting, priceRange)
-		}
+
+	if input.Category == nil {
+		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, "", priceSorting, priceRange)
 	} else {
-		productDaos, totalCount, _ = pkg.ProductsListing(input.Offset, input.Limit, "", "", *input.Alloffcategory, priceSorting, priceRange)
+		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, *input.Category, priceSorting, priceRange)
 	}
 
 	var products []*model.Product
@@ -84,6 +81,66 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 	}
 
 	return &result, nil
+}
+
+func (r *queryResolver) AlloffCategoryProducts(ctx context.Context, input model.AlloffCategoryProductsInput) (*model.AlloffCategoryProducts, error) {
+	priceSorting := ""
+	var priceRange []string
+	for _, sorting := range input.Sorting {
+		if *sorting == model.SortingTypePriceAscending {
+			priceSorting = "ascending"
+		} else if *sorting == model.SortingTypePriceDescending {
+			priceSorting = "descending"
+		} else {
+			if *sorting == model.SortingTypeDiscount0_30 {
+				priceRange = append(priceRange, "30")
+			} else if *sorting == model.SortingTypeDiscount30_50 {
+				priceRange = append(priceRange, "50")
+			} else if *sorting == model.SortingTypeDiscount50_70 {
+				priceRange = append(priceRange, "70")
+			} else {
+				priceRange = append(priceRange, "100")
+			}
+		}
+	}
+
+	totalCount := 0
+
+	productDaos, totalCount, err := product.AlloffCategoryProductsListing(input.Offset, input.Limit, input.BrandIds, input.AlloffcategoryID, priceSorting, priceRange)
+	if err != nil {
+		return nil, err
+	}
+
+	brandDaos, err := ioc.Repo.Products.ListDistinctBrands(input.AlloffcategoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	alloffCatDao, err := ioc.Repo.AlloffCategories.Get(input.AlloffcategoryID)
+	if alloffCatDao != nil {
+		return nil, err
+	}
+
+	var products []*model.Product
+	for _, productDao := range productDaos {
+		products = append(products, productDao.ToDTO())
+	}
+
+	var brands []*model.Brand
+	includeCategory := false
+	for _, brandDao := range brandDaos {
+		brands = append(brands, brandDao.ToDTO(includeCategory))
+	}
+
+	return &model.AlloffCategoryProducts{
+		Alloffcategory: alloffCatDao.ToDTO(),
+		Products:       products,
+		AllBrands:      brands,
+		TotalCount:     totalCount,
+		Offset:         input.Offset,
+		Limit:          input.Limit,
+		SelectedBrands: input.BrandIds,
+	}, nil
 }
 
 func (r *queryResolver) Likeproducts(ctx context.Context) ([]*model.LikeProductOutput, error) {

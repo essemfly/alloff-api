@@ -5,27 +5,31 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/config/ioc"
 )
 
-func (r *mutationResolver) AddAlloffProduct(ctx context.Context, input *model.AlloffProductInput) (*model.AlloffProduct, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *mutationResolver) AlarmProductGroup(ctx context.Context, groupID string) (bool, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
-func (r *queryResolver) Alloffproduct(ctx context.Context, id string) (*model.AlloffProduct, error) {
-	panic(fmt.Errorf("not implemented"))
-}
-
 func (r *queryResolver) ProductGroup(ctx context.Context, id string) (*model.ProductGroup, error) {
-	panic(fmt.Errorf("not implemented"))
+	pgDao, err := ioc.Repo.ProductGroups.Get(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return pgDao.ToDTO(), nil
 }
 
 func (r *queryResolver) ProductGroups(ctx context.Context) ([]*model.ProductGroup, error) {
-	panic(fmt.Errorf("not implemented"))
+	pgDaos, err := ioc.Repo.ProductGroups.List()
+	if err != nil {
+		return nil, err
+	}
+
+	pgs := []*model.ProductGroup{}
+
+	for _, pgDao := range pgDaos {
+		pgs = append(pgs, pgDao.ToDTO())
+	}
+
+	return pgs, nil
 }

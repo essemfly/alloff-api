@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -116,6 +117,47 @@ func (repo *productRepo) Upsert(product *domain.ProductDAO) (*domain.ProductDAO,
 	}
 
 	return updatedProduct, nil
+}
+
+func (repo *productRepo) ListDistinctBrands(alloffCategoryID string) ([]*domain.BrandDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{"removed": false, "alloffcategories.done": true}
+
+	alloffCat, err := ioc.Repo.AlloffCategories.Get(alloffCategoryID)
+	if err != nil {
+		return nil, err
+	}
+
+	if alloffCat.Level == 1 {
+		filter["alloffcategories.first._id"] = alloffCat.ID
+	} else if alloffCat.Level == 2 {
+		filter["alloffcategories.second._id"] = alloffCat.ID
+	}
+
+	rows, err := repo.col.Distinct(ctx, "brand", filter)
+	if err != nil {
+		return nil, err
+	}
+
+	brands := []*domain.BrandDAO{}
+
+	for _, row := range rows {
+		var brand *domain.BrandDAO
+		data, err := bson.Marshal(row)
+		if err != nil {
+			log.Println("Err in marshaling")
+		}
+
+		err = bson.Unmarshal(data, &brand)
+		if err != nil {
+			log.Println("Err in unmarshaling")
+		}
+		brands = append(brands, brand)
+	}
+
+	return brands, nil
 }
 
 func MongoProductsRepo(conn *MongoDB) repository.ProductsRepository {

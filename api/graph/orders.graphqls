@@ -32,7 +32,6 @@ enum PaymentStatusEnum {
 }
 
 type ProductOption {
-  alloffProduct: AlloffProduct
   product: Product
   selectsize: String!
   quantity: Int!
@@ -40,7 +39,6 @@ type ProductOption {
 
 input ProductOptionInput {
   productId: String
-  alloffProductId: String
   selectsize: String!
   quantity: Int!
 }

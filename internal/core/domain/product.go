@@ -115,6 +115,7 @@ type AlloffInstructionDAO struct {
 type ProductDAO struct {
 	ID               primitive.ObjectID `bson:"_id,omitempty"`
 	ProductInfo      *ProductMetaInfoDAO
+	AlloffName       string
 	DiscountedPrice  int
 	DiscountRate     int
 	AlloffCategories *ProductAlloffCategoryDAO
@@ -173,8 +174,39 @@ func (pd *ProductDAO) UpdateInstruction(instruction *AlloffInstructionDAO) {
 }
 
 func (pdDao *ProductDAO) ToDTO() *model.Product {
-	var pd *model.Product
-	return pd
+	sizeAvailables := []string{}
+
+	for _, inv := range pdDao.Inventory {
+		sizeAvailables = append(sizeAvailables, inv.Size)
+	}
+
+	var desc []*model.KeyValueInfo
+	for k, v := range pdDao.ProductInfo.Description {
+		var newInfo model.KeyValueInfo
+		newInfo.Key = k
+		newInfo.Value = v
+		desc = append(desc, &newInfo)
+	}
+
+	return &model.Product{
+		ID:                  pdDao.ID.Hex(),
+		Category:            pdDao.ProductInfo.Category.ToDTO(),
+		Brand:               pdDao.ProductInfo.Brand.ToDTO(false),
+		Name:                pdDao.AlloffName,
+		Images:              pdDao.ProductInfo.Images,
+		SizeAvailable:       sizeAvailables,
+		ProductURL:          pdDao.ProductInfo.ProductUrl,
+		OriginalPrice:       int(pdDao.ProductInfo.Price.OriginalPrice),
+		DiscountedPrice:     &pdDao.DiscountedPrice,
+		DiscountRate:        &pdDao.DiscountRate,
+		Description:         desc,
+		DeliveryDescription: pdDao.SalesInstruction.DeliveryDescription,
+		CancelDescription:   pdDao.SalesInstruction.CancelDescription,
+		Soldout:             pdDao.Soldout,
+		Removed:             pdDao.Removed,
+		IsUpdated:           pdDao.Score.IsUpdated,
+		IsNewProduct:        pdDao.Score.IsNewlyCrawled,
+	}
 }
 
 type PriceDAO struct {

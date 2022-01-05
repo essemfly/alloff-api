@@ -21,12 +21,24 @@ type Product {
   discountRate: Int
   productUrl: String!
   sizeAvailable: [String!]!
+  inventory: [Inventory]!
   isUpdated: Boolean!
   isNewProduct: Boolean!
   removed: Boolean!
   description: [KeyValueInfo]
-  deliveryDescription: [String!]
+  sizeDescription: [String!]
   cancelDescription: [String!]
+  deliveryDescription: [String!]
+}
+
+type Inventory {
+  size: String!
+  quantity: Int!
+}
+
+input InventoryInput {
+  size: String!
+  quantity: Int!
 }
 
 type KeyValueInfo {
@@ -39,7 +51,14 @@ input ProductsInput {
   limit: Int!
   brand: String
   category: String
-  alloffcategory: String
+  sorting: [SortingType]
+}
+
+input AlloffCategoryProductsInput {
+  offset: Int!
+  limit: Int!
+  alloffcategoryId: String!
+  brandIds: [String!]
   sorting: [SortingType]
 }
 
@@ -54,6 +73,16 @@ type ProductsOutput {
   products: [Product]!
 }
 
+type AlloffCategoryProducts {
+  alloffcategory: AlloffCategory!
+  products: [Product]
+  allBrands: [Brand]
+  selectedBrands: [String!]
+  totalCount: Int!
+  offset: Int!
+  limit: Int!
+}
+
 type LikeProductOutput {
   oldProduct: Product!
   newProduct: Product!
@@ -62,6 +91,7 @@ type LikeProductOutput {
 extend type Query {
   product(id: String!): Product!
   products(input: ProductsInput!): ProductsOutput!
+  alloffCategoryProducts(input: AlloffCategoryProductsInput!): AlloffCategoryProducts!
   likeproducts: [LikeProductOutput]!
 }
 

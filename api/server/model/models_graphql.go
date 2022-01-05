@@ -29,42 +29,18 @@ type AlloffCategoryProducts struct {
 	Alloffcategory *AlloffCategory `json:"alloffcategory"`
 	Products       []*Product      `json:"products"`
 	AllBrands      []*Brand        `json:"allBrands"`
+	SelectedBrands []string        `json:"selectedBrands"`
 	TotalCount     int             `json:"totalCount"`
 	Offset         int             `json:"offset"`
 	Limit          int             `json:"limit"`
-	SelectedBrands []string        `json:"selectedBrands"`
 }
 
-type AlloffProduct struct {
-	ID                  string       `json:"id"`
-	Brand               *Brand       `json:"brand"`
-	Name                string       `json:"name"`
-	ProductGroupID      string       `json:"productGroupId"`
-	Producttype         []string     `json:"producttype"`
-	Description         []string     `json:"description"`
-	OriginalPrice       int          `json:"originalPrice"`
-	DiscountedPrice     int          `json:"discountedPrice"`
-	DiscountRate        int          `json:"discountRate"`
-	Images              []string     `json:"images"`
-	Removed             bool         `json:"removed"`
-	Soldout             bool         `json:"soldout"`
-	Inventory           []*Inventory `json:"inventory"`
-	Instruction         *Instruction `json:"instruction"`
-	Faults              []*Faults    `json:"faults"`
-	SizeDescription     []string     `json:"sizeDescription"`
-	CancelDescription   []string     `json:"cancelDescription"`
-	DeliveryDescription []string     `json:"deliveryDescription"`
-}
-
-type AlloffProductInput struct {
-	ProductGroupID  string            `json:"productGroupId"`
-	ProductType     []*string         `json:"productType"`
-	BrandID         string            `json:"brandId"`
-	ProductName     string            `json:"productName"`
-	OriginalPrice   string            `json:"originalPrice"`
-	DiscountedPrice string            `json:"discountedPrice"`
-	Images          []*string         `json:"images"`
-	Inventories     []*InventoryInput `json:"inventories"`
+type AlloffCategoryProductsInput struct {
+	Offset           int            `json:"offset"`
+	Limit            int            `json:"limit"`
+	AlloffcategoryID string         `json:"alloffcategoryId"`
+	BrandIds         []string       `json:"brandIds"`
+	Sorting          []*SortingType `json:"sorting"`
 }
 
 type Brand struct {
@@ -100,14 +76,6 @@ type Category struct {
 	ID      string `json:"id"`
 	KeyName string `json:"keyName"`
 	Name    string `json:"name"`
-}
-
-type CategoryProductsInput struct {
-	Offset           int            `json:"offset"`
-	Limit            int            `json:"limit"`
-	AlloffcategoryID string         `json:"alloffcategoryId"`
-	BrandIds         []string       `json:"brandIds"`
-	Sorting          []*SortingType `json:"sorting"`
 }
 
 type CommunityItem struct {
@@ -310,48 +278,47 @@ type Product struct {
 	DiscountRate        *int            `json:"discountRate"`
 	ProductURL          string          `json:"productUrl"`
 	SizeAvailable       []string        `json:"sizeAvailable"`
+	Inventory           []*Inventory    `json:"inventory"`
 	IsUpdated           bool            `json:"isUpdated"`
 	IsNewProduct        bool            `json:"isNewProduct"`
 	Removed             bool            `json:"removed"`
 	Description         []*KeyValueInfo `json:"description"`
-	DeliveryDescription []string        `json:"deliveryDescription"`
+	SizeDescription     []string        `json:"sizeDescription"`
 	CancelDescription   []string        `json:"cancelDescription"`
+	DeliveryDescription []string        `json:"deliveryDescription"`
 }
 
 type ProductGroup struct {
-	ID             string           `json:"id"`
-	Title          string           `json:"title"`
-	ShortTitle     string           `json:"shortTitle"`
-	Instruction    []string         `json:"instruction"`
-	ImgURL         string           `json:"imgUrl"`
-	Alloffproducts []*AlloffProduct `json:"alloffproducts"`
-	StartTime      string           `json:"startTime"`
-	FinishTime     string           `json:"finishTime"`
-	NumAlarms      int              `json:"numAlarms"`
-	SetAlarm       bool             `json:"setAlarm"`
+	ID          string     `json:"id"`
+	Title       string     `json:"title"`
+	ShortTitle  string     `json:"shortTitle"`
+	Instruction []string   `json:"instruction"`
+	ImgURL      string     `json:"imgUrl"`
+	Products    []*Product `json:"products"`
+	StartTime   string     `json:"startTime"`
+	FinishTime  string     `json:"finishTime"`
+	NumAlarms   int        `json:"numAlarms"`
+	SetAlarm    bool       `json:"setAlarm"`
 }
 
 type ProductOption struct {
-	AlloffProduct *AlloffProduct `json:"alloffProduct"`
-	Product       *Product       `json:"product"`
-	Selectsize    string         `json:"selectsize"`
-	Quantity      int            `json:"quantity"`
+	Product    *Product `json:"product"`
+	Selectsize string   `json:"selectsize"`
+	Quantity   int      `json:"quantity"`
 }
 
 type ProductOptionInput struct {
-	ProductID       *string `json:"productId"`
-	AlloffProductID *string `json:"alloffProductId"`
-	Selectsize      string  `json:"selectsize"`
-	Quantity        int     `json:"quantity"`
+	ProductID  *string `json:"productId"`
+	Selectsize string  `json:"selectsize"`
+	Quantity   int     `json:"quantity"`
 }
 
 type ProductsInput struct {
-	Offset         int            `json:"offset"`
-	Limit          int            `json:"limit"`
-	Brand          *string        `json:"brand"`
-	Category       *string        `json:"category"`
-	Alloffcategory *string        `json:"alloffcategory"`
-	Sorting        []*SortingType `json:"sorting"`
+	Offset   int            `json:"offset"`
+	Limit    int            `json:"limit"`
+	Brand    *string        `json:"brand"`
+	Category *string        `json:"category"`
+	Sorting  []*SortingType `json:"sorting"`
 }
 
 type ProductsOutput struct {

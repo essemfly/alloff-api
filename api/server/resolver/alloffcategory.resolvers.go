@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/lessbutter/alloff-api/api/server"
 	"github.com/lessbutter/alloff-api/api/server/model"
@@ -27,10 +26,6 @@ func (r *queryResolver) Alloffcategories(ctx context.Context, input *model.Allof
 func (r *queryResolver) Alloffcategory(ctx context.Context, input *model.AlloffCategoryID) (*model.AlloffCategory, error) {
 	catDao, _ := ioc.Repo.AlloffCategories.Get(input.ID)
 	return catDao.ToDTO(), nil
-}
-
-func (r *queryResolver) AlloffcategoryProducts(ctx context.Context, input model.CategoryProductsInput) (*model.AlloffCategoryProducts, error) {
-	panic(fmt.Errorf("not implemented"))
 }
 
 // Query returns server.QueryResolver implementation.

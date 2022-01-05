@@ -15,6 +15,7 @@ func AddProduct(request ProductsAddRequest) {
 	pdInfo, err := ioc.Repo.ProductMetaInfos.GetByProductID(request.Brand.KeyName, request.ProductID)
 
 	if err == mongo.ErrNoDocuments {
+		// 새로운 상품이 필요한 경우
 		pdInfo := &domain.ProductMetaInfoDAO{
 			Created: time.Now(),
 			Updated: time.Now(),
@@ -28,8 +29,10 @@ func AddProduct(request ProductsAddRequest) {
 			log.Println(err)
 		}
 	} else if err != nil {
+		// 에러가 발생한 경우
 		log.Println(err)
 	} else {
+		// 기존에 상품이 있던 경우
 		pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), domain.CurrencyKRW)
 		_, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfo)
 		if err != nil {
@@ -45,6 +48,7 @@ func AddProduct(request ProductsAddRequest) {
 	pd, err := ioc.Repo.Products.GetByMetaID(pdInfo.ID.Hex())
 	if err == mongo.ErrNoDocuments {
 		pd = &domain.ProductDAO{
+			AlloffName:  pdInfo.OriginalName,
 			ProductInfo: pdInfo,
 			Removed:     false,
 			Created:     time.Now(),
