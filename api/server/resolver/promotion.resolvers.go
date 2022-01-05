@@ -5,19 +5,35 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/config/ioc"
 )
 
 func (r *queryResolver) Featureds(ctx context.Context) ([]*model.FeaturedItem, error) {
-	panic(fmt.Errorf("not implemented"))
-}
+	featuredDaos, err := ioc.Repo.Featureds.List()
+	if err != nil {
+		return nil, err
+	}
 
-func (r *queryResolver) Curations(ctx context.Context) ([]*model.Curation, error) {
-	panic(fmt.Errorf("not implemented"))
+	items := []*model.FeaturedItem{}
+	for _, itemDao := range featuredDaos {
+		items = append(items, itemDao.ToDTO())
+	}
+
+	return items, nil
 }
 
 func (r *queryResolver) Homeitems(ctx context.Context) ([]*model.HomeItem, error) {
-	panic(fmt.Errorf("not implemented"))
+	homeitemDaos, err := ioc.Repo.HomeItems.List()
+	if err != nil {
+		return nil, err
+	}
+
+	items := []*model.HomeItem{}
+	for _, itemDao := range homeitemDaos {
+		items = append(items, itemDao.ToDTO())
+	}
+
+	return items, nil
 }

@@ -117,20 +117,6 @@ type CommunityItem struct {
 	ImgURL     string            `json:"imgUrl"`
 }
 
-type Curation struct {
-	ID    string          `json:"id"`
-	Order int             `json:"order"`
-	Title string          `json:"title"`
-	Items []*CurationItem `json:"items"`
-}
-
-type CurationItem struct {
-	ID       string    `json:"id"`
-	Img      string    `json:"img"`
-	Brand    *Brand    `json:"brand"`
-	Category *Category `json:"category"`
-}
-
 type Device struct {
 	ID                string  `json:"id"`
 	DeviceID          string  `json:"deviceId"`

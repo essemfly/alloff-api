@@ -1,6 +1,9 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"github.com/lessbutter/alloff-api/api/server/model"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type CategoryDAO struct {
 	ID primitive.ObjectID `bson:"_id,omitempty"`
@@ -14,6 +17,14 @@ type CategoryDAO struct {
 	BrandKeyname string
 	// Size Guide
 	SizeGuide string
+}
+
+func (catDao *CategoryDAO) ToDTO() *model.Category {
+	return &model.Category{
+		ID:      catDao.ID.Hex(),
+		Name:    catDao.Name,
+		KeyName: catDao.KeyName,
+	}
 }
 
 type ClassifierDAO struct {
@@ -32,4 +43,19 @@ type AlloffCategoryDAO struct {
 	ParentId     primitive.ObjectID
 	CategoryType string `json:"type" bson:"type"`
 	ImgURL       string
+}
+
+func (catDao *AlloffCategoryDAO) ToDTO() *model.AlloffCategory {
+	if catDao.CategoryType == "NORMAL" {
+		newItem := model.AlloffCategory{
+			ID:       catDao.ID.Hex(),
+			Name:     catDao.Name,
+			KeyName:  catDao.KeyName,
+			Level:    catDao.Level,
+			ParentID: catDao.ParentId.Hex(),
+			ImgURL:   catDao.ImgURL,
+		}
+		return &newItem
+	}
+	return nil
 }

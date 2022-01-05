@@ -19,20 +19,6 @@ type FeaturedItem {
   category: Category
 }
 
-type Curation {
-  id: ID!
-  order: Int!
-  title: String!
-  items: [CurationItem!]!
-}
-
-type CurationItem {
-  id: ID!
-  img: String!
-  brand: Brand!
-  category: Category
-}
-
 type HomeItem {
   id: ID!
   priority: Int!
@@ -61,6 +47,5 @@ type BrandItem {
 
 extend type Query {
   featureds: [FeaturedItem]!
-  curations: [Curation]!
   homeitems: [HomeItem]!
 }

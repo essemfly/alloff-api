@@ -9,14 +9,24 @@ import (
 
 	"github.com/lessbutter/alloff-api/api/server"
 	"github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/config/ioc"
 )
 
 func (r *queryResolver) Alloffcategories(ctx context.Context, input *model.AlloffCategoryInput) ([]*model.AlloffCategory, error) {
-	panic(fmt.Errorf("not implemented"))
+	alloffCatDaos, _ := ioc.Repo.AlloffCategories.List(input.ParentID)
+	cats := []*model.AlloffCategory{}
+	for _, catDao := range alloffCatDaos {
+		cat := catDao.ToDTO()
+		if cat != nil {
+			cats = append(cats, cat)
+		}
+	}
+	return cats, nil
 }
 
 func (r *queryResolver) Alloffcategory(ctx context.Context, input *model.AlloffCategoryID) (*model.AlloffCategory, error) {
-	panic(fmt.Errorf("not implemented"))
+	catDao, _ := ioc.Repo.AlloffCategories.Get(input.ID)
+	return catDao.ToDTO(), nil
 }
 
 func (r *queryResolver) AlloffcategoryProducts(ctx context.Context, input model.CategoryProductsInput) (*model.AlloffCategoryProducts, error) {

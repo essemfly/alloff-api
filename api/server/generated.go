@@ -117,20 +117,6 @@ type ComplexityRoot struct {
 		TargetType func(childComplexity int) int
 	}
 
-	Curation struct {
-		ID    func(childComplexity int) int
-		Items func(childComplexity int) int
-		Order func(childComplexity int) int
-		Title func(childComplexity int) int
-	}
-
-	CurationItem struct {
-		Brand    func(childComplexity int) int
-		Category func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Img      func(childComplexity int) int
-	}
-
 	Device struct {
 		AllowNotification func(childComplexity int) int
 		DeviceID          func(childComplexity int) int
@@ -331,7 +317,6 @@ type ComplexityRoot struct {
 		Alloffproduct          func(childComplexity int, id string) int
 		Brand                  func(childComplexity int, input *model.BrandInput) int
 		Brands                 func(childComplexity int, input *model.BrandsInput) int
-		Curations              func(childComplexity int) int
 		Featureds              func(childComplexity int) int
 		Homeitems              func(childComplexity int) int
 		Likeproducts           func(childComplexity int) int
@@ -403,7 +388,6 @@ type QueryResolver interface {
 	Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error)
 	Likeproducts(ctx context.Context) ([]*model.LikeProductOutput, error)
 	Featureds(ctx context.Context) ([]*model.FeaturedItem, error)
-	Curations(ctx context.Context) ([]*model.Curation, error)
 	Homeitems(ctx context.Context) ([]*model.HomeItem, error)
 }
 
@@ -792,62 +776,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CommunityItem.TargetType(childComplexity), true
-
-	case "Curation.id":
-		if e.complexity.Curation.ID == nil {
-			break
-		}
-
-		return e.complexity.Curation.ID(childComplexity), true
-
-	case "Curation.items":
-		if e.complexity.Curation.Items == nil {
-			break
-		}
-
-		return e.complexity.Curation.Items(childComplexity), true
-
-	case "Curation.order":
-		if e.complexity.Curation.Order == nil {
-			break
-		}
-
-		return e.complexity.Curation.Order(childComplexity), true
-
-	case "Curation.title":
-		if e.complexity.Curation.Title == nil {
-			break
-		}
-
-		return e.complexity.Curation.Title(childComplexity), true
-
-	case "CurationItem.brand":
-		if e.complexity.CurationItem.Brand == nil {
-			break
-		}
-
-		return e.complexity.CurationItem.Brand(childComplexity), true
-
-	case "CurationItem.category":
-		if e.complexity.CurationItem.Category == nil {
-			break
-		}
-
-		return e.complexity.CurationItem.Category(childComplexity), true
-
-	case "CurationItem.id":
-		if e.complexity.CurationItem.ID == nil {
-			break
-		}
-
-		return e.complexity.CurationItem.ID(childComplexity), true
-
-	case "CurationItem.img":
-		if e.complexity.CurationItem.Img == nil {
-			break
-		}
-
-		return e.complexity.CurationItem.Img(childComplexity), true
 
 	case "Device.allowNotification":
 		if e.complexity.Device.AllowNotification == nil {
@@ -1932,13 +1860,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Brands(childComplexity, args["input"].(*model.BrandsInput)), true
 
-	case "Query.curations":
-		if e.complexity.Query.Curations == nil {
-			break
-		}
-
-		return e.complexity.Query.Curations(childComplexity), true
-
 	case "Query.featureds":
 		if e.complexity.Query.Featureds == nil {
 			break
@@ -2685,20 +2606,6 @@ type FeaturedItem {
   category: Category
 }
 
-type Curation {
-  id: ID!
-  order: Int!
-  title: String!
-  items: [CurationItem!]!
-}
-
-type CurationItem {
-  id: ID!
-  img: String!
-  brand: Brand!
-  category: Category
-}
-
 type HomeItem {
   id: ID!
   priority: Int!
@@ -2727,7 +2634,6 @@ type BrandItem {
 
 extend type Query {
   featureds: [FeaturedItem]!
-  curations: [Curation]!
   homeitems: [HomeItem]!
 }
 `, BuiltIn: false},
@@ -5028,283 +4934,6 @@ func (ec *executionContext) _CommunityItem_imgUrl(ctx context.Context, field gra
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Curation_id(ctx context.Context, field graphql.CollectedField, obj *model.Curation) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Curation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Curation_order(ctx context.Context, field graphql.CollectedField, obj *model.Curation) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Curation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Order, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Curation_title(ctx context.Context, field graphql.CollectedField, obj *model.Curation) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Curation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Curation_items(ctx context.Context, field graphql.CollectedField, obj *model.Curation) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Curation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Items, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.CurationItem)
-	fc.Result = res
-	return ec.marshalNCurationItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCurationItemᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _CurationItem_id(ctx context.Context, field graphql.CollectedField, obj *model.CurationItem) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "CurationItem",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _CurationItem_img(ctx context.Context, field graphql.CollectedField, obj *model.CurationItem) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "CurationItem",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Img, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _CurationItem_brand(ctx context.Context, field graphql.CollectedField, obj *model.CurationItem) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "CurationItem",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Brand, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Brand)
-	fc.Result = res
-	return ec.marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _CurationItem_category(ctx context.Context, field graphql.CollectedField, obj *model.CurationItem) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "CurationItem",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Category, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.Category)
-	fc.Result = res
-	return ec.marshalOCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategory(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Device_id(ctx context.Context, field graphql.CollectedField, obj *model.Device) (ret graphql.Marshaler) {
@@ -10585,41 +10214,6 @@ func (ec *executionContext) _Query_featureds(ctx context.Context, field graphql.
 	return ec.marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFeaturedItem(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_curations(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Curations(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Curation)
-	fc.Result = res
-	return ec.marshalNCuration2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCuration(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Query_homeitems(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -13551,87 +13145,6 @@ func (ec *executionContext) _CommunityItem(ctx context.Context, sel ast.Selectio
 	return out
 }
 
-var curationImplementors = []string{"Curation"}
-
-func (ec *executionContext) _Curation(ctx context.Context, sel ast.SelectionSet, obj *model.Curation) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, curationImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Curation")
-		case "id":
-			out.Values[i] = ec._Curation_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "order":
-			out.Values[i] = ec._Curation_order(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "title":
-			out.Values[i] = ec._Curation_title(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "items":
-			out.Values[i] = ec._Curation_items(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var curationItemImplementors = []string{"CurationItem"}
-
-func (ec *executionContext) _CurationItem(ctx context.Context, sel ast.SelectionSet, obj *model.CurationItem) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, curationItemImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("CurationItem")
-		case "id":
-			out.Values[i] = ec._CurationItem_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "img":
-			out.Values[i] = ec._CurationItem_img(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "brand":
-			out.Values[i] = ec._CurationItem_brand(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "category":
-			out.Values[i] = ec._CurationItem_category(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var deviceImplementors = []string{"Device"}
 
 func (ec *executionContext) _Device(ctx context.Context, sel ast.SelectionSet, obj *model.Device) graphql.Marshaler {
@@ -14882,20 +14395,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "curations":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_curations(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
 		case "homeitems":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -15559,98 +15058,6 @@ func (ec *executionContext) unmarshalNCommunityItemType2githubᚗcomᚋlessbutte
 
 func (ec *executionContext) marshalNCommunityItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCommunityItemType(ctx context.Context, sel ast.SelectionSet, v model.CommunityItemType) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) marshalNCuration2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCuration(ctx context.Context, sel ast.SelectionSet, v []*model.Curation) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOCuration2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCuration(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalNCurationItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCurationItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CurationItem) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNCurationItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCurationItem(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNCurationItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCurationItem(ctx context.Context, sel ast.SelectionSet, v *model.CurationItem) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._CurationItem(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNDate2string(ctx context.Context, v interface{}) (string, error) {
@@ -16910,13 +16317,6 @@ func (ec *executionContext) marshalOCommunityItem2ᚖgithubᚗcomᚋlessbutter�
 		return graphql.Null
 	}
 	return ec._CommunityItem(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOCuration2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCuration(ctx context.Context, sel ast.SelectionSet, v *model.Curation) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Curation(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOFaults2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐFaultsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Faults) graphql.Marshaler {
