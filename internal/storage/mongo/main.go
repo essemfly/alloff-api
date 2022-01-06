@@ -141,7 +141,7 @@ func getCustomTLSConfig(caFile string) (*tls.Config, error) {
 	ok := tlsConfig.RootCAs.AppendCertsFromPEM(certs)
 
 	if !ok {
-		return tlsConfig, errors.New("Failed parsing pem file")
+		return tlsConfig, errors.New("failed parsing pem file")
 	}
 
 	return tlsConfig, nil
