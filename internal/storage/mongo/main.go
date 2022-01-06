@@ -2,7 +2,12 @@ package mongo
 
 import (
 	"context"
+	"crypto/tls"
+	"crypto/x509"
+	"errors"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config"
@@ -35,16 +40,41 @@ type MongoDB struct {
 	exhibitionCol        *mongo.Collection
 }
 
-func NewMongoDB(conf config.Configuration) *MongoDB {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-	credential := options.Credential{
-		Username: conf.MONGO_USERNAME,
-		Password: conf.MONGO_PASSWORD,
-	}
-	clientOptions := options.Client().ApplyURI(conf.MONGO_URL).SetAuth(credential)
+const (
+	// Path to the AWS CA file
+	caFilePath = "rds-combined-ca-bundle.pem"
 
-	mongoClient, err := mongo.Connect(ctx, clientOptions)
+	// Timeout operations after N seconds
+	connectTimeout = 5
+	queryTimeout   = 30
+
+	// Which instances to read from
+	readPreference = "secondaryPreferred"
+
+	connectionStringTemplate = "mongodb://%s:%s@%s/%s?tls=true&replicaSet=rs0&readpreference=%s"
+)
+
+func NewMongoDB(conf config.Configuration) *MongoDB {
+
+	connectionURI := fmt.Sprintf(connectionStringTemplate, conf.MONGO_USERNAME, conf.MONGO_PASSWORD, conf.MONGO_URL, conf.MONGO_DB_NAME, readPreference)
+
+	tlsConfig, err := getCustomTLSConfig(caFilePath)
+	if err != nil {
+		log.Fatalf("Failed getting TLS configuration: %v", err)
+	}
+
+	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(connectionURI).SetTLSConfig(tlsConfig))
+	if err != nil {
+		log.Fatalf("Failed to create client: %v", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), connectTimeout*time.Second)
+	defer cancel()
+
+	err = mongoClient.Connect(ctx)
+	if err != nil {
+		log.Fatalf("Failed to connect to cluster: %v", err)
+	}
 
 	checkErr(err, "Connection in mongodb")
 	checkErr(mongoClient.Ping(ctx, readpref.Primary()), "Ping error in mongoconnect")
@@ -99,4 +129,22 @@ func checkErr(err error, location string) {
 		fmt.Println("Error occured: " + location)
 		fmt.Println("Message: " + err.Error())
 	}
+}
+
+func getCustomTLSConfig(caFile string) (*tls.Config, error) {
+	tlsConfig := new(tls.Config)
+	certs, err := ioutil.ReadFile(caFile)
+
+	if err != nil {
+		return tlsConfig, err
+	}
+
+	tlsConfig.RootCAs = x509.NewCertPool()
+	ok := tlsConfig.RootCAs.AppendCertsFromPEM(certs)
+
+	if !ok {
+		return tlsConfig, errors.New("Failed parsing pem file")
+	}
+
+	return tlsConfig, nil
 }
