@@ -48,21 +48,19 @@ const (
 	connectTimeout = 5
 	queryTimeout   = 30
 
-	// Which instances to read from
-	readPreference = "secondaryPreferred"
-
-	connectionStringTemplate = "mongodb://%s:%s@%s/%s?tls=true&replicaSet=rs0&readpreference=%s"
+	connectionStringTemplate = "mongodb://%s:%s@%s/%s?tls=true&replicaSet=rs0&retryWrites=false"
 )
 
 func NewMongoDB(conf config.Configuration) *MongoDB {
 
-	connectionURI := fmt.Sprintf(connectionStringTemplate, conf.MONGO_USERNAME, conf.MONGO_PASSWORD, conf.MONGO_URL, conf.MONGO_DB_NAME, readPreference)
+	connectionURI := fmt.Sprintf(connectionStringTemplate, conf.MONGO_USERNAME, conf.MONGO_PASSWORD, conf.MONGO_URL, conf.MONGO_DB_NAME)
 
 	tlsConfig, err := getCustomTLSConfig(caFilePath)
 	if err != nil {
 		log.Fatalf("Failed getting TLS configuration: %v", err)
 	}
 
+	log.Println("url", connectionURI)
 	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(connectionURI).SetTLSConfig(tlsConfig))
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
