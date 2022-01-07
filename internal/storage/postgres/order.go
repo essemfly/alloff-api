@@ -37,7 +37,11 @@ func (repo *orderRepo) List(userID string) ([]*domain.OrderDAO, error) {
 	return orders, nil
 }
 
-func (repo *orderRepo) Insert(*domain.OrderDAO) error {
+func (repo *orderRepo) Insert(*domain.OrderDAO) (*domain.OrderDAO, error) {
+	panic("work in progress")
+}
+
+func (repo *orderRepo) Update(*domain.OrderDAO) (*domain.OrderDAO, error) {
 	panic("work in progress")
 }
 

@@ -19,6 +19,14 @@ type UserDAO struct {
 	Created       time.Time
 }
 
+func (userDao *UserDAO) GetUserAddress() string {
+	addr := ""
+	if userDao.BaseAddress != "" {
+		addr = userDao.BaseAddress + " " + userDao.DetailAddress
+	}
+	return addr
+}
+
 func (userDao *UserDAO) ToDTO() *model.User {
 	return &model.User{
 		ID:            userDao.ID.Hex(),

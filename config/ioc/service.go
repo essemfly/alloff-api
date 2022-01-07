@@ -1,12 +1,11 @@
 package ioc
 
-import "github.com/lessbutter/alloff-api/config"
+import (
+	"github.com/lessbutter/alloff-api/internal/core/service"
+)
 
 type iocService struct {
+	OrderWithPaymentService service.OrderWithPaymentService
 }
 
 var Service *iocService
-
-func RegisterService(conf config.Configuration) {
-
-}

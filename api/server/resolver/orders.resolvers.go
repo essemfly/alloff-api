@@ -6,11 +6,11 @@ package resolver
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/lessbutter/alloff-api/api/middleware"
 	"github.com/lessbutter/alloff-api/api/server/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/order"
 )
 
@@ -78,34 +78,89 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 		return nil, errs[0]
 	}
 
-	orderDao, err := basket.BuildOrder()
+	orderDao, err := basket.BuildOrder(user)
 	if err != nil {
 		return nil, err
 	}
 
+	newOrderDao, err := ioc.Repo.Orders.Insert(orderDao)
+	if err != nil {
+		return nil, err
+	}
+
+	basePayment := newOrderDao.GetBasePayment()
+
 	return &model.OrderWithPayment{
 		Success:        true,
 		ErrorMsg:       "",
-		PaymentInfo:    mapper.MapPaymentToPaymentInfo(paymentDao),
-		PaymentMethods: order.GetPaymentMethods(),
-		Order:          mapper.MapOrderToOrderInfo(newOrderDao),
-		User:           mapper.MapUserDaoToUser(user),
+		PaymentInfo:    basePayment.ToDTO(),
+		PaymentMethods: basePayment.GetPaymentMethods(),
+		Order:          newOrderDao.ToDTO(),
+		User:           user.ToDTO(),
 	}, nil
 
 }
 
 func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error) {
-	// 유저가 Order를 취소하고 싶을때 하는 취소요청 API
-	panic(fmt.Errorf("not implemented"))
+	// 주문이 완료된 후, 유저가 Order를 취소하고 싶을때 하는 취소요청 API
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid token")
+	}
+
+	orderDao, paymentDao, err := ioc.Service.OrderWithPaymentService.Find(orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &model.PaymentStatus{
+		Success:     false,
+		ErrorMsg:    err.Error(),
+		PaymentInfo: paymentDao.ToDTO(),
+		Order:       orderDao.ToDTO(),
+	}
+
+	err = ioc.Service.OrderWithPaymentService.CancelOrderRequest(orderDao, paymentDao)
+	if err != nil {
+		return result, err
+	}
+
+	result.Success = true
+	return result, nil
 }
 
 func (r *mutationResolver) ConfirmOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error) {
 	// Order Confirm하는 API 인데, 유저가 앱에서 구매확정을 누르는 API
-	panic(fmt.Errorf("not implemented"))
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid token")
+	}
+
+	orderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	err = orderDao.ConfirmOrder()
+	if err != nil {
+		return nil, err
+	}
+
+	newOrderDao, err := ioc.Repo.Orders.Update(orderDao)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.PaymentStatus{
+		Success:     true,
+		ErrorMsg:    "",
+		PaymentInfo: nil,
+		Order:       newOrderDao.ToDTO(),
+	}, nil
+
 }
 
 func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error) {
-	panic(fmt.Errorf("not implemented"))
 	/*
 		type PaymentClientInput struct {
 			Pg            string  `json:"pg"`
@@ -124,33 +179,74 @@ func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.Paym
 		1. 결제창 띄우면서, iamport에 등록하는 작업을 해야합니다.
 		2. 동시에 상품에서 주문한 상품의 재고를 없애줍니다.
 	*/
+
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid token")
+	}
+
+	paymentDao := BuildPaymentDao(input)
+	orderDao, err := ioc.Repo.Orders.GetByAlloffID(paymentDao.MerchantUid)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &model.PaymentStatus{
+		Success:     false,
+		ErrorMsg:    err.Error(),
+		PaymentInfo: paymentDao.ToDTO(),
+		Order:       orderDao.ToDTO(),
+	}
+
+	orderDao.UserMemo = *input.Memo
+	err = ioc.Service.OrderWithPaymentService.RequestPayment(orderDao, paymentDao)
+	if err != nil {
+		return result, err
+	}
+
+	result.Success = true
+	return result, nil
 }
 
 func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error) {
-	panic(fmt.Errorf("not implemented"))
 	/*
-		type PaymentClientInput struct {
-			Pg            string  `json:"pg"`
-			PayMethod     string  `json:"payMethod"`
-			MerchantUID   string  `json:"merchantUid"`
-			Amount        int     `json:"amount"`
-			Name          *string `json:"name"`
-			BuyerName     *string `json:"buyerName"`
-			BuyerMobile   *string `json:"buyerMobile"`
-			BuyerAddress  *string `json:"buyerAddress"`
-			BuyerPostCode *string `json:"buyerPostCode"`
-			Memo          *string `json:"memo"`
-			AppScheme     *string `json:"appScheme"`
-		}
-
 		0. 주문창까지 넘어갔다가 취소된 경우 발생하는 API
 		1. Payment가 취소 되면서, 재고가 다시 회복됩니다.
 		2. Order의 Status도 다시 돌아옵니다.
 	*/
+
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid token")
+	}
+
+	orderDao, err := ioc.Repo.Orders.GetByAlloffID(input.MerchantUID)
+	if err != nil {
+		return nil, err
+	}
+
+	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(input.MerchantUID, input.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	result := &model.PaymentStatus{
+		Success:     false,
+		ErrorMsg:    err.Error(),
+		PaymentInfo: paymentDao.ToDTO(),
+		Order:       orderDao.ToDTO(),
+	}
+
+	err = ioc.Service.OrderWithPaymentService.CancelPayment(orderDao, paymentDao)
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+
 }
 
 func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *model.OrderResponse) (*model.PaymentResult, error) {
-	panic(fmt.Errorf("not implemented"))
 	/*
 		type OrderResponse struct {
 			Success     bool   `json:"success"`
@@ -161,6 +257,33 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 
 		1. Payment의 결과를 앱에서 iamport로 받는다.
 	*/
+
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid token")
+	}
+
+	orderDao, err := ioc.Repo.Orders.GetByAlloffID(input.MerchantUID)
+	if err != nil {
+		return nil, err
+	}
+
+	paymentDao, err := ioc.Repo.Payments.GetByImpUID(input.ImpUID)
+	if err != nil {
+		return nil, err
+	}
+
+	err = ioc.Service.OrderWithPaymentService.VerifyPayment(orderDao, paymentDao)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.PaymentResult{
+		Success:     true,
+		ErrorMsg:    input.ErrorMsg,
+		Order:       nil,
+		PaymentInfo: nil,
+	}, nil
 }
 
 func (r *queryResolver) Order(ctx context.Context, id string) (*model.OrderInfo, error) {
@@ -221,4 +344,20 @@ func BuildBasketItems(input *model.OrderInput) ([]*order.BasketItem, error) {
 		basketItems = append(basketItems, basketItem)
 	}
 	return basketItems, nil
+}
+
+func BuildPaymentDao(input *model.PaymentClientInput) *domain.PaymentDAO {
+	return &domain.PaymentDAO{
+		Pg:            input.Pg,
+		PayMethod:     input.PayMethod,
+		MerchantUid:   input.MerchantUID,
+		Amount:        input.Amount,
+		Name:          *input.Name,
+		BuyerName:     *input.BuyerName,
+		BuyerMobile:   *input.BuyerMobile,
+		BuyerAddress:  *input.BuyerAddress,
+		BuyerPostCode: *input.BuyerPostCode,
+		Company:       "alloff",
+		AppScheme:     *input.AppScheme,
+	}
 }

@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"errors"
+	"strconv"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/server/model"
@@ -74,6 +76,46 @@ func (orderDao *OrderDAO) ToDTO() *model.OrderInfo {
 	}
 
 	return orderInfo
+}
+
+func (orderDao *OrderDAO) GetBasePayment() *PaymentDAO {
+	return &PaymentDAO{
+		Pg:            "danal_tpay",
+		PayMethod:     "card",
+		MerchantUid:   orderDao.AlloffOrderID,
+		Amount:        orderDao.TotalPrice,
+		Name:          orderDao.GetOrderName(),
+		BuyerName:     orderDao.User.Name,
+		BuyerMobile:   orderDao.User.Mobile,
+		BuyerAddress:  orderDao.User.GetUserAddress(),
+		BuyerPostCode: orderDao.User.Postcode,
+		Company:       "alloff",
+		AppScheme:     "",
+	}
+}
+
+func (orderDao *OrderDAO) GetOrderName() string {
+	if len(orderDao.OrderItems) == 1 {
+		return orderDao.OrderItems[0].ProductName
+	}
+
+	return orderDao.OrderItems[0].ProductName + "외 " + strconv.Itoa(len(orderDao.OrderItems)-1) + " 건"
+}
+
+func (orderDao *OrderDAO) ConfirmOrder() error {
+	if orderDao.OrderStatus == ORDER_CONFIRM_PAYMENT {
+		return errors.New("order already confirmed")
+	}
+
+	if orderDao.OrderStatus != ORDER_DELIVERY_FINISHED {
+		return errors.New("not available on order status for confirm")
+	}
+
+	orderDao.OrderStatus = ORDER_CONFIRM_PAYMENT
+	orderDao.UpdatedAt = time.Now()
+	orderDao.ConfirmedAt = time.Now()
+
+	return nil
 }
 
 type OrderItemDAO struct {

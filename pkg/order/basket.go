@@ -49,8 +49,10 @@ func (basket *Basket) IsValid() []error {
 	return errs
 }
 
-func (basket *Basket) BuildOrder() (*domain.OrderDAO, error) {
-	newOrderDao := &domain.OrderDAO{}
+func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error) {
+	newOrderDao := &domain.OrderDAO{
+		User: user,
+	}
 
 	return newOrderDao, nil
 }

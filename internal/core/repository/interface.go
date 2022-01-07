@@ -84,17 +84,15 @@ type OrdersRepository interface {
 	Get(ID int) (*domain.OrderDAO, error)
 	GetByAlloffID(ID string) (*domain.OrderDAO, error)
 	List(userID string) ([]*domain.OrderDAO, error)
-	Insert(*domain.OrderDAO) error
+	Insert(*domain.OrderDAO) (*domain.OrderDAO, error)
+	Update(*domain.OrderDAO) (*domain.OrderDAO, error)
 }
 
 type PaymentsRepository interface {
+	GetByOrderIDAndAmount(orderID string, amount int) (*domain.PaymentDAO, error)
+	GetByImpUID(impUID string) (*domain.PaymentDAO, error)
+	Insert(*domain.PaymentDAO) (*domain.PaymentDAO, error)
 }
-
-// type OrderWithPaymentRepository interface {
-// 	Confirm() error
-// }
-
-// type OrderWithPaymentUpdate func(*domain.OrderDAO) error
 
 type UsersRepository interface {
 	Get(ID string) (*domain.UserDAO, error)

@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"github.com/lessbutter/alloff-api/api/server/model"
+)
 
 type PaymentStatusEnum string
 
@@ -11,6 +15,11 @@ const (
 	PAYMENT_REFUND_REQUESTED = PaymentStatusEnum("PAYMENT_REFUND_REQUESTED")
 	PAYMENT_REFUND_FINISHED  = PaymentStatusEnum("PAYMENT_REFUND_FINISHED")
 )
+
+type PaymentMethod struct {
+	Label string
+	Code  string
+}
 
 type PaymentDAO struct {
 	tableName     struct{} `pg:"payments"`
@@ -30,4 +39,35 @@ type PaymentDAO struct {
 	AppScheme     string
 	Created       time.Time
 	Updated       time.Time
+}
+
+func (paymentDao *PaymentDAO) ToDTO() *model.PaymentInfo {
+	return &model.PaymentInfo{
+		Pg:            paymentDao.Pg,
+		PayMethod:     paymentDao.PayMethod,
+		Name:          paymentDao.Name,
+		MerchantUID:   paymentDao.MerchantUid,
+		Amount:        paymentDao.Amount,
+		BuyerName:     paymentDao.BuyerName,
+		BuyerMobile:   paymentDao.BuyerMobile,
+		BuyerAddress:  paymentDao.BuyerAddress,
+		BuyerPostCode: paymentDao.BuyerPostCode,
+		Company:       paymentDao.Company,
+		AppScheme:     paymentDao.AppScheme,
+	}
+}
+
+func (paymentDao *PaymentDAO) GetPaymentMethods() []*model.PaymentMethod {
+	// (TODO) To be specified in collection
+	paymentMethods := []*model.PaymentMethod{
+		{
+			Label: "다날",
+			Code:  "danal_tpay",
+		},
+		{
+			Label: "카카오페이",
+			Code:  "kakaopay",
+		},
+	}
+	return paymentMethods
 }

@@ -44,6 +44,7 @@ func NewPostgresDB(conf config.Configuration) *PostgresDB {
 func (conn *PostgresDB) RegisterRepos() {
 	ioc.Repo.Orders = PostgresOrderRepo(conn)
 	ioc.Repo.Payments = PostgresPaymentRepo(conn)
+	ioc.Service.OrderWithPaymentService = PostgresOrderPaymentRepo(conn)
 }
 
 // createSchema creates database schema for User and Story models.
