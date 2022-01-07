@@ -2246,7 +2246,7 @@ type OrderItem {
 
 input OrderItemInput {
   productId: String!
-  productGroupId: String
+  productGroupId: String!
   selectsize: String!
   quantity: Int!
 }
@@ -12000,7 +12000,7 @@ func (ec *executionContext) unmarshalInputOrderItemInput(ctx context.Context, ob
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productGroupId"))
-			it.ProductGroupID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.ProductGroupID, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

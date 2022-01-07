@@ -11,65 +11,87 @@ import (
 	"github.com/lessbutter/alloff-api/api/middleware"
 	"github.com/lessbutter/alloff-api/api/server/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/pkg/order"
 )
 
 func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error) {
-	panic(fmt.Errorf("not implemented"))
 	/*
-		type OrderInput struct {
-			Orders       []*ProductOptionInput `json:"orders"`
-			ProductPrice int                   `json:"productPrice"`
-		}
-
-		type ProductOptionInput struct {
-			ProductID  *string `json:"productId"`
-			Selectsize string  `json:"selectsize"`
-			Quantity   int     `json:"quantity"`
-		}
-
-		1. Order를 만든다.
-		2. Order가 Valid한지 Check를 한다.
+		1. Baskets을 만든다.
+		2. Basket이 Valid한지 Check를 한다.
 		3. Errors들을 모아서 보여준다.
 		4. Order를 Create해줄 필요는 없다.
 	*/
 
-	// orderDao, errs := order.CheckValidOrderInput(input)
-	// if len(errs) > 0 {
-	// 	var errString = []string{}
-	// 	for _, err := range errs {
-	// 		errString = append(errString, err.Error())
-	// 	}
+	basketItems, err := BuildBasketItems(input)
+	if err != nil {
+		return nil, err
+	}
 
-	// 	return &model.OrderValidityResult{
-	// 		Available: false,
-	// 		ErrorMsgs: errString,
-	// 		Order:     mapper.MapOrderToOrderInfo(orderDao),
-	// 	}, nil
-	// }
-	// return &model.OrderValidityResult{
-	// 	Available: true,
-	// 	ErrorMsgs: nil,
-	// 	Order:     mapper.MapOrderToOrderInfo(orderDao),
-	// }, nil
+	basket := &order.Basket{
+		Items:        basketItems,
+		ProductPrice: input.ProductPrice,
+	}
+
+	errs := basket.IsValid()
+
+	if len(errs) > 0 {
+		var errString = []string{}
+		for _, err := range errs {
+			errString = append(errString, err.Error())
+		}
+
+		return &model.OrderValidityResult{
+			Available: false,
+			ErrorMsgs: errString,
+		}, nil
+	}
+
+	return &model.OrderValidityResult{
+		Available: true,
+		ErrorMsgs: nil,
+	}, nil
 }
 
 func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error) {
-	panic(fmt.Errorf("not implemented"))
 	/*
-		type OrderInput struct {
-				Orders       []*ProductOptionInput `json:"orders"`
-				ProductPrice int                   `json:"productPrice"`
-			}
-
-		type ProductOptionInput struct {
-			ProductID  *string `json:"productId"`
-			Selectsize string  `json:"selectsize"`
-			Quantity   int     `json:"quantity"`
-		}
-
 		1. 기본적으로 위와 동일하다 (Order 생성하고, Valid Check하고, Errors들을 모아서 보여준다.)
 		2. 여기서 완료되면 Order가 생성이되고, 주문 결제하는 창으로 넘어간다.
 	*/
+
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid token")
+	}
+
+	basketItems, err := BuildBasketItems(input)
+	if err != nil {
+		return nil, err
+	}
+
+	basket := &order.Basket{
+		Items:        basketItems,
+		ProductPrice: input.ProductPrice,
+	}
+
+	errs := basket.IsValid()
+	if len(errs) > 0 {
+		return nil, errs[0]
+	}
+
+	orderDao, err := basket.BuildOrder()
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.OrderWithPayment{
+		Success:        true,
+		ErrorMsg:       "",
+		PaymentInfo:    mapper.MapPaymentToPaymentInfo(paymentDao),
+		PaymentMethods: order.GetPaymentMethods(),
+		Order:          mapper.MapOrderToOrderInfo(newOrderDao),
+		User:           mapper.MapUserDaoToUser(user),
+	}, nil
+
 }
 
 func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error) {
@@ -172,4 +194,31 @@ func (r *queryResolver) Orders(ctx context.Context) ([]*model.OrderInfo, error) 
 	}
 
 	return orders, nil
+}
+
+func BuildBasketItems(input *model.OrderInput) ([]*order.BasketItem, error) {
+	basketItems := []*order.BasketItem{}
+	for _, item := range input.Orders {
+		pd, err := ioc.Repo.Products.Get(item.ProductID)
+		if err != nil {
+			return nil, err
+		}
+
+		basketItem := &order.BasketItem{
+			Product:      pd,
+			ProductGroup: nil,
+			Size:         item.Selectsize,
+			Quantity:     item.Quantity,
+		}
+
+		if item.ProductGroupID != "" {
+			pg, err := ioc.Repo.ProductGroups.Get(item.ProductGroupID)
+			basketItem.ProductGroup = pg
+			if err != nil {
+				return nil, err
+			}
+		}
+		basketItems = append(basketItems, basketItem)
+	}
+	return basketItems, nil
 }

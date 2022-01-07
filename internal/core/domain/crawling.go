@@ -22,7 +22,8 @@ type CrawlSourceDAO struct {
 	CrawlModuleName string
 	// 아울렛 상품인지 유무, 판매 상품인지 여부
 	IsSalesProducts bool
-
+	// 해외 배송상품인지
+	IsForeignDelivery bool
 	//(TODO) 가격정책이 확정되어야함
 }
 

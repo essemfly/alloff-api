@@ -60,7 +60,6 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 		log.Fatalf("Failed getting TLS configuration: %v", err)
 	}
 
-	log.Println("url", connectionURI)
 	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(connectionURI).SetTLSConfig(tlsConfig))
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)

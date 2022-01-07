@@ -215,10 +215,10 @@ type OrderItem struct {
 }
 
 type OrderItemInput struct {
-	ProductID      string  `json:"productId"`
-	ProductGroupID *string `json:"productGroupId"`
-	Selectsize     string  `json:"selectsize"`
-	Quantity       int     `json:"quantity"`
+	ProductID      string `json:"productId"`
+	ProductGroupID string `json:"productGroupId"`
+	Selectsize     string `json:"selectsize"`
+	Quantity       int    `json:"quantity"`
 }
 
 type OrderResponse struct {
