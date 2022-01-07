@@ -52,27 +52,10 @@ const (
 )
 
 func NewMongoDB(conf config.Configuration) *MongoDB {
-
-	connectionURI := fmt.Sprintf(connectionStringTemplate, conf.MONGO_USERNAME, conf.MONGO_PASSWORD, conf.MONGO_URL, conf.MONGO_DB_NAME)
-
-	tlsConfig, err := getCustomTLSConfig(caFilePath)
-	if err != nil {
-		log.Fatalf("Failed getting TLS configuration: %v", err)
-	}
-
-	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(connectionURI).SetTLSConfig(tlsConfig))
-	if err != nil {
-		log.Fatalf("Failed to create client: %v", err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), connectTimeout*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	err = mongoClient.Connect(ctx)
-	if err != nil {
-		log.Fatalf("Failed to connect to cluster: %v", err)
-	}
-
+	mongoClient, err := makeMongoClient(ctx, conf)
 	checkErr(err, "Connection in mongodb")
 	checkErr(mongoClient.Ping(ctx, readpref.Primary()), "Ping error in mongoconnect")
 	db := mongoClient.Database(conf.MONGO_DB_NAME)
@@ -119,6 +102,33 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.Alimtalks = MongoAlimtalksRepo(conn)
 	ioc.Repo.ProductGroups = MongoProductGroupsRepo(conn)
 	ioc.Repo.Exhibitions = MongoExhibitionsRepo(conn)
+}
+
+func makeMongoClient(ctx context.Context, conf config.Configuration) (*mongo.Client, error) {
+	if conf.ENVIRONMENT == "local" {
+		credential := options.Credential{
+			Username: conf.MONGO_USERNAME,
+			Password: conf.MONGO_PASSWORD,
+		}
+		clientOptions := options.Client().ApplyURI("mongodb://" + conf.MONGO_URL).SetAuth(credential)
+		mongoClient, err := mongo.Connect(ctx, clientOptions)
+		return mongoClient, err
+	}
+
+	connectionURI := fmt.Sprintf(connectionStringTemplate, conf.MONGO_USERNAME, conf.MONGO_PASSWORD, conf.MONGO_URL, conf.MONGO_DB_NAME)
+
+	tlsConfig, err := getCustomTLSConfig(caFilePath)
+	if err != nil {
+		log.Fatalf("Failed getting TLS configuration: %v", err)
+	}
+
+	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(connectionURI).SetTLSConfig(tlsConfig))
+	if err != nil {
+		log.Fatalf("Failed to create client: %v", err)
+	}
+
+	err = mongoClient.Connect(ctx)
+	return mongoClient, err
 }
 
 func checkErr(err error, location string) {

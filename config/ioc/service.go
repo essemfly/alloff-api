@@ -8,4 +8,4 @@ type iocService struct {
 	OrderWithPaymentService service.OrderWithPaymentService
 }
 
-var Service *iocService
+var Service iocService

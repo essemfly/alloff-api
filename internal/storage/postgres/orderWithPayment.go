@@ -43,7 +43,7 @@ func (repo *orderPaymentService) VerifyPayment(*domain.OrderDAO, *domain.Payment
 	panic("work in progress")
 }
 
-func PostgresOrderPaymentRepo(conn *PostgresDB) service.OrderWithPaymentService {
+func PostgresOrderPaymentService(conn *PostgresDB) service.OrderWithPaymentService {
 	return &orderPaymentService{
 		db: conn.db,
 	}
