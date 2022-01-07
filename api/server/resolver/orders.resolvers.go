@@ -10,7 +10,6 @@ import (
 	"github.com/lessbutter/alloff-api/api/middleware"
 	"github.com/lessbutter/alloff-api/api/server/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
-	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/order"
 )
 
@@ -98,7 +97,6 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 		Order:          newOrderDao.ToDTO(),
 		User:           user.ToDTO(),
 	}, nil
-
 }
 
 func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error) {
@@ -157,7 +155,6 @@ func (r *mutationResolver) ConfirmOrder(ctx context.Context, orderID string) (*m
 		PaymentInfo: nil,
 		Order:       newOrderDao.ToDTO(),
 	}, nil
-
 }
 
 func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error) {
@@ -243,7 +240,6 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Payme
 	}
 
 	return result, nil
-
 }
 
 func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *model.OrderResponse) (*model.PaymentResult, error) {
@@ -317,47 +313,4 @@ func (r *queryResolver) Orders(ctx context.Context) ([]*model.OrderInfo, error) 
 	}
 
 	return orders, nil
-}
-
-func BuildBasketItems(input *model.OrderInput) ([]*order.BasketItem, error) {
-	basketItems := []*order.BasketItem{}
-	for _, item := range input.Orders {
-		pd, err := ioc.Repo.Products.Get(item.ProductID)
-		if err != nil {
-			return nil, err
-		}
-
-		basketItem := &order.BasketItem{
-			Product:      pd,
-			ProductGroup: nil,
-			Size:         item.Selectsize,
-			Quantity:     item.Quantity,
-		}
-
-		if item.ProductGroupID != "" {
-			pg, err := ioc.Repo.ProductGroups.Get(item.ProductGroupID)
-			basketItem.ProductGroup = pg
-			if err != nil {
-				return nil, err
-			}
-		}
-		basketItems = append(basketItems, basketItem)
-	}
-	return basketItems, nil
-}
-
-func BuildPaymentDao(input *model.PaymentClientInput) *domain.PaymentDAO {
-	return &domain.PaymentDAO{
-		Pg:            input.Pg,
-		PayMethod:     input.PayMethod,
-		MerchantUid:   input.MerchantUID,
-		Amount:        input.Amount,
-		Name:          *input.Name,
-		BuyerName:     *input.BuyerName,
-		BuyerMobile:   *input.BuyerMobile,
-		BuyerAddress:  *input.BuyerAddress,
-		BuyerPostCode: *input.BuyerPostCode,
-		Company:       "alloff",
-		AppScheme:     *input.AppScheme,
-	}
 }
