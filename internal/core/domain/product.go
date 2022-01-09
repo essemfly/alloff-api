@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/server/model"
@@ -167,6 +168,15 @@ func (pd *ProductDAO) UpdateAlloffCategory(cat *ProductAlloffCategoryDAO) {
 
 func (pd *ProductDAO) UpdateInstruction(instruction *AlloffInstructionDAO) {
 	pd.SalesInstruction = instruction
+}
+
+func (pd *ProductDAO) GetStocks(size string) (int, error) {
+	for _, option := range pd.Inventory {
+		if option.Size == size {
+			return option.Quantity, nil
+		}
+	}
+	return -1, errors.New("no option for requested size")
 }
 
 func (pdDao *ProductDAO) ToDTO() *model.Product {

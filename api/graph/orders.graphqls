@@ -165,7 +165,7 @@ extend type Query {
 extend type Mutation {
   checkOrder(input: OrderInput): OrderValidityResult!
   requestOrder(input: OrderInput): OrderWithPayment!
-  cancelOrder(orderId: String!): PaymentStatus!
+  cancelOrder(orderId: String!, productId: String): PaymentStatus!
   confirmOrder(orderId: String!): PaymentStatus!
   requestPayment(input: PaymentClientInput): PaymentStatus!
   cancelPayment(input: PaymentClientInput): PaymentStatus!

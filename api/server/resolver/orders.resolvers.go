@@ -99,8 +99,9 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 	}, nil
 }
 
-func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error) {
+func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string, productID *string) (*model.PaymentStatus, error) {
 	// 주문이 완료된 후, 유저가 Order를 취소하고 싶을때 하는 취소요청 API
+	// TODO: Cancel Order ITEMS one by one
 	user := middleware.ForContext(ctx)
 	if user == nil {
 		return nil, errors.New("invalid token")
@@ -118,7 +119,7 @@ func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string) (*mo
 		Order:       orderDao.ToDTO(),
 	}
 
-	err = ioc.Service.OrderWithPaymentService.CancelOrderRequest(orderDao, paymentDao)
+	err = ioc.Service.OrderWithPaymentService.CancelOrderRequest(orderDao, orderDao.GetOrderItem(*productID), paymentDao)
 	if err != nil {
 		return result, err
 	}

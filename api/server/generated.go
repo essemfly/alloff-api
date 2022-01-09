@@ -156,7 +156,7 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CancelOrder           func(childComplexity int, orderID string) int
+		CancelOrder           func(childComplexity int, orderID string, productID *string) int
 		CancelPayment         func(childComplexity int, input *model.PaymentClientInput) int
 		CheckOrder            func(childComplexity int, input *model.OrderInput) int
 		ConfirmOrder          func(childComplexity int, orderID string) int
@@ -354,7 +354,7 @@ type MutationResolver interface {
 	LikeBrand(ctx context.Context, input *model.LikeBrandInput) (bool, error)
 	CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error)
 	RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error)
-	CancelOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error)
+	CancelOrder(ctx context.Context, orderID string, productID *string) (*model.PaymentStatus, error)
 	ConfirmOrder(ctx context.Context, orderID string) (*model.PaymentStatus, error)
 	RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
 	CancelPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
@@ -896,7 +896,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CancelOrder(childComplexity, args["orderId"].(string)), true
+		return e.complexity.Mutation.CancelOrder(childComplexity, args["orderId"].(string), args["productId"].(*string)), true
 
 	case "Mutation.cancelPayment":
 		if e.complexity.Mutation.CancelPayment == nil {
@@ -2354,7 +2354,7 @@ extend type Query {
 extend type Mutation {
   checkOrder(input: OrderInput): OrderValidityResult!
   requestOrder(input: OrderInput): OrderWithPayment!
-  cancelOrder(orderId: String!): PaymentStatus!
+  cancelOrder(orderId: String!, productId: String): PaymentStatus!
   confirmOrder(orderId: String!): PaymentStatus!
   requestPayment(input: PaymentClientInput): PaymentStatus!
   cancelPayment(input: PaymentClientInput): PaymentStatus!
@@ -2571,6 +2571,15 @@ func (ec *executionContext) field_Mutation_cancelOrder_args(ctx context.Context,
 		}
 	}
 	args["orderId"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["productId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productId"))
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["productId"] = arg1
 	return args, nil
 }
 
@@ -5762,7 +5771,7 @@ func (ec *executionContext) _Mutation_cancelOrder(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CancelOrder(rctx, args["orderId"].(string))
+		return ec.resolvers.Mutation().CancelOrder(rctx, args["orderId"].(string), args["productId"].(*string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
