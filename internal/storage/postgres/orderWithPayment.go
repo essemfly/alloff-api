@@ -10,10 +10,6 @@ type orderPaymentService struct {
 	db *pg.DB
 }
 
-func (repo *orderPaymentService) Insert(*domain.PaymentDAO) (*domain.PaymentDAO, error) {
-	panic("work in progress")
-}
-
 func (repo *orderPaymentService) Find(orderID string) (*domain.OrderDAO, *domain.PaymentDAO, error) {
 	panic("work in progress")
 }

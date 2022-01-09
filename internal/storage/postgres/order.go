@@ -37,12 +37,22 @@ func (repo *orderRepo) List(userID string) ([]*domain.OrderDAO, error) {
 	return orders, nil
 }
 
-func (repo *orderRepo) Insert(*domain.OrderDAO) (*domain.OrderDAO, error) {
-	panic("work in progress")
+func (repo *orderRepo) Insert(orderDao *domain.OrderDAO) (*domain.OrderDAO, error) {
+	_, err := repo.db.Model(orderDao).Insert()
+	if err != nil {
+		return nil, err
+	}
+
+	return orderDao, nil
 }
 
-func (repo *orderRepo) Update(*domain.OrderDAO) (*domain.OrderDAO, error) {
-	panic("work in progress")
+func (repo *orderRepo) Update(orderDao *domain.OrderDAO) (*domain.OrderDAO, error) {
+	_, err := repo.db.Model(orderDao).WherePK().Update()
+	if err != nil {
+		return nil, err
+	}
+
+	return orderDao, nil
 }
 
 func PostgresOrderRepo(conn *PostgresDB) repository.OrdersRepository {
