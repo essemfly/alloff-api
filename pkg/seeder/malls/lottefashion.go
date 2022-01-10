@@ -228,13 +228,16 @@ func AddLotteFashion() {
 				}
 
 				source := domain.CrawlSourceDAO{
-					BrandKeyname:    upsertedBrand.KeyName,
-					BrandIdentifier: shopId,
-					MainCategoryKey: mainCategoryNumber,
-					Category:        *updatedCat,
-					CrawlUrl:        crawlUrl,
-					CrawlModuleName: modulename,
-					IsSalesProducts: true,
+					BrandKeyname:      upsertedBrand.KeyName,
+					BrandIdentifier:   shopId,
+					MainCategoryKey:   mainCategoryNumber,
+					Category:          *updatedCat,
+					CrawlUrl:          crawlUrl,
+					CrawlModuleName:   modulename,
+					IsSalesProducts:   true,
+					IsForeignDelivery: false,
+					PriceMarginPolicy: "NORMAL",
+					DeliveryPrice:     0,
 				}
 
 				_, err = ioc.Repo.CrawlSources.Upsert(&source)

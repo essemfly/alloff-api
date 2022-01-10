@@ -65,6 +65,7 @@ type LotteFashionProperty struct {
 func CrawlLotteFashion(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
 	pageSize := 100
 	pageNum := 1
+	totalProducts := 0
 
 	jsonStr := BuildLFJsonBody(pageNum, pageSize, source)
 
@@ -97,9 +98,10 @@ func CrawlLotteFashion(worker chan bool, done chan bool, source *domain.CrawlSou
 		json.NewDecoder(resp.Body).Decode(results)
 		defer resp.Body.Close()
 
-		MapLotteCrawlResultsToModels(results.Results.Products, source, brand)
+		totalProducts += MapLotteCrawlResultsToModels(results.Results.Products, source, brand)
 	}
 
+	crawler.WriteCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }
@@ -108,10 +110,12 @@ func BuildLFJsonBody(pageNum int, pageSize int, source *domain.CrawlSourceDAO) s
 	return `{"page":` + strconv.Itoa(pageNum) + `, "size":` + strconv.Itoa(pageSize) + `,"tid":[` + source.MainCategoryKey + `], "sendLogYN":"N","brandGroup":["` + source.BrandIdentifier + `"], "pid":[` + source.Category.CatIdentifier + `]}`
 }
 
-func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain.CrawlSourceDAO, brand *domain.BrandDAO) {
+func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain.CrawlSourceDAO, brand *domain.BrandDAO) int {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.lfmall.co.kr"),
 	)
+
+	numProducts := 0
 
 	for _, product := range products {
 		description := map[string]string{}
@@ -165,6 +169,9 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
+		numProducts += 1
 		crawler.AddProduct(addRequest)
 	}
+
+	return numProducts
 }

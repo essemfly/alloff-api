@@ -17,6 +17,7 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 		colly.AllowedDomains("www.niceclaup.co.kr"),
 	)
 
+	totalProducts := 0
 	brand, err := ioc.Repo.Brands.GetByKeyname(source.Category.BrandKeyname)
 	if err != nil {
 		log.Println(err)
@@ -53,6 +54,7 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
+		totalProducts += 1
 		crawler.AddProduct(addRequest)
 	})
 
@@ -66,6 +68,7 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 	})
 	c.Visit(source.CrawlUrl)
 
+	crawler.WriteCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }

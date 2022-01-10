@@ -64,13 +64,16 @@ func AddMichaa() {
 		}
 
 		source := domain.CrawlSourceDAO{
-			BrandKeyname:    upsertedBrand.KeyName,
-			BrandIdentifier: brand.KeyName,
-			MainCategoryKey: val,
-			Category:        *updatedCat,
-			CrawlUrl:        crawlUrl + "cate_code=" + val + "&soldout_include=N&upper_cate_code=" + "1105",
-			CrawlModuleName: modulename,
-			IsSalesProducts: false,
+			BrandKeyname:      upsertedBrand.KeyName,
+			BrandIdentifier:   brand.KeyName,
+			MainCategoryKey:   val,
+			Category:          *updatedCat,
+			CrawlUrl:          crawlUrl + "cate_code=" + val + "&soldout_include=N&upper_cate_code=" + "1105",
+			CrawlModuleName:   modulename,
+			IsSalesProducts:   false,
+			IsForeignDelivery: false,
+			PriceMarginPolicy: "NORMAL",
+			DeliveryPrice:     0,
 		}
 
 		_, err = ioc.Repo.CrawlSources.Upsert(&source)

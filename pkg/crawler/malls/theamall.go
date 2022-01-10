@@ -26,6 +26,8 @@ type OptionDetail struct {
 
 func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
 	pageNum := 1
+	totalProducts := 0
+
 	crawlUrl := source.CrawlUrl + "&mode=ajaxItems"
 	stockUrl := "http://www.theamall.com/product/ajax"
 
@@ -161,6 +163,7 @@ func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceD
 				CurrencyType:  domain.CurrencyKRW,
 			}
 
+			totalProducts += 1
 			crawler.AddProduct(addRequest)
 		})
 
@@ -171,6 +174,8 @@ func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			break
 		}
 	}
+
+	crawler.WriteCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }

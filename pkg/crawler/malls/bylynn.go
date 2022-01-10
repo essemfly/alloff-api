@@ -23,6 +23,8 @@ func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		log.Println(err)
 	}
 
+	totalProducts := 0
+
 	c.OnHTML(".productlist5 ul li ", func(e *colly.HTMLElement) {
 		originalPriceStr := e.ChildText(".cont .price span:first-child")
 		originalPrice := utils.ParsePriceString(originalPriceStr)
@@ -68,6 +70,7 @@ func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
+		totalProducts += 1
 		crawler.AddProduct(addRequest)
 	})
 
@@ -90,6 +93,8 @@ func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 	})
 	c.Visit(source.CrawlUrl)
+
+	crawler.WriteCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true

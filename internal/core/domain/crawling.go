@@ -25,6 +25,8 @@ type CrawlSourceDAO struct {
 	// 해외 배송상품인지
 	IsForeignDelivery bool
 	//(TODO) 가격정책이 확정되어야함
+	PriceMarginPolicy string
+	DeliveryPrice     int
 }
 
 type CrawlRecordDAO struct {

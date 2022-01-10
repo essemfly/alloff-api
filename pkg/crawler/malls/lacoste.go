@@ -18,6 +18,7 @@ func CrawlLacoste(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		colly.AllowedDomains("www.lacoste.com"),
 	)
 
+	totalProducts := 0
 	brand, err := ioc.Repo.Brands.GetByKeyname(source.Category.BrandKeyname)
 	if err != nil {
 		log.Println(err)
@@ -50,6 +51,7 @@ func CrawlLacoste(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
+		totalProducts += 1
 		crawler.AddProduct(addRequest)
 	})
 
@@ -62,6 +64,7 @@ func CrawlLacoste(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 	})
 	c.Visit(source.CrawlUrl)
 
+	crawler.WriteCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }

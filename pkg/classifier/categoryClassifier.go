@@ -27,7 +27,7 @@ func categoryClassifier(product *domain.ProductDAO) (category1, category2 *domai
 	possibleCat2 := []string{}
 	classifier, err := ioc.Repo.ClassifyRules.GetByKeyname(product.ProductInfo.Brand.KeyName, product.ProductInfo.Category.Name)
 	if err != nil {
-		log.Println(err)
+		log.Println("AlloffCategory error", err)
 		return
 	}
 

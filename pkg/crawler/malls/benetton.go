@@ -38,6 +38,7 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 		log.Println(err)
 	}
 
+	totalProducts := 0
 	for {
 		dataStr := `{"shopcode":"B","gender":"F","code":"` + source.Category.CatIdentifier + `","page":"` + strconv.Itoa(pageNum) + `","limit":"80","isOutlet":"Y"}`
 		errorMessage := "Crawl Failed: Source " + source.Category.KeyName
@@ -81,6 +82,7 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 				CurrencyType:  domain.CurrencyKRW,
 			}
 
+			totalProducts += 1
 			crawler.AddProduct(addRequest)
 		}
 
@@ -91,6 +93,8 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			break
 		}
 	}
+
+	crawler.WriteCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true

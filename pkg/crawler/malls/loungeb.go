@@ -17,8 +17,8 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		colly.AllowedDomains("lounge-b.co.kr"),
 	)
 
+	totalProducts := 0
 	baseUrl := "https://lounge-b.co.kr/product/list.html"
-
 	brand, err := ioc.Repo.Brands.GetByKeyname(source.Category.BrandKeyname)
 	if err != nil {
 		log.Println(err)
@@ -66,26 +66,8 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
+		totalProducts += 1
 		crawler.AddProduct(addRequest)
-
-		// product := internal.ProductDAO{
-		// 	ProductId:       productId,
-		// 	Name:            title,
-		// 	Brand:           brand,
-		// 	Category:        &source.Category,
-		// 	OriginalPrice:   originalPrice,
-		// 	DiscountedPrice: discountedPrice,
-		// 	DiscountRate:    utils.CalculateDiscountRate(float32(originalPrice), float32(discountedPrice)),
-		// 	Soldout:         soldout,
-		// 	Images:          images,
-		// 	Created:         time.Now(),
-		// 	Updated:         time.Now(),
-		// 	IsNewlyCrawled:  true,
-		// 	ProductUrl:      mobileUrl,
-		// 	Removed:         false,
-		// 	SizeAvailable:   sizes,
-		// 	IsImageCached:   false,
-		// }
 	})
 
 	c.OnHTML(".xans-product-normalpaging a:nth-last-child(2)", func(e *colly.HTMLElement) {
@@ -95,6 +77,7 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 	c.Visit(source.CrawlUrl)
 
+	crawler.WriteCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }

@@ -17,6 +17,7 @@ func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		colly.AllowedDomains("www.idlookmall.com"),
 	)
 
+	totalProducts := 0
 	brand, err := ioc.Repo.Brands.GetByKeyname(source.Category.BrandKeyname)
 	if err != nil {
 		log.Println(err)
@@ -63,27 +64,8 @@ func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
+		totalProducts += 1
 		crawler.AddProduct(addRequest)
-		// product := internal.ProductDAO{
-		// 	ProductId:       productId,
-		// 	Name:            title,
-		// 	Brand:           brand,
-		// 	Category:        &source.Category,
-		// 	OriginalPrice:   originalPrice,
-		// 	DiscountedPrice: discountedPrice,
-		// 	DiscountRate:    utils.CalculateDiscountRate(float32(originalPrice), float32(discountedPrice)),
-		// 	Soldout:         soldout,
-		// 	Images:          images,
-		// 	Created:         time.Now(),
-		// 	Updated:         time.Now(),
-		// 	IsNewlyCrawled:  true,
-		// 	ProductUrl:      productUrl,
-		// 	Removed:         false,
-		// 	SizeAvailable:   sizes,
-		// 	IsImageCached:   false,
-		// 	Description:     description,
-		// }
-		// newProducts = append(newProducts, &product)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {
@@ -98,6 +80,8 @@ func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		}
 	})
 	c.Visit(source.CrawlUrl)
+
+	crawler.WriteCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true

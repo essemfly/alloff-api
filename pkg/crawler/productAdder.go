@@ -6,7 +6,6 @@ import (
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -26,17 +25,17 @@ func AddProduct(request ProductsAddRequest) {
 
 		_, err = ioc.Repo.ProductMetaInfos.Insert(pdInfo)
 		if err != nil {
-			log.Println(err)
+			log.Println("productinfo 1", err)
 		}
 	} else if err != nil {
 		// 에러가 발생한 경우
-		log.Println(err)
+		log.Println("productinfo 2", err)
 	} else {
 		// 기존에 상품이 있던 경우
 		pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), domain.CurrencyKRW)
 		_, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfo)
 		if err != nil {
-			log.Println(err)
+			log.Println("productinfo 3", err)
 		}
 	}
 
@@ -55,13 +54,13 @@ func AddProduct(request ProductsAddRequest) {
 			Updated:     time.Now(),
 		}
 	} else if err != nil {
-		log.Println(err)
+		log.Println("IsThere?", err)
 	} else {
 		pd.Updated = time.Now()
 	}
 
 	// TODO: Category classifier, Dynamic prices, Dynamic instruction, dynamic scores should be uploaded
-	alloffCat := classifier.GetAlloffCategory(pd)
+	// alloffCat := classifier.GetAlloffCategory(pd)
 	alloffScore := GetProductScore(pd)
 	alloffPrice := GetProductPrice(pd)
 	alloffInstruction := GetProductDescription(pd)
@@ -72,13 +71,16 @@ func AddProduct(request ProductsAddRequest) {
 	pd.UpdateInstruction(alloffInstruction)
 
 	if pd.ID == primitive.NilObjectID {
-		pd.UpdateAlloffCategory(alloffCat)
+		// pd.UpdateAlloffCategory(alloffCat)
 		_, err = ioc.Repo.Products.Insert(pd)
+		if err != nil {
+			log.Println("product 1", err)
+		}
+
 	} else {
 		_, err = ioc.Repo.Products.Upsert(pd)
-	}
-
-	if err != nil {
-		log.Println(err)
+		if err != nil {
+			log.Println("product 2", err)
+		}
 	}
 }

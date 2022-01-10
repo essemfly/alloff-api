@@ -20,6 +20,7 @@ func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSource
 	)
 
 	num := 0
+	totalProducts := 0
 	brand, err := ioc.Repo.Brands.GetByKeyname(source.Category.BrandKeyname)
 	if err != nil {
 		log.Println(err)
@@ -55,6 +56,7 @@ func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSource
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
+		totalProducts += 1
 		crawler.AddProduct(addRequest)
 	})
 
@@ -74,6 +76,7 @@ func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSource
 	})
 
 	c.Visit(source.CrawlUrl + "&page_size=80")
+	crawler.WriteCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true

@@ -227,13 +227,16 @@ func AddIdLook() {
 		}
 
 		source := domain.CrawlSourceDAO{
-			BrandKeyname:    brands[brandIdentifier].KeyName,
-			BrandIdentifier: brandIdentifier,
-			MainCategoryKey: updatedCat.CatIdentifier,
-			Category:        *updatedCat,
-			CrawlUrl:        "http://www.idlookmall.com/display/outlet_product_list.do?catLvl=1&cateId=" + updatedCat.CatIdentifier,
-			CrawlModuleName: modulename,
-			IsSalesProducts: true,
+			BrandKeyname:      brands[brandIdentifier].KeyName,
+			BrandIdentifier:   brandIdentifier,
+			MainCategoryKey:   updatedCat.CatIdentifier,
+			Category:          *updatedCat,
+			CrawlUrl:          "http://www.idlookmall.com/display/outlet_product_list.do?catLvl=1&cateId=" + updatedCat.CatIdentifier,
+			CrawlModuleName:   modulename,
+			IsSalesProducts:   true,
+			IsForeignDelivery: false,
+			PriceMarginPolicy: "NORMAL",
+			DeliveryPrice:     0,
 		}
 
 		_, err = ioc.Repo.CrawlSources.Upsert(&source)

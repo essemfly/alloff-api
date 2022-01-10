@@ -24,6 +24,7 @@ type IDFResponseParser struct {
 func CrawlIDFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
 	pageNum := 1
 	num := 0
+	totalProducts := 0
 
 	for {
 		baseQuery := "exec.php?exec_file=skin_module/skin_ajax.php&obj_id=prd_basic&_tmp_file_name=shop/big_section.php&single_module=prd_basic&striplayout=1&document_url=/shop/search_result.php&sch_sale=N"
@@ -90,12 +91,15 @@ func CrawlIDFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 						CurrencyType:  domain.CurrencyKRW,
 					}
 
+					totalProducts += 1
 					crawler.AddProduct(addRequest)
 				}
 			}
 		})
 		pageNum += 1
 	}
+
+	crawler.WriteCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true
@@ -105,10 +109,6 @@ func getIdfDetailInfo(producturl string) (imageUrls, colors, sizes []string, inv
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.idfmall.co.kr"),
 	)
-
-	headers := map[string]string{
-		"accept": "application/json",
-	}
 
 	description = map[string]string{}
 
@@ -143,7 +143,7 @@ func getIdfDetailInfo(producturl string) (imageUrls, colors, sizes []string, inv
 					colorItems[itemNo] = colorName
 
 					errorMessage := "Crawl Failed: Product Stock" + stockUrl + itemNo
-					resp, err := utils.RequestRetryer(stockUrl+itemNo, utils.REQUEST_GET, headers, "", errorMessage)
+					resp, err := utils.RequestRetryer(stockUrl+itemNo, utils.REQUEST_GET, utils.GetGeneralHeader(), "", errorMessage)
 					if err != nil {
 						return
 					}

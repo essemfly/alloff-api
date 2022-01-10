@@ -52,10 +52,8 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 	)
 
 	currentPage := 1
-	headers := map[string]string{
-		"accept": "application/json",
-	}
 
+	totalProducts := 0
 	brand, err := ioc.Repo.Brands.GetByKeyname(source.Category.BrandKeyname)
 	if err != nil {
 		log.Println(err)
@@ -83,7 +81,7 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 		description := map[string]string{}
 
 		errorMessage := "Crawl Failed: Product Detail" + source.Category.KeyName + " - " + productUrl
-		resp, err := utils.RequestRetryer(productUrl, utils.REQUEST_GET, headers, "", errorMessage)
+		resp, err := utils.RequestRetryer(productUrl, utils.REQUEST_GET, utils.GetGeneralHeader(), "", errorMessage)
 		if err != nil {
 			return
 		}
@@ -138,6 +136,7 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
+		totalProducts += 1
 		crawler.AddProduct(addRequest)
 	})
 
@@ -148,6 +147,7 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 
 	c.Visit(source.CrawlUrl)
 
+	crawler.WriteCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }

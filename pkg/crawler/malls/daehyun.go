@@ -25,6 +25,8 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 	pageNum := 1
 	num := 0
 
+	totalProducts := 0
+
 	for {
 		baseQuery := "exec.php?exec_file=skin_module/skin_ajax.php&obj_id=prd_basic&_tmp_file_name=shop%2Fbig_section.php&single_module=prd_basic&striplayout=1"
 		url := source.CrawlUrl + baseQuery + "&cno1=" + source.MainCategoryKey + "&module_page=" + strconv.Itoa(pageNum)
@@ -100,12 +102,14 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 					CurrencyType:  domain.CurrencyKRW,
 				}
 
+				totalProducts += 1
 				crawler.AddProduct(addRequest)
 			}
-
 		})
 		pageNum += 1
 	}
+
+	crawler.WriteCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true

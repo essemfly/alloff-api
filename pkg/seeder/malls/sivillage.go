@@ -553,13 +553,16 @@ func AddSiVillages() {
 			}
 
 			source := domain.CrawlSourceDAO{
-				BrandKeyname:    brand.KeyName,
-				BrandIdentifier: shopId,
-				MainCategoryKey: "",
-				Category:        *updatedCat,
-				CrawlUrl:        "https://www.sivillage.com/dispctg/initDispCtg.siv?brand_info=" + shopId + "&disp_ctg_no=" + catId + "&outlet_yn=Y&goods_divi=all_goods&disp_clss_cd=10",
-				CrawlModuleName: modulename,
-				IsSalesProducts: true,
+				BrandKeyname:      brand.KeyName,
+				BrandIdentifier:   shopId,
+				MainCategoryKey:   "",
+				Category:          *updatedCat,
+				CrawlUrl:          "https://www.sivillage.com/dispctg/initDispCtg.siv?brand_info=" + shopId + "&disp_ctg_no=" + catId + "&outlet_yn=Y&goods_divi=all_goods&disp_clss_cd=10",
+				CrawlModuleName:   modulename,
+				IsSalesProducts:   true,
+				IsForeignDelivery: false,
+				PriceMarginPolicy: "NORMAL",
+				DeliveryPrice:     0,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)

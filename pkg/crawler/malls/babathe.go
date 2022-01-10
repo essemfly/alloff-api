@@ -41,6 +41,7 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		log.Println(err)
 	}
 
+	totalProducts := 0
 	for {
 		numProducts := 0
 
@@ -74,6 +75,7 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 				CurrencyType:  domain.CurrencyKRW,
 			}
 
+			totalProducts += 1
 			crawler.AddProduct(addRequest)
 		})
 
@@ -84,6 +86,8 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			break
 		}
 	}
+
+	crawler.WriteCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true

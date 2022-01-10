@@ -292,13 +292,16 @@ func AddSSFMall() {
 				}
 
 				source := domain.CrawlSourceDAO{
-					BrandKeyname:    upsertedBrand.KeyName,
-					BrandIdentifier: shopId,
-					MainCategoryKey: updatedCat.CatIdentifier,
-					Category:        *updatedCat,
-					CrawlUrl:        buildCrawlUrl(shopId, updatedCat.CatIdentifier),
-					CrawlModuleName: modulename,
-					IsSalesProducts: true,
+					BrandKeyname:      upsertedBrand.KeyName,
+					BrandIdentifier:   shopId,
+					MainCategoryKey:   updatedCat.CatIdentifier,
+					Category:          *updatedCat,
+					CrawlUrl:          buildCrawlUrl(shopId, updatedCat.CatIdentifier),
+					CrawlModuleName:   modulename,
+					IsSalesProducts:   true,
+					IsForeignDelivery: false,
+					PriceMarginPolicy: "NORMAL",
+					DeliveryPrice:     0,
 				}
 
 				_, err = ioc.Repo.CrawlSources.Upsert(&source)

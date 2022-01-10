@@ -109,13 +109,16 @@ func AddKolonMall() {
 			}
 
 			source := domain.CrawlSourceDAO{
-				BrandKeyname:    upsertedBrand.KeyName,
-				BrandIdentifier: brandId,
-				MainCategoryKey: updatedCat.CatIdentifier,
-				Category:        *updatedCat,
-				CrawlUrl:        "https://www.kolonmall.com/Category/List/" + val + "?supplierBrands=" + brandId,
-				CrawlModuleName: modulename,
-				IsSalesProducts: true,
+				BrandKeyname:      upsertedBrand.KeyName,
+				BrandIdentifier:   brandId,
+				MainCategoryKey:   updatedCat.CatIdentifier,
+				Category:          *updatedCat,
+				CrawlUrl:          "https://www.kolonmall.com/Category/List/" + val + "?supplierBrands=" + brandId,
+				CrawlModuleName:   modulename,
+				IsSalesProducts:   true,
+				IsForeignDelivery: false,
+				PriceMarginPolicy: "NORMAL",
+				DeliveryPrice:     0,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)

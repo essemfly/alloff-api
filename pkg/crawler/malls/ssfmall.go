@@ -44,6 +44,7 @@ type SSFDspGodPrc struct {
 
 func CrawlSSFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
 	pageNum := 1
+	totalProducts := 0
 	url := source.CrawlUrl + "&currentPage=" + strconv.Itoa(pageNum)
 
 	errorMessage := "Crawl Failed: Source " + source.Category.KeyName
@@ -75,16 +76,17 @@ func CrawlSSFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 		crawlResponse = &SSFResponseParser{}
 		json.NewDecoder(resp.Body).Decode(crawlResponse)
-		MapSSFCrawlResultsToModels(crawlResponse.Products, source, brand)
+		totalProducts += MapSSFCrawlResultsToModels(crawlResponse.Products, source, brand)
 	}
+
+	crawler.WriteCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true
 }
 
-func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.CrawlSourceDAO, brand *domain.BrandDAO) []*domain.ProductDAO {
-	var newProducts []*domain.ProductDAO
-
+func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.CrawlSourceDAO, brand *domain.BrandDAO) int {
+	numProducts := 0
 	for _, product := range products {
 		// isSoldout := false
 		// if product.God.Soldout == "SLDOUT" {
@@ -110,6 +112,7 @@ func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.Cra
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
+		numProducts += 1
 		crawler.AddProduct(addRequest)
 
 		// newProduct := domain.ProductDAO{
@@ -133,7 +136,7 @@ func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.Cra
 		// }
 
 	}
-	return newProducts
+	return numProducts
 }
 
 func getSSFDetailInfo(productUrl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {

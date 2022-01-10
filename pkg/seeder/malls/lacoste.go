@@ -64,13 +64,16 @@ func AddLacoste() {
 		}
 
 		source := domain.CrawlSourceDAO{
-			BrandKeyname:    upsertedBrand.KeyName,
-			BrandIdentifier: brand.KeyName,
-			MainCategoryKey: val,
-			Category:        *updatedCat,
-			CrawlUrl:        crawlUrl + val,
-			CrawlModuleName: modulename,
-			IsSalesProducts: true,
+			BrandKeyname:      upsertedBrand.KeyName,
+			BrandIdentifier:   brand.KeyName,
+			MainCategoryKey:   val,
+			Category:          *updatedCat,
+			CrawlUrl:          crawlUrl + val,
+			CrawlModuleName:   modulename,
+			IsSalesProducts:   true,
+			IsForeignDelivery: false,
+			PriceMarginPolicy: "NORMAL",
+			DeliveryPrice:     0,
 		}
 
 		_, err = ioc.Repo.CrawlSources.Upsert(&source)

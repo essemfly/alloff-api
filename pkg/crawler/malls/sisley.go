@@ -31,6 +31,7 @@ type SisleyProductWrapper struct {
 
 func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
 	pageNum := 0
+	totalProducts := 0
 	crawlurl := source.CrawlUrl
 
 	brand, err := ioc.Repo.Brands.GetByKeyname(source.Category.BrandKeyname)
@@ -81,6 +82,7 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 				CurrencyType:  domain.CurrencyKRW,
 			}
 
+			totalProducts += 1
 			crawler.AddProduct(addRequest)
 		}
 
@@ -92,6 +94,7 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		}
 	}
 
+	crawler.WriteCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }
