@@ -56,12 +56,14 @@ func (repo *brandsRepo) List(offset, limit int, filter, sortingOptions interface
 	defer cancel()
 
 	options := options.Find()
-	options.SetSort(sortingOptions)
+	// (TODO) 현재 Sorting options는, filetr는 무시되고 있음
+	options.SetSort(bson.D{{Key: "korname", Value: 1}})
 	options.SetLimit(int64(limit))
 	options.SetSkip(int64(offset))
 
-	totalCount, _ := repo.col.CountDocuments(ctx, filter)
-	cursor, err := repo.col.Find(ctx, filter, options)
+	newFilter := bson.M{}
+	totalCount, _ := repo.col.CountDocuments(ctx, newFilter)
+	cursor, err := repo.col.Find(ctx, newFilter, options)
 	if err != nil {
 		return nil, 0, err
 	}

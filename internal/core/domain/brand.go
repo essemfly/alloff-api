@@ -39,6 +39,32 @@ type LikeBrandDAO struct {
 }
 
 func (brDao *BrandDAO) ToDTO(includeCategory bool) *model.Brand {
-	var brand *model.Brand
-	return brand
+	var cats []*model.Category
+	for _, catDao := range brDao.Category {
+		cats = append(cats, catDao.ToDTO())
+	}
+
+	sizes := []*model.SizeGuide{}
+	for _, guide := range brDao.SizeGuide {
+		sizes = append(sizes, &model.SizeGuide{
+			Label:  guide.Label,
+			ImgURL: guide.ImgUrl,
+		})
+	}
+
+	return &model.Brand{
+		ID:              brDao.ID.Hex(),
+		EngName:         brDao.EngName,
+		KorName:         brDao.KorName,
+		KeyName:         brDao.KeyName,
+		LogoImgURL:      brDao.LogoImgUrl,
+		OnPopular:       brDao.Onpopular,
+		Description:     brDao.Description,
+		MaxDiscountRate: brDao.MaxDiscountRate,
+		Categories:      cats,
+		IsOpen:          brDao.IsOpen,
+		InMaintenance:   brDao.InMaintenance,
+		NumNewProducts:  brDao.NumNewProducts,
+		SizeGuide:       sizes,
+	}
 }
