@@ -32,6 +32,9 @@ func main() {
 	pgconn := postgres.NewPostgresDB(conf)
 	pgconn.RegisterRepos()
 
+	// (TODO) Be Refactored
+	config.InitIamPort(conf)
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = strconv.Itoa(conf.PORT)

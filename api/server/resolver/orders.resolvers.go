@@ -265,12 +265,7 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 		return nil, err
 	}
 
-	paymentDao, err := ioc.Repo.Payments.GetByImpUID(input.ImpUID)
-	if err != nil {
-		return nil, err
-	}
-
-	err = ioc.Service.OrderWithPaymentService.VerifyPayment(orderDao, paymentDao)
+	err = ioc.Service.OrderWithPaymentService.VerifyPayment(orderDao, input.ImpUID)
 	if err != nil {
 		return nil, err
 	}

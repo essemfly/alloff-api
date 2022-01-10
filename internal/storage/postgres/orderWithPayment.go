@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/go-pg/pg/v10"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/core/service"
@@ -35,7 +36,7 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 		1. 주문 취소가 가능한 Status면 취소 잘 되게끔 만들어준다. + 환불까지
 		2. 주문 취소가 가능한 Status가 아니면, Cancel Requested로 바꿔준다.
 	*/
-	// (다시) OrderItem 별로 Check해야 될 것 같은 느낌이 드네요?
+	// (TODO) OrderItem 별로 Check해야 될 것 같은 느낌이 드네요?
 	if orderDao.CanCancelPayment() {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
@@ -111,7 +112,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 
 		repo.db.Model(orderDao).Update()
 		paymentDao.Updated = time.Now()
-		paymentDao.PaymentStatus = domain.PAYMENT_CONFIRMED
+		paymentDao.PaymentStatus = domain.PAYMENT_CREATED
 		repo.db.Model(paymentDao).Update()
 
 		return nil
@@ -122,20 +123,87 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 	return nil
 }
 
-func (repo *orderPaymentService) CancelPayment(*domain.OrderDAO, *domain.PaymentDAO) error {
+func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymentDao *domain.PaymentDAO) error {
 	/*
 		주문창까지 갔다가 취소 되는 함수
 	*/
-	panic("work in progress")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
+		orderDao.UpdatedAt = time.Now()
+		orderDao.OrderStatus = domain.ORDER_RECREATED
+
+		for _, item := range orderDao.OrderItems {
+			item.UpdatedAt = time.Now()
+			item.OrderStatus = domain.ORDER_RECREATED
+			pd, err := ioc.Repo.Products.Get(item.ProductID)
+			if err != nil {
+				return err
+			}
+
+			err = pd.Revert(item.Size, item.Quantity)
+			if err != nil {
+				return err
+			}
+
+			repo.db.Model(pd).Update()
+		}
+
+		repo.db.Model(orderDao).Update()
+		paymentDao.Updated = time.Now()
+		paymentDao.PaymentStatus = domain.PAYMENT_CANCELED
+		repo.db.Model(paymentDao).Update()
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-func (repo *orderPaymentService) VerifyPayment(*domain.OrderDAO, *domain.PaymentDAO) error {
+func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID string) error {
 	/*
 		1. Validating: 가격이 맞는지 확인 및 재고 확인
-		2. Start Payment: 재고 수량 조절
-		3. Order와 Payment의 Status 변경, 주문 완료
+		2. Order와 Payment의 Status 변경, 주문 완료
+		3. 알림톡 전송
 	*/
-	panic("work in progress")
+
+	payment, err := config.PaymentService.GetPaymentImpUID(impUID)
+	if err != nil {
+		return err
+	}
+
+	if payment.Amount != int32(orderDao.TotalPrice) {
+		return errors.New("payment amount not equal")
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
+		orderDao.OrderStatus = domain.ORDER_PAYMENT_FINISHED
+		orderDao.UpdatedAt = time.Now()
+		orderDao.OrderedAt = time.Now()
+		repo.db.Model(orderDao).Update()
+
+		paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(orderDao.AlloffOrderID, int(payment.Amount))
+		if err != nil {
+			return err
+		}
+		paymentDao.PaymentStatus = domain.PAYMENT_CONFIRMED
+		paymentDao.Updated = time.Now()
+		repo.db.Model(paymentDao).Update()
+
+		// (TODO) Alimtalk Notification
+		// (TODO) Slack Payment Success Notification
+
+		return nil
+	}); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func PostgresOrderPaymentService(conn *PostgresDB) service.OrderWithPaymentService {

@@ -186,9 +186,27 @@ func (pd *ProductDAO) Release(size string, quantity int) error {
 				return errors.New("insufficient product quantity")
 			}
 			option.Quantity -= quantity
+
+			if option.Quantity == 0 {
+				pd.Soldout = true
+			}
+			return nil
 		}
 	}
-	return nil
+	return errors.New("no matched product size option")
+}
+
+func (pd *ProductDAO) Revert(size string, quantity int) error {
+	for _, option := range pd.Inventory {
+		if option.Size == size {
+			if option.Quantity == 0 {
+				pd.Soldout = false
+			}
+			option.Quantity += quantity
+			return nil
+		}
+	}
+	return errors.New("no matched product size option")
 }
 
 func (pdDao *ProductDAO) ToDTO() *model.Product {
