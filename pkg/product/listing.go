@@ -4,16 +4,20 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // (Future) Mongodb에 종속적인 함수: bson이 사용되었다.
 func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
 	filter := bson.M{"removed": false}
 
+	brandObjID, _ := primitive.ObjectIDFromHex(brandID)
+	categoryObjID, _ := primitive.ObjectIDFromHex(categoryID)
+
 	if brandID != "" {
-		filter["brand._id"] = brandID
+		filter["productinfo.brand._id"] = brandObjID
 		if categoryID != "" {
-			filter["category._id"] = categoryID
+			filter["productinfo.category._id"] = categoryObjID
 		}
 	}
 
