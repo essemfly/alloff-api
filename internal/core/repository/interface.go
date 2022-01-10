@@ -1,6 +1,10 @@
 package repository
 
-import "github.com/lessbutter/alloff-api/internal/core/domain"
+import (
+	"time"
+
+	"github.com/lessbutter/alloff-api/internal/core/domain"
+)
 
 type BrandsRepository interface {
 	Get(ID string) (*domain.BrandDAO, error)
@@ -16,6 +20,8 @@ type ProductsRepository interface {
 	ListDistinctBrands(alloffCategoryID string) ([]*domain.BrandDAO, error)
 	Insert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	Upsert(*domain.ProductDAO) (*domain.ProductDAO, error)
+	CountNewProducts([]string) int
+	MakeOutdateProducts([]string, time.Time) int
 }
 
 type ProductMetaInfoRepository interface {

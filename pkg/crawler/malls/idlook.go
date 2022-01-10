@@ -81,7 +81,7 @@ func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 	})
 	c.Visit(source.CrawlUrl)
 
-	crawler.WriteCrawlResults(source, totalProducts)
+	crawler.PrintCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true

@@ -68,7 +68,7 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 	})
 	c.Visit(source.CrawlUrl)
 
-	crawler.WriteCrawlResults(source, totalProducts)
+	crawler.PrintCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }

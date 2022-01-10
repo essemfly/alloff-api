@@ -94,7 +94,7 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		}
 	}
 
-	crawler.WriteCrawlResults(source, totalProducts)
+	crawler.PrintCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }

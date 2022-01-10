@@ -160,6 +160,39 @@ func (repo *productRepo) ListDistinctBrands(alloffCategoryID string) ([]*domain.
 	return brands, nil
 }
 
+func (repo *productRepo) CountNewProducts(brandModules []string) int {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"score.isnewlycrawled": true, "removed": false, "productinfo.source.crawlmodulename": bson.M{"$in": brandModules}}
+	newProducts, err := repo.col.CountDocuments(ctx, filter)
+	if err != nil {
+		log.Println("Find num of new crawled products error", err)
+	}
+
+	return int(newProducts)
+}
+
+func (repo *productRepo) MakeOutdateProducts(brandModules []string, lastUpdatedDate time.Time) int {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	outProducts, err := repo.col.UpdateMany(
+		ctx,
+		bson.M{
+			"removed":                            false,
+			"productinfo.source.crawlmodulename": bson.M{"$in": brandModules},
+			"updated": bson.M{
+				"$lte": primitive.NewDateTimeFromTime(lastUpdatedDate),
+			},
+		}, bson.M{"$set": bson.M{"removed": true}})
+	if err != nil {
+		log.Println("Find num of outdated products error", err)
+	}
+
+	return int(outProducts.ModifiedCount)
+}
+
 func MongoProductsRepo(conn *MongoDB) repository.ProductsRepository {
 	return &productRepo{
 		col: conn.productCol,

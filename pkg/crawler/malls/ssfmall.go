@@ -79,7 +79,7 @@ func CrawlSSFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		totalProducts += MapSSFCrawlResultsToModels(crawlResponse.Products, source, brand)
 	}
 
-	crawler.WriteCrawlResults(source, totalProducts)
+	crawler.PrintCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true

@@ -9,7 +9,9 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/lessbutter/alloff-api/internal/storage/postgres"
+	"github.com/lessbutter/alloff-api/pkg/brand"
 	"github.com/lessbutter/alloff-api/pkg/crawler/malls"
+	"github.com/lessbutter/alloff-api/pkg/homeitem"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -24,13 +26,6 @@ func main() {
 
 	pgconn := postgres.NewPostgresDB(conf)
 	pgconn.RegisterRepos()
-
-	workers := make(chan bool, numWorkers)
-	done := make(chan bool, numWorkers)
-
-	for c := 0; c < numWorkers; c++ {
-		done <- true
-	}
 
 	crawlModules := []string{
 		"lottefashion",
@@ -48,6 +43,24 @@ func main() {
 		"theamall",
 		"loungeb",
 		"bylynn",
+	}
+
+	StartCrawling(crawlModules)
+
+	brand.UpdateBrandDiscountRate()
+	homeitem.UpdateHomeItems()
+	// (TODO) Notification 넣어주는 것
+	// InsertDiffNotification()
+
+}
+
+func StartCrawling(crawlModules []string) {
+
+	workers := make(chan bool, numWorkers)
+	done := make(chan bool, numWorkers)
+
+	for c := 0; c < numWorkers; c++ {
+		done <- true
 	}
 
 	msg := "======== \n " + "Crawling Started: " + time.Now().String() + " for " + strings.Join(crawlModules[:], ", ")

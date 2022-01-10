@@ -109,7 +109,7 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		pageNum += 1
 	}
 
-	crawler.WriteCrawlResults(source, totalProducts)
+	crawler.PrintCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true

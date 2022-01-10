@@ -5,6 +5,8 @@ import (
 
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
+	"github.com/lessbutter/alloff-api/pkg/brand"
+	"github.com/lessbutter/alloff-api/pkg/homeitem"
 	"github.com/lessbutter/alloff-api/pkg/seeder/malls"
 )
 
@@ -34,4 +36,8 @@ func main() {
 	malls.AddBylynn()
 	malls.AddTheAMall()
 	malls.AddOthers()
+
+	brand.UpdateBrandCategory()
+	brand.UpdateBrandDiscountRate()
+	homeitem.UpdateHomeItems()
 }

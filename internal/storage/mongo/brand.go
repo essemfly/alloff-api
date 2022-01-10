@@ -61,7 +61,7 @@ func (repo *brandsRepo) List(offset, limit int, filter, sortingOptions interface
 	options.SetLimit(int64(limit))
 	options.SetSkip(int64(offset))
 
-	newFilter := bson.M{}
+	newFilter := bson.M{"ishide": false}
 	totalCount, _ := repo.col.CountDocuments(ctx, newFilter)
 	cursor, err := repo.col.Find(ctx, newFilter, options)
 	if err != nil {

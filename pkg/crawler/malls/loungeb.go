@@ -77,7 +77,7 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 	c.Visit(source.CrawlUrl)
 
-	crawler.WriteCrawlResults(source, totalProducts)
+	crawler.PrintCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }

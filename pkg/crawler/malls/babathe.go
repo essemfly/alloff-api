@@ -87,7 +87,7 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		}
 	}
 
-	crawler.WriteCrawlResults(source, totalProducts)
+	crawler.PrintCrawlResults(source, totalProducts)
 
 	<-worker
 	done <- true

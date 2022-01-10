@@ -82,11 +82,9 @@ type InventoryDAO struct {
 type ProductScoreInfoDAO struct {
 	// 신상품 위로 올려줄때 쓰는 필드
 	IsNewlyCrawled bool
-	// 상품의 가격/재고가 업데이트 될때 쓰는 필드
-	IsUpdated   bool
-	ManualScore int
-	AutoScore   int
-	TotalScore  int
+	ManualScore    int
+	AutoScore      int
+	TotalScore     int
 }
 
 type ProductAlloffCategoryDAO struct {
@@ -122,6 +120,7 @@ type ProductDAO struct {
 	Score            *ProductScoreInfoDAO
 	SalesInstruction *AlloffInstructionDAO
 	PriceHistory     []PriceHistoryDAO
+	IsUpdated        bool
 	Created          time.Time
 	Updated          time.Time
 }
@@ -141,7 +140,11 @@ func (pd *ProductDAO) UpdatePrice(origPrice, alloffPrice float32) {
 		newHistory = append(pd.PriceHistory, newHistory...)
 	}
 
-	pd.PriceHistory = append(pd.PriceHistory, newHistory...)
+	pd.PriceHistory = newHistory
+
+	if alloffPrice < origPrice {
+		pd.IsUpdated = true
+	}
 }
 
 func (pd *ProductDAO) UpdateScore(newScore *ProductScoreInfoDAO) {
@@ -168,15 +171,6 @@ func (pd *ProductDAO) UpdateAlloffCategory(cat *ProductAlloffCategoryDAO) {
 
 func (pd *ProductDAO) UpdateInstruction(instruction *AlloffInstructionDAO) {
 	pd.SalesInstruction = instruction
-}
-
-func (pd *ProductDAO) GetStocks(size string) (int, error) {
-	for _, option := range pd.Inventory {
-		if option.Size == size {
-			return option.Quantity, nil
-		}
-	}
-	return -1, errors.New("no option for requested size")
 }
 
 func (pd *ProductDAO) Release(size string, quantity int) error {
@@ -239,7 +233,7 @@ func (pdDao *ProductDAO) ToDTO() *model.Product {
 		DiscountRate:        &pdDao.DiscountRate,
 		ProductURL:          pdDao.ProductInfo.ProductUrl,
 		Inventory:           inventories,
-		IsUpdated:           pdDao.Score.IsUpdated,
+		IsUpdated:           pdDao.IsUpdated,
 		IsNewProduct:        pdDao.Score.IsNewlyCrawled,
 		Removed:             pdDao.Removed,
 		Description:         pdDao.SalesInstruction.Description,
@@ -272,7 +266,7 @@ type LikeProductDAO struct {
 
 type ProductDiffDAO struct {
 	ID         primitive.ObjectID `bson:"_id,omitempty"`
-	OldProduct *ProductDAO        `json:"oldproduct"`
+	OldPrice   int                `json:"oldprice"`
 	NewProduct *ProductDAO        `json:"newproduct"`
 	Type       string             `json:"type"`
 	IsPushed   bool

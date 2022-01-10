@@ -101,7 +101,7 @@ func CrawlLotteFashion(worker chan bool, done chan bool, source *domain.CrawlSou
 		totalProducts += MapLotteCrawlResultsToModels(results.Results.Products, source, brand)
 	}
 
-	crawler.WriteCrawlResults(source, totalProducts)
+	crawler.PrintCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
 }

@@ -67,8 +67,20 @@ func AddProduct(request ProductsAddRequest) {
 
 	pd.UpdateInventory(request.Inventories)
 	pd.UpdateScore(alloffScore)
-	pd.UpdatePrice(pdInfo.Price.OriginalPrice, alloffPrice)
 	pd.UpdateInstruction(alloffInstruction)
+	if pd.DiscountedPrice > int(alloffPrice) {
+		oldPrice := pd.DiscountedPrice
+		pd.UpdatePrice(float32(pd.DiscountedPrice), alloffPrice)
+		err := ioc.Repo.ProductDiffs.Insert(&domain.ProductDiffDAO{
+			OldPrice:   oldPrice,
+			NewProduct: pd,
+			Type:       "price",
+			IsPushed:   false,
+		})
+		if err != nil {
+			log.Println("error occured in product dif update")
+		}
+	}
 
 	if pd.ID == primitive.NilObjectID {
 		// pd.UpdateAlloffCategory(alloffCat)

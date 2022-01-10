@@ -8,22 +8,22 @@ import (
 )
 
 type BrandDAO struct {
-	ID              primitive.ObjectID `bson:"_id,omitempty"`
-	KorName         string
-	EngName         string
-	KeyName         string
-	Description     string
-	LogoImgUrl      string
-	Category        []*CategoryDAO
-	SizeGuide       []SizeGuideDAO
-	Created         time.Time
-	Modulename      string
-	Onpopular       bool
-	MaxDiscountRate int
-	IsOpen          bool
-	IsHide          bool
-	InMaintenance   bool
-	NumNewProducts  int
+	ID                    primitive.ObjectID `bson:"_id,omitempty"`
+	KorName               string
+	EngName               string
+	KeyName               string
+	Description           string
+	LogoImgUrl            string
+	Category              []*CategoryDAO
+	SizeGuide             []SizeGuideDAO
+	Created               time.Time
+	Modulename            string
+	Onpopular             bool
+	MaxDiscountRate       int
+	IsOpen                bool
+	IsHide                bool
+	InMaintenance         bool
+	NumNewProductsIn3days int
 }
 
 type SizeGuideDAO struct {
@@ -64,7 +64,7 @@ func (brDao *BrandDAO) ToDTO(includeCategory bool) *model.Brand {
 		Categories:      cats,
 		IsOpen:          brDao.IsOpen,
 		InMaintenance:   brDao.InMaintenance,
-		NumNewProducts:  brDao.NumNewProducts,
+		NumNewProducts:  brDao.NumNewProductsIn3days,
 		SizeGuide:       sizes,
 	}
 }
