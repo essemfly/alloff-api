@@ -193,7 +193,10 @@ type OrderInput struct {
 type OrderItem struct {
 	ProductID              string          `json:"productId"`
 	ProductName            string          `json:"productName"`
+	ProductImg             string          `json:"productImg"`
 	BrandKeyname           string          `json:"brandKeyname"`
+	BrandKorname           string          `json:"brandKorname"`
+	Removed                bool            `json:"removed"`
 	SalesPrice             int             `json:"salesPrice"`
 	Selectsize             string          `json:"selectsize"`
 	Quantity               int             `json:"quantity"`

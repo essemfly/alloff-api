@@ -173,8 +173,11 @@ type OrderItemDAO struct {
 	OrderID                int
 	OrderItemCode          string
 	ProductID              string
+	ProductImg             string
 	ProductName            string
 	BrandKeyname           string
+	BrandKorname           string
+	Removed                bool
 	SalesPrice             int
 	SizeDescription        []string
 	CancelDescription      []string
@@ -199,7 +202,10 @@ func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {
 	return &model.OrderItem{
 		ProductID:              orderItemDao.ProductID,
 		ProductName:            orderItemDao.ProductName,
+		ProductImg:             orderItemDao.ProductImg,
 		BrandKeyname:           orderItemDao.BrandKeyname,
+		BrandKorname:           orderItemDao.BrandKorname,
+		Removed:                orderItemDao.Removed,
 		SalesPrice:             orderItemDao.SalesPrice,
 		Selectsize:             orderItemDao.Size,
 		Quantity:               orderItemDao.Quantity,

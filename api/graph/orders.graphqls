@@ -34,7 +34,10 @@ enum PaymentStatusEnum {
 type OrderItem {
   productId: String!
   productName: String!
+  productImg: String!
   brandKeyname: String!
+  brandKorname: String!
+  removed: Boolean!
   salesPrice: Int!
   selectsize: String!
   quantity: Int!

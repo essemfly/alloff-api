@@ -187,6 +187,7 @@ type ComplexityRoot struct {
 
 	OrderItem struct {
 		BrandKeyname           func(childComplexity int) int
+		BrandKorname           func(childComplexity int) int
 		CancelDescription      func(childComplexity int) int
 		CancelFinishedAt       func(childComplexity int) int
 		CancelRequestedAt      func(childComplexity int) int
@@ -201,8 +202,10 @@ type ComplexityRoot struct {
 		OrderType              func(childComplexity int) int
 		OrderedAt              func(childComplexity int) int
 		ProductID              func(childComplexity int) int
+		ProductImg             func(childComplexity int) int
 		ProductName            func(childComplexity int) int
 		Quantity               func(childComplexity int) int
+		Removed                func(childComplexity int) int
 		SalesPrice             func(childComplexity int) int
 		Selectsize             func(childComplexity int) int
 		SizeDescription        func(childComplexity int) int
@@ -1131,6 +1134,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrderItem.BrandKeyname(childComplexity), true
 
+	case "OrderItem.brandKorname":
+		if e.complexity.OrderItem.BrandKorname == nil {
+			break
+		}
+
+		return e.complexity.OrderItem.BrandKorname(childComplexity), true
+
 	case "OrderItem.cancelDescription":
 		if e.complexity.OrderItem.CancelDescription == nil {
 			break
@@ -1229,6 +1239,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrderItem.ProductID(childComplexity), true
 
+	case "OrderItem.productImg":
+		if e.complexity.OrderItem.ProductImg == nil {
+			break
+		}
+
+		return e.complexity.OrderItem.ProductImg(childComplexity), true
+
 	case "OrderItem.productName":
 		if e.complexity.OrderItem.ProductName == nil {
 			break
@@ -1242,6 +1259,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrderItem.Quantity(childComplexity), true
+
+	case "OrderItem.removed":
+		if e.complexity.OrderItem.Removed == nil {
+			break
+		}
+
+		return e.complexity.OrderItem.Removed(childComplexity), true
 
 	case "OrderItem.salesPrice":
 		if e.complexity.OrderItem.SalesPrice == nil {
@@ -2223,7 +2247,10 @@ enum PaymentStatusEnum {
 type OrderItem {
   productId: String!
   productName: String!
+  productImg: String!
   brandKeyname: String!
+  brandKorname: String!
+  removed: Boolean!
   salesPrice: Int!
   selectsize: String!
   quantity: Int!
@@ -6415,6 +6442,41 @@ func (ec *executionContext) _OrderItem_productName(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _OrderItem_productImg(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProductImg, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _OrderItem_brandKeyname(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6448,6 +6510,76 @@ func (ec *executionContext) _OrderItem_brandKeyname(ctx context.Context, field g
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderItem_brandKorname(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BrandKorname, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderItem_removed(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Removed, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderItem_salesPrice(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
@@ -13147,8 +13279,23 @@ func (ec *executionContext) _OrderItem(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "productImg":
+			out.Values[i] = ec._OrderItem_productImg(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "brandKeyname":
 			out.Values[i] = ec._OrderItem_brandKeyname(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "brandKorname":
+			out.Values[i] = ec._OrderItem_brandKorname(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "removed":
+			out.Values[i] = ec._OrderItem_removed(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
