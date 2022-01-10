@@ -179,6 +179,18 @@ func (pd *ProductDAO) GetStocks(size string) (int, error) {
 	return -1, errors.New("no option for requested size")
 }
 
+func (pd *ProductDAO) Release(size string, quantity int) error {
+	for _, option := range pd.Inventory {
+		if option.Size == size {
+			if option.Quantity < quantity {
+				return errors.New("insufficient product quantity")
+			}
+			option.Quantity -= quantity
+		}
+	}
+	return nil
+}
+
 func (pdDao *ProductDAO) ToDTO() *model.Product {
 	inventories := []*model.Inventory{}
 

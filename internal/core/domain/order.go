@@ -39,8 +39,7 @@ type OrderDAO struct {
 	AlloffOrderID      string
 	User               *UserDAO
 	OrderStatus        OrderStatusEnum
-	OrderItems         []*OrderItemDAO
-	CancelOrderItems   []*OrderItemDAO
+	OrderItems         []*OrderItemDAO `pg:"rel:has-many"`
 	TotalPrice         int
 	ProductPrice       int
 	DeliveryPrice      int
@@ -165,14 +164,13 @@ func (orderDao *OrderDAO) ValidateOrder() error {
 		// (TODO) Product가 Soldout이거나, removed인 경우는 어떻게 처리할 것인가?
 		prices += orderItem.SalesPrice * orderItem.Quantity
 	}
-
 	return nil
 }
 
 type OrderItemDAO struct {
 	tableName              struct{} `pg:"orderItems"`
 	ID                     int
-	OrderID                *OrderDAO `pg:"rel:has-one"`
+	OrderID                int
 	OrderItemCode          string
 	ProductID              string
 	ProductName            string

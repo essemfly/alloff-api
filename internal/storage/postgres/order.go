@@ -1,6 +1,9 @@
 package postgres
 
 import (
+	"context"
+	"time"
+
 	"github.com/go-pg/pg/v10"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/core/repository"
@@ -38,18 +41,51 @@ func (repo *orderRepo) List(userID string) ([]*domain.OrderDAO, error) {
 }
 
 func (repo *orderRepo) Insert(orderDao *domain.OrderDAO) (*domain.OrderDAO, error) {
-	_, err := repo.db.Model(orderDao).Insert()
-	if err != nil {
-		return nil, err
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
+		_, err := repo.db.Model(orderDao).Insert()
+		if err != nil {
+			return err
+		}
+
+		for _, item := range orderDao.OrderItems {
+			item.OrderID = orderDao.ID
+			_, err := repo.db.Model(item).Insert()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}); err != nil {
+		return orderDao, err
 	}
 
 	return orderDao, nil
 }
 
 func (repo *orderRepo) Update(orderDao *domain.OrderDAO) (*domain.OrderDAO, error) {
-	_, err := repo.db.Model(orderDao).WherePK().Update()
-	if err != nil {
-		return nil, err
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
+		_, err := repo.db.Model(orderDao).WherePK().Update()
+		if err != nil {
+			return err
+		}
+
+		for _, item := range orderDao.OrderItems {
+			_, err := repo.db.Model(item).Update()
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	}); err != nil {
+		return orderDao, err
 	}
 
 	return orderDao, nil

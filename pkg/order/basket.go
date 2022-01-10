@@ -2,8 +2,10 @@ package order
 
 import (
 	"errors"
+	"time"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/rs/xid"
 )
 
 type Basket struct {
@@ -50,8 +52,52 @@ func (basket *Basket) IsValid() []error {
 }
 
 func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error) {
+	orderItems := []*domain.OrderItemDAO{}
+	// newOrderID := primitive.NewObjectID().Hex()
+	orderAlloffID := xid.New().String()
+
+	totalProductPrice := 0
+	for _, item := range basket.Items {
+		orderItemType := domain.NORMAL_ORDER
+		if item.ProductGroup != nil {
+			// (TODO) 기획전이 생기면 추가되어야함.
+			orderItemType = domain.TIMEDEAL_ORDER
+		}
+
+		orderItems = append(orderItems, &domain.OrderItemDAO{
+			OrderItemCode:          orderAlloffID,
+			ProductID:              item.Product.ID.Hex(),
+			ProductName:            item.Product.AlloffName,
+			BrandKeyname:           item.Product.ProductInfo.Brand.KeyName,
+			SalesPrice:             item.Product.DiscountedPrice,
+			SizeDescription:        item.Product.SalesInstruction.SizeDescription,
+			CancelDescription:      item.Product.SalesInstruction.CancelDescription,
+			DeliveryDescription:    item.Product.SalesInstruction.DeliveryDescription,
+			OrderType:              orderItemType,
+			OrderStatus:            domain.ORDER_CREATED,
+			DeliveryTrackingNumber: "",
+			DeliveryTrackingUrl:    "",
+			Size:                   item.Size,
+			Quantity:               item.Quantity,
+			CreatedAt:              time.Now(),
+			UpdatedAt:              time.Now(),
+		})
+
+		totalProductPrice += item.Product.DiscountedPrice * item.Quantity
+	}
+
+	// (TODO) Delivery Price는 생성시점에 만들어질 예정이다?
 	newOrderDao := &domain.OrderDAO{
-		User: user,
+		AlloffOrderID: orderAlloffID,
+		User:          user,
+		OrderStatus:   domain.ORDER_CREATED,
+		OrderItems:    orderItems,
+		TotalPrice:    totalProductPrice,
+		ProductPrice:  totalProductPrice,
+		DeliveryPrice: 0,
+		UserMemo:      "",
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
 	}
 
 	return newOrderDao, nil

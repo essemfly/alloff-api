@@ -77,25 +77,43 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 		return errors.New("already ongoing order exists")
 	}
 
-	// 이제 Stock 옵션 줄이면 된다.
+	// 이제 Stock 옵션 줄이면 된다. + Order의 상태 및 timestamp찍으면 된다.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 	if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
+		orderDao.UpdatedAt = time.Now()
+		orderDao.OrderStatus = domain.ORDER_PAYMENT_PENDING
+		totalProductPrices := 0
+
 		for _, item := range orderDao.OrderItems {
+			item.UpdatedAt = time.Now()
+			item.OrderStatus = domain.ORDER_PAYMENT_PENDING
 			pd, err := ioc.Repo.Products.Get(item.ProductID)
 			if err != nil {
 				return err
 			}
-			stock, err := pd.GetStocks(item.Size)
+
+			if pd.Removed || pd.Soldout {
+				return errors.New("product sold out or removed")
+			}
+
+			err = pd.Release(item.Size, item.Quantity)
 			if err != nil {
 				return err
 			}
-			if stock < item.Quantity {
-				return errors.New("not many quantity for the product")
-			}
+			totalProductPrices += item.Quantity * item.SalesPrice
+			repo.db.Model(pd).Update()
 		}
 
-		// (TODO) Save Inventory & Start Order
+		if orderDao.TotalPrice != paymentDao.Amount {
+			return errors.New("total price not the same")
+		}
+
+		repo.db.Model(orderDao).Update()
+		paymentDao.Updated = time.Now()
+		paymentDao.PaymentStatus = domain.PAYMENT_CONFIRMED
+		repo.db.Model(paymentDao).Update()
+
 		return nil
 	}); err != nil {
 		return err
