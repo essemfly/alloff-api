@@ -25,6 +25,12 @@ func (r *mutationResolver) RegisterNotification(ctx context.Context, deviceID st
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {
+
+	_, err := ioc.Repo.Users.GetByMobile(input.Mobile)
+	if err == nil {
+		return "", errors.New("already registered mobile")
+	}
+
 	var user domain.UserDAO
 	user.Uuid = input.UUID
 	user.Mobile = input.Mobile
@@ -45,7 +51,7 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 		user.Postcode = *input.Postcode
 	}
 
-	_, err := ioc.Repo.Users.Insert(&user)
+	_, err = ioc.Repo.Users.Insert(&user)
 	if err != nil {
 		return "", err
 	}

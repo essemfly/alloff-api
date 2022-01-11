@@ -48,6 +48,7 @@ func (repo *userRepo) Insert(user *domain.UserDAO) (*domain.UserDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
+	user.ID = primitive.NewObjectID()
 	oid, err := repo.col.InsertOne(ctx, user)
 	if err != nil {
 		return nil, err
