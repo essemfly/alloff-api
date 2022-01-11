@@ -6,6 +6,7 @@ import (
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -60,11 +61,12 @@ func AddProduct(request ProductsAddRequest) {
 	}
 
 	// TODO: Category classifier, Dynamic prices, Dynamic instruction, dynamic scores should be uploaded
-	// alloffCat := classifier.GetAlloffCategory(pd)
+	alloffCat := classifier.GetAlloffCategory(pd)
 	alloffScore := GetProductScore(pd)
 	alloffPrice := GetProductPrice(pd)
 	alloffInstruction := GetProductDescription(pd)
 
+	pd.UpdateAlloffCategory(alloffCat)
 	pd.UpdateInventory(request.Inventories)
 	pd.UpdateScore(alloffScore)
 	pd.UpdateInstruction(alloffInstruction)
