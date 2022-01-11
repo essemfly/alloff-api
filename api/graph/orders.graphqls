@@ -157,7 +157,6 @@ type PaymentResult {
 type OrderValidityResult {
   available: Boolean!
   errorMsgs: [String!]
-  order: OrderInfo!
 }
 
 extend type Query {

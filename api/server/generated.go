@@ -215,7 +215,6 @@ type ComplexityRoot struct {
 	OrderValidityResult struct {
 		Available func(childComplexity int) int
 		ErrorMsgs func(childComplexity int) int
-		Order     func(childComplexity int) int
 	}
 
 	OrderWithPayment struct {
@@ -1309,13 +1308,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrderValidityResult.ErrorMsgs(childComplexity), true
 
-	case "OrderValidityResult.order":
-		if e.complexity.OrderValidityResult.Order == nil {
-			break
-		}
-
-		return e.complexity.OrderValidityResult.Order(childComplexity), true
-
 	case "OrderWithPayment.errorMsg":
 		if e.complexity.OrderWithPayment.ErrorMsg == nil {
 			break
@@ -2370,7 +2362,6 @@ type PaymentResult {
 type OrderValidityResult {
   available: Boolean!
   errorMsgs: [String!]
-  order: OrderInfo!
 }
 
 extend type Query {
@@ -7268,41 +7259,6 @@ func (ec *executionContext) _OrderValidityResult_errorMsgs(ctx context.Context, 
 	res := resTmp.([]string)
 	fc.Result = res
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _OrderValidityResult_order(ctx context.Context, field graphql.CollectedField, obj *model.OrderValidityResult) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "OrderValidityResult",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Order, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.OrderInfo)
-	fc.Result = res
-	return ec.marshalNOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderInfo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderWithPayment_success(ctx context.Context, field graphql.CollectedField, obj *model.OrderWithPayment) (ret graphql.Marshaler) {
@@ -13409,11 +13365,6 @@ func (ec *executionContext) _OrderValidityResult(ctx context.Context, sel ast.Se
 			}
 		case "errorMsgs":
 			out.Values[i] = ec._OrderValidityResult_errorMsgs(ctx, field, obj)
-		case "order":
-			out.Values[i] = ec._OrderValidityResult_order(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

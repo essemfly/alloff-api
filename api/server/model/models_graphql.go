@@ -232,9 +232,8 @@ type OrderResponse struct {
 }
 
 type OrderValidityResult struct {
-	Available bool       `json:"available"`
-	ErrorMsgs []string   `json:"errorMsgs"`
-	Order     *OrderInfo `json:"order"`
+	Available bool     `json:"available"`
+	ErrorMsgs []string `json:"errorMsgs"`
 }
 
 type OrderWithPayment struct {
