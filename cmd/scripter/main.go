@@ -16,4 +16,5 @@ func main() {
 	conn.RegisterRepos()
 
 	seeder.AddProductGroups()
+	seeder.AddHomeItems()
 }
