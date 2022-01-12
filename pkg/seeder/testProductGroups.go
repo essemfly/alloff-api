@@ -76,48 +76,36 @@ func AddProductGroups() {
 		},
 	}
 
-	for _, pg := range pgs {
-		_, err := ioc.Repo.ProductGroups.Upsert(pg)
+	blouseOID, _ := primitive.ObjectIDFromHex("60feb9f98adeef23689cbff6")
+	outerOID, _ := primitive.ObjectIDFromHex("60feb9f98adeef23689cbffc")
+	pantsOID, _ := primitive.ObjectIDFromHex("60feb9f98adeef23689cc003")
+	onepieceOID, _ := primitive.ObjectIDFromHex("60feb9f98adeef23689cbffa")
+
+	alloffcats := []primitive.ObjectID{
+		blouseOID, outerOID, pantsOID, onepieceOID,
+	}
+
+	for idx, pg := range pgs {
+		totalNumProducts := 10
+		products, _, err := product.AlloffCategoryProductsListing(0, totalNumProducts, nil, alloffcats[idx].Hex(), "", nil)
+		if err != nil {
+			log.Println("add sample product error", err)
+		}
+		log.Println("#products", len(products))
+
+		pdpriorities := []*domain.ProductPriorityDAO{}
+		for idx, pd := range products {
+			pdpriorities = append(pdpriorities, &domain.ProductPriorityDAO{
+				Priority: idx,
+				Product:  pd,
+			})
+		}
+
+		pg.Products = pdpriorities
+		_, err = ioc.Repo.ProductGroups.Upsert(pg)
 		if err != nil {
 			log.Println(err)
 		}
 	}
 	log.Println("ProductGroup seeding end!")
-	AddAlloffProducts([]primitive.ObjectID{pgid0, pgid1, pgid2, pgid3})
-}
-
-func AddAlloffProducts(pgids []primitive.ObjectID) {
-	log.Println("Alloff Products seeding start!")
-	for _, pgid := range pgids {
-		addSampleProductToProductGroup(pgid)
-	}
-
-	log.Println("Alloff Products seeding Finish!")
-}
-
-func addSampleProductToProductGroup(pgId primitive.ObjectID) {
-	r := rand.New(rand.NewSource(99))
-	cats, _ := ioc.Repo.AlloffCategories.List(nil)
-	catsLen := len(cats)
-
-	totalNumProducts := 10
-	products, _, err := product.AlloffCategoryProductsListing(0, totalNumProducts, nil, cats[r.Intn(catsLen)].ID.Hex(), "", nil)
-	if err != nil {
-		log.Println("add sample product error", err)
-	}
-
-	pg, _ := ioc.Repo.ProductGroups.Get(pgId.Hex())
-	pdpriorities := []*domain.ProductPriorityDAO{}
-	for idx, pd := range products {
-		pdpriorities = append(pdpriorities, &domain.ProductPriorityDAO{
-			Priority: idx,
-			Product:  pd,
-		})
-	}
-
-	pg.Products = pdpriorities
-	_, err = ioc.Repo.ProductGroups.Upsert(pg)
-	if err != nil {
-		log.Println("err", err)
-	}
 }
