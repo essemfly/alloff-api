@@ -23,7 +23,6 @@ func NewPostgresDB(conf config.Configuration) *PostgresDB {
 		Password: conf.POSTGRES_PASSWORD,
 		Database: conf.POSTGRES_DB_NAME,
 	})
-	defer db.Close()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()

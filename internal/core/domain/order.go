@@ -28,9 +28,10 @@ const (
 type OrderTypeEnum string
 
 const (
-	NORMAL_ORDER   = OrderTypeEnum("NORMAL_ORDER")
-	TIMEDEAL_ORDER = OrderTypeEnum("TIMEDEAL_ORDER")
-	UNKNOWN_ORDER  = OrderTypeEnum("UNKNOWN_ORDER")
+	NORMAL_ORDER     = OrderTypeEnum("NORMAL_ORDER")
+	TIMEDEAL_ORDER   = OrderTypeEnum("TIMEDEAL_ORDER")
+	EXHIBITION_ORDER = OrderTypeEnum("EXHIBITION_ORDER")
+	UNKNOWN_ORDER    = OrderTypeEnum("UNKNOWN_ORDER")
 )
 
 type OrderDAO struct {
@@ -55,7 +56,6 @@ type OrderDAO struct {
 }
 
 func (orderDao *OrderDAO) ToDTO() *model.OrderInfo {
-
 	orderItems := []*model.OrderItem{}
 	for _, orderDao := range orderDao.OrderItems {
 		orderItems = append(orderItems, orderDao.ToDTO())

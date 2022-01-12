@@ -23,8 +23,12 @@ func (repo *orderRepo) Get(ID int) (*domain.OrderDAO, error) {
 }
 
 func (repo *orderRepo) GetByAlloffID(ID string) (*domain.OrderDAO, error) {
-	var order *domain.OrderDAO
-	if err := repo.db.Model(order).Where("alloff_order_id = ?", ID).Select(); err != nil {
+	order := new(domain.OrderDAO)
+
+	if err := repo.db.Model(order).
+		Where("alloff_order_id = ?", ID).
+		Relation("OrderItems").
+		Select(); err != nil {
 		return nil, err
 	}
 

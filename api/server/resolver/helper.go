@@ -46,6 +46,6 @@ func BuildPaymentDao(input *model.PaymentClientInput) *domain.PaymentDAO {
 		BuyerAddress:  *input.BuyerAddress,
 		BuyerPostCode: *input.BuyerPostCode,
 		Company:       "alloff",
-		AppScheme:     *input.AppScheme,
+		AppScheme:     "appscheme",
 	}
 }

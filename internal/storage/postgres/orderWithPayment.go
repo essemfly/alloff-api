@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 
 	"github.com/go-pg/pg/v10"
@@ -103,17 +104,37 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 				return err
 			}
 			totalProductPrices += item.Quantity * item.SalesPrice
-			repo.db.Model(pd).Update()
+
+			_, err = ioc.Repo.Products.Upsert(pd)
+			if err != nil {
+				log.Println("productDao Update")
+				return err
+			}
+
+			_, err = repo.db.Model(item).WherePK().Update()
+			if err != nil {
+				log.Println("orderitemDao Update")
+				return err
+			}
 		}
 
 		if orderDao.TotalPrice != paymentDao.Amount {
 			return errors.New("total price not the same")
 		}
 
-		repo.db.Model(orderDao).Update()
+		_, err := repo.db.Model(orderDao).WherePK().Update()
+		if err != nil {
+			log.Println("orderDao Update")
+			return err
+		}
+
 		paymentDao.Updated = time.Now()
 		paymentDao.PaymentStatus = domain.PAYMENT_CREATED
-		repo.db.Model(paymentDao).Update()
+		_, err = repo.db.Model(paymentDao).Insert()
+		if err != nil {
+			log.Println("paymentDao Insert")
+			return err
+		}
 
 		return nil
 	}); err != nil {
