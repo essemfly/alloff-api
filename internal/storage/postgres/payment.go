@@ -20,23 +20,23 @@ func (repo *paymentRepo) Insert(paymentDao *domain.PaymentDAO) (*domain.PaymentD
 }
 
 func (repo *paymentRepo) GetByOrderIDAndAmount(orderID string, amount int) (*domain.PaymentDAO, error) {
-	paymentDao := domain.PaymentDAO{}
-	err := repo.db.Model(paymentDao).Where("merchantuid = ?", orderID).Where("amount = ?", amount).Select()
+	paymentDao := new(domain.PaymentDAO)
+	err := repo.db.Model(paymentDao).Where("merchant_uid = ?", orderID).Where("amount = ?", amount).Select()
 	if err != nil {
 		return nil, err
 	}
 
-	return &paymentDao, nil
+	return paymentDao, nil
 }
 
 func (repo *paymentRepo) GetByImpUID(impUID string) (*domain.PaymentDAO, error) {
-	paymentDao := domain.PaymentDAO{}
-	err := repo.db.Model(paymentDao).Where("impuid = ?", impUID).Select()
+	paymentDao := new(domain.PaymentDAO)
+	err := repo.db.Model(paymentDao).Where("imp_uid = ?", impUID).Select()
 	if err != nil {
 		return nil, err
 	}
 
-	return &paymentDao, nil
+	return paymentDao, nil
 }
 
 func PostgresPaymentRepo(conn *PostgresDB) repository.PaymentsRepository {

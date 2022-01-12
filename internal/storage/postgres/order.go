@@ -14,7 +14,8 @@ type orderRepo struct {
 }
 
 func (repo *orderRepo) Get(ID int) (*domain.OrderDAO, error) {
-	var order *domain.OrderDAO
+	order := new(domain.OrderDAO)
+
 	if err := repo.db.Model(order).Where("id = ?", ID).Select(); err != nil {
 		return nil, err
 	}

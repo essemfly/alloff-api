@@ -237,7 +237,7 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Payme
 
 	result := &model.PaymentStatus{
 		Success:     false,
-		ErrorMsg:    err.Error(),
+		ErrorMsg:    "",
 		PaymentInfo: paymentDao.ToDTO(),
 		Order:       orderDao.ToDTO(),
 	}
