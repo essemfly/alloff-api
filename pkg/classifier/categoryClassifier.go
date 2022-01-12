@@ -25,7 +25,7 @@ func categoryClassifier(product *domain.ProductDAO) (category1, category2 *domai
 
 	// 향후 두개 합쳐서 Keyname으로 query하면 좋겠다, 하지만 지금은 keyname이 틀리는 게 있을 확률이 높으니
 	possibleCat2 := []string{}
-	classifier, err := ioc.Repo.ClassifyRules.GetByKeyname(product.ProductInfo.Brand.KeyName, product.ProductInfo.Category.KeyName)
+	classifier, err := ioc.Repo.ClassifyRules.GetByKeyname(product.ProductInfo.Brand.KeyName, product.ProductInfo.Category.Name)
 	if err != nil {
 		log.Println("AlloffCategory error", err)
 		return
