@@ -53,7 +53,6 @@ func (basket *Basket) IsValid() []error {
 
 func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error) {
 	orderItems := []*domain.OrderItemDAO{}
-	// newOrderID := primitive.NewObjectID().Hex()
 	orderAlloffID := xid.New().String()
 
 	totalProductPrice := 0

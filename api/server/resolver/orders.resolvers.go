@@ -31,6 +31,11 @@ func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInp
 		ProductPrice: input.ProductPrice,
 	}
 
+	orderDao, err := basket.BuildOrder(nil)
+	if err != nil {
+		return nil, err
+	}
+
 	errs := basket.IsValid()
 
 	if len(errs) > 0 {
@@ -42,12 +47,14 @@ func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInp
 		return &model.OrderValidityResult{
 			Available: false,
 			ErrorMsgs: errString,
+			Order:     orderDao.ToDTO(),
 		}, nil
 	}
 
 	return &model.OrderValidityResult{
 		Available: true,
 		ErrorMsgs: nil,
+		Order:     orderDao.ToDTO(),
 	}, nil
 }
 
