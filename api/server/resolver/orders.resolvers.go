@@ -198,7 +198,7 @@ func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.Paym
 
 	result := &model.PaymentStatus{
 		Success:     false,
-		ErrorMsg:    err.Error(),
+		ErrorMsg:    "",
 		PaymentInfo: paymentDao.ToDTO(),
 		Order:       orderDao.ToDTO(),
 	}
