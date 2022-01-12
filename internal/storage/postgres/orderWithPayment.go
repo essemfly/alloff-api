@@ -168,13 +168,25 @@ func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymen
 				return err
 			}
 
-			repo.db.Model(pd).Update()
+			_, err = ioc.Repo.Products.Upsert(pd)
+			if err != nil {
+				log.Println("productDao Update", err)
+				return err
+			}
 		}
 
-		repo.db.Model(orderDao).Update()
+		_, err := repo.db.Model(orderDao).WherePK().Update()
+		if err != nil {
+			return err
+		}
+
 		paymentDao.Updated = time.Now()
 		paymentDao.PaymentStatus = domain.PAYMENT_CANCELED
-		repo.db.Model(paymentDao).Update()
+		_, err = repo.db.Model(paymentDao).WherePK().Update()
+		if err != nil {
+			return err
+		}
+
 		return nil
 	}); err != nil {
 		return err

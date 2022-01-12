@@ -247,6 +247,7 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Payme
 		return result, err
 	}
 
+	result.Success = true
 	return result, nil
 }
 

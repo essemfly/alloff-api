@@ -82,7 +82,7 @@ func (repo *orderRepo) Update(orderDao *domain.OrderDAO) (*domain.OrderDAO, erro
 		}
 
 		for _, item := range orderDao.OrderItems {
-			_, err := repo.db.Model(item).Update()
+			_, err := repo.db.Model(item).WherePK().Update()
 			if err != nil {
 				return err
 			}
