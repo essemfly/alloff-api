@@ -89,7 +89,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 
 		for _, item := range orderDao.OrderItems {
 			item.UpdatedAt = time.Now()
-			item.OrderStatus = domain.ORDER_PAYMENT_PENDING
+			item.OrderItemStatus = domain.ORDER_ITEM_PAYMENT_PENDING
 			pd, err := ioc.Repo.Products.Get(item.ProductID)
 			if err != nil {
 				return err
@@ -157,7 +157,7 @@ func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymen
 
 		for _, item := range orderDao.OrderItems {
 			item.UpdatedAt = time.Now()
-			item.OrderStatus = domain.ORDER_RECREATED
+			item.OrderItemStatus = domain.ORDER_ITEM_RECREATED
 			pd, err := ioc.Repo.Products.Get(item.ProductID)
 			if err != nil {
 				return err

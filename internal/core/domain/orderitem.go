@@ -1,0 +1,130 @@
+package domain
+
+import (
+	"time"
+
+	"github.com/lessbutter/alloff-api/api/server/model"
+)
+
+type OrderItemStatusEnum string
+
+const (
+	ORDER_ITEM_CREATED            = OrderItemStatusEnum("ORDER_ITEM_CREATED")
+	ORDER_ITEM_RECREATED          = OrderItemStatusEnum("ORDER_ITEM_RECREATED")
+	ORDER_ITEM_PAYMENT_PENDING    = OrderItemStatusEnum("ORDER_ITEM_PAYMENT_PENDING")
+	ORDER_ITEM_PAYMENT_FINISHED   = OrderItemStatusEnum("ORDER_ITEM_PAYMENT_FINISHED")
+	ORDER_ITEM_PRODUCT_PREPARING  = OrderItemStatusEnum("ORDER_ITEM_PRODUCT_PREPARING")
+	ORDER_ITEM_DELIVERY_PREPARING = OrderItemStatusEnum("ORDER_ITEM_DELIVERY_PREPARING")
+	ORDER_ITEM_CANCEL_REQUESTED   = OrderItemStatusEnum("ORDER_ITEM_CANCEL_REQUESTED")
+	ORDER_ITEM_CANCEL_PENDING     = OrderItemStatusEnum("ORDER_ITEM_CANCEL_PENDING")
+	ORDER_ITEM_CANCEL_FINISHED    = OrderItemStatusEnum("ORDER_ITEM_CANCEL_FINISHED")
+	ORDER_ITEM_DELIVERY_STARTED   = OrderItemStatusEnum("ORDER_ITEM_DELIVERY_STARTED")
+	ORDER_ITEM_DELIVERY_FINISHED  = OrderItemStatusEnum("ORDER_ITEM_DELIVERY_FINISHED")
+	ORDER_ITEM_CONFIRM_PAYMENT    = OrderItemStatusEnum("ORDER_ITEM_CONFIRM_PAYMENT")
+)
+
+type OrderItemTypeEnum string
+
+const (
+	NORMAL_ORDER     = OrderItemTypeEnum("NORMAL_ORDER")
+	TIMEDEAL_ORDER   = OrderItemTypeEnum("TIMEDEAL_ORDER")
+	EXHIBITION_ORDER = OrderItemTypeEnum("EXHIBITION_ORDER")
+	UNKNOWN_ORDER    = OrderItemTypeEnum("UNKNOWN_ORDER")
+)
+
+type OrderItemDAO struct {
+	tableName              struct{} `pg:"orderItems"`
+	ID                     int
+	OrderID                int
+	OrderItemCode          string // Item 사서함번호
+	ProductID              string
+	ProductImg             string
+	ProductName            string
+	BrandKeyname           string
+	BrandKorname           string
+	Removed                bool
+	SalesPrice             int
+	CancelDescription      []string
+	DeliveryDescription    []string
+	OrderItemType          OrderItemTypeEnum
+	OrderItemStatus        OrderItemStatusEnum
+	DeliveryTrackingNumber string
+	DeliveryTrackingUrl    string
+	Size                   string
+	Quantity               int
+	RefundInfo             []*RefundItemDAO `pg:"rel:has-many"`
+	CreatedAt              time.Time
+	UpdatedAt              time.Time
+	OrderedAt              time.Time
+	DeliveryStartedAt      time.Time
+	DeliveryFinishedAt     time.Time
+	CancelRequestedAt      time.Time
+	CancelFinishedAt       time.Time
+	ConfirmedAt            time.Time
+}
+
+func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {
+	return &model.OrderItem{
+		ProductID:              orderItemDao.ProductID,
+		ProductName:            orderItemDao.ProductName,
+		ProductImg:             orderItemDao.ProductImg,
+		BrandKeyname:           orderItemDao.BrandKeyname,
+		BrandKorname:           orderItemDao.BrandKorname,
+		Removed:                orderItemDao.Removed,
+		SalesPrice:             orderItemDao.SalesPrice,
+		Selectsize:             orderItemDao.Size,
+		Quantity:               orderItemDao.Quantity,
+		OrderItemType:          MapOrderItemType(orderItemDao.OrderItemType),
+		OrderItemStatus:        MapOrderItemStatus(orderItemDao.OrderItemStatus),
+		CancelDescription:      orderItemDao.CancelDescription,
+		DeliveryDescription:    orderItemDao.DeliveryDescription,
+		DeliveryTrackingNumber: orderItemDao.DeliveryTrackingNumber,
+		DeliveryTrackingURL:    orderItemDao.DeliveryTrackingUrl,
+		CreatedAt:              orderItemDao.CreatedAt.String(),
+		UpdatedAt:              orderItemDao.UpdatedAt.String(),
+		OrderedAt:              orderItemDao.OrderedAt.String(),
+		DeliveryStartedAt:      orderItemDao.DeliveryStartedAt.String(),
+		DeliveryFinishedAt:     orderItemDao.DeliveryFinishedAt.String(),
+		CancelRequestedAt:      orderItemDao.CancelRequestedAt.String(),
+		CancelFinishedAt:       orderItemDao.CancelFinishedAt.String(),
+		ConfirmedAt:            orderItemDao.ConfirmedAt.String(),
+	}
+}
+
+func MapOrderItemStatus(enum OrderItemStatusEnum) model.OrderItemStatusEnum {
+	switch enum {
+	case ORDER_ITEM_PAYMENT_FINISHED:
+		return model.OrderItemStatusEnumPaymentFinished
+	case ORDER_ITEM_PRODUCT_PREPARING:
+		return model.OrderItemStatusEnumProductPreparing
+	case ORDER_ITEM_DELIVERY_PREPARING:
+		return model.OrderItemStatusEnumDeliveryPreparing
+	case ORDER_ITEM_CANCEL_REQUESTED:
+		return model.OrderItemStatusEnumCancelRequested
+	case ORDER_ITEM_CANCEL_PENDING:
+		return model.OrderItemStatusEnumCancelPending
+	case ORDER_ITEM_CANCEL_FINISHED:
+		return model.OrderItemStatusEnumCancelFinished
+	case ORDER_ITEM_DELIVERY_STARTED:
+		return model.OrderItemStatusEnumDeliveryStarted
+	case ORDER_ITEM_DELIVERY_FINISHED:
+		return model.OrderItemStatusEnumDeliveryFinished
+	case ORDER_ITEM_CONFIRM_PAYMENT:
+		return model.OrderItemStatusEnumConfirmPayment
+	default:
+		return model.OrderItemStatusEnumUnknown
+	}
+}
+
+func MapOrderItemType(enum OrderItemTypeEnum) model.OrderItemTypeEnum {
+	switch enum {
+	case NORMAL_ORDER:
+		return model.OrderItemTypeEnumNormal
+	case TIMEDEAL_ORDER:
+		return model.OrderItemTypeEnumTimedeal
+	case EXHIBITION_ORDER:
+		return model.OrderItemTypeEnumExhibition
+	default:
+		return model.OrderItemTypeEnumUnknown
+	}
+}

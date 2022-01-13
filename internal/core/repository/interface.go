@@ -94,6 +94,12 @@ type OrdersRepository interface {
 	Update(*domain.OrderDAO) (*domain.OrderDAO, error)
 }
 
+type OrderItemsRepository interface {
+	Get(ID int) (*domain.OrderItemDAO, error)
+	ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error)
+	Insert(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
+	Update(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
+}
 type PaymentsRepository interface {
 	GetByOrderIDAndAmount(orderID string, amount int) (*domain.PaymentDAO, error)
 	GetByImpUID(impUID string) (*domain.PaymentDAO, error)
@@ -129,6 +135,10 @@ type LikeBrandsRepository interface {
 type LikeProductsRepository interface {
 	Like(userID, productID string) (bool, error)
 	List(userID string) ([]*domain.LikeProductDAO, error)
+}
+
+type RefundItemsRepository interface {
+	Insert(*domain.RefundItemDAO) (*domain.RefundItemDAO, error)
 }
 
 type NotificationsRepository interface {

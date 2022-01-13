@@ -18,6 +18,7 @@ type iocRepo struct {
 	Featureds          repository.FeaturedsRepository
 	HomeItems          repository.HomeItemsRepository
 	Orders             repository.OrdersRepository
+	OrderItems         repository.OrderItemsRepository
 	Payments           repository.PaymentsRepository
 	Users              repository.UsersRepository
 	Devices            repository.DevicesRepository
@@ -27,6 +28,7 @@ type iocRepo struct {
 	LikeProducts       repository.LikeProductsRepository
 	AlarmProductGroups repository.AlarmProductGroupsRepository
 	Exhibitions        repository.ExhibitionsRepository
+	Refunds            repository.RefundItemsRepository
 }
 
 var Repo iocRepo

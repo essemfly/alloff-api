@@ -123,12 +123,6 @@ type HomeItem struct {
 	ProductGroups  []*ProductGroup  `json:"productGroups"`
 }
 
-type Instruction struct {
-	Title       string   `json:"title"`
-	Description []string `json:"description"`
-	Images      []string `json:"images"`
-}
-
 type Inventory struct {
 	Size     string `json:"size"`
 	Quantity int    `json:"quantity"`
@@ -182,7 +176,6 @@ type OrderInfo struct {
 	CreatedAt     string       `json:"createdAt"`
 	UpdatedAt     string       `json:"updatedAt"`
 	OrderedAt     string       `json:"orderedAt"`
-	RefundInfo    *RefundInfo  `json:"refundInfo"`
 }
 
 type OrderInput struct {
@@ -191,30 +184,30 @@ type OrderInput struct {
 }
 
 type OrderItem struct {
-	ProductID              string          `json:"productId"`
-	ProductName            string          `json:"productName"`
-	ProductImg             string          `json:"productImg"`
-	BrandKeyname           string          `json:"brandKeyname"`
-	BrandKorname           string          `json:"brandKorname"`
-	Removed                bool            `json:"removed"`
-	SalesPrice             int             `json:"salesPrice"`
-	Selectsize             string          `json:"selectsize"`
-	Quantity               int             `json:"quantity"`
-	OrderType              OrderTypeEnum   `json:"orderType"`
-	OrderStatus            OrderStatusEnum `json:"orderStatus"`
-	SizeDescription        []string        `json:"sizeDescription"`
-	CancelDescription      []string        `json:"cancelDescription"`
-	DeliveryDescription    []string        `json:"deliveryDescription"`
-	DeliveryTrackingNumber string          `json:"deliveryTrackingNumber"`
-	DeliveryTrackingURL    string          `json:"deliveryTrackingUrl"`
-	CreatedAt              string          `json:"createdAt"`
-	UpdatedAt              string          `json:"updatedAt"`
-	OrderedAt              string          `json:"orderedAt"`
-	DeliveryStartedAt      string          `json:"deliveryStartedAt"`
-	DeliveryFinishedAt     string          `json:"deliveryFinishedAt"`
-	CancelRequestedAt      string          `json:"cancelRequestedAt"`
-	CancelFinishedAt       string          `json:"cancelFinishedAt"`
-	ConfirmedAt            string          `json:"confirmedAt"`
+	ProductID              string              `json:"productId"`
+	ProductName            string              `json:"productName"`
+	ProductImg             string              `json:"productImg"`
+	BrandKeyname           string              `json:"brandKeyname"`
+	BrandKorname           string              `json:"brandKorname"`
+	Removed                bool                `json:"removed"`
+	SalesPrice             int                 `json:"salesPrice"`
+	Selectsize             string              `json:"selectsize"`
+	Quantity               int                 `json:"quantity"`
+	OrderItemType          OrderItemTypeEnum   `json:"orderItemType"`
+	OrderItemStatus        OrderItemStatusEnum `json:"orderItemStatus"`
+	CancelDescription      []string            `json:"cancelDescription"`
+	DeliveryDescription    []string            `json:"deliveryDescription"`
+	RefundInfo             *RefundInfo         `json:"refundInfo"`
+	DeliveryTrackingNumber string              `json:"deliveryTrackingNumber"`
+	DeliveryTrackingURL    string              `json:"deliveryTrackingUrl"`
+	CreatedAt              string              `json:"createdAt"`
+	UpdatedAt              string              `json:"updatedAt"`
+	OrderedAt              string              `json:"orderedAt"`
+	DeliveryStartedAt      string              `json:"deliveryStartedAt"`
+	DeliveryFinishedAt     string              `json:"deliveryFinishedAt"`
+	CancelRequestedAt      string              `json:"cancelRequestedAt"`
+	CancelFinishedAt       string              `json:"cancelFinishedAt"`
+	ConfirmedAt            string              `json:"confirmedAt"`
 }
 
 type OrderItemInput struct {
@@ -308,10 +301,8 @@ type Product struct {
 	IsUpdated           bool            `json:"isUpdated"`
 	IsNewProduct        bool            `json:"isNewProduct"`
 	Removed             bool            `json:"removed"`
-	Description         []string        `json:"description"`
 	Information         []*KeyValueInfo `json:"information"`
-	Instruction         *Instruction    `json:"instruction"`
-	SizeDescription     []string        `json:"sizeDescription"`
+	Description         []string        `json:"description"`
 	CancelDescription   []string        `json:"cancelDescription"`
 	DeliveryDescription []string        `json:"deliveryDescription"`
 }
@@ -470,22 +461,122 @@ func (e HomeItemType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type OrderItemStatusEnum string
+
+const (
+	OrderItemStatusEnumUnknown           OrderItemStatusEnum = "UNKNOWN"
+	OrderItemStatusEnumCreated           OrderItemStatusEnum = "CREATED"
+	OrderItemStatusEnumRecreated         OrderItemStatusEnum = "RECREATED"
+	OrderItemStatusEnumPaymentPending    OrderItemStatusEnum = "PAYMENT_PENDING"
+	OrderItemStatusEnumPaymentFinished   OrderItemStatusEnum = "PAYMENT_FINISHED"
+	OrderItemStatusEnumProductPreparing  OrderItemStatusEnum = "PRODUCT_PREPARING"
+	OrderItemStatusEnumDeliveryPreparing OrderItemStatusEnum = "DELIVERY_PREPARING"
+	OrderItemStatusEnumCancelRequested   OrderItemStatusEnum = "CANCEL_REQUESTED"
+	OrderItemStatusEnumCancelPending     OrderItemStatusEnum = "CANCEL_PENDING"
+	OrderItemStatusEnumCancelFinished    OrderItemStatusEnum = "CANCEL_FINISHED"
+	OrderItemStatusEnumDeliveryStarted   OrderItemStatusEnum = "DELIVERY_STARTED"
+	OrderItemStatusEnumDeliveryFinished  OrderItemStatusEnum = "DELIVERY_FINISHED"
+	OrderItemStatusEnumConfirmPayment    OrderItemStatusEnum = "CONFIRM_PAYMENT"
+)
+
+var AllOrderItemStatusEnum = []OrderItemStatusEnum{
+	OrderItemStatusEnumUnknown,
+	OrderItemStatusEnumCreated,
+	OrderItemStatusEnumRecreated,
+	OrderItemStatusEnumPaymentPending,
+	OrderItemStatusEnumPaymentFinished,
+	OrderItemStatusEnumProductPreparing,
+	OrderItemStatusEnumDeliveryPreparing,
+	OrderItemStatusEnumCancelRequested,
+	OrderItemStatusEnumCancelPending,
+	OrderItemStatusEnumCancelFinished,
+	OrderItemStatusEnumDeliveryStarted,
+	OrderItemStatusEnumDeliveryFinished,
+	OrderItemStatusEnumConfirmPayment,
+}
+
+func (e OrderItemStatusEnum) IsValid() bool {
+	switch e {
+	case OrderItemStatusEnumUnknown, OrderItemStatusEnumCreated, OrderItemStatusEnumRecreated, OrderItemStatusEnumPaymentPending, OrderItemStatusEnumPaymentFinished, OrderItemStatusEnumProductPreparing, OrderItemStatusEnumDeliveryPreparing, OrderItemStatusEnumCancelRequested, OrderItemStatusEnumCancelPending, OrderItemStatusEnumCancelFinished, OrderItemStatusEnumDeliveryStarted, OrderItemStatusEnumDeliveryFinished, OrderItemStatusEnumConfirmPayment:
+		return true
+	}
+	return false
+}
+
+func (e OrderItemStatusEnum) String() string {
+	return string(e)
+}
+
+func (e *OrderItemStatusEnum) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = OrderItemStatusEnum(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid OrderItemStatusEnum", str)
+	}
+	return nil
+}
+
+func (e OrderItemStatusEnum) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type OrderItemTypeEnum string
+
+const (
+	OrderItemTypeEnumUnknown    OrderItemTypeEnum = "UNKNOWN"
+	OrderItemTypeEnumTimedeal   OrderItemTypeEnum = "TIMEDEAL"
+	OrderItemTypeEnumExhibition OrderItemTypeEnum = "EXHIBITION"
+	OrderItemTypeEnumNormal     OrderItemTypeEnum = "NORMAL"
+)
+
+var AllOrderItemTypeEnum = []OrderItemTypeEnum{
+	OrderItemTypeEnumUnknown,
+	OrderItemTypeEnumTimedeal,
+	OrderItemTypeEnumExhibition,
+	OrderItemTypeEnumNormal,
+}
+
+func (e OrderItemTypeEnum) IsValid() bool {
+	switch e {
+	case OrderItemTypeEnumUnknown, OrderItemTypeEnumTimedeal, OrderItemTypeEnumExhibition, OrderItemTypeEnumNormal:
+		return true
+	}
+	return false
+}
+
+func (e OrderItemTypeEnum) String() string {
+	return string(e)
+}
+
+func (e *OrderItemTypeEnum) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = OrderItemTypeEnum(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid OrderItemTypeEnum", str)
+	}
+	return nil
+}
+
+func (e OrderItemTypeEnum) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type OrderStatusEnum string
 
 const (
-	OrderStatusEnumUnknown           OrderStatusEnum = "UNKNOWN"
-	OrderStatusEnumCreated           OrderStatusEnum = "CREATED"
-	OrderStatusEnumRecreated         OrderStatusEnum = "RECREATED"
-	OrderStatusEnumPaymentPending    OrderStatusEnum = "PAYMENT_PENDING"
-	OrderStatusEnumPaymentFinished   OrderStatusEnum = "PAYMENT_FINISHED"
-	OrderStatusEnumProductPreparing  OrderStatusEnum = "PRODUCT_PREPARING"
-	OrderStatusEnumDeliveryPreparing OrderStatusEnum = "DELIVERY_PREPARING"
-	OrderStatusEnumCancelRequested   OrderStatusEnum = "CANCEL_REQUESTED"
-	OrderStatusEnumCancelPending     OrderStatusEnum = "CANCEL_PENDING"
-	OrderStatusEnumCancelFinished    OrderStatusEnum = "CANCEL_FINISHED"
-	OrderStatusEnumDeliveryStarted   OrderStatusEnum = "DELIVERY_STARTED"
-	OrderStatusEnumDeliveryFinished  OrderStatusEnum = "DELIVERY_FINISHED"
-	OrderStatusEnumConfirmPayment    OrderStatusEnum = "CONFIRM_PAYMENT"
+	OrderStatusEnumUnknown         OrderStatusEnum = "UNKNOWN"
+	OrderStatusEnumCreated         OrderStatusEnum = "CREATED"
+	OrderStatusEnumRecreated       OrderStatusEnum = "RECREATED"
+	OrderStatusEnumPaymentPending  OrderStatusEnum = "PAYMENT_PENDING"
+	OrderStatusEnumPaymentFinished OrderStatusEnum = "PAYMENT_FINISHED"
 )
 
 var AllOrderStatusEnum = []OrderStatusEnum{
@@ -494,19 +585,11 @@ var AllOrderStatusEnum = []OrderStatusEnum{
 	OrderStatusEnumRecreated,
 	OrderStatusEnumPaymentPending,
 	OrderStatusEnumPaymentFinished,
-	OrderStatusEnumProductPreparing,
-	OrderStatusEnumDeliveryPreparing,
-	OrderStatusEnumCancelRequested,
-	OrderStatusEnumCancelPending,
-	OrderStatusEnumCancelFinished,
-	OrderStatusEnumDeliveryStarted,
-	OrderStatusEnumDeliveryFinished,
-	OrderStatusEnumConfirmPayment,
 }
 
 func (e OrderStatusEnum) IsValid() bool {
 	switch e {
-	case OrderStatusEnumUnknown, OrderStatusEnumCreated, OrderStatusEnumRecreated, OrderStatusEnumPaymentPending, OrderStatusEnumPaymentFinished, OrderStatusEnumProductPreparing, OrderStatusEnumDeliveryPreparing, OrderStatusEnumCancelRequested, OrderStatusEnumCancelPending, OrderStatusEnumCancelFinished, OrderStatusEnumDeliveryStarted, OrderStatusEnumDeliveryFinished, OrderStatusEnumConfirmPayment:
+	case OrderStatusEnumUnknown, OrderStatusEnumCreated, OrderStatusEnumRecreated, OrderStatusEnumPaymentPending, OrderStatusEnumPaymentFinished:
 		return true
 	}
 	return false
@@ -530,49 +613,6 @@ func (e *OrderStatusEnum) UnmarshalGQL(v interface{}) error {
 }
 
 func (e OrderStatusEnum) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type OrderTypeEnum string
-
-const (
-	OrderTypeEnumUnknown  OrderTypeEnum = "UNKNOWN"
-	OrderTypeEnumTimedeal OrderTypeEnum = "TIMEDEAL"
-	OrderTypeEnumNormal   OrderTypeEnum = "NORMAL"
-)
-
-var AllOrderTypeEnum = []OrderTypeEnum{
-	OrderTypeEnumUnknown,
-	OrderTypeEnumTimedeal,
-	OrderTypeEnumNormal,
-}
-
-func (e OrderTypeEnum) IsValid() bool {
-	switch e {
-	case OrderTypeEnumUnknown, OrderTypeEnumTimedeal, OrderTypeEnumNormal:
-		return true
-	}
-	return false
-}
-
-func (e OrderTypeEnum) String() string {
-	return string(e)
-}
-
-func (e *OrderTypeEnum) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = OrderTypeEnum(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid OrderTypeEnum", str)
-	}
-	return nil
-}
-
-func (e OrderTypeEnum) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

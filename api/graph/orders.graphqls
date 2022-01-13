@@ -1,12 +1,21 @@
 scalar Date
 
-enum OrderTypeEnum {
+enum OrderItemTypeEnum {
   UNKNOWN
   TIMEDEAL
+  EXHIBITION
   NORMAL
 }
 
 enum OrderStatusEnum {
+  UNKNOWN
+  CREATED
+  RECREATED
+  PAYMENT_PENDING
+  PAYMENT_FINISHED
+}
+
+enum OrderItemStatusEnum {
   UNKNOWN
   CREATED
   RECREATED
@@ -41,11 +50,11 @@ type OrderItem {
   salesPrice: Int!
   selectsize: String!
   quantity: Int!
-  orderType: OrderTypeEnum!
-  orderStatus: OrderStatusEnum!
-  sizeDescription: [String!]
+  orderItemType: OrderItemTypeEnum!
+  orderItemStatus: OrderItemStatusEnum!
   cancelDescription: [String!]
   deliveryDescription: [String!]
+  refundInfo: RefundInfo
   deliveryTrackingNumber: String!
   deliveryTrackingUrl: String!
   createdAt: Date!
@@ -80,7 +89,6 @@ type OrderInfo {
   createdAt: Date!
   updatedAt: Date!
   orderedAt: Date!
-  refundInfo: RefundInfo
 }
 
 type RefundInfo {

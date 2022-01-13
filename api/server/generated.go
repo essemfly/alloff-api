@@ -134,12 +134,6 @@ type ComplexityRoot struct {
 		Title          func(childComplexity int) int
 	}
 
-	Instruction struct {
-		Description func(childComplexity int) int
-		Images      func(childComplexity int) int
-		Title       func(childComplexity int) int
-	}
-
 	Inventory struct {
 		Quantity func(childComplexity int) int
 		Size     func(childComplexity int) int
@@ -179,7 +173,6 @@ type ComplexityRoot struct {
 		OrderedAt     func(childComplexity int) int
 		Orders        func(childComplexity int) int
 		ProductPrice  func(childComplexity int) int
-		RefundInfo    func(childComplexity int) int
 		TotalPrice    func(childComplexity int) int
 		UpdatedAt     func(childComplexity int) int
 		UserMemo      func(childComplexity int) int
@@ -198,17 +191,17 @@ type ComplexityRoot struct {
 		DeliveryStartedAt      func(childComplexity int) int
 		DeliveryTrackingNumber func(childComplexity int) int
 		DeliveryTrackingURL    func(childComplexity int) int
-		OrderStatus            func(childComplexity int) int
-		OrderType              func(childComplexity int) int
+		OrderItemStatus        func(childComplexity int) int
+		OrderItemType          func(childComplexity int) int
 		OrderedAt              func(childComplexity int) int
 		ProductID              func(childComplexity int) int
 		ProductImg             func(childComplexity int) int
 		ProductName            func(childComplexity int) int
 		Quantity               func(childComplexity int) int
+		RefundInfo             func(childComplexity int) int
 		Removed                func(childComplexity int) int
 		SalesPrice             func(childComplexity int) int
 		Selectsize             func(childComplexity int) int
-		SizeDescription        func(childComplexity int) int
 		UpdatedAt              func(childComplexity int) int
 	}
 
@@ -271,7 +264,6 @@ type ComplexityRoot struct {
 		ID                  func(childComplexity int) int
 		Images              func(childComplexity int) int
 		Information         func(childComplexity int) int
-		Instruction         func(childComplexity int) int
 		Inventory           func(childComplexity int) int
 		IsNewProduct        func(childComplexity int) int
 		IsUpdated           func(childComplexity int) int
@@ -279,7 +271,6 @@ type ComplexityRoot struct {
 		OriginalPrice       func(childComplexity int) int
 		ProductURL          func(childComplexity int) int
 		Removed             func(childComplexity int) int
-		SizeDescription     func(childComplexity int) int
 		Soldout             func(childComplexity int) int
 	}
 
@@ -826,27 +817,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.HomeItem.Title(childComplexity), true
 
-	case "Instruction.description":
-		if e.complexity.Instruction.Description == nil {
-			break
-		}
-
-		return e.complexity.Instruction.Description(childComplexity), true
-
-	case "Instruction.images":
-		if e.complexity.Instruction.Images == nil {
-			break
-		}
-
-		return e.complexity.Instruction.Images(childComplexity), true
-
-	case "Instruction.title":
-		if e.complexity.Instruction.Title == nil {
-			break
-		}
-
-		return e.complexity.Instruction.Title(childComplexity), true
-
 	case "Inventory.quantity":
 		if e.complexity.Inventory.Quantity == nil {
 			break
@@ -1099,13 +1069,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrderInfo.ProductPrice(childComplexity), true
 
-	case "OrderInfo.refundInfo":
-		if e.complexity.OrderInfo.RefundInfo == nil {
-			break
-		}
-
-		return e.complexity.OrderInfo.RefundInfo(childComplexity), true
-
 	case "OrderInfo.totalPrice":
 		if e.complexity.OrderInfo.TotalPrice == nil {
 			break
@@ -1211,19 +1174,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrderItem.DeliveryTrackingURL(childComplexity), true
 
-	case "OrderItem.orderStatus":
-		if e.complexity.OrderItem.OrderStatus == nil {
+	case "OrderItem.orderItemStatus":
+		if e.complexity.OrderItem.OrderItemStatus == nil {
 			break
 		}
 
-		return e.complexity.OrderItem.OrderStatus(childComplexity), true
+		return e.complexity.OrderItem.OrderItemStatus(childComplexity), true
 
-	case "OrderItem.orderType":
-		if e.complexity.OrderItem.OrderType == nil {
+	case "OrderItem.orderItemType":
+		if e.complexity.OrderItem.OrderItemType == nil {
 			break
 		}
 
-		return e.complexity.OrderItem.OrderType(childComplexity), true
+		return e.complexity.OrderItem.OrderItemType(childComplexity), true
 
 	case "OrderItem.orderedAt":
 		if e.complexity.OrderItem.OrderedAt == nil {
@@ -1260,6 +1223,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrderItem.Quantity(childComplexity), true
 
+	case "OrderItem.refundInfo":
+		if e.complexity.OrderItem.RefundInfo == nil {
+			break
+		}
+
+		return e.complexity.OrderItem.RefundInfo(childComplexity), true
+
 	case "OrderItem.removed":
 		if e.complexity.OrderItem.Removed == nil {
 			break
@@ -1280,13 +1250,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrderItem.Selectsize(childComplexity), true
-
-	case "OrderItem.sizeDescription":
-		if e.complexity.OrderItem.SizeDescription == nil {
-			break
-		}
-
-		return e.complexity.OrderItem.SizeDescription(childComplexity), true
 
 	case "OrderItem.updatedAt":
 		if e.complexity.OrderItem.UpdatedAt == nil {
@@ -1575,13 +1538,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.Information(childComplexity), true
 
-	case "Product.instruction":
-		if e.complexity.Product.Instruction == nil {
-			break
-		}
-
-		return e.complexity.Product.Instruction(childComplexity), true
-
 	case "Product.inventory":
 		if e.complexity.Product.Inventory == nil {
 			break
@@ -1630,13 +1586,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Product.Removed(childComplexity), true
-
-	case "Product.sizeDescription":
-		if e.complexity.Product.SizeDescription == nil {
-			break
-		}
-
-		return e.complexity.Product.SizeDescription(childComplexity), true
 
 	case "Product.soldout":
 		if e.complexity.Product.Soldout == nil {
@@ -2213,13 +2162,22 @@ extend type Mutation {
 `, BuiltIn: false},
 	{Name: "api/graph/orders.graphqls", Input: `scalar Date
 
-enum OrderTypeEnum {
+enum OrderItemTypeEnum {
   UNKNOWN
   TIMEDEAL
+  EXHIBITION
   NORMAL
 }
 
 enum OrderStatusEnum {
+  UNKNOWN
+  CREATED
+  RECREATED
+  PAYMENT_PENDING
+  PAYMENT_FINISHED
+}
+
+enum OrderItemStatusEnum {
   UNKNOWN
   CREATED
   RECREATED
@@ -2254,11 +2212,11 @@ type OrderItem {
   salesPrice: Int!
   selectsize: String!
   quantity: Int!
-  orderType: OrderTypeEnum!
-  orderStatus: OrderStatusEnum!
-  sizeDescription: [String!]
+  orderItemType: OrderItemTypeEnum!
+  orderItemStatus: OrderItemStatusEnum!
   cancelDescription: [String!]
   deliveryDescription: [String!]
+  refundInfo: RefundInfo
   deliveryTrackingNumber: String!
   deliveryTrackingUrl: String!
   createdAt: Date!
@@ -2293,7 +2251,6 @@ type OrderInfo {
   createdAt: Date!
   updatedAt: Date!
   orderedAt: Date!
-  refundInfo: RefundInfo
 }
 
 type RefundInfo {
@@ -2445,18 +2402,10 @@ type Product {
   isUpdated: Boolean!
   isNewProduct: Boolean!
   removed: Boolean!
-  description: [String!]
   information: [KeyValueInfo]
-  instruction: Instruction
-  sizeDescription: [String!]
+  description: [String!]
   cancelDescription: [String!]
   deliveryDescription: [String!]
-}
-
-type Instruction {
-  title: String!
-  description: [String!]
-  images: [String!]
 }
 
 type Inventory {
@@ -2519,7 +2468,9 @@ type LikeProductOutput {
 extend type Query {
   product(id: String!): Product!
   products(input: ProductsInput!): ProductsOutput!
-  alloffCategoryProducts(input: AlloffCategoryProductsInput!): AlloffCategoryProducts!
+  alloffCategoryProducts(
+    input: AlloffCategoryProductsInput!
+  ): AlloffCategoryProducts!
   likeproducts: [LikeProductOutput]!
 }
 
@@ -5128,105 +5079,6 @@ func (ec *executionContext) _HomeItem_productGroups(ctx context.Context, field g
 	return ec.marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Instruction_title(ctx context.Context, field graphql.CollectedField, obj *model.Instruction) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Instruction",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Instruction_description(ctx context.Context, field graphql.CollectedField, obj *model.Instruction) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Instruction",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Instruction_images(ctx context.Context, field graphql.CollectedField, obj *model.Instruction) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Instruction",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Images, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Inventory_size(ctx context.Context, field graphql.CollectedField, obj *model.Inventory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6340,38 +6192,6 @@ func (ec *executionContext) _OrderInfo_orderedAt(ctx context.Context, field grap
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderInfo_refundInfo(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "OrderInfo",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RefundInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.RefundInfo)
-	fc.Result = res
-	return ec.marshalORefundInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefundInfo(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _OrderItem_productId(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6687,7 +6507,7 @@ func (ec *executionContext) _OrderItem_quantity(ctx context.Context, field graph
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderItem_orderType(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderItem_orderItemType(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6705,7 +6525,7 @@ func (ec *executionContext) _OrderItem_orderType(ctx context.Context, field grap
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.OrderType, nil
+		return obj.OrderItemType, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6717,12 +6537,12 @@ func (ec *executionContext) _OrderItem_orderType(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(model.OrderTypeEnum)
+	res := resTmp.(model.OrderItemTypeEnum)
 	fc.Result = res
-	return ec.marshalNOrderTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderTypeEnum(ctx, field.Selections, res)
+	return ec.marshalNOrderItemTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderItemTypeEnum(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderItem_orderStatus(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderItem_orderItemStatus(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6740,7 +6560,7 @@ func (ec *executionContext) _OrderItem_orderStatus(ctx context.Context, field gr
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.OrderStatus, nil
+		return obj.OrderItemStatus, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6752,41 +6572,9 @@ func (ec *executionContext) _OrderItem_orderStatus(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(model.OrderStatusEnum)
+	res := resTmp.(model.OrderItemStatusEnum)
 	fc.Result = res
-	return ec.marshalNOrderStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderStatusEnum(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _OrderItem_sizeDescription(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "OrderItem",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SizeDescription, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNOrderItemStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderItemStatusEnum(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderItem_cancelDescription(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
@@ -6851,6 +6639,38 @@ func (ec *executionContext) _OrderItem_deliveryDescription(ctx context.Context, 
 	res := resTmp.([]string)
 	fc.Result = res
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderItem_refundInfo(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefundInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.RefundInfo)
+	fc.Result = res
+	return ec.marshalORefundInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefundInfo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderItem_deliveryTrackingNumber(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
@@ -8716,38 +8536,6 @@ func (ec *executionContext) _Product_removed(ctx context.Context, field graphql.
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_description(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Product",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Description, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _Product_information(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -8780,7 +8568,7 @@ func (ec *executionContext) _Product_information(ctx context.Context, field grap
 	return ec.marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐKeyValueInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_instruction(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_description(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -8798,39 +8586,7 @@ func (ec *executionContext) _Product_instruction(ctx context.Context, field grap
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Instruction, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.Instruction)
-	fc.Result = res
-	return ec.marshalOInstruction2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInstruction(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Product_sizeDescription(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Product",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SizeDescription, nil
+		return obj.Description, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12966,37 +12722,6 @@ func (ec *executionContext) _HomeItem(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
-var instructionImplementors = []string{"Instruction"}
-
-func (ec *executionContext) _Instruction(ctx context.Context, sel ast.SelectionSet, obj *model.Instruction) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, instructionImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Instruction")
-		case "title":
-			out.Values[i] = ec._Instruction_title(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "description":
-			out.Values[i] = ec._Instruction_description(ctx, field, obj)
-		case "images":
-			out.Values[i] = ec._Instruction_images(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var inventoryImplementors = []string{"Inventory"}
 
 func (ec *executionContext) _Inventory(ctx context.Context, sel ast.SelectionSet, obj *model.Inventory) graphql.Marshaler {
@@ -13245,8 +12970,6 @@ func (ec *executionContext) _OrderInfo(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "refundInfo":
-			out.Values[i] = ec._OrderInfo_refundInfo(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -13314,22 +13037,22 @@ func (ec *executionContext) _OrderItem(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "orderType":
-			out.Values[i] = ec._OrderItem_orderType(ctx, field, obj)
+		case "orderItemType":
+			out.Values[i] = ec._OrderItem_orderItemType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "orderStatus":
-			out.Values[i] = ec._OrderItem_orderStatus(ctx, field, obj)
+		case "orderItemStatus":
+			out.Values[i] = ec._OrderItem_orderItemStatus(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "sizeDescription":
-			out.Values[i] = ec._OrderItem_sizeDescription(ctx, field, obj)
 		case "cancelDescription":
 			out.Values[i] = ec._OrderItem_cancelDescription(ctx, field, obj)
 		case "deliveryDescription":
 			out.Values[i] = ec._OrderItem_deliveryDescription(ctx, field, obj)
+		case "refundInfo":
+			out.Values[i] = ec._OrderItem_refundInfo(ctx, field, obj)
 		case "deliveryTrackingNumber":
 			out.Values[i] = ec._OrderItem_deliveryTrackingNumber(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -13727,14 +13450,10 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "description":
-			out.Values[i] = ec._Product_description(ctx, field, obj)
 		case "information":
 			out.Values[i] = ec._Product_information(ctx, field, obj)
-		case "instruction":
-			out.Values[i] = ec._Product_instruction(ctx, field, obj)
-		case "sizeDescription":
-			out.Values[i] = ec._Product_sizeDescription(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._Product_description(ctx, field, obj)
 		case "cancelDescription":
 			out.Values[i] = ec._Product_cancelDescription(ctx, field, obj)
 		case "deliveryDescription":
@@ -15107,23 +14826,23 @@ func (ec *executionContext) unmarshalNOrderItemInput2ᚕᚖgithubᚗcomᚋlessbu
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalNOrderStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderStatusEnum(ctx context.Context, v interface{}) (model.OrderStatusEnum, error) {
-	var res model.OrderStatusEnum
+func (ec *executionContext) unmarshalNOrderItemStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderItemStatusEnum(ctx context.Context, v interface{}) (model.OrderItemStatusEnum, error) {
+	var res model.OrderItemStatusEnum
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNOrderStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderStatusEnum(ctx context.Context, sel ast.SelectionSet, v model.OrderStatusEnum) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderItemStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderItemStatusEnum(ctx context.Context, sel ast.SelectionSet, v model.OrderItemStatusEnum) graphql.Marshaler {
 	return v
 }
 
-func (ec *executionContext) unmarshalNOrderTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderTypeEnum(ctx context.Context, v interface{}) (model.OrderTypeEnum, error) {
-	var res model.OrderTypeEnum
+func (ec *executionContext) unmarshalNOrderItemTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderItemTypeEnum(ctx context.Context, v interface{}) (model.OrderItemTypeEnum, error) {
+	var res model.OrderItemTypeEnum
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNOrderTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderTypeEnum(ctx context.Context, sel ast.SelectionSet, v model.OrderTypeEnum) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderItemTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderItemTypeEnum(ctx context.Context, sel ast.SelectionSet, v model.OrderItemTypeEnum) graphql.Marshaler {
 	return v
 }
 
@@ -15957,13 +15676,6 @@ func (ec *executionContext) marshalOHomeItem2ᚖgithubᚗcomᚋlessbutterᚋallo
 		return graphql.Null
 	}
 	return ec._HomeItem(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOInstruction2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐInstruction(ctx context.Context, sel ast.SelectionSet, v *model.Instruction) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Instruction(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

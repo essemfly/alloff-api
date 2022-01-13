@@ -42,7 +42,9 @@ func NewPostgresDB(conf config.Configuration) *PostgresDB {
 
 func (conn *PostgresDB) RegisterRepos() {
 	ioc.Repo.Orders = PostgresOrderRepo(conn)
+	ioc.Repo.OrderItems = PostgresOrderItemRepo(conn)
 	ioc.Repo.Payments = PostgresPaymentRepo(conn)
+	ioc.Repo.Refunds = PostgresRefundItemRepo(conn)
 	ioc.Service.OrderWithPaymentService = PostgresOrderPaymentService(conn)
 }
 

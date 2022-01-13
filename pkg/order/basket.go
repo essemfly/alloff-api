@@ -74,8 +74,8 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			SalesPrice:             item.Product.DiscountedPrice,
 			CancelDescription:      item.Product.SalesInstruction.CancelDescription,
 			DeliveryDescription:    item.Product.SalesInstruction.DeliveryDescription,
-			OrderType:              orderItemType,
-			OrderStatus:            domain.ORDER_CREATED,
+			OrderItemType:          orderItemType,
+			OrderItemStatus:        domain.ORDER_ITEM_CREATED,
 			DeliveryTrackingNumber: "",
 			DeliveryTrackingUrl:    "",
 			Size:                   item.Size,
@@ -91,7 +91,6 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 	newOrderDao := &domain.OrderDAO{
 		AlloffOrderID: orderAlloffID,
 		User:          user,
-		OrderStatus:   domain.ORDER_CREATED,
 		OrderItems:    orderItems,
 		TotalPrice:    totalProductPrice,
 		ProductPrice:  totalProductPrice,
