@@ -95,13 +95,7 @@ type ProductAlloffCategoryDAO struct {
 }
 
 type AlloffInstructionDAO struct {
-	Description []string
-	Instruction struct {
-		Title       string
-		Description []string
-		Images      []string
-	}
-	SizeDescription     []string
+	Description         []string
 	DeliveryDescription []string
 	CancelDescription   []string
 }
@@ -236,10 +230,8 @@ func (pdDao *ProductDAO) ToDTO() *model.Product {
 		IsUpdated:           pdDao.IsUpdated,
 		IsNewProduct:        pdDao.Score.IsNewlyCrawled,
 		Removed:             pdDao.Removed,
-		Description:         pdDao.SalesInstruction.Description,
 		Information:         information,
-		Instruction:         (*model.Instruction)(&pdDao.SalesInstruction.Instruction),
-		SizeDescription:     pdDao.SalesInstruction.SizeDescription,
+		Description:         pdDao.SalesInstruction.Description,
 		DeliveryDescription: pdDao.SalesInstruction.DeliveryDescription,
 		CancelDescription:   pdDao.SalesInstruction.CancelDescription,
 	}

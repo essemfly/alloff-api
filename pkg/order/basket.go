@@ -72,7 +72,6 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			BrandKorname:           item.Product.ProductInfo.Brand.KorName,
 			Removed:                item.Product.Removed,
 			SalesPrice:             item.Product.DiscountedPrice,
-			SizeDescription:        item.Product.SalesInstruction.SizeDescription,
 			CancelDescription:      item.Product.SalesInstruction.CancelDescription,
 			DeliveryDescription:    item.Product.SalesInstruction.DeliveryDescription,
 			OrderType:              orderItemType,

@@ -24,18 +24,10 @@ type Product {
   isUpdated: Boolean!
   isNewProduct: Boolean!
   removed: Boolean!
-  description: [String!]
   information: [KeyValueInfo]
-  instruction: Instruction
-  sizeDescription: [String!]
+  description: [String!]
   cancelDescription: [String!]
   deliveryDescription: [String!]
-}
-
-type Instruction {
-  title: String!
-  description: [String!]
-  images: [String!]
 }
 
 type Inventory {
@@ -98,7 +90,9 @@ type LikeProductOutput {
 extend type Query {
   product(id: String!): Product!
   products(input: ProductsInput!): ProductsOutput!
-  alloffCategoryProducts(input: AlloffCategoryProductsInput!): AlloffCategoryProducts!
+  alloffCategoryProducts(
+    input: AlloffCategoryProductsInput!
+  ): AlloffCategoryProducts!
   likeproducts: [LikeProductOutput]!
 }
 
