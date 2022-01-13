@@ -104,6 +104,7 @@ type ComplexityRoot struct {
 
 	DeliveryDescription struct {
 		DeliveryFee         func(childComplexity int) int
+		DeliveryType        func(childComplexity int) int
 		EarlistDeliveryDays func(childComplexity int) int
 		LatestDeliveryDays  func(childComplexity int) int
 		Texts               func(childComplexity int) int
@@ -186,6 +187,7 @@ type ComplexityRoot struct {
 		OrderedAt     func(childComplexity int) int
 		Orders        func(childComplexity int) int
 		ProductPrice  func(childComplexity int) int
+		RefundPrice   func(childComplexity int) int
 		TotalPrice    func(childComplexity int) int
 		UpdatedAt     func(childComplexity int) int
 		UserMemo      func(childComplexity int) int
@@ -681,6 +683,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DeliveryDescription.DeliveryFee(childComplexity), true
 
+	case "DeliveryDescription.deliveryType":
+		if e.complexity.DeliveryDescription.DeliveryType == nil {
+			break
+		}
+
+		return e.complexity.DeliveryDescription.DeliveryType(childComplexity), true
+
 	case "DeliveryDescription.earlistDeliveryDays":
 		if e.complexity.DeliveryDescription.EarlistDeliveryDays == nil {
 			break
@@ -1135,6 +1144,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrderInfo.ProductPrice(childComplexity), true
+
+	case "OrderInfo.refundPrice":
+		if e.complexity.OrderInfo.RefundPrice == nil {
+			break
+		}
+
+		return e.complexity.OrderInfo.RefundPrice(childComplexity), true
 
 	case "OrderInfo.totalPrice":
 		if e.complexity.OrderInfo.TotalPrice == nil {
@@ -2328,6 +2344,7 @@ type OrderInfo {
   productPrice: Int!
   deliveryPrice: Int!
   totalPrice: Int!
+  refundPrice: Int
   userMemo: String!
   createdAt: Date!
   updatedAt: Date!
@@ -2505,6 +2522,7 @@ type ProductDescription {
 }
 
 type DeliveryDescription {
+  deliveryType: DeliveryType!
   deliveryFee: Int!
   earlistDeliveryDays: Int!
   latestDeliveryDays: Int!
@@ -4397,6 +4415,41 @@ func (ec *executionContext) _CommunityItem_imgUrl(ctx context.Context, field gra
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DeliveryDescription_deliveryType(ctx context.Context, field graphql.CollectedField, obj *model.DeliveryDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DeliveryDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeliveryType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.DeliveryType)
+	fc.Result = res
+	return ec.marshalNDeliveryType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDeliveryType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _DeliveryDescription_deliveryFee(ctx context.Context, field graphql.CollectedField, obj *model.DeliveryDescription) (ret graphql.Marshaler) {
@@ -6393,6 +6446,38 @@ func (ec *executionContext) _OrderInfo_totalPrice(ctx context.Context, field gra
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderInfo_refundPrice(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefundPrice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderInfo_userMemo(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
@@ -12992,6 +13077,11 @@ func (ec *executionContext) _DeliveryDescription(ctx context.Context, sel ast.Se
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("DeliveryDescription")
+		case "deliveryType":
+			out.Values[i] = ec._DeliveryDescription_deliveryType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "deliveryFee":
 			out.Values[i] = ec._DeliveryDescription_deliveryFee(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -13442,6 +13532,8 @@ func (ec *executionContext) _OrderInfo(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "refundPrice":
+			out.Values[i] = ec._OrderInfo_refundPrice(ctx, field, obj)
 		case "userMemo":
 			out.Values[i] = ec._OrderInfo_userMemo(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -14995,6 +15087,16 @@ func (ec *executionContext) marshalNDeliveryDescription2ᚖgithubᚗcomᚋlessbu
 		return graphql.Null
 	}
 	return ec._DeliveryDescription(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNDeliveryType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDeliveryType(ctx context.Context, v interface{}) (model.DeliveryType, error) {
+	var res model.DeliveryType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNDeliveryType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDeliveryType(ctx context.Context, sel ast.SelectionSet, v model.DeliveryType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) marshalNDevice2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDevice(ctx context.Context, sel ast.SelectionSet, v model.Device) graphql.Marshaler {

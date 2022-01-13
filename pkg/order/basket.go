@@ -95,6 +95,7 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 		TotalPrice:    totalProductPrice,
 		ProductPrice:  totalProductPrice,
 		DeliveryPrice: 0,
+		RefundPrice:   0,
 		UserMemo:      "",
 		CreatedAt:     time.Now(),
 		UpdatedAt:     time.Now(),

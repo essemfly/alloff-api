@@ -22,11 +22,20 @@ type CrawlSourceDAO struct {
 	CrawlModuleName string
 	// 아울렛 상품인지 유무, 판매 상품인지 여부
 	IsSalesProducts bool
-	// 해외 배송상품인지
+	// 해외배송 마크
 	IsForeignDelivery bool
-	//(TODO) 가격정책이 확정되어야함
-	PriceMarginPolicy string
+
+	// 배송비 및 가격 추가에 대한 내용 (TODO) 가격정책이 확정되어야함
 	DeliveryPrice     int
+	PriceMarginPolicy string
+
+	// 상품 정보에 들어갈 내용
+	EarliestDeliveryDays int
+	LatestDeliveryDays   int
+	DeliveryDesc         []string
+	RefundAvailable      bool
+	ChangeAvailable      bool
+	CancelDesc           []string
 }
 
 type CrawlRecordDAO struct {

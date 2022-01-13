@@ -26,6 +26,7 @@ type OrderDAO struct {
 	TotalPrice    int
 	ProductPrice  int
 	DeliveryPrice int
+	RefundPrice   int
 	UserMemo      string
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
@@ -44,6 +45,7 @@ func (orderDao *OrderDAO) ToDTO() *model.OrderInfo {
 		ProductPrice:  orderDao.ProductPrice,
 		DeliveryPrice: orderDao.DeliveryPrice,
 		TotalPrice:    orderDao.TotalPrice,
+		RefundPrice:   &orderDao.RefundPrice,
 		UserMemo:      orderDao.UserMemo,
 		CreatedAt:     orderDao.CreatedAt.String(),
 		UpdatedAt:     orderDao.UpdatedAt.String(),

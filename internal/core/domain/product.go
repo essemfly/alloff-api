@@ -257,6 +257,13 @@ func (pdDao *ProductDAO) ToDTO() *model.Product {
 		information = append(information, &newInfo)
 	}
 
+	deliveryDesc := pdDao.SalesInstruction.DeliveryDescription.ToDTO()
+	if pdDao.ProductInfo.Source.IsForeignDelivery {
+		deliveryDesc.DeliveryType = model.DeliveryTypeForeignDelivery
+	} else {
+		deliveryDesc.DeliveryType = model.DeliveryTypeDomesticDelivery
+	}
+
 	return &model.Product{
 		ID:                  pdDao.ID.Hex(),
 		Category:            pdDao.ProductInfo.Category.ToDTO(),
@@ -274,7 +281,7 @@ func (pdDao *ProductDAO) ToDTO() *model.Product {
 		Removed:             pdDao.Removed,
 		Information:         information,
 		Description:         pdDao.SalesInstruction.Description.ToDTO(),
-		DeliveryDescription: pdDao.SalesInstruction.DeliveryDescription.ToDTO(),
+		DeliveryDescription: deliveryDesc,
 		CancelDescription:   pdDao.SalesInstruction.CancelDescription.ToDTO(),
 	}
 }

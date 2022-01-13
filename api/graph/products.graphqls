@@ -46,6 +46,7 @@ type ProductDescription {
 }
 
 type DeliveryDescription {
+  deliveryType: DeliveryType!
   deliveryFee: Int!
   earlistDeliveryDays: Int!
   latestDeliveryDays: Int!

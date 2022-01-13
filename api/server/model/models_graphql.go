@@ -92,10 +92,11 @@ type CommunityItem struct {
 }
 
 type DeliveryDescription struct {
-	DeliveryFee         int      `json:"deliveryFee"`
-	EarlistDeliveryDays int      `json:"earlistDeliveryDays"`
-	LatestDeliveryDays  int      `json:"latestDeliveryDays"`
-	Texts               []string `json:"texts"`
+	DeliveryType        DeliveryType `json:"deliveryType"`
+	DeliveryFee         int          `json:"deliveryFee"`
+	EarlistDeliveryDays int          `json:"earlistDeliveryDays"`
+	LatestDeliveryDays  int          `json:"latestDeliveryDays"`
+	Texts               []string     `json:"texts"`
 }
 
 type Device struct {
@@ -185,6 +186,7 @@ type OrderInfo struct {
 	ProductPrice  int          `json:"productPrice"`
 	DeliveryPrice int          `json:"deliveryPrice"`
 	TotalPrice    int          `json:"totalPrice"`
+	RefundPrice   *int         `json:"refundPrice"`
 	UserMemo      string       `json:"userMemo"`
 	CreatedAt     string       `json:"createdAt"`
 	UpdatedAt     string       `json:"updatedAt"`

@@ -85,6 +85,7 @@ type OrderInfo {
   productPrice: Int!
   deliveryPrice: Int!
   totalPrice: Int!
+  refundPrice: Int
   userMemo: String!
   createdAt: Date!
   updatedAt: Date!
