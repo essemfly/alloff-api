@@ -199,6 +199,7 @@ type OrderInput struct {
 }
 
 type OrderItem struct {
+	ID                     string               `json:"id"`
 	ProductID              string               `json:"productId"`
 	ProductName            string               `json:"productName"`
 	ProductImg             string               `json:"productImg"`
@@ -230,6 +231,11 @@ type OrderItemInput struct {
 	ProductGroupID string `json:"productGroupId"`
 	Selectsize     string `json:"selectsize"`
 	Quantity       int    `json:"quantity"`
+}
+
+type OrderItemStatusDescription struct {
+	StatusName  OrderItemStatusEnum `json:"statusName"`
+	Description string              `json:"description"`
 }
 
 type OrderResponse struct {

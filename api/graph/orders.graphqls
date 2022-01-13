@@ -41,6 +41,7 @@ enum PaymentStatusEnum {
 }
 
 type OrderItem {
+  id: ID!
   productId: String!
   productName: String!
   productImg: String!
@@ -169,17 +170,24 @@ type OrderValidityResult {
   order: OrderInfo!
 }
 
+type OrderItemStatusDescription {
+  statusName: OrderItemStatusEnum!
+  description: String!
+}
+
 extend type Query {
   order(id: String!): OrderInfo!
   orders: [OrderInfo]!
+  orderItemStatus: [OrderItemStatusDescription!]!
 }
 
 extend type Mutation {
   checkOrder(input: OrderInput): OrderValidityResult!
   requestOrder(input: OrderInput): OrderWithPayment!
-  cancelOrder(orderId: String!, productId: String): PaymentStatus!
-  confirmOrder(orderId: String!): PaymentStatus!
   requestPayment(input: PaymentClientInput): PaymentStatus!
   cancelPayment(input: PaymentClientInput): PaymentStatus!
   handlePaymentResponse(input: OrderResponse): PaymentResult!
+
+  cancelOrderItem(orderItemId: ID!, quantity: Int!): PaymentStatus!
+  confirmOrderItem(orderItemId: ID!): PaymentStatus!
 }
