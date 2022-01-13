@@ -40,7 +40,7 @@ func (pdInfo *ProductMetaInfoDAO) SetBrandAndCategory(brand *BrandDAO, source *C
 }
 
 func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyType CurrencyType) {
-	newHistory := []PriceHistoryDAO{
+	newHistory := []*PriceHistoryDAO{
 		{
 			Date:  time.Now(),
 			Price: float32(curPrice),
@@ -95,9 +95,51 @@ type ProductAlloffCategoryDAO struct {
 }
 
 type AlloffInstructionDAO struct {
-	Description         []string
-	DeliveryDescription []string
-	CancelDescription   []string
+	Description         *ProductDescriptionDAO
+	DeliveryDescription *DeliveryDescriptionDAO
+	CancelDescription   *CancelDescriptionDAO
+}
+
+type ProductDescriptionDAO struct {
+	Images []string
+	Texts  []string
+}
+
+func (productDesc *ProductDescriptionDAO) ToDTO() *model.ProductDescription {
+	return &model.ProductDescription{
+		Images: productDesc.Images,
+		Texts:  productDesc.Texts,
+	}
+}
+
+type DeliveryDescriptionDAO struct {
+	DeliveryFee          int
+	EarliestDeliveryDays int
+	LatestDeliveryDays   int
+	Texts                []string
+}
+
+func (deliveryDesc *DeliveryDescriptionDAO) ToDTO() *model.DeliveryDescription {
+	return &model.DeliveryDescription{
+		DeliveryFee:         deliveryDesc.DeliveryFee,
+		EarlistDeliveryDays: deliveryDesc.EarliestDeliveryDays,
+		LatestDeliveryDays:  deliveryDesc.LatestDeliveryDays,
+		Texts:               deliveryDesc.Texts,
+	}
+}
+
+type CancelDescriptionDAO struct {
+	RefundAvailable bool
+	ChangeAvailable bool
+	Texts           []string
+}
+
+func (cancelDesc *CancelDescriptionDAO) ToDTO() *model.CancelDescription {
+	return &model.CancelDescription{
+		RefundAvailable: cancelDesc.RefundAvailable,
+		ChangeAvailable: cancelDesc.ChangeAvailable,
+		Texts:           cancelDesc.Texts,
+	}
 }
 
 type ProductDAO struct {
@@ -231,9 +273,9 @@ func (pdDao *ProductDAO) ToDTO() *model.Product {
 		IsNewProduct:        pdDao.Score.IsNewlyCrawled,
 		Removed:             pdDao.Removed,
 		Information:         information,
-		Description:         pdDao.SalesInstruction.Description,
-		DeliveryDescription: pdDao.SalesInstruction.DeliveryDescription,
-		CancelDescription:   pdDao.SalesInstruction.CancelDescription,
+		Description:         pdDao.SalesInstruction.Description.ToDTO(),
+		DeliveryDescription: pdDao.SalesInstruction.DeliveryDescription.ToDTO(),
+		CancelDescription:   pdDao.SalesInstruction.CancelDescription.ToDTO(),
 	}
 }
 
@@ -241,7 +283,7 @@ type PriceDAO struct {
 	OriginalPrice float32
 	CurrencyType  CurrencyType
 	CurrentPrice  float32
-	History       []PriceHistoryDAO
+	History       []*PriceHistoryDAO
 }
 
 type LikeProductDAO struct {

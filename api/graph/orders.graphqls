@@ -52,8 +52,8 @@ type OrderItem {
   quantity: Int!
   orderItemType: OrderItemTypeEnum!
   orderItemStatus: OrderItemStatusEnum!
-  cancelDescription: [String!]
-  deliveryDescription: [String!]
+  cancelDescription: CancelDescription!
+  deliveryDescription: DeliveryDescription!
   refundInfo: RefundInfo
   deliveryTrackingNumber: String!
   deliveryTrackingUrl: String!

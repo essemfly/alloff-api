@@ -9,6 +9,11 @@ enum SortingType {
   DISCOUNTRATE_DESCENDING
 }
 
+enum DeliveryType {
+  DOMESTIC_DELIVERY
+  FOREIGN_DELIVERY
+}
+
 type Product {
   id: ID!
   category: Category!
@@ -25,14 +30,32 @@ type Product {
   isNewProduct: Boolean!
   removed: Boolean!
   information: [KeyValueInfo]
-  description: [String!]
-  cancelDescription: [String!]
-  deliveryDescription: [String!]
+  description: ProductDescription
+  cancelDescription: CancelDescription!
+  deliveryDescription: DeliveryDescription!
 }
 
 type Inventory {
   size: String!
   quantity: Int!
+}
+
+type ProductDescription {
+  images: [String!]
+  texts: [String!]
+}
+
+type DeliveryDescription {
+  deliveryFee: Int!
+  earlistDeliveryDays: Int!
+  latestDeliveryDays: Int!
+  texts: [String!]
+}
+
+type CancelDescription {
+  refundAvailable: Boolean!
+  changeAvailable: Boolean!
+  texts: [String!]
 }
 
 input InventoryInput {

@@ -72,6 +72,12 @@ type BrandsInput struct {
 	OnlyLikes *bool `json:"onlyLikes"`
 }
 
+type CancelDescription struct {
+	RefundAvailable bool     `json:"refundAvailable"`
+	ChangeAvailable bool     `json:"changeAvailable"`
+	Texts           []string `json:"texts"`
+}
+
 type Category struct {
 	ID      string `json:"id"`
 	KeyName string `json:"keyName"`
@@ -83,6 +89,13 @@ type CommunityItem struct {
 	Target     string            `json:"target"`
 	TargetType CommunityItemType `json:"targetType"`
 	ImgURL     string            `json:"imgUrl"`
+}
+
+type DeliveryDescription struct {
+	DeliveryFee         int      `json:"deliveryFee"`
+	EarlistDeliveryDays int      `json:"earlistDeliveryDays"`
+	LatestDeliveryDays  int      `json:"latestDeliveryDays"`
+	Texts               []string `json:"texts"`
 }
 
 type Device struct {
@@ -184,30 +197,30 @@ type OrderInput struct {
 }
 
 type OrderItem struct {
-	ProductID              string              `json:"productId"`
-	ProductName            string              `json:"productName"`
-	ProductImg             string              `json:"productImg"`
-	BrandKeyname           string              `json:"brandKeyname"`
-	BrandKorname           string              `json:"brandKorname"`
-	Removed                bool                `json:"removed"`
-	SalesPrice             int                 `json:"salesPrice"`
-	Selectsize             string              `json:"selectsize"`
-	Quantity               int                 `json:"quantity"`
-	OrderItemType          OrderItemTypeEnum   `json:"orderItemType"`
-	OrderItemStatus        OrderItemStatusEnum `json:"orderItemStatus"`
-	CancelDescription      []string            `json:"cancelDescription"`
-	DeliveryDescription    []string            `json:"deliveryDescription"`
-	RefundInfo             *RefundInfo         `json:"refundInfo"`
-	DeliveryTrackingNumber string              `json:"deliveryTrackingNumber"`
-	DeliveryTrackingURL    string              `json:"deliveryTrackingUrl"`
-	CreatedAt              string              `json:"createdAt"`
-	UpdatedAt              string              `json:"updatedAt"`
-	OrderedAt              string              `json:"orderedAt"`
-	DeliveryStartedAt      string              `json:"deliveryStartedAt"`
-	DeliveryFinishedAt     string              `json:"deliveryFinishedAt"`
-	CancelRequestedAt      string              `json:"cancelRequestedAt"`
-	CancelFinishedAt       string              `json:"cancelFinishedAt"`
-	ConfirmedAt            string              `json:"confirmedAt"`
+	ProductID              string               `json:"productId"`
+	ProductName            string               `json:"productName"`
+	ProductImg             string               `json:"productImg"`
+	BrandKeyname           string               `json:"brandKeyname"`
+	BrandKorname           string               `json:"brandKorname"`
+	Removed                bool                 `json:"removed"`
+	SalesPrice             int                  `json:"salesPrice"`
+	Selectsize             string               `json:"selectsize"`
+	Quantity               int                  `json:"quantity"`
+	OrderItemType          OrderItemTypeEnum    `json:"orderItemType"`
+	OrderItemStatus        OrderItemStatusEnum  `json:"orderItemStatus"`
+	CancelDescription      *CancelDescription   `json:"cancelDescription"`
+	DeliveryDescription    *DeliveryDescription `json:"deliveryDescription"`
+	RefundInfo             *RefundInfo          `json:"refundInfo"`
+	DeliveryTrackingNumber string               `json:"deliveryTrackingNumber"`
+	DeliveryTrackingURL    string               `json:"deliveryTrackingUrl"`
+	CreatedAt              string               `json:"createdAt"`
+	UpdatedAt              string               `json:"updatedAt"`
+	OrderedAt              string               `json:"orderedAt"`
+	DeliveryStartedAt      string               `json:"deliveryStartedAt"`
+	DeliveryFinishedAt     string               `json:"deliveryFinishedAt"`
+	CancelRequestedAt      string               `json:"cancelRequestedAt"`
+	CancelFinishedAt       string               `json:"cancelFinishedAt"`
+	ConfirmedAt            string               `json:"confirmedAt"`
 }
 
 type OrderItemInput struct {
@@ -287,24 +300,29 @@ type PaymentStatus struct {
 }
 
 type Product struct {
-	ID                  string          `json:"id"`
-	Category            *Category       `json:"category"`
-	Brand               *Brand          `json:"brand"`
-	Name                string          `json:"name"`
-	OriginalPrice       int             `json:"originalPrice"`
-	Soldout             bool            `json:"soldout"`
-	Images              []string        `json:"images"`
-	DiscountedPrice     *int            `json:"discountedPrice"`
-	DiscountRate        *int            `json:"discountRate"`
-	ProductURL          string          `json:"productUrl"`
-	Inventory           []*Inventory    `json:"inventory"`
-	IsUpdated           bool            `json:"isUpdated"`
-	IsNewProduct        bool            `json:"isNewProduct"`
-	Removed             bool            `json:"removed"`
-	Information         []*KeyValueInfo `json:"information"`
-	Description         []string        `json:"description"`
-	CancelDescription   []string        `json:"cancelDescription"`
-	DeliveryDescription []string        `json:"deliveryDescription"`
+	ID                  string               `json:"id"`
+	Category            *Category            `json:"category"`
+	Brand               *Brand               `json:"brand"`
+	Name                string               `json:"name"`
+	OriginalPrice       int                  `json:"originalPrice"`
+	Soldout             bool                 `json:"soldout"`
+	Images              []string             `json:"images"`
+	DiscountedPrice     *int                 `json:"discountedPrice"`
+	DiscountRate        *int                 `json:"discountRate"`
+	ProductURL          string               `json:"productUrl"`
+	Inventory           []*Inventory         `json:"inventory"`
+	IsUpdated           bool                 `json:"isUpdated"`
+	IsNewProduct        bool                 `json:"isNewProduct"`
+	Removed             bool                 `json:"removed"`
+	Information         []*KeyValueInfo      `json:"information"`
+	Description         *ProductDescription  `json:"description"`
+	CancelDescription   *CancelDescription   `json:"cancelDescription"`
+	DeliveryDescription *DeliveryDescription `json:"deliveryDescription"`
+}
+
+type ProductDescription struct {
+	Images []string `json:"images"`
+	Texts  []string `json:"texts"`
 }
 
 type ProductGroup struct {
@@ -411,6 +429,47 @@ func (e *CommunityItemType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e CommunityItemType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type DeliveryType string
+
+const (
+	DeliveryTypeDomesticDelivery DeliveryType = "DOMESTIC_DELIVERY"
+	DeliveryTypeForeignDelivery  DeliveryType = "FOREIGN_DELIVERY"
+)
+
+var AllDeliveryType = []DeliveryType{
+	DeliveryTypeDomesticDelivery,
+	DeliveryTypeForeignDelivery,
+}
+
+func (e DeliveryType) IsValid() bool {
+	switch e {
+	case DeliveryTypeDomesticDelivery, DeliveryTypeForeignDelivery:
+		return true
+	}
+	return false
+}
+
+func (e DeliveryType) String() string {
+	return string(e)
+}
+
+func (e *DeliveryType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = DeliveryType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid DeliveryType", str)
+	}
+	return nil
+}
+
+func (e DeliveryType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

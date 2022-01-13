@@ -44,8 +44,8 @@ type OrderItemDAO struct {
 	BrandKorname           string
 	Removed                bool
 	SalesPrice             int
-	CancelDescription      []string
-	DeliveryDescription    []string
+	CancelDescription      *CancelDescriptionDAO
+	DeliveryDescription    *DeliveryDescriptionDAO
 	OrderItemType          OrderItemTypeEnum
 	OrderItemStatus        OrderItemStatusEnum
 	DeliveryTrackingNumber string
@@ -76,8 +76,8 @@ func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {
 		Quantity:               orderItemDao.Quantity,
 		OrderItemType:          MapOrderItemType(orderItemDao.OrderItemType),
 		OrderItemStatus:        MapOrderItemStatus(orderItemDao.OrderItemStatus),
-		CancelDescription:      orderItemDao.CancelDescription,
-		DeliveryDescription:    orderItemDao.DeliveryDescription,
+		CancelDescription:      orderItemDao.CancelDescription.ToDTO(),
+		DeliveryDescription:    orderItemDao.DeliveryDescription.ToDTO(),
 		DeliveryTrackingNumber: orderItemDao.DeliveryTrackingNumber,
 		DeliveryTrackingURL:    orderItemDao.DeliveryTrackingUrl,
 		CreatedAt:              orderItemDao.CreatedAt.String(),

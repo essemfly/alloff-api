@@ -83,6 +83,12 @@ type ComplexityRoot struct {
 		ImgURL func(childComplexity int) int
 	}
 
+	CancelDescription struct {
+		ChangeAvailable func(childComplexity int) int
+		RefundAvailable func(childComplexity int) int
+		Texts           func(childComplexity int) int
+	}
+
 	Category struct {
 		ID      func(childComplexity int) int
 		KeyName func(childComplexity int) int
@@ -94,6 +100,13 @@ type ComplexityRoot struct {
 		Name       func(childComplexity int) int
 		Target     func(childComplexity int) int
 		TargetType func(childComplexity int) int
+	}
+
+	DeliveryDescription struct {
+		DeliveryFee         func(childComplexity int) int
+		EarlistDeliveryDays func(childComplexity int) int
+		LatestDeliveryDays  func(childComplexity int) int
+		Texts               func(childComplexity int) int
 	}
 
 	Device struct {
@@ -272,6 +285,11 @@ type ComplexityRoot struct {
 		ProductURL          func(childComplexity int) int
 		Removed             func(childComplexity int) int
 		Soldout             func(childComplexity int) int
+	}
+
+	ProductDescription struct {
+		Images func(childComplexity int) int
+		Texts  func(childComplexity int) int
 	}
 
 	ProductGroup struct {
@@ -586,6 +604,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.BrandItem.ImgURL(childComplexity), true
 
+	case "CancelDescription.changeAvailable":
+		if e.complexity.CancelDescription.ChangeAvailable == nil {
+			break
+		}
+
+		return e.complexity.CancelDescription.ChangeAvailable(childComplexity), true
+
+	case "CancelDescription.refundAvailable":
+		if e.complexity.CancelDescription.RefundAvailable == nil {
+			break
+		}
+
+		return e.complexity.CancelDescription.RefundAvailable(childComplexity), true
+
+	case "CancelDescription.texts":
+		if e.complexity.CancelDescription.Texts == nil {
+			break
+		}
+
+		return e.complexity.CancelDescription.Texts(childComplexity), true
+
 	case "Category.id":
 		if e.complexity.Category.ID == nil {
 			break
@@ -634,6 +673,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CommunityItem.TargetType(childComplexity), true
+
+	case "DeliveryDescription.deliveryFee":
+		if e.complexity.DeliveryDescription.DeliveryFee == nil {
+			break
+		}
+
+		return e.complexity.DeliveryDescription.DeliveryFee(childComplexity), true
+
+	case "DeliveryDescription.earlistDeliveryDays":
+		if e.complexity.DeliveryDescription.EarlistDeliveryDays == nil {
+			break
+		}
+
+		return e.complexity.DeliveryDescription.EarlistDeliveryDays(childComplexity), true
+
+	case "DeliveryDescription.latestDeliveryDays":
+		if e.complexity.DeliveryDescription.LatestDeliveryDays == nil {
+			break
+		}
+
+		return e.complexity.DeliveryDescription.LatestDeliveryDays(childComplexity), true
+
+	case "DeliveryDescription.texts":
+		if e.complexity.DeliveryDescription.Texts == nil {
+			break
+		}
+
+		return e.complexity.DeliveryDescription.Texts(childComplexity), true
 
 	case "Device.allowNotification":
 		if e.complexity.Device.AllowNotification == nil {
@@ -1594,6 +1661,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.Soldout(childComplexity), true
 
+	case "ProductDescription.images":
+		if e.complexity.ProductDescription.Images == nil {
+			break
+		}
+
+		return e.complexity.ProductDescription.Images(childComplexity), true
+
+	case "ProductDescription.texts":
+		if e.complexity.ProductDescription.Texts == nil {
+			break
+		}
+
+		return e.complexity.ProductDescription.Texts(childComplexity), true
+
 	case "ProductGroup.finishTime":
 		if e.complexity.ProductGroup.FinishTime == nil {
 			break
@@ -2214,8 +2295,8 @@ type OrderItem {
   quantity: Int!
   orderItemType: OrderItemTypeEnum!
   orderItemStatus: OrderItemStatusEnum!
-  cancelDescription: [String!]
-  deliveryDescription: [String!]
+  cancelDescription: CancelDescription!
+  deliveryDescription: DeliveryDescription!
   refundInfo: RefundInfo
   deliveryTrackingNumber: String!
   deliveryTrackingUrl: String!
@@ -2387,6 +2468,11 @@ extend type Query {
   DISCOUNTRATE_DESCENDING
 }
 
+enum DeliveryType {
+  DOMESTIC_DELIVERY
+  FOREIGN_DELIVERY
+}
+
 type Product {
   id: ID!
   category: Category!
@@ -2403,14 +2489,32 @@ type Product {
   isNewProduct: Boolean!
   removed: Boolean!
   information: [KeyValueInfo]
-  description: [String!]
-  cancelDescription: [String!]
-  deliveryDescription: [String!]
+  description: ProductDescription
+  cancelDescription: CancelDescription!
+  deliveryDescription: DeliveryDescription!
 }
 
 type Inventory {
   size: String!
   quantity: Int!
+}
+
+type ProductDescription {
+  images: [String!]
+  texts: [String!]
+}
+
+type DeliveryDescription {
+  deliveryFee: Int!
+  earlistDeliveryDays: Int!
+  latestDeliveryDays: Int!
+  texts: [String!]
+}
+
+type CancelDescription {
+  refundAvailable: Boolean!
+  changeAvailable: Boolean!
+  texts: [String!]
 }
 
 input InventoryInput {
@@ -3948,6 +4052,108 @@ func (ec *executionContext) _BrandItem_brand(ctx context.Context, field graphql.
 	return ec.marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐBrand(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _CancelDescription_refundAvailable(ctx context.Context, field graphql.CollectedField, obj *model.CancelDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CancelDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefundAvailable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CancelDescription_changeAvailable(ctx context.Context, field graphql.CollectedField, obj *model.CancelDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CancelDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChangeAvailable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CancelDescription_texts(ctx context.Context, field graphql.CollectedField, obj *model.CancelDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CancelDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Texts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Category_id(ctx context.Context, field graphql.CollectedField, obj *model.Category) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -4191,6 +4397,143 @@ func (ec *executionContext) _CommunityItem_imgUrl(ctx context.Context, field gra
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DeliveryDescription_deliveryFee(ctx context.Context, field graphql.CollectedField, obj *model.DeliveryDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DeliveryDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeliveryFee, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DeliveryDescription_earlistDeliveryDays(ctx context.Context, field graphql.CollectedField, obj *model.DeliveryDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DeliveryDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EarlistDeliveryDays, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DeliveryDescription_latestDeliveryDays(ctx context.Context, field graphql.CollectedField, obj *model.DeliveryDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DeliveryDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LatestDeliveryDays, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _DeliveryDescription_texts(ctx context.Context, field graphql.CollectedField, obj *model.DeliveryDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "DeliveryDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Texts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Device_id(ctx context.Context, field graphql.CollectedField, obj *model.Device) (ret graphql.Marshaler) {
@@ -6602,11 +6945,14 @@ func (ec *executionContext) _OrderItem_cancelDescription(ctx context.Context, fi
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(*model.CancelDescription)
 	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNCancelDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCancelDescription(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderItem_deliveryDescription(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
@@ -6634,11 +6980,14 @@ func (ec *executionContext) _OrderItem_deliveryDescription(ctx context.Context, 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(*model.DeliveryDescription)
 	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNDeliveryDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDeliveryDescription(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderItem_refundInfo(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
@@ -8595,9 +8944,9 @@ func (ec *executionContext) _Product_description(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(*model.ProductDescription)
 	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalOProductDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductDescription(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Product_cancelDescription(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
@@ -8625,11 +8974,14 @@ func (ec *executionContext) _Product_cancelDescription(ctx context.Context, fiel
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(*model.CancelDescription)
 	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNCancelDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCancelDescription(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Product_deliveryDescription(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
@@ -8651,6 +9003,73 @@ func (ec *executionContext) _Product_deliveryDescription(ctx context.Context, fi
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.DeliveryDescription, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.DeliveryDescription)
+	fc.Result = res
+	return ec.marshalNDeliveryDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDeliveryDescription(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProductDescription_images(ctx context.Context, field graphql.CollectedField, obj *model.ProductDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProductDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Images, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProductDescription_texts(ctx context.Context, field graphql.CollectedField, obj *model.ProductDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProductDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Texts, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12449,6 +12868,40 @@ func (ec *executionContext) _BrandItem(ctx context.Context, sel ast.SelectionSet
 	return out
 }
 
+var cancelDescriptionImplementors = []string{"CancelDescription"}
+
+func (ec *executionContext) _CancelDescription(ctx context.Context, sel ast.SelectionSet, obj *model.CancelDescription) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, cancelDescriptionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CancelDescription")
+		case "refundAvailable":
+			out.Values[i] = ec._CancelDescription_refundAvailable(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "changeAvailable":
+			out.Values[i] = ec._CancelDescription_changeAvailable(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "texts":
+			out.Values[i] = ec._CancelDescription_texts(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var categoryImplementors = []string{"Category"}
 
 func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet, obj *model.Category) graphql.Marshaler {
@@ -12517,6 +12970,45 @@ func (ec *executionContext) _CommunityItem(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var deliveryDescriptionImplementors = []string{"DeliveryDescription"}
+
+func (ec *executionContext) _DeliveryDescription(ctx context.Context, sel ast.SelectionSet, obj *model.DeliveryDescription) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deliveryDescriptionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeliveryDescription")
+		case "deliveryFee":
+			out.Values[i] = ec._DeliveryDescription_deliveryFee(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "earlistDeliveryDays":
+			out.Values[i] = ec._DeliveryDescription_earlistDeliveryDays(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "latestDeliveryDays":
+			out.Values[i] = ec._DeliveryDescription_latestDeliveryDays(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "texts":
+			out.Values[i] = ec._DeliveryDescription_texts(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -13049,8 +13541,14 @@ func (ec *executionContext) _OrderItem(ctx context.Context, sel ast.SelectionSet
 			}
 		case "cancelDescription":
 			out.Values[i] = ec._OrderItem_cancelDescription(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "deliveryDescription":
 			out.Values[i] = ec._OrderItem_deliveryDescription(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "refundInfo":
 			out.Values[i] = ec._OrderItem_refundInfo(ctx, field, obj)
 		case "deliveryTrackingNumber":
@@ -13456,8 +13954,40 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Product_description(ctx, field, obj)
 		case "cancelDescription":
 			out.Values[i] = ec._Product_cancelDescription(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "deliveryDescription":
 			out.Values[i] = ec._Product_deliveryDescription(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var productDescriptionImplementors = []string{"ProductDescription"}
+
+func (ec *executionContext) _ProductDescription(ctx context.Context, sel ast.SelectionSet, obj *model.ProductDescription) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, productDescriptionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProductDescription")
+		case "images":
+			out.Values[i] = ec._ProductDescription_images(ctx, field, obj)
+		case "texts":
+			out.Values[i] = ec._ProductDescription_texts(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -14368,6 +14898,16 @@ func (ec *executionContext) marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloff�
 	return ec._Brand(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNCancelDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCancelDescription(ctx context.Context, sel ast.SelectionSet, v *model.CancelDescription) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._CancelDescription(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Category) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -14445,6 +14985,16 @@ func (ec *executionContext) marshalNDate2string(ctx context.Context, sel ast.Sel
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNDeliveryDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDeliveryDescription(ctx context.Context, sel ast.SelectionSet, v *model.DeliveryDescription) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._DeliveryDescription(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNDevice2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDevice(ctx context.Context, sel ast.SelectionSet, v model.Device) graphql.Marshaler {
@@ -15877,6 +16427,13 @@ func (ec *executionContext) marshalOProduct2ᚖgithubᚗcomᚋlessbutterᚋallof
 		return graphql.Null
 	}
 	return ec._Product(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOProductDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductDescription(ctx context.Context, sel ast.SelectionSet, v *model.ProductDescription) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProductDescription(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v []*model.ProductGroup) graphql.Marshaler {
