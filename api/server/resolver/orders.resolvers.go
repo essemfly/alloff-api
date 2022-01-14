@@ -229,30 +229,7 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 }
 
 func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderItemID string, quantity int) (*model.PaymentStatus, error) {
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, errors.New("invalid token")
-	}
-
-	orderDao, paymentDao, err := ioc.Service.OrderWithPaymentService.Find(orderID)
-	if err != nil {
-		return nil, err
-	}
-
-	result := &model.PaymentStatus{
-		Success:     false,
-		ErrorMsg:    err.Error(),
-		PaymentInfo: paymentDao.ToDTO(),
-		Order:       orderDao.ToDTO(),
-	}
-
-	err = ioc.Service.OrderWithPaymentService.CancelOrderRequest(orderDao, orderDao.GetOrderItem(*productID), paymentDao)
-	if err != nil {
-		return result, err
-	}
-
-	result.Success = true
-	return result, nil
+	panic(fmt.Errorf("not implemented"))
 }
 
 func (r *mutationResolver) ConfirmOrderItem(ctx context.Context, orderItemID string) (*model.PaymentStatus, error) {
@@ -350,60 +327,60 @@ func (r *queryResolver) OrderItemStatus(ctx context.Context) ([]*model.OrderItem
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *mutationResolver) ConfirmOrder(ctx context.Context, orderItemID string) (*model.PaymentStatus, error) {
-	// Order Confirm하는 API 인데, 유저가 앱에서 구매확정을 누르는 API
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, errors.New("invalid token")
-	}
+// func (r *mutationResolver) ConfirmOrder(ctx context.Context, orderItemID string) (*model.PaymentStatus, error) {
+// 	// Order Confirm하는 API 인데, 유저가 앱에서 구매확정을 누르는 API
+// 	user := middleware.ForContext(ctx)
+// 	if user == nil {
+// 		return nil, errors.New("invalid token")
+// 	}
 
-	orderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
-	if err != nil {
-		return nil, err
-	}
+// 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	err = orderDao.ConfirmOrder()
-	if err != nil {
-		return nil, err
-	}
+// 	err = orderDao.ConfirmOrder()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	newOrderDao, err := ioc.Repo.Orders.Update(orderDao)
-	if err != nil {
-		return nil, err
-	}
+// 	newOrderDao, err := ioc.Repo.Orders.Update(orderDao)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return &model.PaymentStatus{
-		Success:     true,
-		ErrorMsg:    "",
-		PaymentInfo: nil,
-		Order:       newOrderDao.ToDTO(),
-	}, nil
-}
-func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string, productID *string) (*model.PaymentStatus, error) {
-	// 주문이 완료된 후, 유저가 Order를 취소하고 싶을때 하는 취소요청 API
-	// TODO: Cancel Order ITEMS one by one
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, errors.New("invalid token")
-	}
+// 	return &model.PaymentStatus{
+// 		Success:     true,
+// 		ErrorMsg:    "",
+// 		PaymentInfo: nil,
+// 		Order:       newOrderDao.ToDTO(),
+// 	}, nil
+// }
+// func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string, productID *string) (*model.PaymentStatus, error) {
+// 	// 주문이 완료된 후, 유저가 Order를 취소하고 싶을때 하는 취소요청 API
+// 	// TODO: Cancel Order ITEMS one by one
+// 	user := middleware.ForContext(ctx)
+// 	if user == nil {
+// 		return nil, errors.New("invalid token")
+// 	}
 
-	orderDao, paymentDao, err := ioc.Service.OrderWithPaymentService.Find(orderID)
-	if err != nil {
-		return nil, err
-	}
+// 	orderDao, paymentDao, err := ioc.Service.OrderWithPaymentService.Find(orderID)
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	result := &model.PaymentStatus{
-		Success:     false,
-		ErrorMsg:    err.Error(),
-		PaymentInfo: paymentDao.ToDTO(),
-		Order:       orderDao.ToDTO(),
-	}
+// 	result := &model.PaymentStatus{
+// 		Success:     false,
+// 		ErrorMsg:    err.Error(),
+// 		PaymentInfo: paymentDao.ToDTO(),
+// 		Order:       orderDao.ToDTO(),
+// 	}
 
-	err = ioc.Service.OrderWithPaymentService.CancelOrderRequest(orderDao, orderDao.GetOrderItem(*productID), paymentDao)
-	if err != nil {
-		return result, err
-	}
+// 	err = ioc.Service.OrderWithPaymentService.CancelOrderRequest(orderDao, orderDao.GetOrderItem(*productID), paymentDao)
+// 	if err != nil {
+// 		return result, err
+// 	}
 
-	result.Success = true
-	return result, nil
-}
+// 	result.Success = true
+// 	return result, nil
+// }
