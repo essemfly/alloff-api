@@ -103,11 +103,11 @@ type ComplexityRoot struct {
 	}
 
 	DeliveryDescription struct {
-		DeliveryFee         func(childComplexity int) int
-		DeliveryType        func(childComplexity int) int
-		EarlistDeliveryDays func(childComplexity int) int
-		LatestDeliveryDays  func(childComplexity int) int
-		Texts               func(childComplexity int) int
+		DeliveryFee          func(childComplexity int) int
+		DeliveryType         func(childComplexity int) int
+		EarliestDeliveryDays func(childComplexity int) int
+		LatestDeliveryDays   func(childComplexity int) int
+		Texts                func(childComplexity int) int
 	}
 
 	Device struct {
@@ -698,12 +698,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DeliveryDescription.DeliveryType(childComplexity), true
 
-	case "DeliveryDescription.earlistDeliveryDays":
-		if e.complexity.DeliveryDescription.EarlistDeliveryDays == nil {
+	case "DeliveryDescription.earliestDeliveryDays":
+		if e.complexity.DeliveryDescription.EarliestDeliveryDays == nil {
 			break
 		}
 
-		return e.complexity.DeliveryDescription.EarlistDeliveryDays(childComplexity), true
+		return e.complexity.DeliveryDescription.EarliestDeliveryDays(childComplexity), true
 
 	case "DeliveryDescription.latestDeliveryDays":
 		if e.complexity.DeliveryDescription.LatestDeliveryDays == nil {
@@ -2568,7 +2568,7 @@ type ProductDescription {
 type DeliveryDescription {
   deliveryType: DeliveryType!
   deliveryFee: Int!
-  earlistDeliveryDays: Int!
+  earliestDeliveryDays: Int!
   latestDeliveryDays: Int!
   texts: [String!]
 }
@@ -4531,7 +4531,7 @@ func (ec *executionContext) _DeliveryDescription_deliveryFee(ctx context.Context
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _DeliveryDescription_earlistDeliveryDays(ctx context.Context, field graphql.CollectedField, obj *model.DeliveryDescription) (ret graphql.Marshaler) {
+func (ec *executionContext) _DeliveryDescription_earliestDeliveryDays(ctx context.Context, field graphql.CollectedField, obj *model.DeliveryDescription) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -4549,7 +4549,7 @@ func (ec *executionContext) _DeliveryDescription_earlistDeliveryDays(ctx context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.EarlistDeliveryDays, nil
+		return obj.EarliestDeliveryDays, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13271,8 +13271,8 @@ func (ec *executionContext) _DeliveryDescription(ctx context.Context, sel ast.Se
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "earlistDeliveryDays":
-			out.Values[i] = ec._DeliveryDescription_earlistDeliveryDays(ctx, field, obj)
+		case "earliestDeliveryDays":
+			out.Values[i] = ec._DeliveryDescription_earliestDeliveryDays(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

@@ -48,7 +48,7 @@ type ProductDescription {
 type DeliveryDescription {
   deliveryType: DeliveryType!
   deliveryFee: Int!
-  earlistDeliveryDays: Int!
+  earliestDeliveryDays: Int!
   latestDeliveryDays: Int!
   texts: [String!]
 }

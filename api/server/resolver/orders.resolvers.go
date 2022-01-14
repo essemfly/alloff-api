@@ -350,7 +350,6 @@ func (r *queryResolver) OrderItemStatus(ctx context.Context) ([]*model.OrderItem
 //  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
 //    it when you're done.
 //  - You have helper methods in this file. Move them out to keep these resolver files clean.
-
 func (r *mutationResolver) ConfirmOrder(ctx context.Context, orderItemID string) (*model.PaymentStatus, error) {
 	// Order Confirm하는 API 인데, 유저가 앱에서 구매확정을 누르는 API
 	user := middleware.ForContext(ctx)

@@ -121,10 +121,10 @@ type DeliveryDescriptionDAO struct {
 
 func (deliveryDesc *DeliveryDescriptionDAO) ToDTO() *model.DeliveryDescription {
 	return &model.DeliveryDescription{
-		DeliveryFee:         deliveryDesc.DeliveryFee,
-		EarlistDeliveryDays: deliveryDesc.EarliestDeliveryDays,
-		LatestDeliveryDays:  deliveryDesc.LatestDeliveryDays,
-		Texts:               deliveryDesc.Texts,
+		DeliveryFee:          deliveryDesc.DeliveryFee,
+		EarliestDeliveryDays: deliveryDesc.EarliestDeliveryDays,
+		LatestDeliveryDays:   deliveryDesc.LatestDeliveryDays,
+		Texts:                deliveryDesc.Texts,
 	}
 }
 
