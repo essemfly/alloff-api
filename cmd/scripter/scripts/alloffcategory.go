@@ -1,21 +1,11 @@
-package main
+package scripts
 
 import (
-	"log"
-
-	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
-	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/lessbutter/alloff-api/pkg/seeder"
 )
 
-func main() {
-	conf := config.GetConfiguration()
-	log.Println(conf)
-
-	conn := mongo.NewMongoDB(conf)
-	conn.RegisterRepos()
-
+func AddAlloffCategory() {
 	catDaos := seeder.LoadAlloffCats()
 
 	for _, catDao := range catDaos {

@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
+	"github.com/lessbutter/alloff-api/cmd/scripter/scripts"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
-	"github.com/lessbutter/alloff-api/pkg/seeder"
 )
 
 func main() {
@@ -15,6 +15,13 @@ func main() {
 	conn := mongo.NewMongoDB(conf)
 	conn.RegisterRepos()
 
-	seeder.AddProductGroups()
-	seeder.AddHomeItems()
+	scripts.AddAlloffCategory()
+	scripts.AddBrandsSeeder()
+	scripts.AddClassifyRules()
+	scripts.UpdateBrands()
+	scripts.UpdateHomeitems()
+	scripts.AddProductDiffNotificaton()
+	scripts.AddProductGroupsSeeder()
+	scripts.ConfirmOrders()
+	scripts.SendNotification()
 }
