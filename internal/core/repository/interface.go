@@ -142,9 +142,7 @@ type RefundItemsRepository interface {
 }
 
 type NotificationsRepository interface {
-	// NOT URGENT
-}
-
-type AlarmProductGroupsRepository interface {
-	// To BE REMOVED
+	Insert(*domain.NotificationDAO) (*domain.NotificationDAO, error)
+	List(onlyReady bool) ([]*domain.NotificationDAO, error)
+	Update(*domain.NotificationDAO) (*domain.NotificationDAO, error)
 }

@@ -18,26 +18,25 @@ import (
 )
 
 type MongoDB struct {
-	brandCol             *mongo.Collection
-	productCol           *mongo.Collection
-	productMetaInfoCol   *mongo.Collection
-	productDiffCol       *mongo.Collection
-	productGroupCol      *mongo.Collection
-	crawlSourceCol       *mongo.Collection
-	crawlRecordCol       *mongo.Collection
-	categoryCol          *mongo.Collection
-	alloffCategoryCol    *mongo.Collection
-	classifyRuleCol      *mongo.Collection
-	featuredCol          *mongo.Collection
-	homeitemCol          *mongo.Collection
-	userCol              *mongo.Collection
-	deviceCol            *mongo.Collection
-	notificationCol      *mongo.Collection
-	alimtalkCol          *mongo.Collection
-	likeBrandsCol        *mongo.Collection
-	likeProductsCol      *mongo.Collection
-	alarmProductGroupCol *mongo.Collection
-	exhibitionCol        *mongo.Collection
+	brandCol           *mongo.Collection
+	productCol         *mongo.Collection
+	productMetaInfoCol *mongo.Collection
+	productDiffCol     *mongo.Collection
+	productGroupCol    *mongo.Collection
+	crawlSourceCol     *mongo.Collection
+	crawlRecordCol     *mongo.Collection
+	categoryCol        *mongo.Collection
+	alloffCategoryCol  *mongo.Collection
+	classifyRuleCol    *mongo.Collection
+	featuredCol        *mongo.Collection
+	homeitemCol        *mongo.Collection
+	userCol            *mongo.Collection
+	deviceCol          *mongo.Collection
+	notificationCol    *mongo.Collection
+	alimtalkCol        *mongo.Collection
+	likeBrandsCol      *mongo.Collection
+	likeProductsCol    *mongo.Collection
+	exhibitionCol      *mongo.Collection
 }
 
 const (
@@ -61,25 +60,24 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 	db := mongoClient.Database(conf.MONGO_DB_NAME)
 
 	return &MongoDB{
-		brandCol:             db.Collection("brands"),
-		productCol:           db.Collection("products"),
-		productMetaInfoCol:   db.Collection("product_infos"),
-		productDiffCol:       db.Collection("product_diffs"),
-		productGroupCol:      db.Collection("productgroups"),
-		crawlSourceCol:       db.Collection("sources"),
-		crawlRecordCol:       db.Collection("crawling_records"),
-		categoryCol:          db.Collection("categories"),
-		alloffCategoryCol:    db.Collection("alloffcategories"),
-		classifyRuleCol:      db.Collection("classifier"),
-		featuredCol:          db.Collection("featured"),
-		homeitemCol:          db.Collection("homeitems"),
-		userCol:              db.Collection("users"),
-		deviceCol:            db.Collection("devices"),
-		notificationCol:      db.Collection("notifications"),
-		alimtalkCol:          db.Collection("alimtalks"),
-		likeBrandsCol:        db.Collection("likes"),
-		likeProductsCol:      db.Collection("likes_products"),
-		alarmProductGroupCol: db.Collection("alarm_productgroups"),
+		brandCol:           db.Collection("brands"),
+		productCol:         db.Collection("products"),
+		productMetaInfoCol: db.Collection("product_infos"),
+		productDiffCol:     db.Collection("product_diffs"),
+		productGroupCol:    db.Collection("productgroups"),
+		crawlSourceCol:     db.Collection("sources"),
+		crawlRecordCol:     db.Collection("crawling_records"),
+		categoryCol:        db.Collection("categories"),
+		alloffCategoryCol:  db.Collection("alloffcategories"),
+		classifyRuleCol:    db.Collection("classifier"),
+		featuredCol:        db.Collection("featured"),
+		homeitemCol:        db.Collection("homeitems"),
+		userCol:            db.Collection("users"),
+		deviceCol:          db.Collection("devices"),
+		notificationCol:    db.Collection("notifications"),
+		alimtalkCol:        db.Collection("alimtalks"),
+		likeBrandsCol:      db.Collection("likes"),
+		likeProductsCol:    db.Collection("likes_products"),
 	}
 }
 
@@ -102,6 +100,7 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.Alimtalks = MongoAlimtalksRepo(conn)
 	ioc.Repo.ProductGroups = MongoProductGroupsRepo(conn)
 	ioc.Repo.Exhibitions = MongoExhibitionsRepo(conn)
+	ioc.Repo.Notifications = MongoNotificationsRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context, conf config.Configuration) (*mongo.Client, error) {
