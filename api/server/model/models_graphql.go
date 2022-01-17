@@ -553,7 +553,6 @@ const (
 	OrderItemStatusEnumConfirmPayment           OrderItemStatusEnum = "CONFIRM_PAYMENT"
 	OrderItemStatusEnumCancelFinished           OrderItemStatusEnum = "CANCEL_FINISHED"
 	OrderItemStatusEnumExchangeRequested        OrderItemStatusEnum = "EXCHANGE_REQUESTED"
-	OrderItemStatusEnumExchangeReturnPending    OrderItemStatusEnum = "EXCHANGE_RETURN_PENDING"
 	OrderItemStatusEnumExchangePending          OrderItemStatusEnum = "EXCHANGE_PENDING"
 	OrderItemStatusEnumExchangeFinished         OrderItemStatusEnum = "EXCHANGE_FINISHED"
 	OrderItemStatusEnumReturnRequested          OrderItemStatusEnum = "RETURN_REQUESTED"
@@ -576,7 +575,6 @@ var AllOrderItemStatusEnum = []OrderItemStatusEnum{
 	OrderItemStatusEnumConfirmPayment,
 	OrderItemStatusEnumCancelFinished,
 	OrderItemStatusEnumExchangeRequested,
-	OrderItemStatusEnumExchangeReturnPending,
 	OrderItemStatusEnumExchangePending,
 	OrderItemStatusEnumExchangeFinished,
 	OrderItemStatusEnumReturnRequested,
@@ -586,7 +584,7 @@ var AllOrderItemStatusEnum = []OrderItemStatusEnum{
 
 func (e OrderItemStatusEnum) IsValid() bool {
 	switch e {
-	case OrderItemStatusEnumUnknown, OrderItemStatusEnumCreated, OrderItemStatusEnumRecreated, OrderItemStatusEnumPaymentPending, OrderItemStatusEnumPaymentFinished, OrderItemStatusEnumProductPreparing, OrderItemStatusEnumForeignProductInspecting, OrderItemStatusEnumDeliveryPreparing, OrderItemStatusEnumForeignDeliveryStatrted, OrderItemStatusEnumDeliveryStarted, OrderItemStatusEnumDeliveryFinished, OrderItemStatusEnumConfirmPayment, OrderItemStatusEnumCancelFinished, OrderItemStatusEnumExchangeRequested, OrderItemStatusEnumExchangeReturnPending, OrderItemStatusEnumExchangePending, OrderItemStatusEnumExchangeFinished, OrderItemStatusEnumReturnRequested, OrderItemStatusEnumReturnPending, OrderItemStatusEnumReturnFinished:
+	case OrderItemStatusEnumUnknown, OrderItemStatusEnumCreated, OrderItemStatusEnumRecreated, OrderItemStatusEnumPaymentPending, OrderItemStatusEnumPaymentFinished, OrderItemStatusEnumProductPreparing, OrderItemStatusEnumForeignProductInspecting, OrderItemStatusEnumDeliveryPreparing, OrderItemStatusEnumForeignDeliveryStatrted, OrderItemStatusEnumDeliveryStarted, OrderItemStatusEnumDeliveryFinished, OrderItemStatusEnumConfirmPayment, OrderItemStatusEnumCancelFinished, OrderItemStatusEnumExchangeRequested, OrderItemStatusEnumExchangePending, OrderItemStatusEnumExchangeFinished, OrderItemStatusEnumReturnRequested, OrderItemStatusEnumReturnPending, OrderItemStatusEnumReturnFinished:
 		return true
 	}
 	return false

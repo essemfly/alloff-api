@@ -391,10 +391,6 @@ func (r *queryResolver) OrderItemStatus(ctx context.Context) ([]*model.OrderItem
 			Description: "exchange requested",
 		},
 		{
-			StatusName:  model.OrderItemStatusEnumExchangeReturnPending,
-			Description: "exchange return pending",
-		},
-		{
 			StatusName:  model.OrderItemStatusEnumExchangePending,
 			Description: "exchange pending",
 		},

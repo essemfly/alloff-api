@@ -23,7 +23,6 @@ const (
 	ORDER_ITEM_CONFIRM_PAYMENT            = OrderItemStatusEnum("ORDER_ITEM_CONFIRM_PAYMENT")
 	ORDER_ITEM_CANCEL_FINISHED            = OrderItemStatusEnum("ORDER_ITEM_CANCEL_FINISHED")
 	ORDER_ITEM_EXCHANGE_REQUESTED         = OrderItemStatusEnum("ORDER_ITEM_EXCHANGE_REQUESTED")
-	ORDER_ITEM_EXCHANGE_RETURN_PENDING    = OrderItemStatusEnum("ORDER_ITEM_EXCHANGE_RETURN_PENDING")
 	ORDER_ITEM_EXCHANGE_PENDING           = OrderItemStatusEnum("ORDER_ITEM_EXCHANGE_PENDING")
 	ORDER_ITEM_EXCHANGE_FINISHED          = OrderItemStatusEnum("ORDER_ITEM_EXCHANGE_FINISHED")
 	ORDER_ITEM_RETURN_REQUESTED           = OrderItemStatusEnum("ORDER_ITEM_RETURN_REQUESTED")
@@ -130,8 +129,6 @@ func MapOrderItemStatus(enum OrderItemStatusEnum) model.OrderItemStatusEnum {
 		return model.OrderItemStatusEnumCancelFinished
 	case ORDER_ITEM_EXCHANGE_REQUESTED:
 		return model.OrderItemStatusEnumExchangeRequested
-	case ORDER_ITEM_EXCHANGE_RETURN_PENDING:
-		return model.OrderItemStatusEnumExchangeReturnPending
 	case ORDER_ITEM_EXCHANGE_PENDING:
 		return model.OrderItemStatusEnumExchangePending
 	case ORDER_ITEM_EXCHANGE_FINISHED:
