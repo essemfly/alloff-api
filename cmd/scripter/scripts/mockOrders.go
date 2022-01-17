@@ -12,7 +12,7 @@ import (
 )
 
 func AddMockOrders() {
-	log.Println("mock order start")
+	log.Println("Add Mock Orders")
 	mobileNumber := "010-0000-0000"
 	userDao, _ := ioc.Repo.Users.GetByMobile(mobileNumber)
 

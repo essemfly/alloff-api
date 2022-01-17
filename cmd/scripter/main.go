@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	_ "github.com/lessbutter/alloff-api/cmd/scripter/scripts"
+	"github.com/lessbutter/alloff-api/cmd/scripter/scripts"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 )
@@ -22,10 +22,10 @@ func main() {
 	// scripts.AddAlloffCategory()
 	// scripts.AddBrandsSeeder()
 	// scripts.AddClassifyRules()
-	// scripts.UpdateBrands()
-	// scripts.UpdateHomeitems()
+	scripts.UpdateBrands()
+	scripts.AddProductGroupsSeeder()
+	scripts.UpdateHomeitems()
 	// scripts.AddProductDiffNotificaton()
-	// scripts.AddProductGroupsSeeder()
 	// scripts.ConfirmOrders()
 	// scripts.SendNotification()
 	// scripts.AddMockOrders()
