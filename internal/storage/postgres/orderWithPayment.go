@@ -11,6 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/core/service"
+	"github.com/lessbutter/alloff-api/internal/pkg/alimtalk"
 )
 
 type orderPaymentService struct {
@@ -166,7 +167,6 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			return err
 		}
 
-		// TODO payment request 해서 iamport 콜하는 부분 없어졌다.
 		paymentDao.UpdatedAt = time.Now()
 		paymentDao.PaymentStatus = domain.PAYMENT_CREATED
 		_, err = repo.db.Model(paymentDao).Insert()
@@ -267,7 +267,7 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 		paymentDao.UpdatedAt = time.Now()
 		repo.db.Model(paymentDao).Update()
 
-		// (TODO) Alimtalk Notification
+		alimtalk.NotifyPaymentSuccessAlarm(paymentDao)
 		// (TODO) Slack Payment Success Notification
 
 		return nil

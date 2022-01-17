@@ -34,6 +34,7 @@ func main() {
 
 	// (TODO) Be Refactored
 	config.InitIamPort(conf)
+	config.InitSlack(conf)
 
 	port := os.Getenv("PORT")
 	if port == "" {

@@ -67,6 +67,7 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			OrderItemCode:          orderAlloffID,
 			ProductID:              item.Product.ID.Hex(),
 			ProductName:            item.Product.AlloffName,
+			ProductUrl:             item.Product.ProductInfo.ProductUrl,
 			ProductImg:             item.Product.ProductInfo.Images[0],
 			BrandKeyname:           item.Product.ProductInfo.Brand.KeyName,
 			BrandKorname:           item.Product.ProductInfo.Brand.KorName,

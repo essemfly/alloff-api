@@ -39,6 +39,7 @@ type OrderItemDAO struct {
 	OrderID                int
 	OrderItemCode          string // Item 사서함번호
 	ProductID              string
+	ProductUrl             string
 	ProductImg             string
 	ProductName            string
 	BrandKeyname           string
