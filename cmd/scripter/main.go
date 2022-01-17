@@ -6,6 +6,7 @@ import (
 	"github.com/lessbutter/alloff-api/cmd/scripter/scripts"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
+	"github.com/lessbutter/alloff-api/internal/storage/postgres"
 )
 
 func main() {
@@ -15,6 +16,9 @@ func main() {
 	conn := mongo.NewMongoDB(conf)
 	conn.RegisterRepos()
 
+	pgconn := postgres.NewPostgresDB(conf)
+	pgconn.RegisterRepos()
+
 	// (TODO) Be Refactored
 	config.InitIamPort(conf)
 	config.InitSlack(conf)
@@ -22,12 +26,12 @@ func main() {
 	// scripts.AddAlloffCategory()
 	// scripts.AddBrandsSeeder()
 	// scripts.AddClassifyRules()
-	scripts.UpdateBrands()
-	scripts.AddProductGroupsSeeder()
-	scripts.UpdateHomeitems()
+	// scripts.UpdateBrands()
+	// scripts.AddProductGroupsSeeder()
+	// scripts.UpdateHomeitems()
 	// scripts.AddProductDiffNotificaton()
 	// scripts.ConfirmOrders()
 	// scripts.SendNotification()
-	// scripts.AddMockOrders()
+	scripts.AddMockOrders()
 	// scripts.InsertDiffNotification()
 }

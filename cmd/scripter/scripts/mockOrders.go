@@ -71,6 +71,7 @@ func AddMockOrders() {
 				log.Println("err occured in changing orderitems")
 			}
 		}
+		brandIdx += 1
 	}
 
 }
