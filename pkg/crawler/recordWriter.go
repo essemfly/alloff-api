@@ -16,9 +16,9 @@ func PrintCrawlResults(source *domain.CrawlSourceDAO, totalProducts int) {
 
 func WriteCrawlRecords(brandModules []string) {
 	lastRecord, err := ioc.Repo.CrawlRecords.GetLast()
-	lastUpdatedDate := lastRecord.Date
-	if err != nil {
-		lastUpdatedDate = time.Now().Add(-1 * time.Hour)
+	lastUpdatedDate := time.Now().Add(-1 * time.Hour)
+	if err == nil {
+		lastUpdatedDate = lastRecord.Date
 	}
 
 	numNewProducts := ioc.Repo.Products.CountNewProducts(brandModules)
