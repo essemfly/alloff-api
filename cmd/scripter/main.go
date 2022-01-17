@@ -32,6 +32,7 @@ func main() {
 	// scripts.AddProductDiffNotificaton()
 	// scripts.ConfirmOrders()
 	// scripts.SendNotification()
-	scripts.AddMockOrders()
+	// scripts.AddMockOrders()
+	scripts.AddMockHomeItems()
 	// scripts.InsertDiffNotification()
 }
