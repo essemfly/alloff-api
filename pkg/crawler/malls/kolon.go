@@ -62,11 +62,11 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 	c.OnHTML(".itmtgi-0", func(e *colly.HTMLElement) {
 		productID := e.ChildAttr(".itmtgi-2 .itmtgi-4", "href")
 		productUrl := "https://www.kolonmall.com/" + productID
-		productName := e.ChildText(".itmtgi-2 .itmtgi-4 .itmtgi-11")
-		discountedPriceAll := e.ChildText(".itmtgi-2 .itmtgi-4 .itmtgi-12")
+		productName := e.ChildText(".itmtgi-2 .itmtgi-4 .tdtd57-2")
+		discountedPriceAll := e.ChildText(".itmtgi-2 .itmtgi-4 .tdtd57-3")
 		discountedPriceSplit := strings.Split(discountedPriceAll, "원")
 		discountedPriceStr := discountedPriceSplit[0]
-		originalPriceStr := e.ChildText(".itmtgi-2 .itmtgi-4 .itmtgi-13")
+		originalPriceStr := e.ChildText(".itmtgi-2 .itmtgi-4 .tdtd57-3 .real-price")
 		originalPrice := utils.ParsePriceString(originalPriceStr)
 		discountedPrice := utils.ParsePriceString(discountedPriceStr)
 

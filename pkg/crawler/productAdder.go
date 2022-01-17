@@ -7,6 +7,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/classifier"
+	"github.com/lessbutter/alloff-api/pkg/product"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -70,18 +71,11 @@ func AddProduct(request ProductsAddRequest) {
 	pd.UpdateInventory(request.Inventories)
 	pd.UpdateScore(alloffScore)
 	pd.UpdateInstruction(alloffInstruction)
-	if pd.DiscountedPrice > int(alloffPrice) {
-		oldPrice := pd.DiscountedPrice
-		pd.UpdatePrice(float32(pd.DiscountedPrice), alloffPrice)
-		err := ioc.Repo.ProductDiffs.Insert(&domain.ProductDiffDAO{
-			OldPrice:   oldPrice,
-			NewProduct: pd,
-			Type:       "price",
-			IsPushed:   false,
-		})
-		if err != nil {
-			log.Println("error occured in product dif update")
-		}
+	lastPrice := pd.DiscountedPrice
+	isPriceUpdated := pd.UpdatePrice(alloffPrice)
+
+	if isPriceUpdated {
+		product.InsertProductDiff(pd, lastPrice)
 	}
 
 	if pd.ID == primitive.NilObjectID {

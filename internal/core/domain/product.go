@@ -162,9 +162,10 @@ type ProductDAO struct {
 	Updated          time.Time
 }
 
-func (pd *ProductDAO) UpdatePrice(origPrice, alloffPrice float32) {
+func (pd *ProductDAO) UpdatePrice(alloffPrice float32) bool {
+	origPrice := pd.DiscountedPrice
 	pd.DiscountedPrice = int(alloffPrice)
-	pd.DiscountRate = utils.CalculateDiscountRate(origPrice, alloffPrice)
+	pd.DiscountRate = utils.CalculateDiscountRate(pd.ProductInfo.Price.OriginalPrice, alloffPrice)
 
 	newHistory := []PriceHistoryDAO{
 		{
@@ -174,14 +175,21 @@ func (pd *ProductDAO) UpdatePrice(origPrice, alloffPrice float32) {
 	}
 
 	if pd.PriceHistory != nil {
+		// 이 부분 가격 하락시마다 들어가야함.
+		// if origPrice > pd.DiscountedPrice {
+		// 	newHistory = append(pd.PriceHistory, newHistory...)
+		// }
 		newHistory = append(pd.PriceHistory, newHistory...)
+		// product.InsertProductDiff(pd, origPrice)
 	}
 
 	pd.PriceHistory = newHistory
 
-	if alloffPrice < origPrice {
+	if int(alloffPrice) < origPrice {
 		pd.IsUpdated = true
+		return true
 	}
+	return false
 }
 
 func (pd *ProductDAO) UpdateScore(newScore *ProductScoreInfoDAO) {

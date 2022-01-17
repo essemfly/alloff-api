@@ -9,10 +9,8 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/lessbutter/alloff-api/internal/storage/postgres"
-	"github.com/lessbutter/alloff-api/pkg/brand"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/crawler/malls"
-	"github.com/lessbutter/alloff-api/pkg/homeitem"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -52,8 +50,8 @@ func main() {
 
 	StartCrawling(crawlModules)
 
-	brand.UpdateBrandDiscountRate()
-	homeitem.UpdateHomeItems()
+	// brand.UpdateBrandDiscountRate()
+	// homeitem.UpdateHomeItems()
 	crawler.WriteCrawlRecords(crawlModules)
 	// (TODO) Notification 넣어주는 것
 	// InsertDiffNotification()
