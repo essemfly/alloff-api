@@ -28,6 +28,10 @@ func main() {
 	pgconn := postgres.NewPostgresDB(conf)
 	pgconn.RegisterRepos()
 
+	// (TODO) Be Refactored
+	config.InitIamPort(conf)
+	config.InitSlack(conf)
+
 	crawlModules := []string{
 		"lottefashion",
 		"ssfmall",

@@ -15,6 +15,10 @@ func main() {
 	conn := mongo.NewMongoDB(conf)
 	conn.RegisterRepos()
 
+	// (TODO) Be Refactored
+	config.InitIamPort(conf)
+	config.InitSlack(conf)
+
 	scripts.AddAlloffCategory()
 	scripts.AddBrandsSeeder()
 	scripts.AddClassifyRules()
@@ -24,4 +28,5 @@ func main() {
 	scripts.AddProductGroupsSeeder()
 	scripts.ConfirmOrders()
 	scripts.SendNotification()
+	scripts.AddMockOrders()
 }
