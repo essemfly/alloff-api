@@ -53,6 +53,11 @@ func AddMockOrders() {
 			log.Println("err occured in build order", err)
 		}
 
+		_, err = ioc.Repo.Orders.Insert(orderDao)
+		if err != nil {
+			log.Println("err occured in adding order", err)
+		}
+
 		paymentDao := BuildPaymentDao(orderDao)
 		_, err = ioc.Repo.Payments.Insert(paymentDao)
 		if err != nil {
