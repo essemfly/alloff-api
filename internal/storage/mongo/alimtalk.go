@@ -54,9 +54,11 @@ func (repo *alimtalkRepo) Update(alimtalk *domain.AlimtalkDAO) (*domain.Alimtalk
 	defer cancel()
 
 	filter := bson.M{
+		"status":       alimtalk.Status,
 		"templatecode": alimtalk.TemplateCode,
 		"referenceid":  alimtalk.ReferenceID,
 		"userId":       alimtalk.UserID,
+		"updated":      time.Now(),
 	}
 	_, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &alimtalk})
 	if err != nil {
