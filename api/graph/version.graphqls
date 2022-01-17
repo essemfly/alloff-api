@@ -1,0 +1,10 @@
+type AppVersion {
+  latestVersion: String!
+  minVersion: String!
+  message: String
+  isMaintenance: Boolean!
+}
+
+extend type Query {
+  version: AppVersion!
+}

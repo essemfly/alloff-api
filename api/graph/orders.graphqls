@@ -55,7 +55,7 @@ type OrderItem {
   orderItemStatus: OrderItemStatusEnum!
   cancelDescription: CancelDescription!
   deliveryDescription: DeliveryDescription!
-  refundInfo: RefundInfo
+  refundInfo: [RefundInfo]
   deliveryTrackingNumber: String!
   deliveryTrackingUrl: String!
   createdAt: Date!
@@ -94,11 +94,10 @@ type OrderInfo {
 }
 
 type RefundInfo {
-  refundDeliveryPrice: Int!
-  refundPrice: Int!
+  refundFee: Int!
   refundAmount: Int!
-  created: Date!
-  updated: Date!
+  createdAt: Date!
+  updatedAt: Date!
 }
 
 input PaymentClientInput {

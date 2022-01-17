@@ -43,6 +43,13 @@ type AlloffCategoryProductsInput struct {
 	Sorting          []*SortingType `json:"sorting"`
 }
 
+type AppVersion struct {
+	LatestVersion string  `json:"latestVersion"`
+	MinVersion    string  `json:"minVersion"`
+	Message       *string `json:"message"`
+	IsMaintenance bool    `json:"isMaintenance"`
+}
+
 type Brand struct {
 	ID              string       `json:"id"`
 	KorName         string       `json:"korName"`
@@ -213,7 +220,7 @@ type OrderItem struct {
 	OrderItemStatus        OrderItemStatusEnum  `json:"orderItemStatus"`
 	CancelDescription      *CancelDescription   `json:"cancelDescription"`
 	DeliveryDescription    *DeliveryDescription `json:"deliveryDescription"`
-	RefundInfo             *RefundInfo          `json:"refundInfo"`
+	RefundInfo             []*RefundInfo        `json:"refundInfo"`
 	DeliveryTrackingNumber string               `json:"deliveryTrackingNumber"`
 	DeliveryTrackingURL    string               `json:"deliveryTrackingUrl"`
 	CreatedAt              string               `json:"createdAt"`
@@ -368,11 +375,10 @@ type RefreshTokenInput struct {
 }
 
 type RefundInfo struct {
-	RefundDeliveryPrice int    `json:"refundDeliveryPrice"`
-	RefundPrice         int    `json:"refundPrice"`
-	RefundAmount        int    `json:"refundAmount"`
-	Created             string `json:"created"`
-	Updated             string `json:"updated"`
+	RefundFee    int    `json:"refundFee"`
+	RefundAmount int    `json:"refundAmount"`
+	CreatedAt    string `json:"createdAt"`
+	UpdatedAt    string `json:"updatedAt"`
 }
 
 type SizeGuide struct {

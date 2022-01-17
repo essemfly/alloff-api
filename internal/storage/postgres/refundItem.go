@@ -10,8 +10,13 @@ type refundItemRepo struct {
 	db *pg.DB
 }
 
-func (refundRepo *refundItemRepo) Insert(*domain.RefundItemDAO) (*domain.RefundItemDAO, error) {
-	return nil, nil
+func (repo *refundItemRepo) Insert(refundDao *domain.RefundItemDAO) (*domain.RefundItemDAO, error) {
+	_, err := repo.db.Model(refundDao).Insert()
+	if err != nil {
+		return nil, err
+	}
+
+	return refundDao, nil
 }
 
 func PostgresRefundItemRepo(conn *PostgresDB) repository.RefundItemsRepository {

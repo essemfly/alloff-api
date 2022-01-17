@@ -55,6 +55,20 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 			}
 
 			refundPrice := orderItemDao.SalesPrice * orderItemDao.Quantity
+			newRefundInfo := &domain.RefundItemDAO{
+				OrderID:      orderDao.AlloffOrderID,
+				OrderItemID:  orderItemDao.ID,
+				RefundFee:    0,
+				RefundAmount: refundPrice,
+				CreatedAt:    time.Now(),
+				UpdatedAt:    time.Now(),
+			}
+			_, err = ioc.Repo.Refunds.Insert(newRefundInfo)
+			if err != nil {
+				log.Println("error on adding refund")
+				return err
+			}
+
 			_, err = config.PaymentService.CancelPaymentImpUID(paymentDao.ImpUID, orderDao.AlloffOrderID, float64(refundPrice), 0, float64(orderDao.TotalPrice), "cancel before products ready", "", "", "")
 			if err != nil {
 				log.Println("cancel payment error on iamport")
