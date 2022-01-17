@@ -33,6 +33,7 @@ type ProductMetaInfoRepository interface {
 type ProductDiffsRepository interface {
 	Insert(*domain.ProductDiffDAO) error
 	List(filter interface{}) ([]*domain.ProductDiffDAO, error)
+	Update(*domain.ProductDiffDAO) (*domain.ProductDiffDAO, error)
 }
 
 type CrawlSourcesRepository interface {
@@ -135,6 +136,8 @@ type LikeBrandsRepository interface {
 type LikeProductsRepository interface {
 	Like(userID, productID string) (bool, error)
 	List(userID string) ([]*domain.LikeProductDAO, error)
+	ListProductsLike(productId string) ([]*domain.LikeProductDAO, error)
+	Update(*domain.LikeProductDAO) (*domain.LikeProductDAO, error)
 }
 
 type RefundItemsRepository interface {

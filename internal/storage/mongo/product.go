@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
@@ -228,6 +229,18 @@ func (repo *productDiffRepo) List(filter interface{}) ([]*domain.ProductDiffDAO,
 	return diffs, nil
 }
 
+func (repo *productDiffRepo) Update(diffDao *domain.ProductDiffDAO) (*domain.ProductDiffDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": diffDao.ID}, bson.M{"$set": &diffDao})
+	if err != nil {
+		return nil, err
+	}
+
+	return diffDao, nil
+}
+
 func MongoProductDiffsRepo(conn *MongoDB) repository.ProductDiffsRepository {
 	return &productDiffRepo{
 		col: conn.productDiffCol,
@@ -331,6 +344,39 @@ func (repo *productLikeRepo) List(userID string) ([]*domain.LikeProductDAO, erro
 	}
 
 	return likes, nil
+}
+
+func (repo *productLikeRepo) ListProductsLike(productId string) ([]*domain.LikeProductDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{"product._id": productId, "removed": false, "ispushed": false}
+	cursor, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		log.Println(err, "List Like Products error: Repository - ListProductsLike")
+		return nil, errors.New("list like products error")
+	}
+
+	var likes []*domain.LikeProductDAO
+	err = cursor.All(ctx, &likes)
+	if err != nil {
+		log.Println("err in decoding likes", err)
+		return nil, err
+	}
+
+	return likes, nil
+}
+
+func (repo *productLikeRepo) Update(likeProductDao *domain.LikeProductDAO) (*domain.LikeProductDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": likeProductDao.ID}, bson.M{"$set": &likeProductDao})
+	if err != nil {
+		return nil, err
+	}
+
+	return likeProductDao, nil
 }
 
 func MongoProductLikesRepo(conn *MongoDB) repository.LikeProductsRepository {
