@@ -164,10 +164,10 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CancelOrderItem       func(childComplexity int, orderItemID string, quantity int) int
+		CancelOrderItem       func(childComplexity int, orderID string, orderItemID string) int
 		CancelPayment         func(childComplexity int, input *model.PaymentClientInput) int
 		CheckOrder            func(childComplexity int, input *model.OrderInput) int
-		ConfirmOrderItem      func(childComplexity int, orderItemID string) int
+		ConfirmOrderItem      func(childComplexity int, orderID string, orderItemID string) int
 		CreateUser            func(childComplexity int, input model.NewUser) int
 		HandlePaymentResponse func(childComplexity int, input *model.OrderResponse) int
 		LikeBrand             func(childComplexity int, input *model.LikeBrandInput) int
@@ -378,8 +378,8 @@ type MutationResolver interface {
 	RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
 	CancelPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
 	HandlePaymentResponse(ctx context.Context, input *model.OrderResponse) (*model.PaymentResult, error)
-	CancelOrderItem(ctx context.Context, orderItemID string, quantity int) (*model.PaymentStatus, error)
-	ConfirmOrderItem(ctx context.Context, orderItemID string) (*model.PaymentStatus, error)
+	CancelOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error)
+	ConfirmOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error)
 	LikeProduct(ctx context.Context, input *model.LikeProductInput) (bool, error)
 }
 type QueryResolver interface {
@@ -953,7 +953,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CancelOrderItem(childComplexity, args["orderItemId"].(string), args["quantity"].(int)), true
+		return e.complexity.Mutation.CancelOrderItem(childComplexity, args["orderID"].(string), args["orderItemId"].(string)), true
 
 	case "Mutation.cancelPayment":
 		if e.complexity.Mutation.CancelPayment == nil {
@@ -989,7 +989,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ConfirmOrderItem(childComplexity, args["orderItemId"].(string)), true
+		return e.complexity.Mutation.ConfirmOrderItem(childComplexity, args["orderID"].(string), args["orderItemId"].(string)), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
@@ -2483,8 +2483,8 @@ extend type Mutation {
   cancelPayment(input: PaymentClientInput): PaymentStatus!
   handlePaymentResponse(input: OrderResponse): PaymentResult!
 
-  cancelOrderItem(orderItemId: ID!, quantity: Int!): PaymentStatus!
-  confirmOrderItem(orderItemId: ID!): PaymentStatus!
+  cancelOrderItem(orderID: String!, orderItemId: ID!): PaymentStatus!
+  confirmOrderItem(orderID: String!, orderItemId: ID!): PaymentStatus!
 }
 `, BuiltIn: false},
 	{Name: "api/graph/productgroup.graphqls", Input: `scalar Upload
@@ -2707,23 +2707,23 @@ func (ec *executionContext) field_Mutation_cancelOrderItem_args(ctx context.Cont
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
+	if tmp, ok := rawArgs["orderID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderID"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderID"] = arg0
+	var arg1 string
 	if tmp, ok := rawArgs["orderItemId"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderItemId"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["orderItemId"] = arg0
-	var arg1 int
-	if tmp, ok := rawArgs["quantity"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("quantity"))
-		arg1, err = ec.unmarshalNInt2int(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["quantity"] = arg1
+	args["orderItemId"] = arg1
 	return args, nil
 }
 
@@ -2761,14 +2761,23 @@ func (ec *executionContext) field_Mutation_confirmOrderItem_args(ctx context.Con
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["orderItemId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderItemId"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+	if tmp, ok := rawArgs["orderID"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderID"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["orderItemId"] = arg0
+	args["orderID"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["orderItemId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderItemId"))
+		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderItemId"] = arg1
 	return args, nil
 }
 
@@ -6216,7 +6225,7 @@ func (ec *executionContext) _Mutation_cancelOrderItem(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CancelOrderItem(rctx, args["orderItemId"].(string), args["quantity"].(int))
+		return ec.resolvers.Mutation().CancelOrderItem(rctx, args["orderID"].(string), args["orderItemId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6258,7 +6267,7 @@ func (ec *executionContext) _Mutation_confirmOrderItem(ctx context.Context, fiel
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ConfirmOrderItem(rctx, args["orderItemId"].(string))
+		return ec.resolvers.Mutation().ConfirmOrderItem(rctx, args["orderID"].(string), args["orderItemId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

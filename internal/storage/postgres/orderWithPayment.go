@@ -37,20 +37,52 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 		1. 주문 취소가 가능한 Status면 취소 잘 되게끔 만들어준다. + 환불까지
 		2. 주문 취소가 가능한 Status가 아니면, Cancel Requested로 바꿔준다.
 	*/
-	// (TODO) OrderItem 별로 Check해야 될 것 같은 느낌이 드네요?
-	if orderDao.CanCancelPayment() {
+	// 주문취소 바로 가능한 경우
+	if orderItemDao.CanCancelPayment() {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
-			// TODO: Cancel Order ITEMS one by one
+			orderItemDao.OrderItemStatus = domain.ORDER_ITEM_CANCEL_FINISHED
+			orderItemDao.CancelRequestedAt = time.Now()
+			orderItemDao.CancelFinishedAt = time.Now()
+			orderItemDao.UpdatedAt = time.Now()
+			paymentDao.PaymentStatus = domain.PAYMENT_REFUND_FINISHED
+			paymentDao.UpdatedAt = time.Now()
+			_, err := ioc.Repo.OrderItems.Update(orderItemDao)
+			if err != nil {
+				return err
+			}
+
+			refundPrice := orderItemDao.SalesPrice * orderItemDao.Quantity
+			_, err = config.PaymentService.CancelPaymentImpUID(paymentDao.ImpUID, orderDao.AlloffOrderID, float64(refundPrice), 0, float64(orderDao.TotalPrice), "cancel before products ready", "", "", "")
+			if err != nil {
+				log.Println("cancel payment error on iamport")
+				return err
+			}
+
+			_, err = ioc.Repo.Payments.Update(paymentDao)
+			if err != nil {
+				return err
+			}
+
 			return nil
 		}); err != nil {
-			panic(err)
+			return err
 		}
 		return nil
 	}
 
-	if orderDao.CanCancelOrder() {
+	// 주문취소가 바로 안되서 Cancel Requested로 바꿔준다.
+	if orderItemDao.CanCancelOrder() {
+		orderItemDao.OrderItemStatus = domain.ORDER_ITEM_CANCEL_REQUESTED
+		orderItemDao.CancelRequestedAt = time.Now()
+		orderItemDao.CancelFinishedAt = time.Now()
+		orderItemDao.UpdatedAt = time.Now()
+
+		_, err := ioc.Repo.OrderItems.Update(orderItemDao)
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 
@@ -128,7 +160,14 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			return err
 		}
 
-		paymentDao.Updated = time.Now()
+		_, err = config.PaymentService.PreparePayment(orderDao.AlloffOrderID, float64(orderDao.TotalPrice))
+		if err != nil {
+			log.Println("iamport error")
+			return err
+		}
+
+		// TODO payment request 해서 iamport 콜하는 부분 없어졌다.
+		paymentDao.UpdatedAt = time.Now()
 		paymentDao.PaymentStatus = domain.PAYMENT_CREATED
 		_, err = repo.db.Model(paymentDao).Insert()
 		if err != nil {
@@ -180,7 +219,7 @@ func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymen
 			return err
 		}
 
-		paymentDao.Updated = time.Now()
+		paymentDao.UpdatedAt = time.Now()
 		paymentDao.PaymentStatus = domain.PAYMENT_CANCELED
 		_, err = repo.db.Model(paymentDao).WherePK().Update()
 		if err != nil {
@@ -225,7 +264,7 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 			return err
 		}
 		paymentDao.PaymentStatus = domain.PAYMENT_CONFIRMED
-		paymentDao.Updated = time.Now()
+		paymentDao.UpdatedAt = time.Now()
 		repo.db.Model(paymentDao).Update()
 
 		// (TODO) Alimtalk Notification

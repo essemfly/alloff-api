@@ -10,17 +10,32 @@ type orderItemRepo struct {
 	db *pg.DB
 }
 
-func (orderItemRepo *orderItemRepo) Get(ID int) (*domain.OrderItemDAO, error) {
-	return nil, nil
+func (repo *orderItemRepo) Get(ID int) (*domain.OrderItemDAO, error) {
+	orderItem := new(domain.OrderItemDAO)
+
+	if err := repo.db.Model(orderItem).Where("id = ?", ID).Select(); err != nil {
+		return nil, err
+	}
+
+	return orderItem, nil
+
 }
-func (orderItemRepo *orderItemRepo) ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error) {
-	return nil, nil
+func (repo *orderItemRepo) ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error) {
+	orderItems := []*domain.OrderItemDAO{}
+	if err := repo.db.Model(&orderItems).Where("order_id = ?", orderID).Select(); err != nil {
+		return nil, err
+	}
+
+	return orderItems, nil
 }
-func (orderItemRepo *orderItemRepo) Insert(*domain.OrderItemDAO) (*domain.OrderItemDAO, error) {
-	return nil, nil
-}
-func (orderItemRepo *orderItemRepo) Update(*domain.OrderItemDAO) (*domain.OrderItemDAO, error) {
-	return nil, nil
+
+func (repo *orderItemRepo) Update(orderItemDao *domain.OrderItemDAO) (*domain.OrderItemDAO, error) {
+	_, err := repo.db.Model(orderItemDao).WherePK().Update()
+	if err != nil {
+		return orderItemDao, err
+	}
+
+	return orderItemDao, nil
 }
 
 func PostgresOrderItemRepo(conn *PostgresDB) repository.OrderItemsRepository {

@@ -6,7 +6,7 @@ package resolver
 import (
 	"context"
 	"errors"
-	"fmt"
+	"strconv"
 
 	"github.com/lessbutter/alloff-api/api/middleware"
 	"github.com/lessbutter/alloff-api/api/server/model"
@@ -228,12 +228,86 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 	}, nil
 }
 
-func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderItemID string, quantity int) (*model.PaymentStatus, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error) {
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid token")
+	}
+
+	orderDao, paymentDao, err := ioc.Service.OrderWithPaymentService.Find(orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	intOrderItemID, err := strconv.Atoi(orderItemID)
+	if err != nil {
+		return nil, err
+	}
+
+	orderItemDao := orderDao.GetOrderItemByID(intOrderItemID)
+	if orderItemDao == nil {
+		return nil, err
+	}
+
+	result := &model.PaymentStatus{
+		Success:     false,
+		ErrorMsg:    err.Error(),
+		PaymentInfo: paymentDao.ToDTO(),
+		Order:       orderDao.ToDTO(),
+	}
+
+	err = ioc.Service.OrderWithPaymentService.CancelOrderRequest(orderDao, orderItemDao, paymentDao)
+
+	if err != nil {
+		return result, err
+	}
+
+	result.Success = true
+	return result, nil
 }
 
-func (r *mutationResolver) ConfirmOrderItem(ctx context.Context, orderItemID string) (*model.PaymentStatus, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) ConfirmOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error) {
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, errors.New("invalid token")
+	}
+
+	orderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	intOrderItemID, err := strconv.Atoi(orderItemID)
+	if err != nil {
+		return nil, err
+	}
+
+	orderItemDao := orderDao.GetOrderItemByID(intOrderItemID)
+	if orderItemDao == nil {
+		return nil, err
+	}
+
+	err = orderItemDao.ConfirmOrder()
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = ioc.Repo.OrderItems.Update(orderItemDao)
+	if err != nil {
+		return nil, err
+	}
+
+	newOrderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.PaymentStatus{
+		Success:     true,
+		ErrorMsg:    "",
+		PaymentInfo: nil,
+		Order:       newOrderDao.ToDTO(),
+	}, nil
 }
 
 func (r *queryResolver) Order(ctx context.Context, id string) (*model.OrderInfo, error) {
@@ -271,43 +345,43 @@ func (r *queryResolver) Orders(ctx context.Context) ([]*model.OrderInfo, error) 
 
 func (r *queryResolver) OrderItemStatus(ctx context.Context) ([]*model.OrderItemStatusDescription, error) {
 	allStatus := []model.OrderItemStatusDescription{
-		model.OrderItemStatusDescription{
+		{
 			StatusName:  model.OrderItemStatusEnumUnknown,
 			Description: "Unknown",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumCreated,
 			Description: "Created",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumRecreated,
 			Description: "Recreated",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumPaymentPending,
 			Description: "PaymentPending",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumPaymentFinished,
 			Description: "PaymentFinished",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumProductPreparing,
 			Description: "ProductPreparing",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumDeliveryPreparing,
 			Description: "DeliveryPreparing",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumCancelRequested,
 			Description: "CancelRequested",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumCancelPending,
 			Description: "CancelPending",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumCancelFinished,
 			Description: "CancelFinished",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumDeliveryStarted,
 			Description: "DeliveryStarted",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumDeliveryFinished,
 			Description: "DeliveryFinished",
-		}, model.OrderItemStatusDescription{
+		}, {
 			StatusName:  model.OrderItemStatusEnumConfirmPayment,
 			Description: "ConfirmPayment",
 		},
@@ -320,67 +394,3 @@ func (r *queryResolver) OrderItemStatus(ctx context.Context) ([]*model.OrderItem
 	}
 	return ret, nil
 }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-// func (r *mutationResolver) ConfirmOrder(ctx context.Context, orderItemID string) (*model.PaymentStatus, error) {
-// 	// Order Confirm하는 API 인데, 유저가 앱에서 구매확정을 누르는 API
-// 	user := middleware.ForContext(ctx)
-// 	if user == nil {
-// 		return nil, errors.New("invalid token")
-// 	}
-
-// 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	err = orderDao.ConfirmOrder()
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	newOrderDao, err := ioc.Repo.Orders.Update(orderDao)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return &model.PaymentStatus{
-// 		Success:     true,
-// 		ErrorMsg:    "",
-// 		PaymentInfo: nil,
-// 		Order:       newOrderDao.ToDTO(),
-// 	}, nil
-// }
-// func (r *mutationResolver) CancelOrder(ctx context.Context, orderID string, productID *string) (*model.PaymentStatus, error) {
-// 	// 주문이 완료된 후, 유저가 Order를 취소하고 싶을때 하는 취소요청 API
-// 	// TODO: Cancel Order ITEMS one by one
-// 	user := middleware.ForContext(ctx)
-// 	if user == nil {
-// 		return nil, errors.New("invalid token")
-// 	}
-
-// 	orderDao, paymentDao, err := ioc.Service.OrderWithPaymentService.Find(orderID)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	result := &model.PaymentStatus{
-// 		Success:     false,
-// 		ErrorMsg:    err.Error(),
-// 		PaymentInfo: paymentDao.ToDTO(),
-// 		Order:       orderDao.ToDTO(),
-// 	}
-
-// 	err = ioc.Service.OrderWithPaymentService.CancelOrderRequest(orderDao, orderDao.GetOrderItem(*productID), paymentDao)
-// 	if err != nil {
-// 		return result, err
-// 	}
-
-// 	result.Success = true
-// 	return result, nil
-// }

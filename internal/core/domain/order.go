@@ -104,35 +104,13 @@ func (orderDao *OrderDAO) GetOrderItem(productID string) *OrderItemDAO {
 	return nil
 }
 
-func (orderDao *OrderDAO) ConfirmOrder() error {
-	// if orderDao.OrderStatus == ORDER_CONFIRM_PAYMENT {
-	// 	return errors.New("order already confirmed")
-	// }
-
-	// if orderDao.OrderStatus != ORDER_DELIVERY_FINISHED {
-	// 	return errors.New("not available on order status for confirm")
-	// }
-
-	// orderDao.OrderStatus = ORDER_CONFIRM_PAYMENT
-	// orderDao.UpdatedAt = time.Now()
-
+func (orderDao *OrderDAO) GetOrderItemByID(orderItemID int) *OrderItemDAO {
+	for _, item := range orderDao.OrderItems {
+		if item.ID == orderItemID {
+			return item
+		}
+	}
 	return nil
-}
-
-func (orderDao *OrderDAO) CanCancelOrder() bool {
-	// if orderDao.OrderStatus == ORDER_DELIVERY_PREPARING ||
-	// 	orderDao.OrderStatus == ORDER_DELIVERY_STARTED ||
-	// 	orderDao.OrderStatus == ORDER_DELIVERY_FINISHED {
-	// 	return true
-	// }
-	return false
-}
-
-func (orderDao *OrderDAO) CanCancelPayment() bool {
-	// if orderDao.OrderStatus == ORDER_PAYMENT_FINISHED || orderDao.OrderStatus == ORDER_PRODUCT_PREPARING {
-	// 	return true
-	// }
-	return false
 }
 
 func (orderDao *OrderDAO) ValidateOrder() error {

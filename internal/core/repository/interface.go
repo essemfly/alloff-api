@@ -97,13 +97,13 @@ type OrdersRepository interface {
 type OrderItemsRepository interface {
 	Get(ID int) (*domain.OrderItemDAO, error)
 	ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error)
-	Insert(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
 	Update(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
 }
 type PaymentsRepository interface {
 	GetByOrderIDAndAmount(orderID string, amount int) (*domain.PaymentDAO, error)
 	GetByImpUID(impUID string) (*domain.PaymentDAO, error)
 	Insert(*domain.PaymentDAO) (*domain.PaymentDAO, error)
+	Update(*domain.PaymentDAO) (*domain.PaymentDAO, error)
 }
 
 type UsersRepository interface {

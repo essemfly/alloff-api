@@ -38,8 +38,8 @@ type PaymentDAO struct {
 	BuyerPostCode string
 	Company       string
 	AppScheme     string
-	Created       time.Time
-	Updated       time.Time
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
 
 func (paymentDao *PaymentDAO) ToDTO() *model.PaymentInfo {

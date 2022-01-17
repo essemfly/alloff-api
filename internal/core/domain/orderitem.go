@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/server/model"
@@ -127,4 +128,36 @@ func MapOrderItemType(enum OrderItemTypeEnum) model.OrderItemTypeEnum {
 	default:
 		return model.OrderItemTypeEnumUnknown
 	}
+}
+
+func (orderItemDao *OrderItemDAO) ConfirmOrder() error {
+	if orderItemDao.OrderItemStatus == ORDER_ITEM_CONFIRM_PAYMENT {
+		return errors.New("order already confirmed")
+	}
+
+	if orderItemDao.OrderItemStatus != ORDER_ITEM_DELIVERY_FINISHED {
+		return errors.New("not available on order status for confirm")
+	}
+
+	orderItemDao.OrderItemStatus = ORDER_ITEM_CONFIRM_PAYMENT
+	orderItemDao.ConfirmedAt = time.Now()
+	orderItemDao.UpdatedAt = time.Now()
+
+	return nil
+}
+
+func (orderItemDao *OrderItemDAO) CanCancelOrder() bool {
+	if orderItemDao.OrderItemStatus == ORDER_ITEM_DELIVERY_PREPARING ||
+		orderItemDao.OrderItemStatus == ORDER_ITEM_DELIVERY_STARTED ||
+		orderItemDao.OrderItemStatus == ORDER_ITEM_DELIVERY_FINISHED {
+		return true
+	}
+	return false
+}
+
+func (orderItemDao *OrderItemDAO) CanCancelPayment() bool {
+	if orderItemDao.OrderItemStatus == ORDER_ITEM_PAYMENT_FINISHED || orderItemDao.OrderItemStatus == ORDER_ITEM_PRODUCT_PREPARING {
+		return true
+	}
+	return false
 }

@@ -39,6 +39,15 @@ func (repo *paymentRepo) GetByImpUID(impUID string) (*domain.PaymentDAO, error) 
 	return paymentDao, nil
 }
 
+func (repo *paymentRepo) Update(paymentDao *domain.PaymentDAO) (*domain.PaymentDAO, error) {
+	_, err := repo.db.Model(paymentDao).WherePK().Update()
+	if err != nil {
+		return paymentDao, err
+	}
+
+	return paymentDao, nil
+}
+
 func PostgresPaymentRepo(conn *PostgresDB) repository.PaymentsRepository {
 	return &paymentRepo{
 		db: conn.db,
