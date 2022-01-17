@@ -364,17 +364,14 @@ func (r *queryResolver) OrderItemStatus(ctx context.Context) ([]*model.OrderItem
 			StatusName:  model.OrderItemStatusEnumProductPreparing,
 			Description: "ProductPreparing",
 		}, {
+			StatusName:  model.OrderItemStatusEnumForeignProductInspecting,
+			Description: "Foriegn Product Inspecting",
+		}, {
 			StatusName:  model.OrderItemStatusEnumDeliveryPreparing,
 			Description: "DeliveryPreparing",
 		}, {
-			StatusName:  model.OrderItemStatusEnumCancelRequested,
-			Description: "CancelRequested",
-		}, {
-			StatusName:  model.OrderItemStatusEnumCancelPending,
-			Description: "CancelPending",
-		}, {
-			StatusName:  model.OrderItemStatusEnumCancelFinished,
-			Description: "CancelFinished",
+			StatusName:  model.OrderItemStatusEnumForeignDeliveryStatrted,
+			Description: "Foreign DeliveryStarted",
 		}, {
 			StatusName:  model.OrderItemStatusEnumDeliveryStarted,
 			Description: "DeliveryStarted",
@@ -384,6 +381,38 @@ func (r *queryResolver) OrderItemStatus(ctx context.Context) ([]*model.OrderItem
 		}, {
 			StatusName:  model.OrderItemStatusEnumConfirmPayment,
 			Description: "ConfirmPayment",
+		},
+		{
+			StatusName:  model.OrderItemStatusEnumCancelFinished,
+			Description: "CancelFinished",
+		},
+		{
+			StatusName:  model.OrderItemStatusEnumExchangeRequested,
+			Description: "exchange requested",
+		},
+		{
+			StatusName:  model.OrderItemStatusEnumExchangeReturnPending,
+			Description: "exchange return pending",
+		},
+		{
+			StatusName:  model.OrderItemStatusEnumExchangePending,
+			Description: "exchange pending",
+		},
+		{
+			StatusName:  model.OrderItemStatusEnumExchangeFinished,
+			Description: "exchange finished",
+		},
+		{
+			StatusName:  model.OrderItemStatusEnumReturnRequested,
+			Description: "return requested",
+		},
+		{
+			StatusName:  model.OrderItemStatusEnumReturnPending,
+			Description: "return pending",
+		},
+		{
+			StatusName:  model.OrderItemStatusEnumReturnFinished,
+			Description: "return finished",
 		},
 	}
 

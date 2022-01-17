@@ -10,18 +10,25 @@ import (
 type OrderItemStatusEnum string
 
 const (
-	ORDER_ITEM_CREATED            = OrderItemStatusEnum("ORDER_ITEM_CREATED")
-	ORDER_ITEM_RECREATED          = OrderItemStatusEnum("ORDER_ITEM_RECREATED")
-	ORDER_ITEM_PAYMENT_PENDING    = OrderItemStatusEnum("ORDER_ITEM_PAYMENT_PENDING")
-	ORDER_ITEM_PAYMENT_FINISHED   = OrderItemStatusEnum("ORDER_ITEM_PAYMENT_FINISHED")
-	ORDER_ITEM_PRODUCT_PREPARING  = OrderItemStatusEnum("ORDER_ITEM_PRODUCT_PREPARING")
-	ORDER_ITEM_DELIVERY_PREPARING = OrderItemStatusEnum("ORDER_ITEM_DELIVERY_PREPARING")
-	ORDER_ITEM_CANCEL_REQUESTED   = OrderItemStatusEnum("ORDER_ITEM_CANCEL_REQUESTED")
-	ORDER_ITEM_CANCEL_PENDING     = OrderItemStatusEnum("ORDER_ITEM_CANCEL_PENDING")
-	ORDER_ITEM_CANCEL_FINISHED    = OrderItemStatusEnum("ORDER_ITEM_CANCEL_FINISHED")
-	ORDER_ITEM_DELIVERY_STARTED   = OrderItemStatusEnum("ORDER_ITEM_DELIVERY_STARTED")
-	ORDER_ITEM_DELIVERY_FINISHED  = OrderItemStatusEnum("ORDER_ITEM_DELIVERY_FINISHED")
-	ORDER_ITEM_CONFIRM_PAYMENT    = OrderItemStatusEnum("ORDER_ITEM_CONFIRM_PAYMENT")
+	ORDER_ITEM_CREATED                    = OrderItemStatusEnum("ORDER_ITEM_CREATED")
+	ORDER_ITEM_RECREATED                  = OrderItemStatusEnum("ORDER_ITEM_RECREATED")
+	ORDER_ITEM_PAYMENT_PENDING            = OrderItemStatusEnum("ORDER_ITEM_PAYMENT_PENDING")
+	ORDER_ITEM_PAYMENT_FINISHED           = OrderItemStatusEnum("ORDER_ITEM_PAYMENT_FINISHED")
+	ORDER_ITEM_PRODUCT_PREPARING          = OrderItemStatusEnum("ORDER_ITEM_PRODUCT_PREPARING")
+	ORDER_ITEM_FOREIGN_PRODUCT_INSPECTING = OrderItemStatusEnum("ORDER_ITEM_FOREIGN_PRODUCT_INSPECTING")
+	ORDER_ITEM_DELIVERY_PREPARING         = OrderItemStatusEnum("ORDER_ITEM_DELIVERY_PREPARING")
+	ORDER_ITEM_FOREIGN_DELIVERY_STARTED   = OrderItemStatusEnum("ORDER_ITEM_FOREIGN_DELIVERY_STARTED")
+	ORDER_ITEM_DELIVERY_STARTED           = OrderItemStatusEnum("ORDER_ITEM_DELIVERY_STARTED")
+	ORDER_ITEM_DELIVERY_FINISHED          = OrderItemStatusEnum("ORDER_ITEM_DELIVERY_FINISHED")
+	ORDER_ITEM_CONFIRM_PAYMENT            = OrderItemStatusEnum("ORDER_ITEM_CONFIRM_PAYMENT")
+	ORDER_ITEM_CANCEL_FINISHED            = OrderItemStatusEnum("ORDER_ITEM_CANCEL_FINISHED")
+	ORDER_ITEM_EXCHANGE_REQUESTED         = OrderItemStatusEnum("ORDER_ITEM_EXCHANGE_REQUESTED")
+	ORDER_ITEM_EXCHANGE_RETURN_PENDING    = OrderItemStatusEnum("ORDER_ITEM_EXCHANGE_RETURN_PENDING")
+	ORDER_ITEM_EXCHANGE_PENDING           = OrderItemStatusEnum("ORDER_ITEM_EXCHANGE_PENDING")
+	ORDER_ITEM_EXCHANGE_FINISHED          = OrderItemStatusEnum("ORDER_ITEM_EXCHANGE_FINISHED")
+	ORDER_ITEM_RETURN_REQUESTED           = OrderItemStatusEnum("ORDER_ITEM_RETURN_REQUESTED")
+	ORDER_ITEM_RETURN_PENDING             = OrderItemStatusEnum("ORDER_ITEM_RETURN_PENDING")
+	ORDER_ITEM_RETURN_FINISHED            = OrderItemStatusEnum("ORDER_ITEM_RETURN_FINISHED")
 )
 
 type OrderItemTypeEnum string
@@ -107,20 +114,34 @@ func MapOrderItemStatus(enum OrderItemStatusEnum) model.OrderItemStatusEnum {
 		return model.OrderItemStatusEnumPaymentFinished
 	case ORDER_ITEM_PRODUCT_PREPARING:
 		return model.OrderItemStatusEnumProductPreparing
+	case ORDER_ITEM_FOREIGN_PRODUCT_INSPECTING:
+		return model.OrderItemStatusEnumForeignProductInspecting
 	case ORDER_ITEM_DELIVERY_PREPARING:
 		return model.OrderItemStatusEnumDeliveryPreparing
-	case ORDER_ITEM_CANCEL_REQUESTED:
-		return model.OrderItemStatusEnumCancelRequested
-	case ORDER_ITEM_CANCEL_PENDING:
-		return model.OrderItemStatusEnumCancelPending
-	case ORDER_ITEM_CANCEL_FINISHED:
-		return model.OrderItemStatusEnumCancelFinished
+	case ORDER_ITEM_FOREIGN_DELIVERY_STARTED:
+		return model.OrderItemStatusEnumForeignDeliveryStatrted
 	case ORDER_ITEM_DELIVERY_STARTED:
 		return model.OrderItemStatusEnumDeliveryStarted
 	case ORDER_ITEM_DELIVERY_FINISHED:
 		return model.OrderItemStatusEnumDeliveryFinished
 	case ORDER_ITEM_CONFIRM_PAYMENT:
 		return model.OrderItemStatusEnumConfirmPayment
+	case ORDER_ITEM_CANCEL_FINISHED:
+		return model.OrderItemStatusEnumCancelFinished
+	case ORDER_ITEM_EXCHANGE_REQUESTED:
+		return model.OrderItemStatusEnumExchangeRequested
+	case ORDER_ITEM_EXCHANGE_RETURN_PENDING:
+		return model.OrderItemStatusEnumExchangeReturnPending
+	case ORDER_ITEM_EXCHANGE_PENDING:
+		return model.OrderItemStatusEnumExchangePending
+	case ORDER_ITEM_EXCHANGE_FINISHED:
+		return model.OrderItemStatusEnumExchangeFinished
+	case ORDER_ITEM_RETURN_REQUESTED:
+		return model.OrderItemStatusEnumReturnRequested
+	case ORDER_ITEM_RETURN_PENDING:
+		return model.OrderItemStatusEnumReturnPending
+	case ORDER_ITEM_RETURN_FINISHED:
+		return model.OrderItemStatusEnumReturnFinished
 	default:
 		return model.OrderItemStatusEnumUnknown
 	}

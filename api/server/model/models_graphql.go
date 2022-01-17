@@ -539,19 +539,26 @@ func (e HomeItemType) MarshalGQL(w io.Writer) {
 type OrderItemStatusEnum string
 
 const (
-	OrderItemStatusEnumUnknown           OrderItemStatusEnum = "UNKNOWN"
-	OrderItemStatusEnumCreated           OrderItemStatusEnum = "CREATED"
-	OrderItemStatusEnumRecreated         OrderItemStatusEnum = "RECREATED"
-	OrderItemStatusEnumPaymentPending    OrderItemStatusEnum = "PAYMENT_PENDING"
-	OrderItemStatusEnumPaymentFinished   OrderItemStatusEnum = "PAYMENT_FINISHED"
-	OrderItemStatusEnumProductPreparing  OrderItemStatusEnum = "PRODUCT_PREPARING"
-	OrderItemStatusEnumDeliveryPreparing OrderItemStatusEnum = "DELIVERY_PREPARING"
-	OrderItemStatusEnumCancelRequested   OrderItemStatusEnum = "CANCEL_REQUESTED"
-	OrderItemStatusEnumCancelPending     OrderItemStatusEnum = "CANCEL_PENDING"
-	OrderItemStatusEnumCancelFinished    OrderItemStatusEnum = "CANCEL_FINISHED"
-	OrderItemStatusEnumDeliveryStarted   OrderItemStatusEnum = "DELIVERY_STARTED"
-	OrderItemStatusEnumDeliveryFinished  OrderItemStatusEnum = "DELIVERY_FINISHED"
-	OrderItemStatusEnumConfirmPayment    OrderItemStatusEnum = "CONFIRM_PAYMENT"
+	OrderItemStatusEnumUnknown                  OrderItemStatusEnum = "UNKNOWN"
+	OrderItemStatusEnumCreated                  OrderItemStatusEnum = "CREATED"
+	OrderItemStatusEnumRecreated                OrderItemStatusEnum = "RECREATED"
+	OrderItemStatusEnumPaymentPending           OrderItemStatusEnum = "PAYMENT_PENDING"
+	OrderItemStatusEnumPaymentFinished          OrderItemStatusEnum = "PAYMENT_FINISHED"
+	OrderItemStatusEnumProductPreparing         OrderItemStatusEnum = "PRODUCT_PREPARING"
+	OrderItemStatusEnumForeignProductInspecting OrderItemStatusEnum = "FOREIGN_PRODUCT_INSPECTING"
+	OrderItemStatusEnumDeliveryPreparing        OrderItemStatusEnum = "DELIVERY_PREPARING"
+	OrderItemStatusEnumForeignDeliveryStatrted  OrderItemStatusEnum = "FOREIGN_DELIVERY_STATRTED"
+	OrderItemStatusEnumDeliveryStarted          OrderItemStatusEnum = "DELIVERY_STARTED"
+	OrderItemStatusEnumDeliveryFinished         OrderItemStatusEnum = "DELIVERY_FINISHED"
+	OrderItemStatusEnumConfirmPayment           OrderItemStatusEnum = "CONFIRM_PAYMENT"
+	OrderItemStatusEnumCancelFinished           OrderItemStatusEnum = "CANCEL_FINISHED"
+	OrderItemStatusEnumExchangeRequested        OrderItemStatusEnum = "EXCHANGE_REQUESTED"
+	OrderItemStatusEnumExchangeReturnPending    OrderItemStatusEnum = "EXCHANGE_RETURN_PENDING"
+	OrderItemStatusEnumExchangePending          OrderItemStatusEnum = "EXCHANGE_PENDING"
+	OrderItemStatusEnumExchangeFinished         OrderItemStatusEnum = "EXCHANGE_FINISHED"
+	OrderItemStatusEnumReturnRequested          OrderItemStatusEnum = "RETURN_REQUESTED"
+	OrderItemStatusEnumReturnPending            OrderItemStatusEnum = "RETURN_PENDING"
+	OrderItemStatusEnumReturnFinished           OrderItemStatusEnum = "RETURN_FINISHED"
 )
 
 var AllOrderItemStatusEnum = []OrderItemStatusEnum{
@@ -561,18 +568,25 @@ var AllOrderItemStatusEnum = []OrderItemStatusEnum{
 	OrderItemStatusEnumPaymentPending,
 	OrderItemStatusEnumPaymentFinished,
 	OrderItemStatusEnumProductPreparing,
+	OrderItemStatusEnumForeignProductInspecting,
 	OrderItemStatusEnumDeliveryPreparing,
-	OrderItemStatusEnumCancelRequested,
-	OrderItemStatusEnumCancelPending,
-	OrderItemStatusEnumCancelFinished,
+	OrderItemStatusEnumForeignDeliveryStatrted,
 	OrderItemStatusEnumDeliveryStarted,
 	OrderItemStatusEnumDeliveryFinished,
 	OrderItemStatusEnumConfirmPayment,
+	OrderItemStatusEnumCancelFinished,
+	OrderItemStatusEnumExchangeRequested,
+	OrderItemStatusEnumExchangeReturnPending,
+	OrderItemStatusEnumExchangePending,
+	OrderItemStatusEnumExchangeFinished,
+	OrderItemStatusEnumReturnRequested,
+	OrderItemStatusEnumReturnPending,
+	OrderItemStatusEnumReturnFinished,
 }
 
 func (e OrderItemStatusEnum) IsValid() bool {
 	switch e {
-	case OrderItemStatusEnumUnknown, OrderItemStatusEnumCreated, OrderItemStatusEnumRecreated, OrderItemStatusEnumPaymentPending, OrderItemStatusEnumPaymentFinished, OrderItemStatusEnumProductPreparing, OrderItemStatusEnumDeliveryPreparing, OrderItemStatusEnumCancelRequested, OrderItemStatusEnumCancelPending, OrderItemStatusEnumCancelFinished, OrderItemStatusEnumDeliveryStarted, OrderItemStatusEnumDeliveryFinished, OrderItemStatusEnumConfirmPayment:
+	case OrderItemStatusEnumUnknown, OrderItemStatusEnumCreated, OrderItemStatusEnumRecreated, OrderItemStatusEnumPaymentPending, OrderItemStatusEnumPaymentFinished, OrderItemStatusEnumProductPreparing, OrderItemStatusEnumForeignProductInspecting, OrderItemStatusEnumDeliveryPreparing, OrderItemStatusEnumForeignDeliveryStatrted, OrderItemStatusEnumDeliveryStarted, OrderItemStatusEnumDeliveryFinished, OrderItemStatusEnumConfirmPayment, OrderItemStatusEnumCancelFinished, OrderItemStatusEnumExchangeRequested, OrderItemStatusEnumExchangeReturnPending, OrderItemStatusEnumExchangePending, OrderItemStatusEnumExchangeFinished, OrderItemStatusEnumReturnRequested, OrderItemStatusEnumReturnPending, OrderItemStatusEnumReturnFinished:
 		return true
 	}
 	return false
