@@ -149,6 +149,7 @@ type ProductDAO struct {
 	AlloffName       string
 	DiscountedPrice  int
 	DiscountRate     int
+	SpecialPrice     int
 	AlloffCategories *ProductAlloffCategoryDAO
 	Soldout          bool
 	Removed          bool
@@ -264,6 +265,11 @@ func (pdDao *ProductDAO) ToDTO() *model.Product {
 		deliveryDesc.DeliveryType = model.DeliveryTypeDomesticDelivery
 	}
 
+	specialDiscount := 0
+	if pdDao.SpecialPrice < pdDao.DiscountedPrice {
+		specialDiscount = utils.CalculateDiscountRate(pdDao.ProductInfo.Price.OriginalPrice, float32(pdDao.SpecialPrice))
+	}
+
 	return &model.Product{
 		ID:                  pdDao.ID.Hex(),
 		Category:            pdDao.ProductInfo.Category.ToDTO(),
@@ -272,8 +278,10 @@ func (pdDao *ProductDAO) ToDTO() *model.Product {
 		OriginalPrice:       int(pdDao.ProductInfo.Price.OriginalPrice),
 		Soldout:             pdDao.Soldout,
 		Images:              pdDao.ProductInfo.Images,
-		DiscountedPrice:     &pdDao.DiscountedPrice,
-		DiscountRate:        &pdDao.DiscountRate,
+		DiscountedPrice:     pdDao.DiscountedPrice,
+		DiscountRate:        pdDao.DiscountRate,
+		SpecialPrice:        &pdDao.SpecialPrice,
+		SpecialDiscountRate: &specialDiscount,
 		ProductURL:          pdDao.ProductInfo.ProductUrl,
 		Inventory:           inventories,
 		IsUpdated:           pdDao.IsUpdated,
@@ -281,8 +289,8 @@ func (pdDao *ProductDAO) ToDTO() *model.Product {
 		Removed:             pdDao.Removed,
 		Information:         information,
 		Description:         pdDao.SalesInstruction.Description.ToDTO(),
-		DeliveryDescription: deliveryDesc,
 		CancelDescription:   pdDao.SalesInstruction.CancelDescription.ToDTO(),
+		DeliveryDescription: deliveryDesc,
 	}
 }
 

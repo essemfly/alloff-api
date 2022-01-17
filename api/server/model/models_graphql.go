@@ -315,8 +315,10 @@ type Product struct {
 	OriginalPrice       int                  `json:"originalPrice"`
 	Soldout             bool                 `json:"soldout"`
 	Images              []string             `json:"images"`
-	DiscountedPrice     *int                 `json:"discountedPrice"`
-	DiscountRate        *int                 `json:"discountRate"`
+	DiscountedPrice     int                  `json:"discountedPrice"`
+	DiscountRate        int                  `json:"discountRate"`
+	SpecialPrice        *int                 `json:"specialPrice"`
+	SpecialDiscountRate *int                 `json:"specialDiscountRate"`
 	ProductURL          string               `json:"productUrl"`
 	Inventory           []*Inventory         `json:"inventory"`
 	IsUpdated           bool                 `json:"isUpdated"`

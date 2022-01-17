@@ -22,8 +22,10 @@ type Product {
   originalPrice: Int!
   soldout: Boolean!
   images: [String!]!
-  discountedPrice: Int
-  discountRate: Int
+  discountedPrice: Int!
+  discountRate: Int!
+  specialPrice: Int
+  specialDiscountRate: Int
   productUrl: String!
   inventory: [Inventory]!
   isUpdated: Boolean!

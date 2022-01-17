@@ -293,6 +293,8 @@ type ComplexityRoot struct {
 		ProductURL          func(childComplexity int) int
 		Removed             func(childComplexity int) int
 		Soldout             func(childComplexity int) int
+		SpecialDiscountRate func(childComplexity int) int
+		SpecialPrice        func(childComplexity int) int
 	}
 
 	ProductDescription struct {
@@ -1706,6 +1708,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.Soldout(childComplexity), true
 
+	case "Product.specialDiscountRate":
+		if e.complexity.Product.SpecialDiscountRate == nil {
+			break
+		}
+
+		return e.complexity.Product.SpecialDiscountRate(childComplexity), true
+
+	case "Product.specialPrice":
+		if e.complexity.Product.SpecialPrice == nil {
+			break
+		}
+
+		return e.complexity.Product.SpecialPrice(childComplexity), true
+
 	case "ProductDescription.images":
 		if e.complexity.ProductDescription.Images == nil {
 			break
@@ -2542,8 +2558,10 @@ type Product {
   originalPrice: Int!
   soldout: Boolean!
   images: [String!]!
-  discountedPrice: Int
-  discountRate: Int
+  discountedPrice: Int!
+  discountRate: Int!
+  specialPrice: Int
+  specialDiscountRate: Int
   productUrl: String!
   inventory: [Inventory]!
   isUpdated: Boolean!
@@ -8914,11 +8932,14 @@ func (ec *executionContext) _Product_discountedPrice(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*int)
+	res := resTmp.(int)
 	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Product_discountRate(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
@@ -8940,6 +8961,73 @@ func (ec *executionContext) _Product_discountRate(ctx context.Context, field gra
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.DiscountRate, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Product_specialPrice(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Product",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SpecialPrice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Product_specialDiscountRate(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Product",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SpecialDiscountRate, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14243,8 +14331,18 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "discountedPrice":
 			out.Values[i] = ec._Product_discountedPrice(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "discountRate":
 			out.Values[i] = ec._Product_discountRate(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "specialPrice":
+			out.Values[i] = ec._Product_specialPrice(ctx, field, obj)
+		case "specialDiscountRate":
+			out.Values[i] = ec._Product_specialDiscountRate(ctx, field, obj)
 		case "productUrl":
 			out.Values[i] = ec._Product_productUrl(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
