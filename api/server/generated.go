@@ -2408,7 +2408,7 @@ type OrderItem {
   orderItemStatus: OrderItemStatusEnum!
   cancelDescription: CancelDescription!
   deliveryDescription: DeliveryDescription!
-  refundInfo: [RefundInfo]
+  refundInfo: RefundInfo
   deliveryTrackingNumber: String!
   deliveryTrackingUrl: String!
   createdAt: Date!
@@ -7397,9 +7397,9 @@ func (ec *executionContext) _OrderItem_refundInfo(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.RefundInfo)
+	res := resTmp.(*model.RefundInfo)
 	fc.Result = res
-	return ec.marshalORefundInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefundInfo(ctx, field.Selections, res)
+	return ec.marshalORefundInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefundInfo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderItem_deliveryTrackingNumber(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
@@ -17231,47 +17231,6 @@ func (ec *executionContext) marshalOProductGroup2ᚖgithubᚗcomᚋlessbutterᚋ
 		return graphql.Null
 	}
 	return ec._ProductGroup(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalORefundInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefundInfo(ctx context.Context, sel ast.SelectionSet, v []*model.RefundInfo) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalORefundInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefundInfo(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
 }
 
 func (ec *executionContext) marshalORefundInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐRefundInfo(ctx context.Context, sel ast.SelectionSet, v *model.RefundInfo) graphql.Marshaler {

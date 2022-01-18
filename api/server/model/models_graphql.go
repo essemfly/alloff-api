@@ -220,7 +220,7 @@ type OrderItem struct {
 	OrderItemStatus        OrderItemStatusEnum  `json:"orderItemStatus"`
 	CancelDescription      *CancelDescription   `json:"cancelDescription"`
 	DeliveryDescription    *DeliveryDescription `json:"deliveryDescription"`
-	RefundInfo             []*RefundInfo        `json:"refundInfo"`
+	RefundInfo             *RefundInfo          `json:"refundInfo"`
 	DeliveryTrackingNumber string               `json:"deliveryTrackingNumber"`
 	DeliveryTrackingURL    string               `json:"deliveryTrackingUrl"`
 	CreatedAt              string               `json:"createdAt"`

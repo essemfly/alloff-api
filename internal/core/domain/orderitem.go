@@ -60,7 +60,7 @@ type OrderItemDAO struct {
 	DeliveryTrackingUrl    string
 	Size                   string
 	Quantity               int
-	RefundInfo             []*RefundItemDAO `pg:"rel:has-many"`
+	RefundInfo             RefundItemDAO `pg:"rel:has-one"`
 	CreatedAt              time.Time
 	UpdatedAt              time.Time
 	OrderedAt              time.Time
@@ -72,13 +72,6 @@ type OrderItemDAO struct {
 }
 
 func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {
-
-	refundInfos := []*model.RefundInfo{}
-
-	for _, item := range orderItemDao.RefundInfo {
-		refundInfos = append(refundInfos, item.ToDTO())
-	}
-
 	return &model.OrderItem{
 		ProductID:              orderItemDao.ProductID,
 		ProductName:            orderItemDao.ProductName,
@@ -95,7 +88,7 @@ func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {
 		DeliveryDescription:    orderItemDao.DeliveryDescription.ToDTO(),
 		DeliveryTrackingNumber: orderItemDao.DeliveryTrackingNumber,
 		DeliveryTrackingURL:    orderItemDao.DeliveryTrackingUrl,
-		RefundInfo:             refundInfos,
+		RefundInfo:             orderItemDao.RefundInfo.ToDTO(),
 		CreatedAt:              orderItemDao.CreatedAt.String(),
 		UpdatedAt:              orderItemDao.UpdatedAt.String(),
 		OrderedAt:              orderItemDao.OrderedAt.String(),

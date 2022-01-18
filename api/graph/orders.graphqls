@@ -61,7 +61,7 @@ type OrderItem {
   orderItemStatus: OrderItemStatusEnum!
   cancelDescription: CancelDescription!
   deliveryDescription: DeliveryDescription!
-  refundInfo: [RefundInfo]
+  refundInfo: RefundInfo
   deliveryTrackingNumber: String!
   deliveryTrackingUrl: String!
   createdAt: Date!
