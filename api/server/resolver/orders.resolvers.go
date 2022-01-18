@@ -344,78 +344,59 @@ func (r *queryResolver) Orders(ctx context.Context) ([]*model.OrderInfo, error) 
 }
 
 func (r *queryResolver) OrderItemStatus(ctx context.Context) ([]*model.OrderItemStatusDescription, error) {
-	allStatus := []model.OrderItemStatusDescription{
+	allStatus := []*model.OrderItemStatusDescription{
 		{
-			StatusName:  model.OrderItemStatusEnumUnknown,
-			Description: "Unknown",
+			SvgName:      "package",
+			DeliveryType: model.DeliveryTypeForeignDelivery,
+			StatusEnum:   model.OrderItemStatusEnumPaymentFinished,
+			Description:  "고객님의 주문을 확인한 후 현지에서 상품 구매를 진행하고 있습니다. 현지 재고 상황에 따라 3~5일 소요될 수 있습니다.",
 		}, {
-			StatusName:  model.OrderItemStatusEnumCreated,
-			Description: "Created",
+			SvgName:      "search",
+			DeliveryType: model.DeliveryTypeForeignDelivery,
+			StatusEnum:   model.OrderItemStatusEnumForeignProductInspecting,
+			Description:  "올오프 현지 물류센터에 상품이 입고되어 순차적인 검수를 진행하고 배송을 준비하고 있습니다.",
 		}, {
-			StatusName:  model.OrderItemStatusEnumRecreated,
-			Description: "Recreated",
+			SvgName:      "navigation",
+			DeliveryType: model.DeliveryTypeForeignDelivery,
+			StatusEnum:   model.OrderItemStatusEnumForeignDeliveryStatrted,
+			Description:  "현지 물류센터에서 한국으로 상품이 출고되었습니다. 인천공항에 도착하여 정식 세관 통관 과정을 거치게 됩니다.",
 		}, {
-			StatusName:  model.OrderItemStatusEnumPaymentPending,
-			Description: "PaymentPending",
+			SvgName:      "truck",
+			DeliveryType: model.DeliveryTypeForeignDelivery,
+			StatusEnum:   model.OrderItemStatusEnumDeliveryStarted,
+			Description:  "통관이 완료된 상품이 국내 물류센터에 입고 후 고객님께 배송 중입니다.",
 		}, {
-			StatusName:  model.OrderItemStatusEnumPaymentFinished,
-			Description: "PaymentFinished",
+			SvgName:      "check-circle",
+			DeliveryType: model.DeliveryTypeForeignDelivery,
+			StatusEnum:   model.OrderItemStatusEnumDeliveryFinished,
+			Description:  "주문하신 상품이 고객님께 도착하였습니다.",
 		}, {
-			StatusName:  model.OrderItemStatusEnumProductPreparing,
-			Description: "ProductPreparing",
+			SvgName:      "package",
+			DeliveryType: model.DeliveryTypeDomesticDelivery,
+			StatusEnum:   model.OrderItemStatusEnumPaymentFinished,
+			Description:  "고객님의 주문을 확인한 후 현지에서 상품 구매를 진행하고 있습니다. 현지 재고 상황에 따라 3~5일 소요될 수 있습니다.",
 		}, {
-			StatusName:  model.OrderItemStatusEnumForeignProductInspecting,
-			Description: "Foriegn Product Inspecting",
+			SvgName:      "package",
+			DeliveryType: model.DeliveryTypeDomesticDelivery,
+			StatusEnum:   model.OrderItemStatusEnumProductPreparing,
+			Description:  "고객님의 주문을 확인한 후 올오프 또는 브랜드에서 상품을 준비하고 있습니다. 재고 상황에 따라 3~5일 소요될 수 있습니다.",
 		}, {
-			StatusName:  model.OrderItemStatusEnumDeliveryPreparing,
-			Description: "DeliveryPreparing",
+			SvgName:      "package-box",
+			DeliveryType: model.DeliveryTypeDomesticDelivery,
+			StatusEnum:   model.OrderItemStatusEnumDeliveryPreparing,
+			Description:  "올오프 또는 브랜드 물류센터에 상품이 입고되어 순차적인 검수를 진행하고 배송을 준비하고 있습니다.",
 		}, {
-			StatusName:  model.OrderItemStatusEnumForeignDeliveryStatrted,
-			Description: "Foreign DeliveryStarted",
+			SvgName:      "truck",
+			DeliveryType: model.DeliveryTypeDomesticDelivery,
+			StatusEnum:   model.OrderItemStatusEnumDeliveryStarted,
+			Description:  "올오프 또는 브랜드 물류센터에서 상품이 출고되어 고객님께 배송 중입니다.",
 		}, {
-			StatusName:  model.OrderItemStatusEnumDeliveryStarted,
-			Description: "DeliveryStarted",
-		}, {
-			StatusName:  model.OrderItemStatusEnumDeliveryFinished,
-			Description: "DeliveryFinished",
-		}, {
-			StatusName:  model.OrderItemStatusEnumConfirmPayment,
-			Description: "ConfirmPayment",
-		},
-		{
-			StatusName:  model.OrderItemStatusEnumCancelFinished,
-			Description: "CancelFinished",
-		},
-		{
-			StatusName:  model.OrderItemStatusEnumExchangeRequested,
-			Description: "exchange requested",
-		},
-		{
-			StatusName:  model.OrderItemStatusEnumExchangePending,
-			Description: "exchange pending",
-		},
-		{
-			StatusName:  model.OrderItemStatusEnumExchangeFinished,
-			Description: "exchange finished",
-		},
-		{
-			StatusName:  model.OrderItemStatusEnumReturnRequested,
-			Description: "return requested",
-		},
-		{
-			StatusName:  model.OrderItemStatusEnumReturnPending,
-			Description: "return pending",
-		},
-		{
-			StatusName:  model.OrderItemStatusEnumReturnFinished,
-			Description: "return finished",
+			SvgName:      "check-circle",
+			DeliveryType: model.DeliveryTypeDomesticDelivery,
+			StatusEnum:   model.OrderItemStatusEnumDeliveryFinished,
+			Description:  "주문하신 상품이 고객님께 도착하였습니다.",
 		},
 	}
 
-	ret := []*model.OrderItemStatusDescription{}
-
-	for _, status := range allStatus {
-		ret = append(ret, &status)
-	}
-	return ret, nil
+	return allStatus, nil
 }

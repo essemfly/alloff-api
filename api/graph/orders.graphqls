@@ -176,7 +176,9 @@ type OrderValidityResult {
 }
 
 type OrderItemStatusDescription {
-  statusName: OrderItemStatusEnum!
+  deliveryType: DeliveryType!
+  statusEnum: OrderItemStatusEnum!
+  svgName: String!
   description: String!
 }
 

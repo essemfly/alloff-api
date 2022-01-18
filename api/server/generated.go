@@ -229,8 +229,10 @@ type ComplexityRoot struct {
 	}
 
 	OrderItemStatusDescription struct {
-		Description func(childComplexity int) int
-		StatusName  func(childComplexity int) int
+		DeliveryType func(childComplexity int) int
+		Description  func(childComplexity int) int
+		StatusEnum   func(childComplexity int) int
+		SvgName      func(childComplexity int) int
 	}
 
 	OrderValidityResult struct {
@@ -1394,6 +1396,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrderItem.UpdatedAt(childComplexity), true
 
+	case "OrderItemStatusDescription.deliveryType":
+		if e.complexity.OrderItemStatusDescription.DeliveryType == nil {
+			break
+		}
+
+		return e.complexity.OrderItemStatusDescription.DeliveryType(childComplexity), true
+
 	case "OrderItemStatusDescription.description":
 		if e.complexity.OrderItemStatusDescription.Description == nil {
 			break
@@ -1401,12 +1410,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.OrderItemStatusDescription.Description(childComplexity), true
 
-	case "OrderItemStatusDescription.statusName":
-		if e.complexity.OrderItemStatusDescription.StatusName == nil {
+	case "OrderItemStatusDescription.statusEnum":
+		if e.complexity.OrderItemStatusDescription.StatusEnum == nil {
 			break
 		}
 
-		return e.complexity.OrderItemStatusDescription.StatusName(childComplexity), true
+		return e.complexity.OrderItemStatusDescription.StatusEnum(childComplexity), true
+
+	case "OrderItemStatusDescription.svgName":
+		if e.complexity.OrderItemStatusDescription.SvgName == nil {
+			break
+		}
+
+		return e.complexity.OrderItemStatusDescription.SvgName(childComplexity), true
 
 	case "OrderValidityResult.available":
 		if e.complexity.OrderValidityResult.Available == nil {
@@ -2523,7 +2539,9 @@ type OrderValidityResult {
 }
 
 type OrderItemStatusDescription {
-  statusName: OrderItemStatusEnum!
+  deliveryType: DeliveryType!
+  statusEnum: OrderItemStatusEnum!
+  svgName: String!
   description: String!
 }
 
@@ -7752,7 +7770,7 @@ func (ec *executionContext) _OrderItem_confirmedAt(ctx context.Context, field gr
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _OrderItemStatusDescription_statusName(ctx context.Context, field graphql.CollectedField, obj *model.OrderItemStatusDescription) (ret graphql.Marshaler) {
+func (ec *executionContext) _OrderItemStatusDescription_deliveryType(ctx context.Context, field graphql.CollectedField, obj *model.OrderItemStatusDescription) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -7770,7 +7788,42 @@ func (ec *executionContext) _OrderItemStatusDescription_statusName(ctx context.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.StatusName, nil
+		return obj.DeliveryType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.DeliveryType)
+	fc.Result = res
+	return ec.marshalNDeliveryType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐDeliveryType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderItemStatusDescription_statusEnum(ctx context.Context, field graphql.CollectedField, obj *model.OrderItemStatusDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderItemStatusDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StatusEnum, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -7785,6 +7838,41 @@ func (ec *executionContext) _OrderItemStatusDescription_statusName(ctx context.C
 	res := resTmp.(model.OrderItemStatusEnum)
 	fc.Result = res
 	return ec.marshalNOrderItemStatusEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋserverᚋmodelᚐOrderItemStatusEnum(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderItemStatusDescription_svgName(ctx context.Context, field graphql.CollectedField, obj *model.OrderItemStatusDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderItemStatusDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SvgName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderItemStatusDescription_description(ctx context.Context, field graphql.CollectedField, obj *model.OrderItemStatusDescription) (ret graphql.Marshaler) {
@@ -14229,8 +14317,18 @@ func (ec *executionContext) _OrderItemStatusDescription(ctx context.Context, sel
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("OrderItemStatusDescription")
-		case "statusName":
-			out.Values[i] = ec._OrderItemStatusDescription_statusName(ctx, field, obj)
+		case "deliveryType":
+			out.Values[i] = ec._OrderItemStatusDescription_deliveryType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "statusEnum":
+			out.Values[i] = ec._OrderItemStatusDescription_statusEnum(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "svgName":
+			out.Values[i] = ec._OrderItemStatusDescription_svgName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
