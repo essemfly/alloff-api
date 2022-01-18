@@ -13,37 +13,10 @@ import (
 )
 
 func AddProduct(request ProductsAddRequest) {
-	pdInfo, err := ioc.Repo.ProductMetaInfos.GetByProductID(request.Brand.KeyName, request.ProductID)
-
-	if err == mongo.ErrNoDocuments {
-		// 새로운 상품이 필요한 경우
-		pdInfo := &domain.ProductMetaInfoDAO{
-			Created: time.Now(),
-			Updated: time.Now(),
-		}
-		pdInfo.SetBrandAndCategory(request.Brand, request.Source)
-		pdInfo.SetGeneralInfo(request.ProductName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Description)
-		pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), domain.CurrencyKRW)
-
-		_, err = ioc.Repo.ProductMetaInfos.Insert(pdInfo)
-		if err != nil {
-			log.Println("productinfo 1", err)
-		}
-	} else if err != nil {
-		// 에러가 발생한 경우
-		log.Println("productinfo 2", err)
-	} else {
-		// 기존에 상품이 있던 경우
-		pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), domain.CurrencyKRW)
-		_, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfo)
-		if err != nil {
-			log.Println("productinfo 3", err)
-		}
-	}
-
-	pdInfo, err = ioc.Repo.ProductMetaInfos.GetByProductID(request.Brand.KeyName, request.ProductID)
+	pdInfo, err := ProcessProductInfoRequest(request)
 	if err != nil {
-		log.Println("err", err)
+		log.Println(err)
+		return
 	}
 
 	pd, err := ioc.Repo.Products.GetByMetaID(pdInfo.ID.Hex())
@@ -61,32 +34,97 @@ func AddProduct(request ProductsAddRequest) {
 		pd.Updated = time.Now()
 	}
 
-	// TODO: Category classifier, Dynamic prices, Dynamic instruction, dynamic scores should be uploaded
-	alloffCat := classifier.GetAlloffCategory(pd)
-	alloffScore := GetProductScore(pd)
-	alloffPrice := GetProductPrice(pd)
-	alloffInstruction := GetProductDescription(pd)
+	ProcessProductRequest(pd, request)
 
-	pd.UpdateAlloffCategory(alloffCat)
-	pd.UpdateInventory(request.Inventories)
+}
+
+func ProcessProductInfoRequest(request ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
+	pdInfo, err := ioc.Repo.ProductMetaInfos.GetByProductID(request.Brand.KeyName, request.ProductID)
+
+	var newPdInfo = &domain.ProductMetaInfoDAO{}
+	if err == mongo.ErrNoDocuments {
+		// 새로운 상품이 필요한 경우
+		newPdInfo, err = AddProductInfo(request)
+		if err != nil {
+			log.Println("err on insert product info ", err)
+			return nil, err
+		}
+	} else if err == nil {
+		// 기존에 상품이 있던 경우
+		newPdInfo, err = UpdateProductInfo(pdInfo, request)
+		if err != nil {
+			log.Println("err on update product info", err)
+			return nil, err
+		}
+	} else {
+		// 에러가 발생한 경우
+		log.Println("productinfo 2", err)
+		return nil, err
+	}
+
+	return newPdInfo, nil
+}
+
+func AddProductInfo(request ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
+	pdInfo := &domain.ProductMetaInfoDAO{
+		Created: time.Now(),
+		Updated: time.Now(),
+	}
+	pdInfo.SetBrandAndCategory(request.Brand, request.Source)
+	pdInfo.SetGeneralInfo(request.ProductName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Description)
+	pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), domain.CurrencyKRW)
+
+	newPdInfo, err := ioc.Repo.ProductMetaInfos.Insert(pdInfo)
+	if err != nil {
+		log.Println("productinfo 1", err)
+		return nil, err
+	}
+	return newPdInfo, nil
+}
+
+func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
+	pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), request.CurrencyType)
+	updatedPdInfo, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfo)
+	if err != nil {
+		log.Println("productinfo 3", err)
+		return nil, err
+	}
+	return updatedPdInfo, nil
+}
+
+func ProcessProductRequest(pd *domain.ProductDAO, request ProductsAddRequest) {
+	if pd.AlloffCategories == nil || !pd.AlloffCategories.Done {
+		alloffCat := classifier.GetAlloffCategory(pd)
+		pd.UpdateAlloffCategory(alloffCat)
+	}
+	if pd.SalesInstruction == nil {
+		alloffInstruction := GetProductDescription(pd)
+		pd.UpdateInstruction(alloffInstruction)
+	}
+
+	alloffScore := GetProductScore(pd)
 	pd.UpdateScore(alloffScore)
-	pd.UpdateInstruction(alloffInstruction)
+	pd.UpdateInventory(request.Inventories)
+
+	alloffPrice := GetProductPrice(pd)
 	lastPrice := pd.DiscountedPrice
 	isPriceUpdated := pd.UpdatePrice(alloffPrice)
 
 	if isPriceUpdated {
-		product.InsertProductDiff(pd, lastPrice)
+		err := product.InsertProductDiff(pd, lastPrice)
+		if err != nil {
+			log.Println("error on insert product diff", err)
+		}
 	}
 
 	if pd.ID == primitive.NilObjectID {
-		// pd.UpdateAlloffCategory(alloffCat)
-		_, err = ioc.Repo.Products.Insert(pd)
+		_, err := ioc.Repo.Products.Insert(pd)
 		if err != nil {
 			log.Println("product 1", err)
 		}
 
 	} else {
-		_, err = ioc.Repo.Products.Upsert(pd)
+		_, err := ioc.Repo.Products.Upsert(pd)
 		if err != nil {
 			log.Println("product 2", err)
 		}
