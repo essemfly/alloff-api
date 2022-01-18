@@ -39,8 +39,15 @@ func (repo *orderRepo) GetByAlloffID(ID string) (*domain.OrderDAO, error) {
 func (repo *orderRepo) List(userID string) ([]*domain.OrderDAO, error) {
 	orders := []*domain.OrderDAO{}
 
-	if err := repo.db.Model(&orders).Where("user_id = ?", userID).Order("created_at DESC").Relation("OrderItems").Relation("OrderItems.RefundInfo").Select(); err != nil {
+	if err := repo.db.Model(&orders).Where("user_id = ?", userID).Order("created_at DESC").Select(); err != nil {
 		return nil, err
+	}
+	for _, order := range orders {
+		orderItems := []*domain.OrderItemDAO{}
+		if err := repo.db.Model(&orderItems).Where("order_id = ?", order.ID).Order("id ASC").Select(); err != nil {
+			return nil, err
+		}
+		order.OrderItems = orderItems
 	}
 
 	return orders, nil
