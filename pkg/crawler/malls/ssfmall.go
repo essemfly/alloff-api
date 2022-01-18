@@ -44,12 +44,12 @@ type SSFDspGodPrc struct {
 
 func CrawlSSFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
 	pageNum := 1
-	totalProducts := 0
 	url := source.CrawlUrl + "&currentPage=" + strconv.Itoa(pageNum)
 
 	errorMessage := "Crawl Failed: Source " + source.Category.KeyName
 	resp, err := utils.RequestRetryer(url, utils.REQUEST_GET, utils.GetSSFHeaders(), "", errorMessage)
 	if err != nil {
+		log.Println("SSFmall fail on", source)
 		<-worker
 		done <- true
 		return
@@ -59,11 +59,16 @@ func CrawlSSFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 	brand, err := ioc.Repo.Brands.GetByKeyname(source.Category.BrandKeyname)
 	if err != nil {
-		log.Println(err)
+		log.Println("brand repo key error", err)
 	}
 
 	crawlResponse := &SSFResponseParser{}
-	json.NewDecoder(resp.Body).Decode(crawlResponse)
+	err = json.NewDecoder(resp.Body).Decode(crawlResponse)
+	if err != nil {
+		log.Println("ssf decode err", err)
+	}
+
+	totalProducts := MapSSFCrawlResultsToModels(crawlResponse.Products, source, brand)
 
 	for crawlResponse.TotalPage > crawlResponse.CurrentPage {
 		pageNum += 1
@@ -71,11 +76,16 @@ func CrawlSSFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		errorMessage = "Crawl Failed: Source Page" + source.Category.KeyName + strconv.Itoa(pageNum)
 		resp, err := utils.RequestRetryer(url, utils.REQUEST_GET, utils.GetSSFHeaders(), "", errorMessage)
 		if err != nil {
+			log.Println("SSF Request error", err)
 			break
 		}
 
 		crawlResponse = &SSFResponseParser{}
-		json.NewDecoder(resp.Body).Decode(crawlResponse)
+		err = json.NewDecoder(resp.Body).Decode(crawlResponse)
+		if err != nil {
+			log.Println("SSF REsponse decode error", err)
+
+		}
 		totalProducts += MapSSFCrawlResultsToModels(crawlResponse.Products, source, brand)
 	}
 

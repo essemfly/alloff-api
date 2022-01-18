@@ -2,6 +2,7 @@ package malls
 
 import (
 	"encoding/json"
+	"log"
 	"strconv"
 	"strings"
 
@@ -65,13 +66,13 @@ type LotteFashionProperty struct {
 func CrawlLotteFashion(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
 	pageSize := 100
 	pageNum := 1
-	totalProducts := 0
 
 	jsonStr := BuildLFJsonBody(pageNum, pageSize, source)
 
 	errorMessage := "Crawl Failed: Source " + source.Category.KeyName
 	resp, err := utils.RequestRetryer(source.CrawlUrl, utils.REQUEST_POST, utils.GetGeneralHeader(), jsonStr, errorMessage)
 	if err != nil {
+		log.Println("LotteFashion fail on", source)
 		<-worker
 		done <- true
 		return
@@ -83,6 +84,8 @@ func CrawlLotteFashion(worker chan bool, done chan bool, source *domain.CrawlSou
 	crawlResponse := &LotteFashionResponseParse{}
 	json.NewDecoder(resp.Body).Decode(crawlResponse)
 	crawlResults := crawlResponse.Results
+
+	totalProducts := MapLotteCrawlResultsToModels(crawlResults.Products, source, brand)
 
 	for crawlResults.TotalPage > pageNum {
 		pageNum += 1
