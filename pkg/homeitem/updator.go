@@ -10,6 +10,7 @@ import (
 )
 
 func UpdateHomeItems() {
+	log.Println("Running Script: Update HomeItems")
 	homeitemDaos, err := ioc.Repo.HomeItems.List()
 	if err != nil {
 		log.Println("Errors homeitem list: ", err)

@@ -9,6 +9,7 @@ import (
 )
 
 func UpdateBrandCategory() {
+	log.Println("Running Script: Update Brand Category")
 	offset, limit := 0, 1000
 	brandDaos, totalCount, err := ioc.Repo.Brands.List(offset, limit, nil, nil)
 	if err != nil {

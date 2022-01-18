@@ -10,8 +10,10 @@ import (
 )
 
 func PrintCrawlResults(source *domain.CrawlSourceDAO, totalProducts int) {
-	msg := source.CrawlModuleName + ": " + source.Category.KeyName + " " + strconv.Itoa(totalProducts) + "products crawled"
-	log.Println(msg)
+	if totalProducts > 0 {
+		msg := source.CrawlModuleName + ": " + source.Category.KeyName + " " + strconv.Itoa(totalProducts) + "products crawled"
+		log.Println(msg)
+	}
 }
 
 func WriteCrawlRecords(brandModules []string) {
@@ -36,6 +38,6 @@ func WriteCrawlRecords(brandModules []string) {
 		log.Println("Error occured in inserting crawling Record", err)
 	}
 
-	msg := "Update Finished: " + lastUpdatedDate.String() + "\n" + "New Products: " + strconv.Itoa(numNewProducts) + "  Out Products: " + strconv.Itoa(numOutProducts)
+	msg := "Update Finished: " + lastUpdatedDate.Format("2006-01-02 15:04:05") + "\n" + "New Products: " + strconv.Itoa(numNewProducts) + "  Out Products: " + strconv.Itoa(numOutProducts)
 	log.Println(msg)
 }
