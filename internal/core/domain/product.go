@@ -128,8 +128,13 @@ type DeliveryDescriptionDAO struct {
 }
 
 func (deliveryDesc *DeliveryDescriptionDAO) ToDTO() *model.DeliveryDescription {
+	deliveryType := model.DeliveryTypeDomesticDelivery
+	if deliveryDesc.DeliveryType == Foreign {
+		deliveryType = model.DeliveryTypeForeignDelivery
+	}
+
 	return &model.DeliveryDescription{
-		DeliveryType:         model.DeliveryType(deliveryDesc.DeliveryType),
+		DeliveryType:         deliveryType,
 		DeliveryFee:          deliveryDesc.DeliveryFee,
 		EarliestDeliveryDays: deliveryDesc.EarliestDeliveryDays,
 		LatestDeliveryDays:   deliveryDesc.LatestDeliveryDays,
