@@ -16,6 +16,13 @@ const (
 	CurrencyUSD CurrencyType = "USD"
 )
 
+type DeliveryType string
+
+const (
+	Domestic DeliveryType = "DOMESTIC"
+	Foreign  DeliveryType = "FOREIGN"
+)
+
 type ProductMetaInfoDAO struct {
 	ID           primitive.ObjectID `bson:"_id,omitempty"`
 	ProductID    string
@@ -113,6 +120,7 @@ func (productDesc *ProductDescriptionDAO) ToDTO() *model.ProductDescription {
 }
 
 type DeliveryDescriptionDAO struct {
+	DeliveryType         DeliveryType
 	DeliveryFee          int
 	EarliestDeliveryDays int
 	LatestDeliveryDays   int
@@ -121,6 +129,7 @@ type DeliveryDescriptionDAO struct {
 
 func (deliveryDesc *DeliveryDescriptionDAO) ToDTO() *model.DeliveryDescription {
 	return &model.DeliveryDescription{
+		DeliveryType:         model.DeliveryType(deliveryDesc.DeliveryType),
 		DeliveryFee:          deliveryDesc.DeliveryFee,
 		EarliestDeliveryDays: deliveryDesc.EarliestDeliveryDays,
 		LatestDeliveryDays:   deliveryDesc.LatestDeliveryDays,

@@ -9,12 +9,18 @@ func GetProductDescription(pd *domain.ProductDAO) *domain.AlloffInstructionDAO {
 		earlyDays, lateDays = 7, 14
 	}
 
+	deliveryType := domain.Domestic
+	if pd.ProductInfo.Source.IsForeignDelivery {
+		deliveryType = domain.Foreign
+	}
+
 	return &domain.AlloffInstructionDAO{
 		Description: &domain.ProductDescriptionDAO{
 			Images: pd.ProductInfo.Images,
 			Texts:  nil,
 		},
 		DeliveryDescription: &domain.DeliveryDescriptionDAO{
+			DeliveryType:         deliveryType,
 			DeliveryFee:          pd.ProductInfo.Source.DeliveryPrice,
 			EarliestDeliveryDays: earlyDays,
 			LatestDeliveryDays:   lateDays,
