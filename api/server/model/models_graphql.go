@@ -243,7 +243,6 @@ type OrderItemInput struct {
 type OrderItemStatusDescription struct {
 	DeliveryType DeliveryType        `json:"deliveryType"`
 	StatusEnum   OrderItemStatusEnum `json:"statusEnum"`
-	SvgName      string              `json:"svgName"`
 	Description  string              `json:"description"`
 }
 
