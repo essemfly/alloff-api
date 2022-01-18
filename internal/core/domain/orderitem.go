@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"strconv"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/server/model"
@@ -73,6 +74,7 @@ type OrderItemDAO struct {
 
 func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {
 	return &model.OrderItem{
+		ID:                     strconv.Itoa(orderItemDao.ID),
 		ProductID:              orderItemDao.ProductID,
 		ProductName:            orderItemDao.ProductName,
 		ProductImg:             orderItemDao.ProductImg,

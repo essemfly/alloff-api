@@ -38,7 +38,8 @@ func (repo *orderRepo) GetByAlloffID(ID string) (*domain.OrderDAO, error) {
 
 func (repo *orderRepo) List(userID string) ([]*domain.OrderDAO, error) {
 	orders := []*domain.OrderDAO{}
-	if err := repo.db.Model(&orders).Order("created_at DESC").Select(); err != nil {
+
+	if err := repo.db.Model(&orders).Where("user_id = ?", userID).Order("created_at DESC").Relation("OrderItems").Relation("OrderItems.RefundInfo").Select(); err != nil {
 		return nil, err
 	}
 

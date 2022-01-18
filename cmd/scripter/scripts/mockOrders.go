@@ -41,7 +41,6 @@ func AddMockOrders() {
 		products, cnt, _ := product.ProductsListing(0, 3, brandDao[brandIdx].ID.Hex(), "", "", nil)
 		for cnt < 1 {
 			brandIdx += 1
-			log.Println("HOIT?", brandDao[brandIdx].ID.Hex())
 			products, cnt, _ = product.ProductsListing(0, len(allstatus), brandDao[brandIdx].ID.Hex(), "", "", nil)
 		}
 

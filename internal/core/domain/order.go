@@ -20,6 +20,7 @@ type OrderDAO struct {
 	tableName     struct{} `pg:"orders"`
 	ID            int
 	AlloffOrderID string
+	UserID        string
 	User          *UserDAO
 	OrderStatus   OrderStatusEnum
 	OrderItems    []*OrderItemDAO `pg:"rel:has-many"`

@@ -54,6 +54,7 @@ func createSchema(db *pg.DB) error {
 		(*domain.OrderDAO)(nil),
 		(*domain.OrderItemDAO)(nil),
 		(*domain.PaymentDAO)(nil),
+		(*domain.RefundItemDAO)(nil),
 	}
 
 	for _, model := range models {
