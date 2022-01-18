@@ -27,7 +27,7 @@ func categoryClassifier(product *domain.ProductDAO) (category1, category2 *domai
 	possibleCat2 := []string{}
 	classifier, err := ioc.Repo.ClassifyRules.GetByKeyname(product.ProductInfo.Brand.KeyName, product.ProductInfo.Category.Name)
 	if err != nil {
-		log.Println("AlloffCategory error", err)
+		log.Println("Brand key Category Key find no rules:", product.ProductInfo.Brand.KeyName, product.ProductInfo.Category.Name)
 		return
 	}
 
@@ -54,7 +54,6 @@ func categoryClassifier(product *domain.ProductDAO) (category1, category2 *domai
 			}
 
 		} else {
-			log.Println("MORE THAN TWO CLASSIFICATION RULES: ", product.ProductInfo.OriginalName)
 			return nil, nil, false
 		}
 	}
@@ -74,7 +73,5 @@ func categoryClassifier(product *domain.ProductDAO) (category1, category2 *domai
 		return classifier.AlloffCategory1, cat2, true
 	}
 
-	// log.Println("MORE THAN TWO CLASSIFICATION RULES: ", product.Name)
 	return classifier.AlloffCategory1, nil, false
-
 }
