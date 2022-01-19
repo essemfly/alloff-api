@@ -7,9 +7,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/lessbutter/alloff-api/api/middleware"
-	"github.com/lessbutter/alloff-api/api/server"
-	"github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/front"
+	"github.com/lessbutter/alloff-api/api/front/middleware"
+	"github.com/lessbutter/alloff-api/api/front/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
@@ -152,6 +152,6 @@ func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
 }
 
 // Mutation returns server.MutationResolver implementation.
-func (r *Resolver) Mutation() server.MutationResolver { return &mutationResolver{r} }
+func (r *Resolver) Mutation() front.MutationResolver { return &mutationResolver{r} }
 
 type mutationResolver struct{ *Resolver }

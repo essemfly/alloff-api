@@ -6,8 +6,8 @@ package resolver
 import (
 	"context"
 
-	"github.com/lessbutter/alloff-api/api/server"
-	"github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/front"
+	"github.com/lessbutter/alloff-api/api/front/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 )
 
@@ -29,6 +29,6 @@ func (r *queryResolver) Alloffcategory(ctx context.Context, input *model.AlloffC
 }
 
 // Query returns server.QueryResolver implementation.
-func (r *Resolver) Query() server.QueryResolver { return &queryResolver{r} }
+func (r *Resolver) Query() front.QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }
