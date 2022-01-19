@@ -3,7 +3,7 @@ package seeder
 import (
 	"log"
 
-	"github.com/lessbutter/alloff-api/api/front/model"
+	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/product"

@@ -8,8 +8,8 @@ import (
 	"errors"
 	"strconv"
 
-	"github.com/lessbutter/alloff-api/api/front/middleware"
-	"github.com/lessbutter/alloff-api/api/front/model"
+	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
+	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/pkg/order"
 )

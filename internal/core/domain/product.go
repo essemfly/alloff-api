@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lessbutter/alloff-api/api/front/model"
+	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

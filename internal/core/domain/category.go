@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/lessbutter/alloff-api/api/front/model"
+	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

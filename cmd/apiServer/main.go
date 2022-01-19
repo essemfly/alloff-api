@@ -13,9 +13,9 @@ import (
 	"github.com/getsentry/sentry-go"
 	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/go-chi/chi"
-	"github.com/lessbutter/alloff-api/api/front"
-	"github.com/lessbutter/alloff-api/api/front/middleware"
-	"github.com/lessbutter/alloff-api/api/front/resolver"
+	"github.com/lessbutter/alloff-api/api/apiServer"
+	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
+	"github.com/lessbutter/alloff-api/api/apiServer/resolver"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/lessbutter/alloff-api/internal/storage/postgres"
@@ -44,7 +44,7 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(middleware.Middleware())
 
-	srv := handler.NewDefaultServer(front.NewExecutableSchema(front.Config{Resolvers: &resolver.Resolver{}}))
+	srv := handler.NewDefaultServer(apiServer.NewExecutableSchema(apiServer.Config{Resolvers: &resolver.Resolver{}}))
 	srv.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error {
 		sentry.CaptureException(e)
 		err := graphql.DefaultErrorPresenter(ctx, e)

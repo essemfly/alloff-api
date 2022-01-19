@@ -7,9 +7,9 @@ import (
 	"context"
 	"errors"
 
-	"github.com/lessbutter/alloff-api/api/front"
-	"github.com/lessbutter/alloff-api/api/front/middleware"
-	"github.com/lessbutter/alloff-api/api/front/model"
+	"github.com/lessbutter/alloff-api/api/apiServer"
+	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
+	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
@@ -151,7 +151,7 @@ func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
 	return user.ToDTO(), nil
 }
 
-// Mutation returns server.MutationResolver implementation.
-func (r *Resolver) Mutation() front.MutationResolver { return &mutationResolver{r} }
+// Mutation returns apiServer.MutationResolver implementation.
+func (r *Resolver) Mutation() apiServer.MutationResolver { return &mutationResolver{r} }
 
 type mutationResolver struct{ *Resolver }

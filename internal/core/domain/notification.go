@@ -37,9 +37,7 @@ type NotificationDAO struct {
 	DeviceIDs        []string
 	NavigateTo       string
 	ReferenceID      string
-	ScheduledDate    time.Time
 	Created          time.Time
 	Updated          time.Time
 	Sended           time.Time
-	Result           interface{}
 }

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.17.3
-// source: api/grpcServer/product.proto
+// source: api/grpcServer/messages.proto
 
 package grpcServer
 
@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type NotificationClient interface {
 	ListNoti(ctx context.Context, in *ListNotiRequest, opts ...grpc.CallOption) (*ListNotiResponse, error)
 	CreateNoti(ctx context.Context, in *CreateNotiRequest, opts ...grpc.CallOption) (*CreateNotiResponse, error)
+	SendNoti(ctx context.Context, in *SendNotiRequest, opts ...grpc.CallOption) (*SendNotiResponse, error)
 }
 
 type notificationClient struct {
@@ -52,12 +53,22 @@ func (c *notificationClient) CreateNoti(ctx context.Context, in *CreateNotiReque
 	return out, nil
 }
 
+func (c *notificationClient) SendNoti(ctx context.Context, in *SendNotiRequest, opts ...grpc.CallOption) (*SendNotiResponse, error) {
+	out := new(SendNotiResponse)
+	err := c.cc.Invoke(ctx, "/grpcServer.Notification/SendNoti", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NotificationServer is the server API for Notification service.
 // All implementations must embed UnimplementedNotificationServer
 // for forward compatibility
 type NotificationServer interface {
 	ListNoti(context.Context, *ListNotiRequest) (*ListNotiResponse, error)
 	CreateNoti(context.Context, *CreateNotiRequest) (*CreateNotiResponse, error)
+	SendNoti(context.Context, *SendNotiRequest) (*SendNotiResponse, error)
 	mustEmbedUnimplementedNotificationServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedNotificationServer) ListNoti(context.Context, *ListNotiReques
 }
 func (UnimplementedNotificationServer) CreateNoti(context.Context, *CreateNotiRequest) (*CreateNotiResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateNoti not implemented")
+}
+func (UnimplementedNotificationServer) SendNoti(context.Context, *SendNotiRequest) (*SendNotiResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendNoti not implemented")
 }
 func (UnimplementedNotificationServer) mustEmbedUnimplementedNotificationServer() {}
 
@@ -120,6 +134,24 @@ func _Notification_CreateNoti_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Notification_SendNoti_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendNotiRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServer).SendNoti(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpcServer.Notification/SendNoti",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServer).SendNoti(ctx, req.(*SendNotiRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Notification_ServiceDesc is the grpc.ServiceDesc for Notification service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -135,9 +167,13 @@ var Notification_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "CreateNoti",
 			Handler:    _Notification_CreateNoti_Handler,
 		},
+		{
+			MethodName: "SendNoti",
+			Handler:    _Notification_SendNoti_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/grpcServer/product.proto",
+	Metadata: "api/grpcServer/messages.proto",
 }
 
 // BrandClient is the client API for Brand service.
@@ -259,7 +295,7 @@ var Brand_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/grpcServer/product.proto",
+	Metadata: "api/grpcServer/messages.proto",
 }
 
 // ProductClient is the client API for Product service.
@@ -453,7 +489,7 @@ var Product_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/grpcServer/product.proto",
+	Metadata: "api/grpcServer/messages.proto",
 }
 
 // ProductGroupClient is the client API for ProductGroup service.
@@ -647,5 +683,5 @@ var ProductGroup_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/grpcServer/product.proto",
+	Metadata: "api/grpcServer/messages.proto",
 }
