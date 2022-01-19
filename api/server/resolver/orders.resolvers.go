@@ -347,7 +347,7 @@ func (r *queryResolver) OrderItemStatus(ctx context.Context) ([]*model.OrderItem
 	allStatus := []*model.OrderItemStatusDescription{
 		{
 			DeliveryType: model.DeliveryTypeForeignDelivery,
-			StatusEnum:   model.OrderItemStatusEnumPaymentFinished,
+			StatusEnum:   model.OrderItemStatusEnumProductPreparing,
 			Description:  "고객님의 주문을 확인한 후 현지에서 상품 구매를 진행하고 있습니다. 현지 재고 상황에 따라 3~5일 소요될 수 있습니다.",
 		}, {
 			DeliveryType: model.DeliveryTypeForeignDelivery,
@@ -365,10 +365,6 @@ func (r *queryResolver) OrderItemStatus(ctx context.Context) ([]*model.OrderItem
 			DeliveryType: model.DeliveryTypeForeignDelivery,
 			StatusEnum:   model.OrderItemStatusEnumDeliveryFinished,
 			Description:  "주문하신 상품이 고객님께 도착하였습니다.",
-		}, {
-			DeliveryType: model.DeliveryTypeDomesticDelivery,
-			StatusEnum:   model.OrderItemStatusEnumPaymentFinished,
-			Description:  "고객님의 주문을 확인한 후 현지에서 상품 구매를 진행하고 있습니다. 현지 재고 상황에 따라 3~5일 소요될 수 있습니다.",
 		}, {
 			DeliveryType: model.DeliveryTypeDomesticDelivery,
 			StatusEnum:   model.OrderItemStatusEnumProductPreparing,
