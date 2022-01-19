@@ -20,7 +20,7 @@ func GetProductDescription(pd *domain.ProductDAO) *domain.AlloffInstructionDAO {
 	return &domain.AlloffInstructionDAO{
 		Description: &domain.ProductDescriptionDAO{
 			Images: pd.ProductInfo.Images,
-			Texts:  pd.SalesInstruction.Description.Texts,
+			Texts:  nil,
 		},
 		DeliveryDescription: &domain.DeliveryDescriptionDAO{
 			DeliveryType:         deliveryType,
