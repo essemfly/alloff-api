@@ -7,8 +7,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/lessbutter/alloff-api/api/middleware"
-	"github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/front/middleware"
+	"github.com/lessbutter/alloff-api/api/front/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 )
 

@@ -3,7 +3,7 @@ package domain
 import (
 	"time"
 
-	"github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/front/model"
 )
 
 type RefundItemDAO struct {

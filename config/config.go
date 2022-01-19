@@ -27,6 +27,7 @@ type Configuration struct {
 	POSTGRES_USER      string
 	POSTGRES_PASSWORD  string
 	POSTGRES_DB_NAME   string
+	GRPC_PORT          int
 }
 
 func GetConfiguration() Configuration {

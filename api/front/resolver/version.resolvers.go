@@ -6,7 +6,7 @@ package resolver
 import (
 	"context"
 
-	"github.com/lessbutter/alloff-api/api/server/model"
+	"github.com/lessbutter/alloff-api/api/front/model"
 )
 
 func (r *queryResolver) Version(ctx context.Context) (*model.AppVersion, error) {
