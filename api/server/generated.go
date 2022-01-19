@@ -675,7 +675,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CancelDescription.RefundAvailable(childComplexity), true
 
-	case "CancelDescription.RefundFee":
+	case "CancelDescription.refundFee":
 		if e.complexity.CancelDescription.RefundFee == nil {
 			break
 		}
@@ -2653,7 +2653,7 @@ type CancelDescription {
   refundAvailable: Boolean!
   changeAvailable: Boolean!
   changeFee: Int!
-  RefundFee: Int!
+  refundFee: Int!
 }
 
 input InventoryInput {
@@ -4453,7 +4453,7 @@ func (ec *executionContext) _CancelDescription_changeFee(ctx context.Context, fi
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _CancelDescription_RefundFee(ctx context.Context, field graphql.CollectedField, obj *model.CancelDescription) (ret graphql.Marshaler) {
+func (ec *executionContext) _CancelDescription_refundFee(ctx context.Context, field graphql.CollectedField, obj *model.CancelDescription) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -13579,8 +13579,8 @@ func (ec *executionContext) _CancelDescription(ctx context.Context, sel ast.Sele
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "RefundFee":
-			out.Values[i] = ec._CancelDescription_RefundFee(ctx, field, obj)
+		case "refundFee":
+			out.Values[i] = ec._CancelDescription_refundFee(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

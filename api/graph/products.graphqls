@@ -59,7 +59,7 @@ type CancelDescription {
   refundAvailable: Boolean!
   changeAvailable: Boolean!
   changeFee: Int!
-  RefundFee: Int!
+  refundFee: Int!
 }
 
 input InventoryInput {

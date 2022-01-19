@@ -83,7 +83,7 @@ type CancelDescription struct {
 	RefundAvailable bool `json:"refundAvailable"`
 	ChangeAvailable bool `json:"changeAvailable"`
 	ChangeFee       int  `json:"changeFee"`
-	RefundFee       int  `json:"RefundFee"`
+	RefundFee       int  `json:"refundFee"`
 }
 
 type Category struct {
