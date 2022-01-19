@@ -80,13 +80,10 @@ type BrandsInput struct {
 }
 
 type CancelDescription struct {
-	RefundAvailable bool     `json:"refundAvailable"`
-	ChangeAvailable bool     `json:"changeAvailable"`
-	ChangeFee       int      `json:"changeFee"`
-	RefundFee       int      `json:"RefundFee"`
-	ChangeRoughFee  int      `json:"ChangeRoughFee"`
-	RefundRoughFee  int      `json:"RefundRoughFee"`
-	Texts           []string `json:"texts"`
+	RefundAvailable bool `json:"refundAvailable"`
+	ChangeAvailable bool `json:"changeAvailable"`
+	ChangeFee       int  `json:"changeFee"`
+	RefundFee       int  `json:"RefundFee"`
 }
 
 type Category struct {

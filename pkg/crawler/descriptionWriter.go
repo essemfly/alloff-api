@@ -34,8 +34,6 @@ func GetProductDescription(pd *domain.ProductDAO) *domain.AlloffInstructionDAO {
 			ChangeAvailable: pd.ProductInfo.Source.ChangeAvailable,
 			ChangeFee:       pd.ProductInfo.Source.ChangeFee,
 			RefundFee:       pd.ProductInfo.Source.RefundFee,
-			ChangeRoughFee:  pd.ProductInfo.Source.ChangeRoughFee,
-			RefundRoughFee:  pd.ProductInfo.Source.RefundRoughFee,
 		},
 	}
 }

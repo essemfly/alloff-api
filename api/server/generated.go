@@ -93,11 +93,8 @@ type ComplexityRoot struct {
 	CancelDescription struct {
 		ChangeAvailable func(childComplexity int) int
 		ChangeFee       func(childComplexity int) int
-		ChangeRoughFee  func(childComplexity int) int
 		RefundAvailable func(childComplexity int) int
 		RefundFee       func(childComplexity int) int
-		RefundRoughFee  func(childComplexity int) int
-		Texts           func(childComplexity int) int
 	}
 
 	Category struct {
@@ -671,13 +668,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CancelDescription.ChangeFee(childComplexity), true
 
-	case "CancelDescription.ChangeRoughFee":
-		if e.complexity.CancelDescription.ChangeRoughFee == nil {
-			break
-		}
-
-		return e.complexity.CancelDescription.ChangeRoughFee(childComplexity), true
-
 	case "CancelDescription.refundAvailable":
 		if e.complexity.CancelDescription.RefundAvailable == nil {
 			break
@@ -691,20 +681,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CancelDescription.RefundFee(childComplexity), true
-
-	case "CancelDescription.RefundRoughFee":
-		if e.complexity.CancelDescription.RefundRoughFee == nil {
-			break
-		}
-
-		return e.complexity.CancelDescription.RefundRoughFee(childComplexity), true
-
-	case "CancelDescription.texts":
-		if e.complexity.CancelDescription.Texts == nil {
-			break
-		}
-
-		return e.complexity.CancelDescription.Texts(childComplexity), true
 
 	case "Category.id":
 		if e.complexity.Category.ID == nil {
@@ -2678,9 +2654,6 @@ type CancelDescription {
   changeAvailable: Boolean!
   changeFee: Int!
   RefundFee: Int!
-  ChangeRoughFee: Int!
-  RefundRoughFee: Int!
-  texts: [String!]
 }
 
 input InventoryInput {
@@ -4513,108 +4486,6 @@ func (ec *executionContext) _CancelDescription_RefundFee(ctx context.Context, fi
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _CancelDescription_ChangeRoughFee(ctx context.Context, field graphql.CollectedField, obj *model.CancelDescription) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "CancelDescription",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ChangeRoughFee, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _CancelDescription_RefundRoughFee(ctx context.Context, field graphql.CollectedField, obj *model.CancelDescription) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "CancelDescription",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RefundRoughFee, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _CancelDescription_texts(ctx context.Context, field graphql.CollectedField, obj *model.CancelDescription) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "CancelDescription",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Texts, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]string)
-	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Category_id(ctx context.Context, field graphql.CollectedField, obj *model.Category) (ret graphql.Marshaler) {
@@ -13713,18 +13584,6 @@ func (ec *executionContext) _CancelDescription(ctx context.Context, sel ast.Sele
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "ChangeRoughFee":
-			out.Values[i] = ec._CancelDescription_ChangeRoughFee(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "RefundRoughFee":
-			out.Values[i] = ec._CancelDescription_RefundRoughFee(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "texts":
-			out.Values[i] = ec._CancelDescription_texts(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

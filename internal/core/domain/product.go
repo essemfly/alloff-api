@@ -160,8 +160,6 @@ func (cancelDesc *CancelDescriptionDAO) ToDTO() *model.CancelDescription {
 		ChangeAvailable: cancelDesc.ChangeAvailable,
 		ChangeFee:       cancelDesc.ChangeFee,
 		RefundFee:       cancelDesc.RefundFee,
-		ChangeRoughFee:  cancelDesc.ChangeRoughFee,
-		RefundRoughFee:  cancelDesc.RefundRoughFee,
 	}
 }
 

@@ -37,8 +37,6 @@ type CrawlSourceDAO struct {
 	ChangeAvailable      bool
 	RefundFee            int
 	ChangeFee            int
-	RefundRoughFee       int
-	ChangeRoughFee       int
 }
 
 type CrawlRecordDAO struct {

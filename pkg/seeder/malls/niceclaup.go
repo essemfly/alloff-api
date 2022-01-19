@@ -77,8 +77,6 @@ func AddNiceClaup() {
 				ChangeAvailable:      true,
 				RefundFee:            5000,
 				ChangeFee:            5000,
-				RefundRoughFee:       5500,
-				ChangeRoughFee:       5500,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)
