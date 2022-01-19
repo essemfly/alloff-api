@@ -12,7 +12,7 @@ func (s *ProductGroupService) GetProductGroup(ctx context.Context, req *GetProdu
 	return nil, nil
 }
 
-func (s *ProductGroupService) PostProductGroup(ctx context.Context, req *PostProductGroupRequest) (*PostProductGroupResponse, error) {
+func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *CreateProductGroupRequest) (*CreateProductGroupResponse, error) {
 	return nil, nil
 }
 

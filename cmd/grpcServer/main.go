@@ -40,6 +40,8 @@ func main() {
 	grpcServer := grpc.NewServer()
 	pb.RegisterProductServer(grpcServer, &pb.ProductService{})
 	pb.RegisterProductGroupServer(grpcServer, &pb.ProductGroupService{})
+	pb.RegisterBrandServer(grpcServer, &pb.BrandService{})
+	pb.RegisterNotificationServer(grpcServer, &pb.NotiService{})
 
 	log.Printf("start gRPC server on %s port", port)
 	if err := grpcServer.Serve(lis); err != nil {

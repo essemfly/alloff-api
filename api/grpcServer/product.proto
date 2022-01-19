@@ -5,15 +5,26 @@ package grpcServer;
 option go_package = "github.com/lessbutter/alloff-api/api/grpcServer";
 
 
+service Notification {
+    rpc ListNoti(ListNotiRequest) returns (ListNotiResponse);
+    rpc CreateNoti(CreateNotiRequest) returns (CreateNotiResponse);
+}
+
+service Brand {
+    rpc ListBrand(ListBrandRequest) returns (ListBrandResponse);
+    rpc CreateBrand(CreateBrandRequest) returns (CreateBrandResponse);
+}
+
 service Product {
-    rpc GetProduct(GetProdcutRequest) returns (GetProductResponse);
+    rpc GetProduct(GetProductRequest) returns (GetProductResponse);
     rpc PutProduct(PutProductRequest) returns (PutProductResponse);
     rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+    rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
 }
 
 service ProductGroup {
     rpc GetProductGroup(GetProductGroupRequest) returns (GetProductGroupResponse);
-    rpc PostProductGroup(PostProductGroupRequest) returns (PostProductGroupResponse);
+    rpc CreateProductGroup(CreateProductGroupRequest) returns (CreateProductGroupResponse);
     rpc ListProductGroups(ListProductGroupsRequest) returns (ListProductGroupsResponse);
     rpc PushProducts(PushProductsRequest) returns (PushProductsResponse);
 }
@@ -22,7 +33,36 @@ service ProductGroup {
     GRPC API Request & Response
 */
 
-message GetProdcutRequest {
+// Notification Service
+message ListNotiRequest {
+
+}
+message ListNotiResponse {
+
+}
+message CreateNotiRequest {
+
+}
+message CreateNotiResponse {
+
+}
+
+// Brand Service
+message ListBrandRequest {
+
+}
+message ListBrandResponse {
+
+}
+message CreateBrandRequest {
+
+}
+message CreateBrandResponse {
+
+}
+
+// Product Service
+message GetProductRequest {
     string product_id = 1;
 }
 message GetProductResponse {
@@ -47,14 +87,21 @@ message ListProductsResponse {
     int32 total_counts = 4;
     ProductQuery list_query = 5;
 }
+message CreateProductRequest {
+    ProductCreateRequest create_request = 1;
+}
+message CreateProductResponse {
+    ProductMessage product = 1;
+}
 
+// Product Group Service
 message GetProductGroupRequest {
     string product_id = 1;
 }
 message GetProductGroupResponse {
     ProductMessage product = 1;
 }
-message PostProductGroupRequest {
+message CreateProductGroupRequest {
     string title = 1;
     string short_title = 2;
     repeated string instruction = 3;
@@ -62,7 +109,7 @@ message PostProductGroupRequest {
     string start_time = 5;
     string finish_time = 6;
 }
-message PostProductGroupResponse {
+message CreateProductGroupResponse {
     ProductGroupMessage pg = 1;
 }
 message ListProductGroupsRequest {}
@@ -125,4 +172,16 @@ message ProductQuery {
     optional string brand_id = 2;
     optional string category_id = 3;
     optional string alloff_category_id = 4;
+}
+
+message ProductCreateRequest {
+    string alloff_name = 1;
+    bool is_foreign_delivery = 2;
+    string product_id = 3;
+    optional int32 original_price = 4;
+    optional int32 discounted_price = 5;
+    int32 special_price = 6;
+    string brand_key_name = 7;
+    repeated InventoryMessage inventory = 8;
+    string description = 9;
 }

@@ -6,7 +6,7 @@ type ProductService struct {
 	ProductServer
 }
 
-func (s *ProductService) GetProduct(ctx context.Context, req *GetProdcutRequest) (*GetProductResponse, error) {
+func (s *ProductService) GetProduct(ctx context.Context, req *GetProductRequest) (*GetProductResponse, error) {
 	return nil, nil
 }
 
