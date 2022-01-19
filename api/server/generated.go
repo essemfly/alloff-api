@@ -992,7 +992,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CancelOrderItem(childComplexity, args["orderID"].(string), args["orderItemId"].(string)), true
+		return e.complexity.Mutation.CancelOrderItem(childComplexity, args["orderId"].(string), args["orderItemId"].(string)), true
 
 	case "Mutation.cancelPayment":
 		if e.complexity.Mutation.CancelPayment == nil {
@@ -1028,7 +1028,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.ConfirmOrderItem(childComplexity, args["orderID"].(string), args["orderItemId"].(string)), true
+		return e.complexity.Mutation.ConfirmOrderItem(childComplexity, args["orderId"].(string), args["orderItemId"].(string)), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
@@ -2549,8 +2549,8 @@ extend type Mutation {
   cancelPayment(input: PaymentClientInput): PaymentStatus!
   handlePaymentResponse(input: OrderResponse): PaymentResult!
 
-  cancelOrderItem(orderID: String!, orderItemId: ID!): PaymentStatus!
-  confirmOrderItem(orderID: String!, orderItemId: ID!): PaymentStatus!
+  cancelOrderItem(orderId: String!, orderItemId: ID!): PaymentStatus!
+  confirmOrderItem(orderId: String!, orderItemId: ID!): PaymentStatus!
 }
 `, BuiltIn: false},
 	{Name: "api/graph/productgroup.graphqls", Input: `scalar Upload
@@ -2786,14 +2786,14 @@ func (ec *executionContext) field_Mutation_cancelOrderItem_args(ctx context.Cont
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["orderID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderID"))
+	if tmp, ok := rawArgs["orderId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderId"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["orderID"] = arg0
+	args["orderId"] = arg0
 	var arg1 string
 	if tmp, ok := rawArgs["orderItemId"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderItemId"))
@@ -2840,14 +2840,14 @@ func (ec *executionContext) field_Mutation_confirmOrderItem_args(ctx context.Con
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["orderID"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderID"))
+	if tmp, ok := rawArgs["orderId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderId"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["orderID"] = arg0
+	args["orderId"] = arg0
 	var arg1 string
 	if tmp, ok := rawArgs["orderItemId"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderItemId"))
@@ -6441,7 +6441,7 @@ func (ec *executionContext) _Mutation_cancelOrderItem(ctx context.Context, field
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CancelOrderItem(rctx, args["orderID"].(string), args["orderItemId"].(string))
+		return ec.resolvers.Mutation().CancelOrderItem(rctx, args["orderId"].(string), args["orderItemId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6483,7 +6483,7 @@ func (ec *executionContext) _Mutation_confirmOrderItem(ctx context.Context, fiel
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ConfirmOrderItem(rctx, args["orderID"].(string), args["orderItemId"].(string))
+		return ec.resolvers.Mutation().ConfirmOrderItem(rctx, args["orderId"].(string), args["orderItemId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)

@@ -194,6 +194,6 @@ extend type Mutation {
   cancelPayment(input: PaymentClientInput): PaymentStatus!
   handlePaymentResponse(input: OrderResponse): PaymentResult!
 
-  cancelOrderItem(orderID: String!, orderItemId: ID!): PaymentStatus!
-  confirmOrderItem(orderID: String!, orderItemId: ID!): PaymentStatus!
+  cancelOrderItem(orderId: String!, orderItemId: ID!): PaymentStatus!
+  confirmOrderItem(orderId: String!, orderItemId: ID!): PaymentStatus!
 }

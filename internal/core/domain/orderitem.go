@@ -51,14 +51,14 @@ type OrderItemDAO struct {
 	ProductName            string
 	BrandKeyname           string
 	BrandKorname           string
-	Removed                bool
+	Removed                bool `pg:"is_removed"`
 	SalesPrice             int
 	CancelDescription      *CancelDescriptionDAO
 	DeliveryDescription    *DeliveryDescriptionDAO
 	OrderItemType          OrderItemTypeEnum
 	OrderItemStatus        OrderItemStatusEnum
-	DeliveryTrackingNumber string
-	DeliveryTrackingUrl    string
+	DeliveryTrackingNumber []string `pg:"tracking_number"`
+	DeliveryTrackingUrl    []string `pg:"tracking_url"`
 	Size                   string
 	Quantity               int
 	RefundInfo             RefundItemDAO `pg:"rel:has-one"`
@@ -88,8 +88,8 @@ func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {
 		OrderItemStatus:        MapOrderItemStatus(orderItemDao.OrderItemStatus),
 		CancelDescription:      orderItemDao.CancelDescription.ToDTO(),
 		DeliveryDescription:    orderItemDao.DeliveryDescription.ToDTO(),
-		DeliveryTrackingNumber: orderItemDao.DeliveryTrackingNumber,
-		DeliveryTrackingURL:    orderItemDao.DeliveryTrackingUrl,
+		DeliveryTrackingNumber: orderItemDao.DeliveryTrackingNumber[len(orderItemDao.DeliveryTrackingNumber)-1],
+		DeliveryTrackingURL:    orderItemDao.DeliveryTrackingUrl[len(orderItemDao.DeliveryTrackingUrl)-1],
 		RefundInfo:             orderItemDao.RefundInfo.ToDTO(),
 		CreatedAt:              orderItemDao.CreatedAt.String(),
 		UpdatedAt:              orderItemDao.UpdatedAt.String(),
