@@ -2549,8 +2549,8 @@ extend type Mutation {
   cancelPayment(input: PaymentClientInput): PaymentStatus!
   handlePaymentResponse(input: OrderResponse): PaymentResult!
 
-  cancelOrderItem(orderId: String!, orderItemId: ID!): PaymentStatus!
-  confirmOrderItem(orderId: String!, orderItemId: ID!): PaymentStatus!
+  cancelOrderItem(orderId: String!, orderItemId: String!): PaymentStatus!
+  confirmOrderItem(orderId: String!, orderItemId: String!): PaymentStatus!
 }
 `, BuiltIn: false},
 	{Name: "api/graph/productgroup.graphqls", Input: `scalar Upload
@@ -2797,7 +2797,7 @@ func (ec *executionContext) field_Mutation_cancelOrderItem_args(ctx context.Cont
 	var arg1 string
 	if tmp, ok := rawArgs["orderItemId"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderItemId"))
-		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2851,7 +2851,7 @@ func (ec *executionContext) field_Mutation_confirmOrderItem_args(ctx context.Con
 	var arg1 string
 	if tmp, ok := rawArgs["orderItemId"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderItemId"))
-		arg1, err = ec.unmarshalNID2string(ctx, tmp)
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
