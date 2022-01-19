@@ -145,14 +145,23 @@ func (deliveryDesc *DeliveryDescriptionDAO) ToDTO() *model.DeliveryDescription {
 type CancelDescriptionDAO struct {
 	RefundAvailable bool
 	ChangeAvailable bool
-	Texts           []string
+	ChangeFee       int
+	RefundFee       int
+	ChangeRoughFee  int
+	RefundRoughFee  int
+}
+
+type IndentText struct {
 }
 
 func (cancelDesc *CancelDescriptionDAO) ToDTO() *model.CancelDescription {
 	return &model.CancelDescription{
 		RefundAvailable: cancelDesc.RefundAvailable,
 		ChangeAvailable: cancelDesc.ChangeAvailable,
-		Texts:           cancelDesc.Texts,
+		ChangeFee:       cancelDesc.ChangeFee,
+		RefundFee:       cancelDesc.RefundFee,
+		ChangeRoughFee:  cancelDesc.ChangeRoughFee,
+		RefundRoughFee:  cancelDesc.RefundRoughFee,
 	}
 }
 

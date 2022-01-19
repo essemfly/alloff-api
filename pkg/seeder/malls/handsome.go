@@ -201,16 +201,25 @@ func AddHandsome() {
 			}
 
 			source := domain.CrawlSourceDAO{
-				BrandKeyname:      upsertedBrand.KeyName,
-				BrandIdentifier:   brandId,
-				MainCategoryKey:   updatedCat.CatIdentifier,
-				Category:          *updatedCat,
-				CrawlUrl:          "http://www.thehandsome.com/ko/c/categoryList?brandCode=ou&categoryCode=ou_" + brandId + "_" + val,
-				CrawlModuleName:   modulename,
-				IsSalesProducts:   false,
-				IsForeignDelivery: false,
-				PriceMarginPolicy: "NORMAL",
-				DeliveryPrice:     0,
+				BrandKeyname:         upsertedBrand.KeyName,
+				BrandIdentifier:      brandId,
+				MainCategoryKey:      updatedCat.CatIdentifier,
+				Category:             *updatedCat,
+				CrawlUrl:             "http://www.thehandsome.com/ko/c/categoryList?brandCode=ou&categoryCode=ou_" + brandId + "_" + val,
+				CrawlModuleName:      modulename,
+				IsSalesProducts:      false,
+				IsForeignDelivery:    false,
+				PriceMarginPolicy:    "NORMAL",
+				DeliveryPrice:        0,
+				EarliestDeliveryDays: 2,
+				LatestDeliveryDays:   7,
+				DeliveryDesc:         nil,
+				RefundAvailable:      true,
+				ChangeAvailable:      true,
+				RefundFee:            5000,
+				ChangeFee:            5000,
+				RefundRoughFee:       5500,
+				ChangeRoughFee:       5500,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)

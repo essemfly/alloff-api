@@ -35,7 +35,10 @@ type CrawlSourceDAO struct {
 	DeliveryDesc         []string
 	RefundAvailable      bool
 	ChangeAvailable      bool
-	CancelDesc           []string
+	RefundFee            int
+	ChangeFee            int
+	RefundRoughFee       int
+	ChangeRoughFee       int
 }
 
 type CrawlRecordDAO struct {

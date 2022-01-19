@@ -97,10 +97,9 @@ func ProcessProductRequest(pd *domain.ProductDAO, request ProductsAddRequest) {
 		alloffCat := classifier.GetAlloffCategory(pd)
 		pd.UpdateAlloffCategory(alloffCat)
 	}
-	if pd.SalesInstruction == nil {
-		alloffInstruction := GetProductDescription(pd)
-		pd.UpdateInstruction(alloffInstruction)
-	}
+
+	alloffInstruction := GetProductDescription(pd)
+	pd.UpdateInstruction(alloffInstruction)
 
 	alloffScore := GetProductScore(pd)
 	pd.UpdateScore(alloffScore)

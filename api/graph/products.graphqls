@@ -58,7 +58,10 @@ type DeliveryDescription {
 type CancelDescription {
   refundAvailable: Boolean!
   changeAvailable: Boolean!
-  texts: [String!]
+  changeFee: Int!
+  RefundFee: Int!
+  ChangeRoughFee: Int!
+  RefundRoughFee: Int!
 }
 
 input InventoryInput {
