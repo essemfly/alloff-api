@@ -222,7 +222,7 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 
 	return &model.PaymentResult{
 		Success:     true,
-		ErrorMsg:    input.ErrorMsg,
+		ErrorMsg:    "",
 		Order:       nil,
 		PaymentInfo: nil,
 	}, nil
@@ -251,7 +251,7 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 
 	result := &model.PaymentStatus{
 		Success:     false,
-		ErrorMsg:    err.Error(),
+		ErrorMsg:    "",
 		PaymentInfo: paymentDao.ToDTO(),
 		Order:       orderDao.ToDTO(),
 	}

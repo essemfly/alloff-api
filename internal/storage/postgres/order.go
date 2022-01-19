@@ -20,6 +20,12 @@ func (repo *orderRepo) Get(ID int) (*domain.OrderDAO, error) {
 		return nil, err
 	}
 
+	orderItems := []*domain.OrderItemDAO{}
+	if err := repo.db.Model(&orderItems).Where("order_id = ?", order.ID).Order("id ASC").Select(); err != nil {
+		return nil, err
+	}
+	order.OrderItems = orderItems
+
 	return order, nil
 }
 
@@ -28,10 +34,15 @@ func (repo *orderRepo) GetByAlloffID(ID string) (*domain.OrderDAO, error) {
 
 	if err := repo.db.Model(order).
 		Where("alloff_order_id = ?", ID).
-		Relation("OrderItems").
 		Select(); err != nil {
 		return nil, err
 	}
+
+	orderItems := []*domain.OrderItemDAO{}
+	if err := repo.db.Model(&orderItems).Where("order_id = ?", order.ID).Order("id ASC").Select(); err != nil {
+		return nil, err
+	}
+	order.OrderItems = orderItems
 
 	return order, nil
 }
