@@ -73,6 +73,13 @@ type OrderItemDAO struct {
 }
 
 func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {
+	trackingNumber := ""
+	trackingUrl := ""
+
+	if len(orderItemDao.DeliveryTrackingNumber) > 0 {
+		trackingNumber = orderItemDao.DeliveryTrackingNumber[len(orderItemDao.DeliveryTrackingNumber)-1]
+		trackingUrl = orderItemDao.DeliveryTrackingUrl[len(orderItemDao.DeliveryTrackingUrl)-1]
+	}
 	return &model.OrderItem{
 		ID:                     strconv.Itoa(orderItemDao.ID),
 		ProductID:              orderItemDao.ProductID,
@@ -88,8 +95,8 @@ func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {
 		OrderItemStatus:        MapOrderItemStatus(orderItemDao.OrderItemStatus),
 		CancelDescription:      orderItemDao.CancelDescription.ToDTO(),
 		DeliveryDescription:    orderItemDao.DeliveryDescription.ToDTO(),
-		DeliveryTrackingNumber: orderItemDao.DeliveryTrackingNumber[len(orderItemDao.DeliveryTrackingNumber)-1],
-		DeliveryTrackingURL:    orderItemDao.DeliveryTrackingUrl[len(orderItemDao.DeliveryTrackingUrl)-1],
+		DeliveryTrackingNumber: trackingNumber,
+		DeliveryTrackingURL:    trackingUrl,
 		RefundInfo:             orderItemDao.RefundInfo.ToDTO(),
 		CreatedAt:              orderItemDao.CreatedAt.String(),
 		UpdatedAt:              orderItemDao.UpdatedAt.String(),
