@@ -2,10 +2,10 @@ package services
 
 import (
 	"context"
-	"log"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer"
-	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
+	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
@@ -14,21 +14,43 @@ type ProductService struct {
 }
 
 func (s *ProductService) GetProduct(ctx context.Context, req *grpcServer.GetProductRequest) (*grpcServer.GetProductResponse, error) {
-	return nil, nil
+	pdDao, err := ioc.Repo.Products.Get(req.ProductId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpcServer.GetProductResponse{
+		Product: mapper.ProductMapper(pdDao),
+	}, nil
 }
 
 func (s *ProductService) PutProduct(ctx context.Context, req *grpcServer.PutProductRequest) (*grpcServer.PutProductResponse, error) {
-	return nil, nil
+	pdDao, err := ioc.Repo.Products.Get(req.ProductId)
+	if err != nil {
+		return nil, err
+	}
+
+	pdDao.SpecialPrice = int(req.SpecialPrice)
+	newPdDao, err := ioc.Repo.Products.Upsert(pdDao)
+	if err != nil {
+		return nil, err
+	}
+	return &grpcServer.PutProductResponse{
+		Product: mapper.ProductMapper(newPdDao),
+	}, nil
 }
 
 func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListProductsRequest) (*grpcServer.ListProductsResponse, error) {
-	log.Println("Request", req)
-	brandID := "61db9501dc6a9bb988410a35"
+	brandID := ""
 	if req.Query.BrandId != nil {
 		brandID = *req.Query.BrandId
 	}
+	categoryID := ""
+	if req.Query.CategoryId != nil {
+		categoryID = *req.Query.CategoryId
+	}
 
-	products, cnt, err := product.ProductsListing(int(req.Offset), int(req.Limit), brandID, "", "", nil)
+	products, cnt, err := product.ProductsListing(int(req.Offset), int(req.Limit), brandID, categoryID, "", nil)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +58,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	pds := []*grpcServer.ProductMessage{}
 
 	for _, pd := range products {
-		pds = append(pds, ProductMapper(pd))
+		pds = append(pds, mapper.ProductMapper(pd))
 	}
 
 	ret := &grpcServer.ListProductsResponse{
@@ -47,31 +69,4 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	}
 
 	return ret, nil
-}
-
-func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
-	return &grpcServer.ProductMessage{
-		ProductId:       pd.ProductInfo.ProductID,
-		AlloffName:      pd.AlloffName,
-		DiscountedPrice: int32(pd.DiscountedPrice),
-		DiscountRate:    int32(pd.DiscountRate),
-		SpecialPrice:    int32(pd.SpecialPrice),
-		BrandKorName:    pd.ProductInfo.Brand.KorName,
-		CategoryName:    pd.ProductInfo.Category.Name,
-		IsRemoved:       pd.Removed,
-		IsSoldout:       pd.Soldout,
-		Inventory:       InventoryMapper(pd),
-		TotalScore:      int32(pd.Score.TotalScore),
-	}
-}
-
-func InventoryMapper(pd *domain.ProductDAO) []*grpcServer.InventoryMessage {
-	invMessages := []*grpcServer.InventoryMessage{}
-	for _, inv := range pd.Inventory {
-		invMessages = append(invMessages, &grpcServer.InventoryMessage{
-			Size:     inv.Size,
-			Quantity: int32(inv.Quantity),
-		})
-	}
-	return invMessages
 }

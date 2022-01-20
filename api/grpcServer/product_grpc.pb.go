@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.17.3
-// source: api/grpcServer/product.proto
+// source: api/grpcServer/protos/product.proto
 
 package grpcServer
 
@@ -18,134 +18,12 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// BrandClient is the client API for Brand service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type BrandClient interface {
-	ListBrand(ctx context.Context, in *ListBrandRequest, opts ...grpc.CallOption) (*ListBrandResponse, error)
-	CreateBrand(ctx context.Context, in *CreateBrandRequest, opts ...grpc.CallOption) (*CreateBrandResponse, error)
-}
-
-type brandClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewBrandClient(cc grpc.ClientConnInterface) BrandClient {
-	return &brandClient{cc}
-}
-
-func (c *brandClient) ListBrand(ctx context.Context, in *ListBrandRequest, opts ...grpc.CallOption) (*ListBrandResponse, error) {
-	out := new(ListBrandResponse)
-	err := c.cc.Invoke(ctx, "/grpcServer.Brand/ListBrand", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *brandClient) CreateBrand(ctx context.Context, in *CreateBrandRequest, opts ...grpc.CallOption) (*CreateBrandResponse, error) {
-	out := new(CreateBrandResponse)
-	err := c.cc.Invoke(ctx, "/grpcServer.Brand/CreateBrand", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// BrandServer is the server API for Brand service.
-// All implementations must embed UnimplementedBrandServer
-// for forward compatibility
-type BrandServer interface {
-	ListBrand(context.Context, *ListBrandRequest) (*ListBrandResponse, error)
-	CreateBrand(context.Context, *CreateBrandRequest) (*CreateBrandResponse, error)
-	mustEmbedUnimplementedBrandServer()
-}
-
-// UnimplementedBrandServer must be embedded to have forward compatible implementations.
-type UnimplementedBrandServer struct {
-}
-
-func (UnimplementedBrandServer) ListBrand(context.Context, *ListBrandRequest) (*ListBrandResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListBrand not implemented")
-}
-func (UnimplementedBrandServer) CreateBrand(context.Context, *CreateBrandRequest) (*CreateBrandResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateBrand not implemented")
-}
-func (UnimplementedBrandServer) mustEmbedUnimplementedBrandServer() {}
-
-// UnsafeBrandServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to BrandServer will
-// result in compilation errors.
-type UnsafeBrandServer interface {
-	mustEmbedUnimplementedBrandServer()
-}
-
-func RegisterBrandServer(s grpc.ServiceRegistrar, srv BrandServer) {
-	s.RegisterService(&Brand_ServiceDesc, srv)
-}
-
-func _Brand_ListBrand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListBrandRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BrandServer).ListBrand(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpcServer.Brand/ListBrand",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BrandServer).ListBrand(ctx, req.(*ListBrandRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Brand_CreateBrand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateBrandRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(BrandServer).CreateBrand(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpcServer.Brand/CreateBrand",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BrandServer).CreateBrand(ctx, req.(*CreateBrandRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// Brand_ServiceDesc is the grpc.ServiceDesc for Brand service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var Brand_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "grpcServer.Brand",
-	HandlerType: (*BrandServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "ListBrand",
-			Handler:    _Brand_ListBrand_Handler,
-		},
-		{
-			MethodName: "CreateBrand",
-			Handler:    _Brand_CreateBrand_Handler,
-		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/grpcServer/product.proto",
-}
-
 // ProductClient is the client API for Product service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductClient interface {
 	GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error)
-	PutProduct(ctx context.Context, in *PutProductRequest, opts ...grpc.CallOption) (*PutProductResponse, error)
+	PutSpecialPrice(ctx context.Context, in *PutProductRequest, opts ...grpc.CallOption) (*PutProductResponse, error)
 	ListProducts(ctx context.Context, in *ListProductsRequest, opts ...grpc.CallOption) (*ListProductsResponse, error)
 	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
 }
@@ -167,9 +45,9 @@ func (c *productClient) GetProduct(ctx context.Context, in *GetProductRequest, o
 	return out, nil
 }
 
-func (c *productClient) PutProduct(ctx context.Context, in *PutProductRequest, opts ...grpc.CallOption) (*PutProductResponse, error) {
+func (c *productClient) PutSpecialPrice(ctx context.Context, in *PutProductRequest, opts ...grpc.CallOption) (*PutProductResponse, error) {
 	out := new(PutProductResponse)
-	err := c.cc.Invoke(ctx, "/grpcServer.Product/PutProduct", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grpcServer.Product/PutSpecialPrice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -199,7 +77,7 @@ func (c *productClient) CreateProduct(ctx context.Context, in *CreateProductRequ
 // for forward compatibility
 type ProductServer interface {
 	GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error)
-	PutProduct(context.Context, *PutProductRequest) (*PutProductResponse, error)
+	PutSpecialPrice(context.Context, *PutProductRequest) (*PutProductResponse, error)
 	ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error)
 	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
 	mustEmbedUnimplementedProductServer()
@@ -212,8 +90,8 @@ type UnimplementedProductServer struct {
 func (UnimplementedProductServer) GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProduct not implemented")
 }
-func (UnimplementedProductServer) PutProduct(context.Context, *PutProductRequest) (*PutProductResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PutProduct not implemented")
+func (UnimplementedProductServer) PutSpecialPrice(context.Context, *PutProductRequest) (*PutProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PutSpecialPrice not implemented")
 }
 func (UnimplementedProductServer) ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProducts not implemented")
@@ -252,20 +130,20 @@ func _Product_GetProduct_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Product_PutProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Product_PutSpecialPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PutProductRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProductServer).PutProduct(ctx, in)
+		return srv.(ProductServer).PutSpecialPrice(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/grpcServer.Product/PutProduct",
+		FullMethod: "/grpcServer.Product/PutSpecialPrice",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServer).PutProduct(ctx, req.(*PutProductRequest))
+		return srv.(ProductServer).PutSpecialPrice(ctx, req.(*PutProductRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -318,8 +196,8 @@ var Product_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Product_GetProduct_Handler,
 		},
 		{
-			MethodName: "PutProduct",
-			Handler:    _Product_PutProduct_Handler,
+			MethodName: "PutSpecialPrice",
+			Handler:    _Product_PutSpecialPrice_Handler,
 		},
 		{
 			MethodName: "ListProducts",
@@ -331,5 +209,5 @@ var Product_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/grpcServer/product.proto",
+	Metadata: "api/grpcServer/protos/product.proto",
 }

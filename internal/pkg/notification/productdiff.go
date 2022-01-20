@@ -53,6 +53,7 @@ func InsertDiffNotification(newProduct *domain.ProductDAO, oldPrice int) error {
 					Message:          messages,
 					DeviceIDs:        deviceIDs,
 					NavigateTo:       "/products",
+					Notificationid:   "/products" + "/" + newProduct.ID.Hex(),
 					ReferenceID:      "/" + newProduct.ID.Hex(),
 					Created:          time.Now(),
 					Updated:          time.Now(),
