@@ -7,9 +7,9 @@ import (
 )
 
 type RefundItemDAO struct {
-	tableName    struct{} `pg:"refundItems"`
+	tableName    struct{} `pg:"refund_items"`
 	ID           int
-	OrderID      string
+	OrderID      int
 	OrderItemID  int
 	RefundFee    int
 	RefundAmount int
