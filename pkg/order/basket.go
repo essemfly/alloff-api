@@ -4,7 +4,9 @@ import (
 	"errors"
 	"time"
 
+	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/rs/xid"
 )
 
@@ -63,8 +65,15 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			orderItemType = domain.TIMEDEAL_ORDER
 		}
 
+		itemCode := utils.CreateShortUUID()
+
+		_, err := ioc.Repo.OrderItems.GetByCode(itemCode)
+		for err == nil {
+			itemCode = utils.CreateShortUUID()
+		}
+
 		orderItems = append(orderItems, &domain.OrderItemDAO{
-			OrderItemCode:          orderAlloffID,
+			OrderItemCode:          itemCode,
 			ProductID:              item.Product.ID.Hex(),
 			ProductName:            item.Product.AlloffName,
 			ProductUrl:             item.Product.ProductInfo.ProductUrl,

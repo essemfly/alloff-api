@@ -18,8 +18,18 @@ func (repo *orderItemRepo) Get(ID int) (*domain.OrderItemDAO, error) {
 	}
 
 	return orderItem, nil
-
 }
+
+func (repo *orderItemRepo) GetByCode(code string) (*domain.OrderItemDAO, error) {
+	orderItem := new(domain.OrderItemDAO)
+
+	if err := repo.db.Model(orderItem).Where("order_item_code = ?", code).Select(); err != nil {
+		return nil, err
+	}
+
+	return orderItem, nil
+}
+
 func (repo *orderItemRepo) ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error) {
 	orderItems := []*domain.OrderItemDAO{}
 	if err := repo.db.Model(&orderItems).Where("order_id = ?", orderID).Select(); err != nil {

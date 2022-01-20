@@ -97,6 +97,7 @@ type OrdersRepository interface {
 
 type OrderItemsRepository interface {
 	Get(ID int) (*domain.OrderItemDAO, error)
+	GetByCode(code string) (*domain.OrderItemDAO, error)
 	ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error)
 	Update(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
 }
