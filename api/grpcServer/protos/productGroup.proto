@@ -19,10 +19,10 @@ service ProductGroup {
 
 // Product Group Service
 message GetProductGroupRequest {
-    string product_id = 1;
+    string product_group_id = 1;
 }
 message GetProductGroupResponse {
-    ProductMessage product = 1;
+    ProductGroupMessage product_group = 1;
 }
 message CreateProductGroupRequest {
     string title = 1;

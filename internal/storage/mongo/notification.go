@@ -7,7 +7,9 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/core/repository"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type notificationRepo struct {
@@ -28,7 +30,32 @@ func (repo *notificationRepo) Insert(noti *domain.NotificationDAO) (*domain.Noti
 
 	return noti, nil
 }
-func (repo *notificationRepo) List(onlyReady bool) ([]*domain.NotificationDAO, error) {
+
+func (repo *notificationRepo) Get(notiID string) ([]*domain.NotificationDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	notiObjID, _ := primitive.ObjectIDFromHex(notiID)
+
+	noti := &domain.NotificationDAO{}
+	if err := repo.col.FindOne(ctx, bson.M{"_id": notiObjID}).Decode(noti); err != nil {
+		return nil, err
+	}
+
+	notis := []*domain.NotificationDAO{}
+	cursor, err := repo.col.Find(ctx, bson.M{"notificationid": noti.Notificationid})
+	if err != nil {
+		return nil, err
+	}
+	err = cursor.All(ctx, &notis)
+	if err != nil {
+		return nil, err
+	}
+
+	return notis, nil
+}
+
+func (repo *notificationRepo) List(offset, limit int, onlyReady bool) ([]*domain.NotificationDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -39,7 +66,11 @@ func (repo *notificationRepo) List(onlyReady bool) ([]*domain.NotificationDAO, e
 		filter["status"] = domain.NOTIFICATION_READY
 	}
 
-	cursor, err := repo.col.Find(ctx, filter)
+	options := options.Find()
+	options.SetSkip(int64(offset))
+	options.SetLimit(int64(limit))
+
+	cursor, err := repo.col.Find(ctx, filter, options)
 	if err != nil {
 		return nil, err
 	}
