@@ -41,7 +41,7 @@ const (
 )
 
 type OrderItemDAO struct {
-	tableName              struct{} `pg:"orderItems"`
+	tableName              struct{} `pg:"order_items"`
 	ID                     int
 	OrderID                int
 	OrderItemCode          string // Item 사서함번호
