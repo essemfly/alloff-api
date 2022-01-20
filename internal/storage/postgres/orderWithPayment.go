@@ -56,7 +56,7 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 
 			refundPrice := orderItemDao.SalesPrice * orderItemDao.Quantity
 			newRefundInfo := &domain.RefundItemDAO{
-				OrderID:      orderDao.AlloffOrderID,
+				OrderID:      orderDao.ID,
 				OrderItemID:  orderItemDao.ID,
 				RefundFee:    0,
 				RefundAmount: refundPrice,
