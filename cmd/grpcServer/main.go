@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	pb "github.com/lessbutter/alloff-api/api/grpcServer"
+	"github.com/lessbutter/alloff-api/api/grpcServer/services"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/lessbutter/alloff-api/internal/storage/postgres"
@@ -38,10 +39,10 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterProductServer(grpcServer, &pb.ProductService{})
-	pb.RegisterProductGroupServer(grpcServer, &pb.ProductGroupService{})
-	pb.RegisterBrandServer(grpcServer, &pb.BrandService{})
-	pb.RegisterNotificationServer(grpcServer, &pb.NotiService{})
+	pb.RegisterProductServer(grpcServer, &services.ProductService{})
+	pb.RegisterProductGroupServer(grpcServer, &services.ProductGroupService{})
+	pb.RegisterBrandServer(grpcServer, &services.BrandService{})
+	pb.RegisterNotificationServer(grpcServer, &services.NotiService{})
 
 	log.Printf("start gRPC server on %s port", port)
 	if err := grpcServer.Serve(lis); err != nil {

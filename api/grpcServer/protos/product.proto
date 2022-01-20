@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package grpcServer;
+
+option go_package = "github.com/lessbutter/alloff-api/api/grpcServer";
+
+service Product {
+    rpc GetProduct(GetProductRequest) returns (GetProductResponse);
+    rpc PutProduct(PutProductRequest) returns (PutProductResponse);
+    rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
+    rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+}
+
+/*
+    GRPC API Request & Response
+*/
+
+// Product Service
+message GetProductRequest {
+    string product_id = 1;
+}
+message GetProductResponse {
+    ProductMessage product = 1;
+}
+message PutProductRequest {
+    string product_id = 1;
+    int32 special_price = 2;
+}
+message PutProductResponse {
+    ProductMessage product = 1;
+}
+message ListProductsRequest {
+    ProductQuery query = 1;
+    int32 offset = 2;
+    int32 limit = 3;
+}
+message ListProductsResponse {
+    repeated ProductMessage products = 1;
+    int32 offset = 2;
+    int32 limit = 3;
+    int32 total_counts = 4;
+    ProductQuery list_query = 5;
+}
+message CreateProductRequest {
+    ProductCreateRequest create_request = 1;
+}
+message CreateProductResponse {
+    ProductMessage product = 1;
+}
+
+/*
+    GRPC Structs
+*/
+
+message ProductMessage {
+    string product_id = 1;
+    string alloff_name = 2;
+    int32 discounted_price = 3;
+    int32 discount_rate = 4;
+    int32 special_price = 5;
+    string brand_kor_name = 6;
+    string category_name = 7;
+    string alloff_category_name = 8;
+    bool is_removed = 9;
+    bool is_soldout = 10;
+    repeated InventoryMessage inventory = 11;
+    int32 total_score = 12;
+}
+
+message InventoryMessage {
+    string size = 1;
+    int32 quantity = 2;
+}
+
+/*
+    GRPC Queries
+*/
+
+message ProductQuery {
+    optional string search_query = 1;
+    optional string brand_id = 2;
+    optional string category_id = 3;
+    optional string alloff_category_id = 4;
+}
+
+message ProductCreateRequest {
+    string alloff_name = 1;
+    bool is_foreign_delivery = 2;
+    string product_id = 3;
+    optional int32 original_price = 4;
+    optional int32 discounted_price = 5;
+    int32 special_price = 6;
+    string brand_key_name = 7;
+    repeated InventoryMessage inventory = 8;
+    string description = 9;
+}
