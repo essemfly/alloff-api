@@ -147,8 +147,6 @@ type CancelDescriptionDAO struct {
 	ChangeAvailable bool
 	ChangeFee       int
 	RefundFee       int
-	ChangeRoughFee  int
-	RefundRoughFee  int
 }
 
 type IndentText struct {
