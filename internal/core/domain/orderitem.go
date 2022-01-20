@@ -43,33 +43,33 @@ const (
 type OrderItemDAO struct {
 	tableName              struct{} `pg:"order_items"`
 	ID                     int
-	OrderID                int
-	OrderItemCode          string // Item 사서함번호
-	ProductID              string
-	ProductUrl             string
-	ProductImg             string
-	ProductName            string
-	BrandKeyname           string
-	BrandKorname           string
-	Removed                bool `pg:"is_removed"`
-	SalesPrice             int
-	CancelDescription      *CancelDescriptionDAO
-	DeliveryDescription    *DeliveryDescriptionDAO
-	OrderItemType          OrderItemTypeEnum
-	OrderItemStatus        OrderItemStatusEnum
-	DeliveryTrackingNumber []string `pg:"tracking_number"`
-	DeliveryTrackingUrl    []string `pg:"tracking_url"`
-	Size                   string
-	Quantity               int
-	RefundInfo             RefundItemDAO `pg:"rel:has-one"`
-	CreatedAt              time.Time
-	UpdatedAt              time.Time
-	OrderedAt              time.Time
-	DeliveryStartedAt      time.Time
-	DeliveryFinishedAt     time.Time
-	CancelRequestedAt      time.Time
-	CancelFinishedAt       time.Time
-	ConfirmedAt            time.Time
+	OrderID                int                     `pg:"order_id"`
+	OrderItemCode          string                  `pg:"order_item_code"`
+	ProductID              string                  `pg:"product_id"`
+	ProductUrl             string                  `pg:"product_url"`
+	ProductImg             string                  `pg:"product_img"`
+	ProductName            string                  `pg:"product_name"`
+	BrandKeyname           string                  `pg:"brand_keyname"`
+	BrandKorname           string                  `pg:"brand_korname"`
+	Removed                bool                    `pg:"is_removed,use_zero"`
+	SalesPrice             int                     `pg:"sales_price"`
+	CancelDescription      *CancelDescriptionDAO   `pg:"cancel_description"`
+	DeliveryDescription    *DeliveryDescriptionDAO `pg:"delivery_description"`
+	OrderItemType          OrderItemTypeEnum       `pg:"order_item_type"`
+	OrderItemStatus        OrderItemStatusEnum     `pg:"order_item_status"`
+	DeliveryTrackingNumber []string                `pg:"tracking_number"`
+	DeliveryTrackingUrl    []string                `pg:"tracking_url"`
+	Size                   string                  `pg:"size"`
+	Quantity               int                     `pg:"quantity"`
+	RefundInfo             RefundItemDAO           `pg:"rel:has-one"`
+	CreatedAt              time.Time               `pg:"created_at"`
+	UpdatedAt              time.Time               `pg:"updated_at"`
+	OrderedAt              time.Time               `pg:"ordered_at"`
+	DeliveryStartedAt      time.Time               `pg:"delivery_started_at"`
+	DeliveryFinishedAt     time.Time               `pg:"delivery_finished_at"`
+	CancelRequestedAt      time.Time               `pg:"cancel_requested_at"`
+	CancelFinishedAt       time.Time               `pg:"cancel_finished_at"`
+	ConfirmedAt            time.Time               `pg:"confirmed_at"`
 }
 
 func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {

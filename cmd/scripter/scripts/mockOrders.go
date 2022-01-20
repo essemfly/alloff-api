@@ -13,7 +13,7 @@ import (
 
 func AddMockOrders() {
 	log.Println("Add Mock Orders")
-	mobileNumber := "010-0000-0000"
+	mobileNumber := "01000000000"
 	userDao, _ := ioc.Repo.Users.GetByMobile(mobileNumber)
 
 	allstatus := []domain.OrderItemStatusEnum{
@@ -110,7 +110,7 @@ func BuildPaymentDao(orderDao *domain.OrderDAO) *domain.PaymentDAO {
 		Amount:        orderDao.TotalPrice,
 		Name:          "테스트 상품 2개 이상?",
 		BuyerName:     "테스트 이석민",
-		BuyerMobile:   "010-9771-1882",
+		BuyerMobile:   "01097711882",
 		BuyerAddress:  "서울광역시 강남구 역삼동 스파크플러스 선릉3호점",
 		BuyerPostCode: "08365",
 		Company:       "alloff",

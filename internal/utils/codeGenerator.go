@@ -3,7 +3,7 @@ package utils
 import "github.com/lithammer/shortuuid/v3"
 
 const (
-	CODE_CHARSET = "346789ABCDEFGHJKLMNPQRTUVWXY"
+	CODE_CHARSET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxy="
 	CODE_LENGTH  = 6
 )
 

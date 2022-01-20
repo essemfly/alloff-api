@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/go-pg/pg/v10"
@@ -28,11 +27,6 @@ func NewPostgresDB(conf config.Configuration) *PostgresDB {
 	defer cancel()
 	if err := db.Ping(ctx); err != nil {
 		panic(err)
-	}
-
-	err := createSchema(db)
-	if err != nil {
-		log.Println(err)
 	}
 
 	return &PostgresDB{

@@ -24,22 +24,22 @@ type PaymentMethod struct {
 
 type PaymentDAO struct {
 	tableName     struct{} `pg:"payments"`
-	ID            int      `bson:"_id, omitempty"`
-	ImpUID        string
-	PaymentStatus PaymentStatusEnum
-	Pg            string
-	PayMethod     string
-	Name          string
-	MerchantUid   string
-	Amount        int
-	BuyerName     string
-	BuyerMobile   string
-	BuyerAddress  string
-	BuyerPostCode string
-	Company       string
-	AppScheme     string
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
+	ID            int
+	ImpUID        string            `pg:"imp_uid"`
+	PaymentStatus PaymentStatusEnum `pg:"payment_status"`
+	Pg            string            `pg:"pg"`
+	PayMethod     string            `pg:"pay_method"`
+	Name          string            `pg:"name"`
+	MerchantUid   string            `pg:"merchant_uid"`
+	Amount        int               `pg:"amount"`
+	BuyerName     string            `pg:"buyer_name"`
+	BuyerMobile   string            `pg:"buyer_mobile"`
+	BuyerAddress  string            `pg:"buyer_address"`
+	BuyerPostCode string            `pg:"buyer_post_code"`
+	Company       string            `pg:"company"`
+	AppScheme     string            `pg:"app_scheme"`
+	CreatedAt     time.Time         `pg:"created_at"`
+	UpdatedAt     time.Time         `pg:"updated_at"`
 }
 
 func (paymentDao *PaymentDAO) ToDTO() *model.PaymentInfo {

@@ -19,19 +19,19 @@ const (
 type OrderDAO struct {
 	tableName     struct{} `pg:"orders"`
 	ID            int
-	AlloffOrderID string
-	UserID        string
-	User          *UserDAO
-	OrderStatus   OrderStatusEnum
+	AlloffOrderID string          `pg:"alloff_order_id"`
+	UserID        string          `pg:"user_id"`
+	User          *UserDAO        `pg:"user"`
+	OrderStatus   OrderStatusEnum `pg:"order_status"`
 	OrderItems    []*OrderItemDAO `pg:"rel:has-many"`
-	TotalPrice    int
-	ProductPrice  int
-	DeliveryPrice int
-	RefundPrice   int
-	UserMemo      string
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-	OrderedAt     time.Time
+	TotalPrice    int             `pg:"total_price"`
+	ProductPrice  int             `pg:"product_price"`
+	DeliveryPrice int             `pg:"delivery_price"`
+	RefundPrice   int             `pg:"refund_price"`
+	UserMemo      string          `pg:"user_memo"`
+	CreatedAt     time.Time       `pg:"created_at"`
+	UpdatedAt     time.Time       `pg:"updated_at"`
+	OrderedAt     time.Time       `pg:"ordered_at"`
 }
 
 func (orderDao *OrderDAO) ToDTO() *model.OrderInfo {

@@ -9,12 +9,12 @@ import (
 type RefundItemDAO struct {
 	tableName    struct{} `pg:"refund_items"`
 	ID           int
-	OrderID      int
-	OrderItemID  int
-	RefundFee    int
-	RefundAmount int
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	OrderID      int       `pg:"order_id"`
+	OrderItemID  int       `pg:"order_item_id"`
+	RefundFee    int       `pg:"refund_fee"`
+	RefundAmount int       `pg:"refund_amount"`
+	CreatedAt    time.Time `pg:"created_at"`
+	UpdatedAt    time.Time `pg:"updated_at`
 }
 
 func (itemDao *RefundItemDAO) ToDTO() *model.RefundInfo {
