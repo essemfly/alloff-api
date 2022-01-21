@@ -103,6 +103,7 @@ func ProcessProductRequest(pd *domain.ProductDAO, request *ProductManuelAddReque
 
 	alloffInstruction := GetProductDescription(pd)
 	pd.UpdateInstruction(alloffInstruction)
+	pd.SalesInstruction.Description.Texts = request.Description
 	pd.UpdateInventory(request.Inventory)
 	pd.UpdatePrice(float32(request.DiscountedPrice))
 	pd.SpecialPrice = request.SpecialPrice
