@@ -1,4 +1,4 @@
-package crawler
+package product
 
 import "github.com/lessbutter/alloff-api/internal/core/domain"
 

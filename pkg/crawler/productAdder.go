@@ -12,7 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func AddProduct(request ProductsAddRequest) {
+func AddProduct(request product.ProductsAddRequest) {
 	pdInfo, err := ProcessProductInfoRequest(request)
 	if err != nil {
 		log.Println(err)
@@ -38,7 +38,7 @@ func AddProduct(request ProductsAddRequest) {
 
 }
 
-func ProcessProductInfoRequest(request ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
+func ProcessProductInfoRequest(request product.ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
 	pdInfo, err := ioc.Repo.ProductMetaInfos.GetByProductID(request.Brand.KeyName, request.ProductID)
 
 	var newPdInfo = &domain.ProductMetaInfoDAO{}
@@ -65,7 +65,7 @@ func ProcessProductInfoRequest(request ProductsAddRequest) (*domain.ProductMetaI
 	return newPdInfo, nil
 }
 
-func AddProductInfo(request ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
+func AddProductInfo(request product.ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
 	pdInfo := &domain.ProductMetaInfoDAO{
 		Created: time.Now(),
 		Updated: time.Now(),
@@ -82,7 +82,7 @@ func AddProductInfo(request ProductsAddRequest) (*domain.ProductMetaInfoDAO, err
 	return newPdInfo, nil
 }
 
-func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
+func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request product.ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
 	pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), request.CurrencyType)
 	updatedPdInfo, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfo)
 	if err != nil {
@@ -92,20 +92,20 @@ func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request ProductsAddReq
 	return updatedPdInfo, nil
 }
 
-func ProcessProductRequest(pd *domain.ProductDAO, request ProductsAddRequest) {
+func ProcessProductRequest(pd *domain.ProductDAO, request product.ProductsAddRequest) {
 	if pd.AlloffCategories == nil || !pd.AlloffCategories.Done {
 		alloffCat := classifier.GetAlloffCategory(pd)
 		pd.UpdateAlloffCategory(alloffCat)
 	}
 
-	alloffInstruction := GetProductDescription(pd)
+	alloffInstruction := product.GetProductDescription(pd)
 	pd.UpdateInstruction(alloffInstruction)
 
-	alloffScore := GetProductScore(pd)
+	alloffScore := product.GetProductScore(pd)
 	pd.UpdateScore(alloffScore)
 	pd.UpdateInventory(request.Inventories)
 
-	alloffPrice := GetProductPrice(pd)
+	alloffPrice := product.GetProductPrice(pd)
 	lastPrice := pd.DiscountedPrice
 	isPriceUpdated := pd.UpdatePrice(alloffPrice)
 

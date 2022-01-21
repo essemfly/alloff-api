@@ -6,6 +6,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
@@ -69,4 +70,52 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	}
 
 	return ret, nil
+}
+
+func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.CreateProductRequest) (*grpcServer.CreateProductResponse, error) {
+	specialPrice := int(req.SpecialPrice)
+	originalPrice := specialPrice
+	if req.OriginalPrice != nil {
+		originalPrice = int(*req.OriginalPrice)
+	}
+	discountedPrice := specialPrice
+	if req.DiscountedPrice != nil {
+		discountedPrice = int(*req.DiscountedPrice)
+	}
+
+	invDaos := []domain.InventoryDAO{}
+	for _, inv := range req.Inventory {
+		invDaos = append(invDaos, domain.InventoryDAO{
+			Size:     inv.Size,
+			Quantity: int(inv.Quantity),
+		})
+	}
+
+	addRequest := &product.ProductManuelAddRequest{
+		AlloffName:           req.AlloffName,
+		IsForeignDelivery:    req.IsForeignDelivery,
+		ProductID:            req.ProductId,
+		OriginalPrice:        originalPrice,
+		DiscountedPrice:      discountedPrice,
+		SpecialPrice:         int(req.SpecialPrice),
+		BrandKeyName:         req.BrandKeyName,
+		Inventory:            invDaos,
+		Description:          req.Description,
+		EarliestDeliveryDays: int(req.EarliestDeliveryDays),
+		LatestDeliveryDays:   int(req.LatestDeliveryDays),
+		IsRefundPossible:     req.IsRefundPossible,
+		RefundFee:            int(req.RefundFee),
+		Images:               req.Images,
+	}
+
+	pdDao, err := product.AddProductInManuel(addRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	pdMessage := mapper.ProductMapper(pdDao)
+
+	return &grpcServer.CreateProductResponse{
+		Product: pdMessage,
+	}, nil
 }
