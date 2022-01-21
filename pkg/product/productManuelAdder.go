@@ -24,6 +24,7 @@ type ProductManuelAddRequest struct {
 	IsRefundPossible     bool
 	RefundFee            int
 	Images               []string
+	DescriptionImages    []string
 }
 
 func AddProductInManuel(request *ProductManuelAddRequest) (*domain.ProductDAO, error) {
@@ -65,6 +66,7 @@ func AddProductInfo(request *ProductManuelAddRequest) (*domain.ProductMetaInfoDA
 		sizes = append(sizes, inv.Size)
 	}
 
+	pdInfo.Images = request.Images
 	pdInfo.SetBrandAndCategory(brand, newSource)
 	pdInfo.SetGeneralInfo(request.AlloffName, request.ProductID, "", request.Images, sizes, nil, nil)
 	pdInfo.SetPrices(int(request.OriginalPrice), int(request.DiscountedPrice), domain.CurrencyKRW)
@@ -103,6 +105,8 @@ func ProcessProductRequest(pd *domain.ProductDAO, request *ProductManuelAddReque
 
 	alloffInstruction := GetProductDescription(pd)
 	pd.UpdateInstruction(alloffInstruction)
+	pd.SalesInstruction.Description.Images = append(pd.SalesInstruction.Description.Images, request.Images...)
+	pd.SalesInstruction.Description.Images = append(pd.SalesInstruction.Description.Images, request.DescriptionImages...)
 	pd.SalesInstruction.Description.Texts = request.Description
 	pd.UpdateInventory(request.Inventory)
 	pd.UpdatePrice(float32(request.DiscountedPrice))

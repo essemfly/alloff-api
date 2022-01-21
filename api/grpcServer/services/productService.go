@@ -106,6 +106,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		IsRefundPossible:     req.IsRefundPossible,
 		RefundFee:            int(req.RefundFee),
 		Images:               req.Images,
+		DescriptionImages:    req.DescriptionImages,
 	}
 
 	pdDao, err := product.AddProductInManuel(addRequest)
