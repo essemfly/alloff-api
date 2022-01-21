@@ -120,3 +120,85 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		Product: pdMessage,
 	}, nil
 }
+
+func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditProductRequest) (*grpcServer.EditProductResponse, error) {
+
+	pdDao, err := ioc.Repo.Products.Get(req.ProductId)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.AlloffName != nil {
+		pdDao.AlloffName = *req.AlloffName
+	}
+
+	if req.IsForeignDelivery != nil {
+		if *req.IsForeignDelivery {
+			pdDao.ProductInfo.Source.IsForeignDelivery = true
+		} else {
+			pdDao.ProductInfo.Source.IsForeignDelivery = false
+		}
+	}
+
+	if req.OriginalPrice != nil {
+		pdDao.ProductInfo.Price.OriginalPrice = float32(*req.OriginalPrice)
+	}
+
+	if req.DiscountedPrice != nil {
+		pdDao.DiscountedPrice = int(*req.DiscountedPrice)
+	}
+
+	if req.SpecialPrice != nil {
+		pdDao.SpecialPrice = int(*req.SpecialPrice)
+	}
+
+	if req.BrandKeyName != nil {
+		brand, err := ioc.Repo.Brands.GetByKeyname(*req.BrandKeyName)
+		if err != nil {
+			return nil, err
+		}
+		pdDao.ProductInfo.Brand = brand
+	}
+
+	if req.Inventory != nil {
+		invDaos := []domain.InventoryDAO{}
+		for _, inv := range req.Inventory {
+			invDaos = append(invDaos, domain.InventoryDAO{
+				Size:     inv.Size,
+				Quantity: int(inv.Quantity),
+			})
+		}
+		pdDao.Inventory = invDaos
+	}
+
+	if req.Description != nil {
+		pdDao.SalesInstruction.Description.Texts = req.Description
+	}
+
+	if req.IsRefundPossible != nil {
+		pdDao.SalesInstruction.CancelDescription.RefundAvailable = *req.IsRefundPossible
+		pdDao.SalesInstruction.CancelDescription.ChangeAvailable = *req.IsRefundPossible
+	}
+
+	if req.Images != nil {
+		pdDao.ProductInfo.Images = req.Images
+	}
+
+	if req.DescriptionImages != nil {
+		pdDao.SalesInstruction.Description.Images = req.DescriptionImages
+	}
+
+	if req.IsRemoved != nil {
+		pdDao.Removed = *req.IsRemoved
+	}
+
+	newPdDao, err := ioc.Repo.Products.Upsert(pdDao)
+	if err != nil {
+		return nil, err
+	}
+
+	pdMessage := mapper.ProductMapper(newPdDao)
+	return &grpcServer.EditProductResponse{
+		Product: pdMessage,
+	}, nil
+}
