@@ -12,6 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 type SisleyResponseParser struct {
@@ -66,7 +67,7 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			productUrl := "http://www.sisleymall.com/product/view?code=" + source.Category.CatIdentifier + "&productcode=" + pd.ProductCode
 			images, colors, sizes, inventories, description := CrawlSisleyDetail(productUrl)
 
-			addRequest := crawler.ProductsAddRequest{
+			addRequest := product.ProductsAddRequest{
 				Brand:         brand,
 				Source:        source,
 				ProductID:     pd.ProductCode,

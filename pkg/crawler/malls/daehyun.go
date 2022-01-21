@@ -13,6 +13,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 type DaehyunResponseParser struct {
@@ -86,7 +87,7 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 				delete(description, askey)
 				delete(description, laundrykey)
 
-				addRequest := crawler.ProductsAddRequest{
+				addRequest := product.ProductsAddRequest{
 					Brand:         brand,
 					Source:        source,
 					ProductID:     productID,

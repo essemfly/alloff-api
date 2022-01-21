@@ -12,6 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -40,7 +41,7 @@ func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSource
 		productUrl := "https://www.sivillage.com/goods/initDetailGoods.siv?goods_no=" + productID
 		images, colors, sizes, inventories, description := CrawlSiVillageDetail(productID)
 
-		addRequest := crawler.ProductsAddRequest{
+		addRequest := product.ProductsAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     productID,

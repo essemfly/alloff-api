@@ -12,6 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 type BenettonResponseParser struct {
@@ -66,7 +67,7 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			productUrl := "https://benettonmall.com/product/view?productcode=" + pd.ProductCode
 			images, sizes, colors, inventories, description := CrawlBenettonDetail(productUrl)
 
-			addRequest := crawler.ProductsAddRequest{
+			addRequest := product.ProductsAddRequest{
 				Brand:         brand,
 				Source:        source,
 				ProductID:     pd.ProductCode,

@@ -13,6 +13,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 type IDFResponseParser struct {
@@ -75,7 +76,7 @@ func CrawlIDFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 					images, colors, sizes, inventories, description := getIdfDetailInfo(productUrl)
 
-					addRequest := crawler.ProductsAddRequest{
+					addRequest := product.ProductsAddRequest{
 						Brand:         brand,
 						Source:        source,
 						ProductID:     productID,

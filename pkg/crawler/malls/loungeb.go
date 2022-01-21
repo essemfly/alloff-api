@@ -10,6 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -50,7 +51,7 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 		mobileUrl := strings.Replace(productUrl, "https://lounge-b.co.kr", "https://m.lounge-b.co.kr", 1)
 
-		addRequest := crawler.ProductsAddRequest{
+		addRequest := product.ProductsAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     productID,

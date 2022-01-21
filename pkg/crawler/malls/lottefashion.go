@@ -11,6 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
+	pdPackage "github.com/lessbutter/alloff-api/pkg/product"
 )
 
 type LotteFashionResponseParse struct {
@@ -156,7 +157,7 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 
 		c.Visit(url)
 
-		addRequest := crawler.ProductsAddRequest{
+		addRequest := pdPackage.ProductsAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     product.LotteFashionID,

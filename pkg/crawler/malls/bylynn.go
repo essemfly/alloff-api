@@ -11,6 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -54,7 +55,7 @@ func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 		title, images, sizes, colors, inventories, description := getBylynnDetail(productUrl)
 
-		addRequest := crawler.ProductsAddRequest{
+		addRequest := product.ProductsAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     productID,
