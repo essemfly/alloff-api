@@ -36,11 +36,11 @@ type AlloffCategoryProducts struct {
 }
 
 type AlloffCategoryProductsInput struct {
-	Offset           int            `json:"offset"`
-	Limit            int            `json:"limit"`
-	AlloffcategoryID string         `json:"alloffcategoryId"`
-	BrandIds         []string       `json:"brandIds"`
-	Sorting          []*SortingType `json:"sorting"`
+	Offset           int           `json:"offset"`
+	Limit            int           `json:"limit"`
+	AlloffcategoryID string        `json:"alloffcategoryId"`
+	BrandIds         []string      `json:"brandIds"`
+	Sorting          []SortingType `json:"sorting"`
 }
 
 type AppVersion struct {
@@ -358,11 +358,11 @@ type ProductGroup struct {
 }
 
 type ProductsInput struct {
-	Offset   int            `json:"offset"`
-	Limit    int            `json:"limit"`
-	Brand    *string        `json:"brand"`
-	Category *string        `json:"category"`
-	Sorting  []*SortingType `json:"sorting"`
+	Offset   int           `json:"offset"`
+	Limit    int           `json:"limit"`
+	Brand    *string       `json:"brand"`
+	Category *string       `json:"category"`
+	Sorting  []SortingType `json:"sorting"`
 }
 
 type ProductsOutput struct {

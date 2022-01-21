@@ -38,20 +38,20 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 	priceSorting := ""
 	var priceRange []string
 	for _, sorting := range input.Sorting {
-		if *sorting == model.SortingTypePriceAscending {
+		if sorting == model.SortingTypePriceAscending {
 			priceSorting = "ascending"
-		} else if *sorting == model.SortingTypePriceDescending {
+		} else if sorting == model.SortingTypePriceDescending {
 			priceSorting = "descending"
-		} else if *sorting == model.SortingTypeDiscountrateAscending {
+		} else if sorting == model.SortingTypeDiscountrateAscending {
 			priceSorting = "discountrateAescending"
-		} else if *sorting == model.SortingTypeDiscountrateDescending {
+		} else if sorting == model.SortingTypeDiscountrateDescending {
 			priceSorting = "discountrateDescending"
 		} else {
-			if *sorting == model.SortingTypeDiscount0_30 {
+			if sorting == model.SortingTypeDiscount0_30 {
 				priceRange = append(priceRange, "30")
-			} else if *sorting == model.SortingTypeDiscount30_50 {
+			} else if sorting == model.SortingTypeDiscount30_50 {
 				priceRange = append(priceRange, "50")
-			} else if *sorting == model.SortingTypeDiscount50_70 {
+			} else if sorting == model.SortingTypeDiscount50_70 {
 				priceRange = append(priceRange, "70")
 			} else {
 				priceRange = append(priceRange, "100")
@@ -87,16 +87,16 @@ func (r *queryResolver) AlloffCategoryProducts(ctx context.Context, input model.
 	priceSorting := ""
 	var priceRange []string
 	for _, sorting := range input.Sorting {
-		if *sorting == model.SortingTypePriceAscending {
+		if sorting == model.SortingTypePriceAscending {
 			priceSorting = "ascending"
-		} else if *sorting == model.SortingTypePriceDescending {
+		} else if sorting == model.SortingTypePriceDescending {
 			priceSorting = "descending"
 		} else {
-			if *sorting == model.SortingTypeDiscount0_30 {
+			if sorting == model.SortingTypeDiscount0_30 {
 				priceRange = append(priceRange, "30")
-			} else if *sorting == model.SortingTypeDiscount30_50 {
+			} else if sorting == model.SortingTypeDiscount30_50 {
 				priceRange = append(priceRange, "50")
-			} else if *sorting == model.SortingTypeDiscount50_70 {
+			} else if sorting == model.SortingTypeDiscount50_70 {
 				priceRange = append(priceRange, "70")
 			} else {
 				priceRange = append(priceRange, "100")

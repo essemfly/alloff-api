@@ -17,7 +17,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2 // indirect
 	github.com/iamport/interface v0.0.15
 	github.com/kennygrant/sanitize v1.2.4 // indirect
-	github.com/lithammer/shortuuid/v3 v3.0.7 // indirect
+	github.com/lithammer/shortuuid/v3 v3.0.7
 	github.com/rs/xid v1.3.0
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect

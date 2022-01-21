@@ -2248,9 +2248,8 @@ input AlloffCategoryId {
   id: String!
 }
 
-
 extend type Query {
-  alloffcategories(input: AlloffCategoryInput): [AlloffCategory]!
+  alloffcategories(input: AlloffCategoryInput): [AlloffCategory!]!
   alloffcategory(input: AlloffCategoryId): AlloffCategory!
 }
 `, BuiltIn: false},
@@ -2326,7 +2325,7 @@ extend type Mutation {
   isOpen: Boolean!
   inMaintenance: Boolean!
   numNewProducts: Int!
-  sizeGuide: [SizeGuide]!
+  sizeGuide: [SizeGuide!]!
 }
 
 type SizeGuide {
@@ -2445,13 +2444,13 @@ input OrderItemInput {
 }
 
 input OrderInput {
-  orders: [OrderItemInput]!
+  orders: [OrderItemInput!]!
   productPrice: Int!
 }
 
 type OrderInfo {
   id: ID!
-  orders: [OrderItem]!
+  orders: [OrderItem!]!
   productPrice: Int!
   deliveryPrice: Int!
   totalPrice: Int!
@@ -2507,7 +2506,7 @@ input OrderResponse {
 type OrderWithPayment {
   success: Boolean!
   errorMsg: String!
-  paymentMethods: [PaymentMethod]!
+  paymentMethods: [PaymentMethod!]!
   user: User!
   paymentInfo: PaymentInfo
   order: OrderInfo
@@ -2546,7 +2545,7 @@ type OrderItemStatusDescription {
 
 extend type Query {
   order(id: String!): OrderInfo!
-  orders: [OrderInfo]!
+  orders: [OrderInfo!]!
   orderItemStatus: [OrderItemStatusDescription!]!
 }
 
@@ -2569,7 +2568,7 @@ type ProductGroup {
   shortTitle: String!
   instruction: [String!]!
   imgUrl: String!
-  products: [Product]!
+  products: [Product!]!
   startTime: Date!
   finishTime: Date!
   numAlarms: Int!
@@ -2582,14 +2581,14 @@ type Exhibition {
   thumbnailImage: String!
   title: String!
   shortTitle: String!
-  productGroups: [ProductGroup]!
+  productGroups: [ProductGroup!]!
 }
 
 extend type Query {
   productGroup(id: String!): ProductGroup!
-  productGroups: [ProductGroup]!
+  productGroups: [ProductGroup!]!
   exhibition(id: String!): Exhibition!
-  exhibitions: [Exhibition]!
+  exhibitions: [Exhibition!]!
 }
 `, BuiltIn: false},
 	{Name: "api/apiServer/graph/products.graphqls", Input: `enum SortingType {
@@ -2625,7 +2624,7 @@ type Product {
   isUpdated: Boolean!
   isNewProduct: Boolean!
   removed: Boolean!
-  information: [KeyValueInfo]
+  information: [KeyValueInfo!]
   description: ProductDescription
   cancelDescription: CancelDescription!
   deliveryDescription: DeliveryDescription!
@@ -2671,7 +2670,7 @@ input ProductsInput {
   limit: Int!
   brand: String
   category: String
-  sorting: [SortingType]
+  sorting: [SortingType!]
 }
 
 input AlloffCategoryProductsInput {
@@ -2679,7 +2678,7 @@ input AlloffCategoryProductsInput {
   limit: Int!
   alloffcategoryId: String!
   brandIds: [String!]
-  sorting: [SortingType]
+  sorting: [SortingType!]
 }
 
 input LikeProductInput {
@@ -2690,13 +2689,13 @@ type ProductsOutput {
   totalCount: Int!
   offset: Int!
   limit: Int!
-  products: [Product]!
+  products: [Product!]!
 }
 
 type AlloffCategoryProducts {
   alloffcategory: AlloffCategory!
-  products: [Product]
-  allBrands: [Brand]
+  products: [Product!]
+  allBrands: [Brand!]
   selectedBrands: [String!]
   totalCount: Int!
   offset: Int!
@@ -2714,7 +2713,7 @@ extend type Query {
   alloffCategoryProducts(
     input: AlloffCategoryProductsInput!
   ): AlloffCategoryProducts!
-  likeproducts: [LikeProductOutput]!
+  likeproducts: [LikeProductOutput!]!
 }
 
 extend type Mutation {
@@ -2750,10 +2749,10 @@ type HomeItem {
   targetId: String!
   sorting: [SortingType!]
   images: [String!]
-  communityItems: [CommunityItem]
-  brands: [BrandItem]
-  products: [Product]
-  productGroups: [ProductGroup]
+  communityItems: [CommunityItem!]
+  brands: [BrandItem!]
+  products: [Product!]
+  productGroups: [ProductGroup!]
 }
 
 type CommunityItem {
@@ -2769,8 +2768,8 @@ type BrandItem {
 }
 
 extend type Query {
-  featureds: [FeaturedItem]!
-  homeitems: [HomeItem]!
+  featureds: [FeaturedItem!]!
+  homeitems: [HomeItem!]!
 }
 `, BuiltIn: false},
 	{Name: "api/apiServer/graph/version.graphqls", Input: `type AppVersion {
@@ -3514,7 +3513,7 @@ func (ec *executionContext) _AlloffCategoryProducts_products(ctx context.Context
 	}
 	res := resTmp.([]*model.Product)
 	fc.Result = res
-	return ec.marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx, field.Selections, res)
+	return ec.marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _AlloffCategoryProducts_allBrands(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategoryProducts) (ret graphql.Marshaler) {
@@ -3546,7 +3545,7 @@ func (ec *executionContext) _AlloffCategoryProducts_allBrands(ctx context.Contex
 	}
 	res := resTmp.([]*model.Brand)
 	fc.Result = res
-	return ec.marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrand(ctx, field.Selections, res)
+	return ec.marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _AlloffCategoryProducts_selectedBrands(ctx context.Context, field graphql.CollectedField, obj *model.AlloffCategoryProducts) (ret graphql.Marshaler) {
@@ -4275,7 +4274,7 @@ func (ec *executionContext) _Brand_sizeGuide(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*model.SizeGuide)
 	fc.Result = res
-	return ec.marshalNSizeGuide2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeGuide(ctx, field.Selections, res)
+	return ec.marshalNSizeGuide2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeGuideᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _BrandItem_imgUrl(ctx context.Context, field graphql.CollectedField, obj *model.BrandItem) (ret graphql.Marshaler) {
@@ -5249,7 +5248,7 @@ func (ec *executionContext) _Exhibition_productGroups(ctx context.Context, field
 	}
 	res := resTmp.([]*model.ProductGroup)
 	fc.Result = res
-	return ec.marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx, field.Selections, res)
+	return ec.marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroupᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _FeaturedItem_id(ctx context.Context, field graphql.CollectedField, obj *model.FeaturedItem) (ret graphql.Marshaler) {
@@ -5692,7 +5691,7 @@ func (ec *executionContext) _HomeItem_communityItems(ctx context.Context, field 
 	}
 	res := resTmp.([]*model.CommunityItem)
 	fc.Result = res
-	return ec.marshalOCommunityItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCommunityItem(ctx, field.Selections, res)
+	return ec.marshalOCommunityItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCommunityItemᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _HomeItem_brands(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
@@ -5724,7 +5723,7 @@ func (ec *executionContext) _HomeItem_brands(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*model.BrandItem)
 	fc.Result = res
-	return ec.marshalOBrandItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandItem(ctx, field.Selections, res)
+	return ec.marshalOBrandItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandItemᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _HomeItem_products(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
@@ -5756,7 +5755,7 @@ func (ec *executionContext) _HomeItem_products(ctx context.Context, field graphq
 	}
 	res := resTmp.([]*model.Product)
 	fc.Result = res
-	return ec.marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx, field.Selections, res)
+	return ec.marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _HomeItem_productGroups(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
@@ -5788,7 +5787,7 @@ func (ec *executionContext) _HomeItem_productGroups(ctx context.Context, field g
 	}
 	res := resTmp.([]*model.ProductGroup)
 	fc.Result = res
-	return ec.marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx, field.Selections, res)
+	return ec.marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroupᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Inventory_size(ctx context.Context, field graphql.CollectedField, obj *model.Inventory) (ret graphql.Marshaler) {
@@ -6656,7 +6655,7 @@ func (ec *executionContext) _OrderInfo_orders(ctx context.Context, field graphql
 	}
 	res := resTmp.([]*model.OrderItem)
 	fc.Result = res
-	return ec.marshalNOrderItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItem(ctx, field.Selections, res)
+	return ec.marshalNOrderItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderInfo_productPrice(ctx context.Context, field graphql.CollectedField, obj *model.OrderInfo) (ret graphql.Marshaler) {
@@ -8117,7 +8116,7 @@ func (ec *executionContext) _OrderWithPayment_paymentMethods(ctx context.Context
 	}
 	res := resTmp.([]*model.PaymentMethod)
 	fc.Result = res
-	return ec.marshalNPaymentMethod2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐPaymentMethod(ctx, field.Selections, res)
+	return ec.marshalNPaymentMethod2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐPaymentMethodᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderWithPayment_user(ctx context.Context, field graphql.CollectedField, obj *model.OrderWithPayment) (ret graphql.Marshaler) {
@@ -9525,7 +9524,7 @@ func (ec *executionContext) _Product_information(ctx context.Context, field grap
 	}
 	res := resTmp.([]*model.KeyValueInfo)
 	fc.Result = res
-	return ec.marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfo(ctx, field.Selections, res)
+	return ec.marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfoᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Product_description(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
@@ -9901,7 +9900,7 @@ func (ec *executionContext) _ProductGroup_products(ctx context.Context, field gr
 	}
 	res := resTmp.([]*model.Product)
 	fc.Result = res
-	return ec.marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx, field.Selections, res)
+	return ec.marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ProductGroup_startTime(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
@@ -10181,7 +10180,7 @@ func (ec *executionContext) _ProductsOutput_products(ctx context.Context, field 
 	}
 	res := resTmp.([]*model.Product)
 	fc.Result = res
-	return ec.marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx, field.Selections, res)
+	return ec.marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_alloffcategories(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -10223,7 +10222,7 @@ func (ec *executionContext) _Query_alloffcategories(ctx context.Context, field g
 	}
 	res := resTmp.([]*model.AlloffCategory)
 	fc.Result = res
-	return ec.marshalNAlloffCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategory(ctx, field.Selections, res)
+	return ec.marshalNAlloffCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategoryᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_alloffcategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -10458,7 +10457,7 @@ func (ec *executionContext) _Query_orders(ctx context.Context, field graphql.Col
 	}
 	res := resTmp.([]*model.OrderInfo)
 	fc.Result = res
-	return ec.marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderInfo(ctx, field.Selections, res)
+	return ec.marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderInfoᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_orderItemStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -10570,7 +10569,7 @@ func (ec *executionContext) _Query_productGroups(ctx context.Context, field grap
 	}
 	res := resTmp.([]*model.ProductGroup)
 	fc.Result = res
-	return ec.marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx, field.Selections, res)
+	return ec.marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroupᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_exhibition(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -10647,7 +10646,7 @@ func (ec *executionContext) _Query_exhibitions(ctx context.Context, field graphq
 	}
 	res := resTmp.([]*model.Exhibition)
 	fc.Result = res
-	return ec.marshalNExhibition2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibition(ctx, field.Selections, res)
+	return ec.marshalNExhibition2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_product(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -10808,7 +10807,7 @@ func (ec *executionContext) _Query_likeproducts(ctx context.Context, field graph
 	}
 	res := resTmp.([]*model.LikeProductOutput)
 	fc.Result = res
-	return ec.marshalNLikeProductOutput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐLikeProductOutput(ctx, field.Selections, res)
+	return ec.marshalNLikeProductOutput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐLikeProductOutputᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_featureds(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -10843,7 +10842,7 @@ func (ec *executionContext) _Query_featureds(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*model.FeaturedItem)
 	fc.Result = res
-	return ec.marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐFeaturedItem(ctx, field.Selections, res)
+	return ec.marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐFeaturedItemᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_homeitems(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -10878,7 +10877,7 @@ func (ec *executionContext) _Query_homeitems(ctx context.Context, field graphql.
 	}
 	res := resTmp.([]*model.HomeItem)
 	fc.Result = res
-	return ec.marshalNHomeItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐHomeItem(ctx, field.Selections, res)
+	return ec.marshalNHomeItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐHomeItemᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_version(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -12675,7 +12674,7 @@ func (ec *executionContext) unmarshalInputAlloffCategoryProductsInput(ctx contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sorting"))
-			it.Sorting, err = ec.unmarshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx, v)
+			it.Sorting, err = ec.unmarshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingTypeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12923,7 +12922,7 @@ func (ec *executionContext) unmarshalInputOrderInput(ctx context.Context, obj in
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orders"))
-			it.Orders, err = ec.unmarshalNOrderItemInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemInput(ctx, v)
+			it.Orders, err = ec.unmarshalNOrderItemInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemInputᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -13183,7 +13182,7 @@ func (ec *executionContext) unmarshalInputProductsInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sorting"))
-			it.Sorting, err = ec.unmarshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx, v)
+			it.Sorting, err = ec.unmarshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingTypeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -15533,7 +15532,7 @@ func (ec *executionContext) marshalNAlloffCategory2githubᚗcomᚋlessbutterᚋa
 	return ec._AlloffCategory(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNAlloffCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategory(ctx context.Context, sel ast.SelectionSet, v []*model.AlloffCategory) graphql.Marshaler {
+func (ec *executionContext) marshalNAlloffCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AlloffCategory) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15557,7 +15556,7 @@ func (ec *executionContext) marshalNAlloffCategory2ᚕᚖgithubᚗcomᚋlessbutt
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategory(ctx, sel, v[i])
+			ret[i] = ec.marshalNAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategory(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -15567,6 +15566,12 @@ func (ec *executionContext) marshalNAlloffCategory2ᚕᚖgithubᚗcomᚋlessbutt
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
 
 	return ret
 }
@@ -15687,6 +15692,16 @@ func (ec *executionContext) marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloff�
 	return ec._Brand(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNBrandItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandItem(ctx context.Context, sel ast.SelectionSet, v *model.BrandItem) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._BrandItem(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNCancelDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCancelDescription(ctx context.Context, sel ast.SelectionSet, v *model.CancelDescription) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -15749,6 +15764,16 @@ func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlessbutterᚋallo
 		return graphql.Null
 	}
 	return ec._Category(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNCommunityItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCommunityItem(ctx context.Context, sel ast.SelectionSet, v *model.CommunityItem) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._CommunityItem(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNCommunityItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCommunityItemType(ctx context.Context, v interface{}) (model.CommunityItemType, error) {
@@ -15814,7 +15839,7 @@ func (ec *executionContext) marshalNExhibition2githubᚗcomᚋlessbutterᚋallof
 	return ec._Exhibition(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNExhibition2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibition(ctx context.Context, sel ast.SelectionSet, v []*model.Exhibition) graphql.Marshaler {
+func (ec *executionContext) marshalNExhibition2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Exhibition) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15838,7 +15863,7 @@ func (ec *executionContext) marshalNExhibition2ᚕᚖgithubᚗcomᚋlessbutter�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOExhibition2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibition(ctx, sel, v[i])
+			ret[i] = ec.marshalNExhibition2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibition(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -15848,6 +15873,12 @@ func (ec *executionContext) marshalNExhibition2ᚕᚖgithubᚗcomᚋlessbutter�
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
 
 	return ret
 }
@@ -15862,7 +15893,7 @@ func (ec *executionContext) marshalNExhibition2ᚖgithubᚗcomᚋlessbutterᚋal
 	return ec._Exhibition(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐFeaturedItem(ctx context.Context, sel ast.SelectionSet, v []*model.FeaturedItem) graphql.Marshaler {
+func (ec *executionContext) marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐFeaturedItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.FeaturedItem) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15886,7 +15917,7 @@ func (ec *executionContext) marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutter
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOFeaturedItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐFeaturedItem(ctx, sel, v[i])
+			ret[i] = ec.marshalNFeaturedItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐFeaturedItem(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -15896,11 +15927,27 @@ func (ec *executionContext) marshalNFeaturedItem2ᚕᚖgithubᚗcomᚋlessbutter
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
 
 	return ret
 }
 
-func (ec *executionContext) marshalNHomeItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐHomeItem(ctx context.Context, sel ast.SelectionSet, v []*model.HomeItem) graphql.Marshaler {
+func (ec *executionContext) marshalNFeaturedItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐFeaturedItem(ctx context.Context, sel ast.SelectionSet, v *model.FeaturedItem) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._FeaturedItem(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNHomeItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐHomeItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.HomeItem) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -15924,7 +15971,7 @@ func (ec *executionContext) marshalNHomeItem2ᚕᚖgithubᚗcomᚋlessbutterᚋa
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOHomeItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐHomeItem(ctx, sel, v[i])
+			ret[i] = ec.marshalNHomeItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐHomeItem(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -15935,7 +15982,23 @@ func (ec *executionContext) marshalNHomeItem2ᚕᚖgithubᚗcomᚋlessbutterᚋa
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
+}
+
+func (ec *executionContext) marshalNHomeItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐHomeItem(ctx context.Context, sel ast.SelectionSet, v *model.HomeItem) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._HomeItem(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNHomeItemType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐHomeItemType(ctx context.Context, v interface{}) (model.HomeItemType, error) {
@@ -16016,7 +16079,17 @@ func (ec *executionContext) marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 	return ret
 }
 
-func (ec *executionContext) marshalNLikeProductOutput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐLikeProductOutput(ctx context.Context, sel ast.SelectionSet, v []*model.LikeProductOutput) graphql.Marshaler {
+func (ec *executionContext) marshalNKeyValueInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfo(ctx context.Context, sel ast.SelectionSet, v *model.KeyValueInfo) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._KeyValueInfo(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNLikeProductOutput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐLikeProductOutputᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.LikeProductOutput) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16040,7 +16113,7 @@ func (ec *executionContext) marshalNLikeProductOutput2ᚕᚖgithubᚗcomᚋlessb
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOLikeProductOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐLikeProductOutput(ctx, sel, v[i])
+			ret[i] = ec.marshalNLikeProductOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐLikeProductOutput(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -16051,7 +16124,23 @@ func (ec *executionContext) marshalNLikeProductOutput2ᚕᚖgithubᚗcomᚋlessb
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
+}
+
+func (ec *executionContext) marshalNLikeProductOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐLikeProductOutput(ctx context.Context, sel ast.SelectionSet, v *model.LikeProductOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._LikeProductOutput(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNLogin2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐLogin(ctx context.Context, v interface{}) (model.Login, error) {
@@ -16068,7 +16157,7 @@ func (ec *executionContext) marshalNOrderInfo2githubᚗcomᚋlessbutterᚋalloff
 	return ec._OrderInfo(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderInfo(ctx context.Context, sel ast.SelectionSet, v []*model.OrderInfo) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderInfoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.OrderInfo) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16092,7 +16181,7 @@ func (ec *executionContext) marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderInfo(ctx, sel, v[i])
+			ret[i] = ec.marshalNOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderInfo(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -16102,6 +16191,12 @@ func (ec *executionContext) marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
 
 	return ret
 }
@@ -16116,7 +16211,7 @@ func (ec *executionContext) marshalNOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋall
 	return ec._OrderInfo(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNOrderItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItem(ctx context.Context, sel ast.SelectionSet, v []*model.OrderItem) graphql.Marshaler {
+func (ec *executionContext) marshalNOrderItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.OrderItem) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16140,7 +16235,7 @@ func (ec *executionContext) marshalNOrderItem2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOOrderItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItem(ctx, sel, v[i])
+			ret[i] = ec.marshalNOrderItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItem(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -16151,10 +16246,26 @@ func (ec *executionContext) marshalNOrderItem2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) unmarshalNOrderItemInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemInput(ctx context.Context, v interface{}) ([]*model.OrderItemInput, error) {
+func (ec *executionContext) marshalNOrderItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItem(ctx context.Context, sel ast.SelectionSet, v *model.OrderItem) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._OrderItem(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNOrderItemInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemInputᚄ(ctx context.Context, v interface{}) ([]*model.OrderItemInput, error) {
 	var vSlice []interface{}
 	if v != nil {
 		if tmp1, ok := v.([]interface{}); ok {
@@ -16167,12 +16278,17 @@ func (ec *executionContext) unmarshalNOrderItemInput2ᚕᚖgithubᚗcomᚋlessbu
 	res := make([]*model.OrderItemInput, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOOrderItemInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemInput(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNOrderItemInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemInput(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) unmarshalNOrderItemInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemInput(ctx context.Context, v interface{}) (*model.OrderItemInput, error) {
+	res, err := ec.unmarshalInputOrderItemInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNOrderItemStatusDescription2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemStatusDescriptionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.OrderItemStatusDescription) graphql.Marshaler {
@@ -16277,7 +16393,7 @@ func (ec *executionContext) marshalNOrderWithPayment2ᚖgithubᚗcomᚋlessbutte
 	return ec._OrderWithPayment(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNPaymentMethod2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐPaymentMethod(ctx context.Context, sel ast.SelectionSet, v []*model.PaymentMethod) graphql.Marshaler {
+func (ec *executionContext) marshalNPaymentMethod2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐPaymentMethodᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PaymentMethod) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16301,7 +16417,7 @@ func (ec *executionContext) marshalNPaymentMethod2ᚕᚖgithubᚗcomᚋlessbutte
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOPaymentMethod2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐPaymentMethod(ctx, sel, v[i])
+			ret[i] = ec.marshalNPaymentMethod2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐPaymentMethod(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -16312,7 +16428,23 @@ func (ec *executionContext) marshalNPaymentMethod2ᚕᚖgithubᚗcomᚋlessbutte
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
+}
+
+func (ec *executionContext) marshalNPaymentMethod2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐPaymentMethod(ctx context.Context, sel ast.SelectionSet, v *model.PaymentMethod) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._PaymentMethod(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNPaymentResult2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐPaymentResult(ctx context.Context, sel ast.SelectionSet, v model.PaymentResult) graphql.Marshaler {
@@ -16347,7 +16479,7 @@ func (ec *executionContext) marshalNProduct2githubᚗcomᚋlessbutterᚋalloff�
 	return ec._Product(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v []*model.Product) graphql.Marshaler {
+func (ec *executionContext) marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Product) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16371,7 +16503,7 @@ func (ec *executionContext) marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋal
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx, sel, v[i])
+			ret[i] = ec.marshalNProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -16381,6 +16513,12 @@ func (ec *executionContext) marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋal
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
 
 	return ret
 }
@@ -16399,7 +16537,7 @@ func (ec *executionContext) marshalNProductGroup2githubᚗcomᚋlessbutterᚋall
 	return ec._ProductGroup(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v []*model.ProductGroup) graphql.Marshaler {
+func (ec *executionContext) marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ProductGroup) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16423,7 +16561,7 @@ func (ec *executionContext) marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutter
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx, sel, v[i])
+			ret[i] = ec.marshalNProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -16433,6 +16571,12 @@ func (ec *executionContext) marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutter
 
 	}
 	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
 
 	return ret
 }
@@ -16471,7 +16615,7 @@ func (ec *executionContext) unmarshalNRefreshTokenInput2githubᚗcomᚋlessbutte
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNSizeGuide2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeGuide(ctx context.Context, sel ast.SelectionSet, v []*model.SizeGuide) graphql.Marshaler {
+func (ec *executionContext) marshalNSizeGuide2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeGuideᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SizeGuide) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -16495,7 +16639,7 @@ func (ec *executionContext) marshalNSizeGuide2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOSizeGuide2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeGuide(ctx, sel, v[i])
+			ret[i] = ec.marshalNSizeGuide2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeGuide(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -16506,7 +16650,23 @@ func (ec *executionContext) marshalNSizeGuide2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
+}
+
+func (ec *executionContext) marshalNSizeGuide2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeGuide(ctx context.Context, sel ast.SelectionSet, v *model.SizeGuide) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._SizeGuide(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNSortingType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx context.Context, v interface{}) (model.SortingType, error) {
@@ -16846,13 +17006,6 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) marshalOAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategory(ctx context.Context, sel ast.SelectionSet, v *model.AlloffCategory) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._AlloffCategory(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalOAlloffCategoryId2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategoryID(ctx context.Context, v interface{}) (*model.AlloffCategoryID, error) {
 	if v == nil {
 		return nil, nil
@@ -16893,7 +17046,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return graphql.MarshalBoolean(*v)
 }
 
-func (ec *executionContext) marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrand(ctx context.Context, sel ast.SelectionSet, v []*model.Brand) graphql.Marshaler {
+func (ec *executionContext) marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Brand) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -16920,7 +17073,7 @@ func (ec *executionContext) marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋallo
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrand(ctx, sel, v[i])
+			ret[i] = ec.marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrand(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -16931,14 +17084,13 @@ func (ec *executionContext) marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋallo
 	}
 	wg.Wait()
 
-	return ret
-}
-
-func (ec *executionContext) marshalOBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrand(ctx context.Context, sel ast.SelectionSet, v *model.Brand) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
 	}
-	return ec._Brand(ctx, sel, v)
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOBrandInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandInput(ctx context.Context, v interface{}) (*model.BrandInput, error) {
@@ -16949,7 +17101,7 @@ func (ec *executionContext) unmarshalOBrandInput2ᚖgithubᚗcomᚋlessbutterᚋ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOBrandItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandItem(ctx context.Context, sel ast.SelectionSet, v []*model.BrandItem) graphql.Marshaler {
+func (ec *executionContext) marshalOBrandItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.BrandItem) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -16976,7 +17128,7 @@ func (ec *executionContext) marshalOBrandItem2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOBrandItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandItem(ctx, sel, v[i])
+			ret[i] = ec.marshalNBrandItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandItem(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -16987,14 +17139,13 @@ func (ec *executionContext) marshalOBrandItem2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 	}
 	wg.Wait()
 
-	return ret
-}
-
-func (ec *executionContext) marshalOBrandItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandItem(ctx context.Context, sel ast.SelectionSet, v *model.BrandItem) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
 	}
-	return ec._BrandItem(ctx, sel, v)
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOBrandsInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandsInput(ctx context.Context, v interface{}) (*model.BrandsInput, error) {
@@ -17012,7 +17163,7 @@ func (ec *executionContext) marshalOCategory2ᚖgithubᚗcomᚋlessbutterᚋallo
 	return ec._Category(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOCommunityItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCommunityItem(ctx context.Context, sel ast.SelectionSet, v []*model.CommunityItem) graphql.Marshaler {
+func (ec *executionContext) marshalOCommunityItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCommunityItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CommunityItem) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17039,7 +17190,7 @@ func (ec *executionContext) marshalOCommunityItem2ᚕᚖgithubᚗcomᚋlessbutte
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOCommunityItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCommunityItem(ctx, sel, v[i])
+			ret[i] = ec.marshalNCommunityItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCommunityItem(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17050,35 +17201,13 @@ func (ec *executionContext) marshalOCommunityItem2ᚕᚖgithubᚗcomᚋlessbutte
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
-}
-
-func (ec *executionContext) marshalOCommunityItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCommunityItem(ctx context.Context, sel ast.SelectionSet, v *model.CommunityItem) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._CommunityItem(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOExhibition2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibition(ctx context.Context, sel ast.SelectionSet, v *model.Exhibition) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Exhibition(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOFeaturedItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐFeaturedItem(ctx context.Context, sel ast.SelectionSet, v *model.FeaturedItem) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._FeaturedItem(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOHomeItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐHomeItem(ctx context.Context, sel ast.SelectionSet, v *model.HomeItem) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._HomeItem(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
@@ -17103,7 +17232,7 @@ func (ec *executionContext) marshalOInventory2ᚖgithubᚗcomᚋlessbutterᚋall
 	return ec._Inventory(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfo(ctx context.Context, sel ast.SelectionSet, v []*model.KeyValueInfo) graphql.Marshaler {
+func (ec *executionContext) marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.KeyValueInfo) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17130,7 +17259,7 @@ func (ec *executionContext) marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutter
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOKeyValueInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfo(ctx, sel, v[i])
+			ret[i] = ec.marshalNKeyValueInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfo(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17141,14 +17270,13 @@ func (ec *executionContext) marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutter
 	}
 	wg.Wait()
 
-	return ret
-}
-
-func (ec *executionContext) marshalOKeyValueInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfo(ctx context.Context, sel ast.SelectionSet, v *model.KeyValueInfo) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
 	}
-	return ec._KeyValueInfo(ctx, sel, v)
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOLikeBrandInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐLikeBrandInput(ctx context.Context, v interface{}) (*model.LikeBrandInput, error) {
@@ -17167,13 +17295,6 @@ func (ec *executionContext) unmarshalOLikeProductInput2ᚖgithubᚗcomᚋlessbut
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOLikeProductOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐLikeProductOutput(ctx context.Context, sel ast.SelectionSet, v *model.LikeProductOutput) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._LikeProductOutput(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOOrderInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderInfo(ctx context.Context, sel ast.SelectionSet, v *model.OrderInfo) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -17186,21 +17307,6 @@ func (ec *executionContext) unmarshalOOrderInput2ᚖgithubᚗcomᚋlessbutterᚋ
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputOrderInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOOrderItem2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItem(ctx context.Context, sel ast.SelectionSet, v *model.OrderItem) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._OrderItem(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOOrderItemInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemInput(ctx context.Context, v interface{}) (*model.OrderItemInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputOrderItemInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -17227,14 +17333,7 @@ func (ec *executionContext) marshalOPaymentInfo2ᚖgithubᚗcomᚋlessbutterᚋa
 	return ec._PaymentInfo(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOPaymentMethod2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐPaymentMethod(ctx context.Context, sel ast.SelectionSet, v *model.PaymentMethod) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._PaymentMethod(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v []*model.Product) graphql.Marshaler {
+func (ec *executionContext) marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Product) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17261,7 +17360,7 @@ func (ec *executionContext) marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋal
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx, sel, v[i])
+			ret[i] = ec.marshalNProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17272,14 +17371,13 @@ func (ec *executionContext) marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋal
 	}
 	wg.Wait()
 
-	return ret
-}
-
-func (ec *executionContext) marshalOProduct2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProduct(ctx context.Context, sel ast.SelectionSet, v *model.Product) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
 	}
-	return ec._Product(ctx, sel, v)
+
+	return ret
 }
 
 func (ec *executionContext) marshalOProductDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductDescription(ctx context.Context, sel ast.SelectionSet, v *model.ProductDescription) graphql.Marshaler {
@@ -17289,7 +17387,7 @@ func (ec *executionContext) marshalOProductDescription2ᚖgithubᚗcomᚋlessbut
 	return ec._ProductDescription(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v []*model.ProductGroup) graphql.Marshaler {
+func (ec *executionContext) marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroupᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ProductGroup) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -17316,7 +17414,7 @@ func (ec *executionContext) marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutter
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx, sel, v[i])
+			ret[i] = ec.marshalNProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -17327,14 +17425,13 @@ func (ec *executionContext) marshalOProductGroup2ᚕᚖgithubᚗcomᚋlessbutter
 	}
 	wg.Wait()
 
-	return ret
-}
-
-func (ec *executionContext) marshalOProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v *model.ProductGroup) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
 	}
-	return ec._ProductGroup(ctx, sel, v)
+
+	return ret
 }
 
 func (ec *executionContext) marshalORefundInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐRefundInfo(ctx context.Context, sel ast.SelectionSet, v *model.RefundInfo) graphql.Marshaler {
@@ -17342,13 +17439,6 @@ func (ec *executionContext) marshalORefundInfo2ᚖgithubᚗcomᚋlessbutterᚋal
 		return graphql.Null
 	}
 	return ec._RefundInfo(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOSizeGuide2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeGuide(ctx context.Context, sel ast.SelectionSet, v *model.SizeGuide) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._SizeGuide(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingTypeᚄ(ctx context.Context, v interface{}) ([]model.SortingType, error) {
@@ -17420,87 +17510,6 @@ func (ec *executionContext) marshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋa
 	}
 
 	return ret
-}
-
-func (ec *executionContext) unmarshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx context.Context, v interface{}) ([]*model.SortingType, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		if tmp1, ok := v.([]interface{}); ok {
-			vSlice = tmp1
-		} else {
-			vSlice = []interface{}{v}
-		}
-	}
-	var err error
-	res := make([]*model.SortingType, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOSortingType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOSortingType2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx context.Context, sel ast.SelectionSet, v []*model.SortingType) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOSortingType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) unmarshalOSortingType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx context.Context, v interface{}) (*model.SortingType, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(model.SortingType)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOSortingType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx context.Context, sel ast.SelectionSet, v *model.SortingType) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

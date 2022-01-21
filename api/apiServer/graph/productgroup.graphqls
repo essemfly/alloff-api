@@ -6,7 +6,7 @@ type ProductGroup {
   shortTitle: String!
   instruction: [String!]!
   imgUrl: String!
-  products: [Product]!
+  products: [Product!]!
   startTime: Date!
   finishTime: Date!
   numAlarms: Int!
@@ -19,12 +19,12 @@ type Exhibition {
   thumbnailImage: String!
   title: String!
   shortTitle: String!
-  productGroups: [ProductGroup]!
+  productGroups: [ProductGroup!]!
 }
 
 extend type Query {
   productGroup(id: String!): ProductGroup!
-  productGroups: [ProductGroup]!
+  productGroups: [ProductGroup!]!
   exhibition(id: String!): Exhibition!
-  exhibitions: [Exhibition]!
+  exhibitions: [Exhibition!]!
 }

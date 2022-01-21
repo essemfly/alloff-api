@@ -82,13 +82,13 @@ input OrderItemInput {
 }
 
 input OrderInput {
-  orders: [OrderItemInput]!
+  orders: [OrderItemInput!]!
   productPrice: Int!
 }
 
 type OrderInfo {
   id: ID!
-  orders: [OrderItem]!
+  orders: [OrderItem!]!
   productPrice: Int!
   deliveryPrice: Int!
   totalPrice: Int!
@@ -144,7 +144,7 @@ input OrderResponse {
 type OrderWithPayment {
   success: Boolean!
   errorMsg: String!
-  paymentMethods: [PaymentMethod]!
+  paymentMethods: [PaymentMethod!]!
   user: User!
   paymentInfo: PaymentInfo
   order: OrderInfo
@@ -183,7 +183,7 @@ type OrderItemStatusDescription {
 
 extend type Query {
   order(id: String!): OrderInfo!
-  orders: [OrderInfo]!
+  orders: [OrderInfo!]!
   orderItemStatus: [OrderItemStatusDescription!]!
 }
 

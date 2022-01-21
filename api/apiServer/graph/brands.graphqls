@@ -11,7 +11,7 @@ type Brand {
   isOpen: Boolean!
   inMaintenance: Boolean!
   numNewProducts: Int!
-  sizeGuide: [SizeGuide]!
+  sizeGuide: [SizeGuide!]!
 }
 
 type SizeGuide {

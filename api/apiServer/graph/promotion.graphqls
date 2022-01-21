@@ -27,10 +27,10 @@ type HomeItem {
   targetId: String!
   sorting: [SortingType!]
   images: [String!]
-  communityItems: [CommunityItem]
-  brands: [BrandItem]
-  products: [Product]
-  productGroups: [ProductGroup]
+  communityItems: [CommunityItem!]
+  brands: [BrandItem!]
+  products: [Product!]
+  productGroups: [ProductGroup!]
 }
 
 type CommunityItem {
@@ -46,6 +46,6 @@ type BrandItem {
 }
 
 extend type Query {
-  featureds: [FeaturedItem]!
-  homeitems: [HomeItem]!
+  featureds: [FeaturedItem!]!
+  homeitems: [HomeItem!]!
 }

@@ -15,8 +15,7 @@ input AlloffCategoryId {
   id: String!
 }
 
-
 extend type Query {
-  alloffcategories(input: AlloffCategoryInput): [AlloffCategory]!
+  alloffcategories(input: AlloffCategoryInput): [AlloffCategory!]!
   alloffcategory(input: AlloffCategoryId): AlloffCategory!
 }

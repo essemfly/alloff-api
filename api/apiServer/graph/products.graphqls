@@ -31,7 +31,7 @@ type Product {
   isUpdated: Boolean!
   isNewProduct: Boolean!
   removed: Boolean!
-  information: [KeyValueInfo]
+  information: [KeyValueInfo!]
   description: ProductDescription
   cancelDescription: CancelDescription!
   deliveryDescription: DeliveryDescription!
@@ -77,7 +77,7 @@ input ProductsInput {
   limit: Int!
   brand: String
   category: String
-  sorting: [SortingType]
+  sorting: [SortingType!]
 }
 
 input AlloffCategoryProductsInput {
@@ -85,7 +85,7 @@ input AlloffCategoryProductsInput {
   limit: Int!
   alloffcategoryId: String!
   brandIds: [String!]
-  sorting: [SortingType]
+  sorting: [SortingType!]
 }
 
 input LikeProductInput {
@@ -96,13 +96,13 @@ type ProductsOutput {
   totalCount: Int!
   offset: Int!
   limit: Int!
-  products: [Product]!
+  products: [Product!]!
 }
 
 type AlloffCategoryProducts {
   alloffcategory: AlloffCategory!
-  products: [Product]
-  allBrands: [Brand]
+  products: [Product!]
+  allBrands: [Brand!]
   selectedBrands: [String!]
   totalCount: Int!
   offset: Int!
@@ -120,7 +120,7 @@ extend type Query {
   alloffCategoryProducts(
     input: AlloffCategoryProductsInput!
   ): AlloffCategoryProducts!
-  likeproducts: [LikeProductOutput]!
+  likeproducts: [LikeProductOutput!]!
 }
 
 extend type Mutation {
