@@ -18,10 +18,10 @@ func AddProductGroups() {
 		"타임딜 상품은 올오프 MD가 팩토리 아울렛 및 현대/롯데/신세계 프리미엄 아울렛에서 직소싱한 상품입니다.",
 		"타임딜 상품은 오프라인 매장에서 동시에 판매되고 있습니다. 재고가 제한적이라 결제 완료 후 오프라인 매장에서 판매가 완료되어 품절될 수 있습니다.",
 		"한섬 팩토리 아울렛 타임딜의 경우, 매장에서는 불가능했던 교환/반품이 올오프에서는 가능합니다."}
-	timedeal0StartTime := time.Date(2021, time.September, 7, 15, 0, 0, 0, loc)
-	timedeal1StartTime := time.Date(2021, time.September, 9, 15, 0, 0, 0, loc)
-	timedeal2StartTime := time.Date(2021, time.September, 10, 15, 0, 0, 0, loc)
-	timedeal3StartTime := time.Date(2021, time.September, 11, 15, 0, 0, 0, loc)
+	timedeal0StartTime := time.Now().In(loc)
+	timedeal1StartTime := time.Now().Add(2 * time.Hour).In(loc)
+	timedeal2StartTime := time.Now().Add(12 * time.Hour).In(loc)
+	timedeal3StartTime := time.Now().Add(-12 * time.Hour).In(loc)
 
 	log.Println("ProductGroup seeding start!")
 	pgid0 := primitive.NewObjectID()
