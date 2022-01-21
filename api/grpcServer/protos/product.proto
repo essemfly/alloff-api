@@ -9,6 +9,7 @@ service Product {
     rpc PutSpecialPrice(PutProductRequest) returns (PutProductResponse);
     rpc ListProducts(ListProductsRequest) returns (ListProductsResponse);
     rpc CreateProduct(CreateProductRequest) returns (CreateProductResponse);
+    rpc EditProduct(EditProductRequest) returns (EditProductResponse);
 }
 
 /*
@@ -51,14 +52,31 @@ message CreateProductRequest {
     string brand_key_name = 7;
     repeated InventoryMessage inventory = 8;
     repeated string description = 9;
-    int32 earliestDeliveryDays = 10;
-    int32 latestDeliveryDays = 11;
-    int32 refundFee = 12;
-    bool is_refund_possible = 13;
-    repeated string images = 14;
-    repeated string description_images = 15;
+    bool is_refund_possible = 10;
+    repeated string images = 11;
+    repeated string description_images = 12;
 }
 message CreateProductResponse {
+    ProductMessage product = 1;
+}
+
+message EditProductRequest {
+    optional string alloff_name = 1;
+    optional bool is_foreign_delivery = 2;
+    string product_id = 3;
+    optional int32 original_price = 4;
+    optional int32 discounted_price = 5;
+    optional int32 special_price = 6;
+    optional string brand_key_name = 7;
+    repeated InventoryMessage inventory = 8;
+    repeated string description = 9;
+    optional bool is_refund_possible = 10;
+    repeated string images = 11;
+    repeated string description_images = 12;
+    optional bool is_removed = 13;
+}
+
+message EditProductResponse {
     ProductMessage product = 1;
 }
 
@@ -67,18 +85,26 @@ message CreateProductResponse {
 */
 
 message ProductMessage {
-    string product_id = 1;
-    string alloff_name = 2;
-    int32 discounted_price = 3;
-    int32 discount_rate = 4;
-    int32 special_price = 5;
-    string brand_kor_name = 6;
-    string category_name = 7;
-    string alloff_category_name = 8;
-    bool is_removed = 9;
-    bool is_soldout = 10;
-    repeated InventoryMessage inventory = 11;
-    int32 total_score = 12;
+    string alloff_name = 1;
+    bool is_foreign_delivery = 2;
+    string product_id = 3;
+    int32 original_price = 4;
+    int32 discounted_price = 5;
+    int32 special_price = 6;
+    string brand_kor_name = 7;
+    repeated InventoryMessage inventory = 8;
+    repeated string description = 9;
+    int32 earliest_delivery_days = 10;
+    int32 latest_delivery_days = 11;
+    int32 refund_fee = 12;
+    bool is_refund_possible = 13;
+    repeated string images = 14;
+    repeated string description_images = 15;
+    string category_name = 16;
+    string alloff_category_name = 17;
+    bool is_removed = 18;
+    bool is_soldout = 19;
+    int32 total_score = 20;
 }
 
 message InventoryMessage {

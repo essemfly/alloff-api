@@ -26,6 +26,7 @@ type ProductClient interface {
 	PutSpecialPrice(ctx context.Context, in *PutProductRequest, opts ...grpc.CallOption) (*PutProductResponse, error)
 	ListProducts(ctx context.Context, in *ListProductsRequest, opts ...grpc.CallOption) (*ListProductsResponse, error)
 	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
+	EditProduct(ctx context.Context, in *EditProductRequest, opts ...grpc.CallOption) (*EditProductResponse, error)
 }
 
 type productClient struct {
@@ -72,6 +73,15 @@ func (c *productClient) CreateProduct(ctx context.Context, in *CreateProductRequ
 	return out, nil
 }
 
+func (c *productClient) EditProduct(ctx context.Context, in *EditProductRequest, opts ...grpc.CallOption) (*EditProductResponse, error) {
+	out := new(EditProductResponse)
+	err := c.cc.Invoke(ctx, "/grpcServer.Product/EditProduct", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServer is the server API for Product service.
 // All implementations must embed UnimplementedProductServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type ProductServer interface {
 	PutSpecialPrice(context.Context, *PutProductRequest) (*PutProductResponse, error)
 	ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error)
 	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
+	EditProduct(context.Context, *EditProductRequest) (*EditProductResponse, error)
 	mustEmbedUnimplementedProductServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedProductServer) ListProducts(context.Context, *ListProductsReq
 }
 func (UnimplementedProductServer) CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProduct not implemented")
+}
+func (UnimplementedProductServer) EditProduct(context.Context, *EditProductRequest) (*EditProductResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditProduct not implemented")
 }
 func (UnimplementedProductServer) mustEmbedUnimplementedProductServer() {}
 
@@ -184,6 +198,24 @@ func _Product_CreateProduct_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Product_EditProduct_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditProductRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServer).EditProduct(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpcServer.Product/EditProduct",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServer).EditProduct(ctx, req.(*EditProductRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Product_ServiceDesc is the grpc.ServiceDesc for Product service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var Product_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateProduct",
 			Handler:    _Product_CreateProduct_Handler,
+		},
+		{
+			MethodName: "EditProduct",
+			Handler:    _Product_EditProduct_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

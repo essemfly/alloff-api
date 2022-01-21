@@ -7,17 +7,26 @@ import (
 
 func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 	return &grpcServer.ProductMessage{
-		ProductId:       pd.ProductInfo.ProductID,
-		AlloffName:      pd.AlloffName,
-		DiscountedPrice: int32(pd.DiscountedPrice),
-		DiscountRate:    int32(pd.DiscountRate),
-		SpecialPrice:    int32(pd.SpecialPrice),
-		BrandKorName:    pd.ProductInfo.Brand.KorName,
-		CategoryName:    pd.ProductInfo.Category.Name,
-		IsRemoved:       pd.Removed,
-		IsSoldout:       pd.Soldout,
-		Inventory:       InventoryMapper(pd),
-		TotalScore:      int32(pd.Score.TotalScore),
+		AlloffName:           pd.AlloffName,
+		IsForeignDelivery:    pd.ProductInfo.Source.IsForeignDelivery,
+		ProductId:            pd.ProductInfo.ProductID,
+		OriginalPrice:        int32(pd.ProductInfo.Price.OriginalPrice),
+		DiscountedPrice:      int32(pd.DiscountedPrice),
+		SpecialPrice:         int32(pd.SpecialPrice),
+		BrandKorName:         pd.ProductInfo.Brand.KorName,
+		Inventory:            InventoryMapper(pd),
+		Description:          pd.SalesInstruction.Description.Texts,
+		EarliestDeliveryDays: int32(pd.SalesInstruction.DeliveryDescription.LatestDeliveryDays),
+		LatestDeliveryDays:   int32(pd.SalesInstruction.DeliveryDescription.EarliestDeliveryDays),
+		RefundFee:            int32(pd.SalesInstruction.CancelDescription.RefundFee),
+		IsRefundPossible:     pd.SalesInstruction.CancelDescription.RefundAvailable,
+		Images:               pd.ProductInfo.Images,
+		DescriptionImages:    pd.SalesInstruction.Description.Images,
+		CategoryName:         pd.ProductInfo.Category.Name,
+		AlloffCategoryName:   pd.AlloffCategories.First.KeyName,
+		IsRemoved:            pd.Removed,
+		IsSoldout:            pd.Soldout,
+		TotalScore:           int32(pd.Score.TotalScore),
 	}
 }
 
