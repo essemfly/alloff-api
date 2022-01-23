@@ -18,13 +18,13 @@ service Product {
 
 // Product Service
 message GetProductRequest {
-    string product_id = 1;
+    string alloff_product_id = 1;
 }
 message GetProductResponse {
     ProductMessage product = 1;
 }
 message PutProductRequest {
-    string product_id = 1;
+    string alloff_product_id = 1;
     int32 special_price = 2;
 }
 message PutProductResponse {
@@ -45,7 +45,7 @@ message ListProductsResponse {
 message CreateProductRequest {
     string alloff_name = 1;
     bool is_foreign_delivery = 2;
-    string product_id = 3;
+    optional string product_id = 3;
     optional int32 original_price = 4;
     optional int32 discounted_price = 5;
     int32 special_price = 6;
@@ -55,6 +55,9 @@ message CreateProductRequest {
     bool is_refund_possible = 10;
     repeated string images = 11;
     repeated string description_images = 12;
+    int32 earliest_delivery_days = 13;
+    int32 latest_delivery_days = 14;
+    int32 refund_fee = 15;
 }
 message CreateProductResponse {
     ProductMessage product = 1;
@@ -63,7 +66,7 @@ message CreateProductResponse {
 message EditProductRequest {
     optional string alloff_name = 1;
     optional bool is_foreign_delivery = 2;
-    string product_id = 3;
+    optional string product_id = 3;
     optional int32 original_price = 4;
     optional int32 discounted_price = 5;
     optional int32 special_price = 6;
@@ -74,6 +77,10 @@ message EditProductRequest {
     repeated string images = 11;
     repeated string description_images = 12;
     optional bool is_removed = 13;
+    int32 earliest_delivery_days = 14;
+    int32 latest_delivery_days = 15;
+    int32 refund_fee = 16;
+    string alloff_product_id = 17;
 }
 
 message EditProductResponse {
@@ -105,6 +112,7 @@ message ProductMessage {
     bool is_removed = 18;
     bool is_soldout = 19;
     int32 total_score = 20;
+    string alloff_product_id = 21;
 }
 
 message InventoryMessage {

@@ -44,7 +44,7 @@ message SendNotiResponse {
 message NotificationMessage {
     string notification_id = 1;
     string status = 2;
-    string type = 3;
+    string noti_type = 3;
     string reference_id = 4;
     string title = 5;
     string message = 6;

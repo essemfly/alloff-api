@@ -9,7 +9,7 @@ func NotificationMapper(noti *domain.NotificationDAO) *grpcServer.NotificationMe
 	return &grpcServer.NotificationMessage{
 		NotificationId: noti.ID.Hex(),
 		Status:         string(noti.Status),
-		Type:           string(noti.NotificationType),
+		NotiType:       string(noti.NotificationType),
 		ReferenceId:    noti.ReferenceID,
 		Title:          noti.Title,
 		Message:        noti.Message,

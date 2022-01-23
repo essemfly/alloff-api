@@ -15,12 +15,13 @@ func ProductGroupMapper(pg *domain.ProductGroupDAO) *grpcServer.ProductGroupMess
 	}
 
 	return &grpcServer.ProductGroupMessage{
-		Title:       pg.Title,
-		ShortTitle:  pg.ShortTitle,
-		Instruction: pg.Instruction,
-		ImageUrl:    pg.ImgUrl,
-		Products:    products,
-		StartTime:   pg.StartTime.String(),
-		FinishTime:  pg.FinishTime.String(),
+		Title:          pg.Title,
+		ShortTitle:     pg.ShortTitle,
+		Instruction:    pg.Instruction,
+		ImageUrl:       pg.ImgUrl,
+		Products:       products,
+		StartTime:      pg.StartTime.String(),
+		FinishTime:     pg.FinishTime.String(),
+		ProductGroupId: pg.ID.Hex(),
 	}
 }

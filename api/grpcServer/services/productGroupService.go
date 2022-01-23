@@ -20,7 +20,7 @@ func (s *ProductGroupService) GetProductGroup(ctx context.Context, req *grpcServ
 		return nil, err
 	}
 	return &grpcServer.GetProductGroupResponse{
-		ProductGroup: mapper.ProductGroupMapper(pgDao),
+		Pg: mapper.ProductGroupMapper(pgDao),
 	}, nil
 }
 
@@ -59,11 +59,9 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 	}
 
 	pgs := []*grpcServer.ProductGroupMessage{}
-
 	for _, pgDao := range pgDaos {
 		pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
 	}
-
 	return &grpcServer.ListProductGroupsResponse{
 		Pgs: pgs,
 	}, nil

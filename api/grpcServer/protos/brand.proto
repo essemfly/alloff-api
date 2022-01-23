@@ -52,7 +52,7 @@ message CreateBrandResponse {
 }
 
 message BrandMessage {
-    string id = 1;
+    string brand_id = 1;
     string korname = 2;
     string keyname = 3;
     string engname = 4;

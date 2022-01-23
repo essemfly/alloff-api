@@ -7,7 +7,7 @@ import (
 
 func BrandMapper(brand *domain.BrandDAO) *grpcServer.BrandMessage {
 	return &grpcServer.BrandMessage{
-		Id:            brand.ID.Hex(),
+		BrandId:       brand.ID.Hex(),
 		Korname:       brand.KorName,
 		Keyname:       brand.KeyName,
 		Engname:       brand.EngName,

@@ -22,7 +22,7 @@ message GetProductGroupRequest {
     string product_group_id = 1;
 }
 message GetProductGroupResponse {
-    ProductGroupMessage product_group = 1;
+    ProductGroupMessage pg = 1;
 }
 message CreateProductGroupRequest {
     string title = 1;
@@ -42,6 +42,7 @@ message ListProductGroupsResponse {
 message PushProductsRequest {
     string product_group_id = 1;
     repeated string product_id = 2;
+    int32 priority = 3;
 }
 message PushProductsResponse {
     ProductGroupMessage pg = 1;
@@ -64,4 +65,5 @@ message ProductGroupMessage {
     repeated ProductInGroupMessage products = 5;
     string start_time = 6;
     string finish_time = 7;
+    string product_group_id = 8;
 }

@@ -15,7 +15,7 @@ type ProductService struct {
 }
 
 func (s *ProductService) GetProduct(ctx context.Context, req *grpcServer.GetProductRequest) (*grpcServer.GetProductResponse, error) {
-	pdDao, err := ioc.Repo.Products.Get(req.ProductId)
+	pdDao, err := ioc.Repo.Products.Get(req.AlloffProductId)
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +26,7 @@ func (s *ProductService) GetProduct(ctx context.Context, req *grpcServer.GetProd
 }
 
 func (s *ProductService) PutProduct(ctx context.Context, req *grpcServer.PutProductRequest) (*grpcServer.PutProductResponse, error) {
-	pdDao, err := ioc.Repo.Products.Get(req.ProductId)
+	pdDao, err := ioc.Repo.Products.Get(req.AlloffProductId)
 	if err != nil {
 		return nil, err
 	}
@@ -91,10 +91,14 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		})
 	}
 
+	productID := ""
+	if req.ProductId != nil {
+		productID = *req.ProductId
+	}
 	addRequest := &product.ProductManuelAddRequest{
 		AlloffName:           req.AlloffName,
 		IsForeignDelivery:    req.IsForeignDelivery,
-		ProductID:            req.ProductId,
+		ProductID:            productID,
 		OriginalPrice:        originalPrice,
 		DiscountedPrice:      discountedPrice,
 		SpecialPrice:         int(req.SpecialPrice),
@@ -123,7 +127,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 
 func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditProductRequest) (*grpcServer.EditProductResponse, error) {
 
-	pdDao, err := ioc.Repo.Products.Get(req.ProductId)
+	pdDao, err := ioc.Repo.Products.Get(req.AlloffProductId)
 	if err != nil {
 		return nil, err
 	}
