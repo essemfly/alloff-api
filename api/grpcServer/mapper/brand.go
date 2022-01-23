@@ -7,8 +7,11 @@ import (
 
 func BrandMapper(brand *domain.BrandDAO) *grpcServer.BrandMessage {
 	return &grpcServer.BrandMessage{
+		Id:            brand.ID.Hex(),
 		Korname:       brand.KorName,
 		Keyname:       brand.KeyName,
+		Engname:       brand.EngName,
+		Description:   brand.Description,
 		LogoImageUrl:  brand.LogoImgUrl,
 		IsPopular:     brand.Onpopular,
 		IsOpen:        brand.IsOpen,

@@ -6,6 +6,7 @@ option go_package = "github.com/lessbutter/alloff-api/api/grpcServer";
 
 service Brand {
     rpc ListBrand(ListBrandRequest) returns (ListBrandResponse);
+    rpc EditBrand(EditBrandRequest) returns (EditBrandResponse);
     rpc CreateBrand(CreateBrandRequest) returns (CreateBrandResponse);
 }
 
@@ -19,6 +20,22 @@ message ListBrandRequest {}
 message ListBrandResponse {
     repeated BrandMessage brands = 1;
 }
+
+message EditBrandRequest {
+    optional string keyname = 1;
+    optional string korname = 2;
+    optional string engname = 3;
+    optional string logo_image_url = 4;
+    optional string description = 5;
+    optional bool is_popular = 6;
+    optional bool is_open = 7;
+    optional bool in_maintenance = 8;
+    repeated SizeGuideMessage size_guide = 9;
+}
+message EditBrandResponse {
+    BrandMessage brand = 1;
+}
+
 message CreateBrandRequest {
     string keyname = 1;
     string korname = 2;
@@ -28,20 +45,23 @@ message CreateBrandRequest {
     bool is_popular = 6;
     bool is_open = 7;
     bool in_maintenance = 8;
-    repeated SizeGuideMessage sizeguide = 9;
+    repeated SizeGuideMessage size_guide = 9;
 }
 message CreateBrandResponse {
     BrandMessage brand = 1;
 }
 
 message BrandMessage {
-    string korname = 1;
-    string keyname = 2;
-    string logo_image_url = 3;
-    bool is_popular = 4;
-    bool is_open = 5;
-    bool in_maintenance = 6;
-    repeated SizeGuideMessage size_guide = 7;
+    string id = 1;
+    string korname = 2;
+    string keyname = 3;
+    string engname = 4;
+    string logo_image_url = 5;
+    string description = 6;
+    bool is_popular = 7;
+    bool is_open = 8;
+    bool in_maintenance = 9;
+    repeated SizeGuideMessage size_guide = 10;
 }
 
 message SizeGuideMessage {

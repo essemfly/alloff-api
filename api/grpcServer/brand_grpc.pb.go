@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BrandClient interface {
 	ListBrand(ctx context.Context, in *ListBrandRequest, opts ...grpc.CallOption) (*ListBrandResponse, error)
+	EditBrand(ctx context.Context, in *EditBrandRequest, opts ...grpc.CallOption) (*EditBrandResponse, error)
 	CreateBrand(ctx context.Context, in *CreateBrandRequest, opts ...grpc.CallOption) (*CreateBrandResponse, error)
 }
 
@@ -43,6 +44,15 @@ func (c *brandClient) ListBrand(ctx context.Context, in *ListBrandRequest, opts 
 	return out, nil
 }
 
+func (c *brandClient) EditBrand(ctx context.Context, in *EditBrandRequest, opts ...grpc.CallOption) (*EditBrandResponse, error) {
+	out := new(EditBrandResponse)
+	err := c.cc.Invoke(ctx, "/grpcServer.Brand/EditBrand", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *brandClient) CreateBrand(ctx context.Context, in *CreateBrandRequest, opts ...grpc.CallOption) (*CreateBrandResponse, error) {
 	out := new(CreateBrandResponse)
 	err := c.cc.Invoke(ctx, "/grpcServer.Brand/CreateBrand", in, out, opts...)
@@ -57,6 +67,7 @@ func (c *brandClient) CreateBrand(ctx context.Context, in *CreateBrandRequest, o
 // for forward compatibility
 type BrandServer interface {
 	ListBrand(context.Context, *ListBrandRequest) (*ListBrandResponse, error)
+	EditBrand(context.Context, *EditBrandRequest) (*EditBrandResponse, error)
 	CreateBrand(context.Context, *CreateBrandRequest) (*CreateBrandResponse, error)
 	mustEmbedUnimplementedBrandServer()
 }
@@ -67,6 +78,9 @@ type UnimplementedBrandServer struct {
 
 func (UnimplementedBrandServer) ListBrand(context.Context, *ListBrandRequest) (*ListBrandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListBrand not implemented")
+}
+func (UnimplementedBrandServer) EditBrand(context.Context, *EditBrandRequest) (*EditBrandResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditBrand not implemented")
 }
 func (UnimplementedBrandServer) CreateBrand(context.Context, *CreateBrandRequest) (*CreateBrandResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateBrand not implemented")
@@ -102,6 +116,24 @@ func _Brand_ListBrand_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Brand_EditBrand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditBrandRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BrandServer).EditBrand(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpcServer.Brand/EditBrand",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BrandServer).EditBrand(ctx, req.(*EditBrandRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Brand_CreateBrand_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateBrandRequest)
 	if err := dec(in); err != nil {
@@ -130,6 +162,10 @@ var Brand_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListBrand",
 			Handler:    _Brand_ListBrand_Handler,
+		},
+		{
+			MethodName: "EditBrand",
+			Handler:    _Brand_EditBrand_Handler,
 		},
 		{
 			MethodName: "CreateBrand",

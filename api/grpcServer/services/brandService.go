@@ -17,7 +17,7 @@ type BrandService struct {
 func (s *BrandService) CreateBrand(ctx context.Context, req *grpcServer.CreateBrandRequest) (*grpcServer.CreateBrandResponse, error) {
 
 	sizeGuideDaos := []domain.SizeGuideDAO{}
-	for _, guide := range req.Sizeguide {
+	for _, guide := range req.SizeGuide {
 		sizeGuideDaos = append(sizeGuideDaos, domain.SizeGuideDAO{
 			Label:  guide.Label,
 			ImgUrl: guide.ImageUrl,
