@@ -19,7 +19,7 @@ func TestAlimtalk() {
 		ReferenceID:  "Test alimtalk payment ref id",
 		SendDate:     nil,
 		TemplateParams: map[string]string{
-			"orderedAt":   time.Now().String(),
+			"orderedAt":   utils.TimeFormatterForKorea(time.Now()),
 			"productName": "test payment id",
 			"amount":      utils.PriceFormatter(135000),
 		},
