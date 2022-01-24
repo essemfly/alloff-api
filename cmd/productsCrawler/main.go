@@ -33,21 +33,21 @@ func main() {
 	config.InitSlack(conf)
 
 	crawlModules := []string{
-		"lottefashion",
-		"ssfmall",
-		"idlook",
-		"sivillage",
-		"kolon",
-		"babathe",
-		"idfmall",
-		"daehyun",
-		"niceclaup",
-		"lacoste",
+//		"lottefashion",
+//		"ssfmall",
+//		"idlook",
+//		"sivillage",
+//		"kolon",
+//		"babathe",
+//		"idfmall",
+//		"daehyun",
+//		"niceclaup",
+//		"lacoste",
 		"sisley",
-		"benetton",
-		"theamall",
-		"loungeb",
-		"bylynn",
+//		"benetton",
+//		"theamall",
+//		"loungeb",
+//		"bylynn",
 	}
 
 	StartCrawling(crawlModules)

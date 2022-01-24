@@ -99,6 +99,7 @@ func ProcessProductRequest(pd *domain.ProductDAO, request product.ProductsAddReq
 	}
 
 	alloffInstruction := product.GetProductDescription(pd, request.Source)
+	pd.ProductInfo.Source = request.Source
 	pd.UpdateInstruction(alloffInstruction)
 
 	alloffScore := product.GetProductScore(pd)

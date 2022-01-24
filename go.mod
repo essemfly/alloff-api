@@ -11,6 +11,7 @@ require (
 	github.com/dustin/go-humanize v1.0.0
 	github.com/getsentry/sentry-go v0.12.0
 	github.com/go-chi/chi v1.5.4
+	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-pg/pg/v10 v10.10.6
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0

@@ -24,7 +24,7 @@ func main() {
 	config.InitSlack(conf)
 
 	// scripts.AddAlloffCategory()
-	// scripts.AddBrandsSeeder()
+//	scripts.AddBrandsSeeder()
 	// scripts.AddClassifyRules()
 	// scripts.UpdateBrands()
 	// scripts.AddProductGroupsSeeder()

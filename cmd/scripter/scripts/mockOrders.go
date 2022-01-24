@@ -35,14 +35,9 @@ func AddMockOrders() {
 
 	brandIdx := 0
 
-	for brandIdx < 5 {
+	for brandIdx < 1 {
 		log.Println("mock order created # " + strconv.Itoa(brandIdx))
-		brandDao, _, _ := ioc.Repo.Brands.List(0, 100, nil, nil)
-		products, cnt, _ := product.ProductsListing(0, 3, brandDao[brandIdx].ID.Hex(), "", "", nil)
-		for cnt < 1 {
-			brandIdx += 1
-			products, cnt, _ = product.ProductsListing(0, len(allstatus), brandDao[brandIdx].ID.Hex(), "", "", nil)
-		}
+		products, _, _ := product.ProductsListing(0, len(allstatus), "61d699ec74b2b71fe80ff58a", "", "", nil)
 
 		basket := BuildBasket(products)
 
@@ -61,7 +56,6 @@ func AddMockOrders() {
 		if err != nil {
 			log.Println("err occured in build payments", err)
 		}
-
 		for idx, item := range orderDao.OrderItems {
 			item.OrderItemStatus = allstatus[idx]
 			_, err := ioc.Repo.OrderItems.Update(item)
