@@ -90,7 +90,7 @@ type ExhibitionsRepository interface {
 type OrdersRepository interface {
 	Get(ID int) (*domain.OrderDAO, error)
 	GetByAlloffID(ID string) (*domain.OrderDAO, error)
-	List(userID string) ([]*domain.OrderDAO, error)
+	List(userID string, onlyPaid bool) ([]*domain.OrderDAO, error)
 	Insert(*domain.OrderDAO) (*domain.OrderDAO, error)
 	Update(*domain.OrderDAO) (*domain.OrderDAO, error)
 }
