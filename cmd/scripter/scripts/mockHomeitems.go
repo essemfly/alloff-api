@@ -72,10 +72,9 @@ func AddHomeItems() {
 
 	onepieceCategory, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_ONEPIECE")
 	onepieceProducts, _, _ := product.AlloffCategoryProductsListing(0, 10, nil, onepieceCategory.ID.Hex(), "", nil)
-	trenchCategory, _ := ioc.Repo.AlloffCategories.GetByKeyname("2_TRENCH")
-	trenchProducts, _, _ := product.AlloffCategoryProductsListing(0, 10, nil, trenchCategory.ID.Hex(), "", nil)
+	onepiece50products, _, _ := product.AlloffCategoryProductsListing(0, 10, nil, onepieceCategory.ID.Hex(), "", []string{"70", "100"})
 	knitCategory, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_KNITWARE")
-	knitProducts, _, _ := product.AlloffCategoryProductsListing(0, 10, nil, knitCategory.ID.Hex(), "", nil)
+	knitProducts, _, _ := product.AlloffCategoryProductsListing(0, 10, nil, knitCategory.ID.Hex(), "", []string{"70", "100"})
 
 	pgs, _ := ioc.Repo.ProductGroups.List()
 
@@ -158,7 +157,7 @@ func AddHomeItems() {
 			Images:         nil,
 			CommunityItems: nil,
 			Brands:         nil,
-			Products:       trenchProducts,
+			Products:       onepiece50products,
 		},
 		{
 			Priority: 65,
