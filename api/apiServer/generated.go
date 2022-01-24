@@ -2747,8 +2747,8 @@ type HomeItem {
   title: String!
   itemType: HomeItemType!
   targetId: String!
-  sorting: [SortingType!]
-  images: [String!]
+  sorting: [SortingType!]!
+  images: [String!]!
   communityItems: [CommunityItem!]!
   brands: [BrandItem!]!
   products: [Product!]!
@@ -5623,11 +5623,14 @@ func (ec *executionContext) _HomeItem_sorting(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.([]model.SortingType)
 	fc.Result = res
-	return ec.marshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingTypeᚄ(ctx, field.Selections, res)
+	return ec.marshalNSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingTypeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _HomeItem_images(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
@@ -5655,11 +5658,14 @@ func (ec *executionContext) _HomeItem_images(ctx context.Context, field graphql.
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _HomeItem_communityItems(ctx context.Context, field graphql.CollectedField, obj *model.HomeItem) (ret graphql.Marshaler) {
@@ -13902,8 +13908,14 @@ func (ec *executionContext) _HomeItem(ctx context.Context, sel ast.SelectionSet,
 			}
 		case "sorting":
 			out.Values[i] = ec._HomeItem_sorting(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "images":
 			out.Values[i] = ec._HomeItem_images(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "communityItems":
 			out.Values[i] = ec._HomeItem_communityItems(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -16789,6 +16801,71 @@ func (ec *executionContext) unmarshalNSortingType2githubᚗcomᚋlessbutterᚋal
 
 func (ec *executionContext) marshalNSortingType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx context.Context, sel ast.SelectionSet, v model.SortingType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) unmarshalNSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingTypeᚄ(ctx context.Context, v interface{}) ([]model.SortingType, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]model.SortingType, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNSortingType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingTypeᚄ(ctx context.Context, sel ast.SelectionSet, v []model.SortingType) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSortingType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingType(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
