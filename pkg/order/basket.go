@@ -33,11 +33,13 @@ func (basket *Basket) IsValid() []error {
 			totalPrices += item.Product.DiscountedPrice * item.Quantity
 		}
 
-		if time.Now().After(item.ProductGroup.FinishTime) {
-			errs = append(errs, errors.New("productgroup finished time out"+item.Product.ID.Hex()))
-		}
-		if time.Now().Before(item.ProductGroup.StartTime) {
-			errs = append(errs, errors.New("productgroup not start yet"+item.Product.ID.Hex()))
+		if item.ProductGroup != nil {
+			if time.Now().After(item.ProductGroup.FinishTime) {
+				errs = append(errs, errors.New("productgroup finished time out"+item.Product.ID.Hex()))
+			}
+			if time.Now().Before(item.ProductGroup.StartTime) {
+				errs = append(errs, errors.New("productgroup not start yet"+item.Product.ID.Hex()))
+			}
 		}
 
 		isValidSize, isValidQuantity := false, false
@@ -111,11 +113,15 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 		totalProductPrice += item.Product.DiscountedPrice * item.Quantity
 	}
 
+	userID := ""
+	if user != nil {
+		userID = user.ID.Hex()
+	}
 	// (TODO) Delivery Price는 생성시점에 만들어질 예정이다?
 	newOrderDao := &domain.OrderDAO{
 		AlloffOrderID: orderAlloffID,
 		OrderStatus:   domain.ORDER_PAYMENT_FINISHED,
-		UserID:        user.ID.Hex(),
+		UserID:        userID,
 		User:          user,
 		OrderItems:    orderItems,
 		TotalPrice:    totalProductPrice,

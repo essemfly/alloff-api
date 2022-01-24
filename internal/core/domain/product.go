@@ -195,11 +195,10 @@ func (pd *ProductDAO) UpdatePrice(alloffPrice float32) bool {
 
 	if pd.PriceHistory != nil {
 		// 이 부분 가격 하락시마다 들어가야함.
-		// if origPrice > pd.DiscountedPrice {
-		// 	newHistory = append(pd.PriceHistory, newHistory...)
-		// }
+		if origPrice > pd.DiscountedPrice {
+			newHistory = append(pd.PriceHistory, newHistory...)
+		}
 		newHistory = append(pd.PriceHistory, newHistory...)
-		// product.InsertProductDiff(pd, origPrice)
 	}
 
 	pd.PriceHistory = newHistory
