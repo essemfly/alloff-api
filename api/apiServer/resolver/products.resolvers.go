@@ -117,7 +117,7 @@ func (r *queryResolver) AlloffCategoryProducts(ctx context.Context, input model.
 	}
 
 	alloffCatDao, err := ioc.Repo.AlloffCategories.Get(input.AlloffcategoryID)
-	if alloffCatDao != nil {
+	if alloffCatDao == nil {
 		return nil, err
 	}
 
