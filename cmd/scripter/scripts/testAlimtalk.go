@@ -10,7 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/utils"
 )
 
-func testAlimtalk() {
+func TestAlimtalk() {
 	user, _ := ioc.Repo.Users.GetByMobile("01097711882")
 	newAlimtalk := &domain.AlimtalkDAO{
 		UserID:       user.ID.Hex(),

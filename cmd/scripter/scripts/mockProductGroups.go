@@ -1,16 +1,20 @@
-package seeder
+package scripts
 
 import (
 	"log"
-	"time"
-
 	"math/rand"
+	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/product"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
+func AddProductGroupsSeeder() {
+	log.Println("Add Dummy Product Groups")
+	AddProductGroups()
+}
 
 func AddProductGroups() {
 	loc, _ := time.LoadLocation("Asia/Seoul")
