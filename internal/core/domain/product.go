@@ -184,6 +184,11 @@ type ProductDAO struct {
 func (pd *ProductDAO) UpdatePrice(alloffPrice float32) bool {
 	origPrice := pd.DiscountedPrice
 	pd.DiscountedPrice = int(alloffPrice)
+
+	if pd.SpecialPrice == 0 || pd.SpecialPrice > pd.DiscountedPrice {
+		pd.SpecialPrice = pd.DiscountedPrice
+	}
+
 	pd.DiscountRate = utils.CalculateDiscountRate(pd.ProductInfo.Price.OriginalPrice, alloffPrice)
 
 	newHistory := []PriceHistoryDAO{
