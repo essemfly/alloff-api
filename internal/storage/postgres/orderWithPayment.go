@@ -179,6 +179,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			return err
 		}
 
+		paymentDao.CreatedAt = time.Now()
 		paymentDao.UpdatedAt = time.Now()
 		paymentDao.PaymentStatus = domain.PAYMENT_CREATED
 		_, err = repo.db.Model(paymentDao).Insert()
