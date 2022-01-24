@@ -3,7 +3,6 @@ package order
 import (
 	"errors"
 	"time"
-	"log"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -82,17 +81,13 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			productPrice = item.Product.SpecialPrice
 		}
 
-		log.Println("1-1")
 		itemCode := utils.CreateShortUUID()
 
-		log.Println("1-1-1")
 		_, err := ioc.Repo.OrderItems.GetByCode(itemCode)
 		for err == nil {
-			log.Println("1-1-4")
 			itemCode = utils.CreateShortUUID()
 		}
 
-		log.Println("1-2")
 		orderItems = append(orderItems, &domain.OrderItemDAO{
 			OrderItemCode:          itemCode,
 			ProductID:              item.Product.ID.Hex(),
@@ -115,7 +110,6 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			UpdatedAt:              time.Now(),
 		})
 
-		log.Println("1-3")
 		totalProductPrice += item.Product.DiscountedPrice * item.Quantity
 	}
 

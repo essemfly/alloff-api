@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
@@ -19,6 +20,7 @@ func UpdateBrandCategory() {
 	log.Println("Total # of brands : " + strconv.Itoa(totalCount))
 
 	for _, brandDao := range brandDaos {
+		brandCats := []*domain.CategoryDAO{}
 		catDaos, err := ioc.Repo.Categories.List(brandDao.KeyName)
 		if err != nil {
 			log.Println(err)
@@ -29,9 +31,10 @@ func UpdateBrandCategory() {
 			if pdCount == 0 {
 				continue
 			}
-			brandDao.Category = append(brandDao.Category, catDao)
+			brandCats = append(brandCats, catDao)
 		}
 
+		brandDao.Category = brandCats
 		_, err = ioc.Repo.Brands.Upsert(brandDao)
 		if err != nil {
 			log.Println(err)
