@@ -330,7 +330,8 @@ func (r *queryResolver) Orders(ctx context.Context) ([]*model.OrderInfo, error) 
 		return nil, errors.New("invalid token")
 	}
 
-	orderDaos, err := ioc.Repo.Orders.List(user.ID.Hex())
+	onlyPaid := true
+	orderDaos, err := ioc.Repo.Orders.List(user.ID.Hex(), onlyPaid)
 	if err != nil {
 		return nil, err
 	}

@@ -47,10 +47,14 @@ func (repo *orderRepo) GetByAlloffID(ID string) (*domain.OrderDAO, error) {
 	return order, nil
 }
 
-func (repo *orderRepo) List(userID string) ([]*domain.OrderDAO, error) {
+func (repo *orderRepo) List(userID string, onlyPaid bool) ([]*domain.OrderDAO, error) {
 	orders := []*domain.OrderDAO{}
-
-	if err := repo.db.Model(&orders).Where("user_id = ?", userID).Order("created_at DESC").Select(); err != nil {
+	query := repo.db.Model(&orders).Where("user_id = ?", userID)
+	if onlyPaid {
+		notPaidStatus := []domain.OrderStatusEnum{domain.ORDER_CREATED, domain.ORDER_RECREATED}
+		query = query.Where("order_status NOT IN (?)", pg.In(notPaidStatus))
+	}
+	if err := query.Order("created_at DESC").Select(); err != nil {
 		return nil, err
 	}
 	for _, order := range orders {
