@@ -51,8 +51,7 @@ func (repo *orderRepo) List(userID string, onlyPaid bool) ([]*domain.OrderDAO, e
 	orders := []*domain.OrderDAO{}
 	query := repo.db.Model(&orders).Where("user_id = ?", userID)
 	if onlyPaid {
-		notPaidStatus := []domain.OrderStatusEnum{domain.ORDER_CREATED, domain.ORDER_RECREATED}
-		query = query.Where("order_status NOT IN (?)", pg.In(notPaidStatus))
+		query = query.Where("order_status = ?", domain.ORDER_PAYMENT_FINISHED)
 	}
 	if err := query.Order("created_at DESC").Select(); err != nil {
 		return nil, err
