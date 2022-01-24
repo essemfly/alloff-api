@@ -90,7 +90,6 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 	// 주문취소가 바로 안되서 Cancel Requested로 바꿔준다.
 	if orderItemDao.CanCancelOrder() {
 		orderItemDao.CancelRequestedAt = time.Now()
-		orderItemDao.CancelFinishedAt = time.Now()
 		orderItemDao.UpdatedAt = time.Now()
 
 		_, err := ioc.Repo.OrderItems.Update(orderItemDao)
