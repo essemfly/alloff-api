@@ -99,6 +99,7 @@ func AddProductGroups() {
 
 		pdpriorities := []*domain.ProductPriorityDAO{}
 		for idx, pd := range products {
+			pd.SpecialPrice = pd.DiscountedPrice - 12345 // For test code
 			pdpriorities = append(pdpriorities, &domain.ProductPriorityDAO{
 				Priority: idx,
 				Product:  pd,
