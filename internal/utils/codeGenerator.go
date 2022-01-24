@@ -2,9 +2,11 @@ package utils
 
 import (
 	"math/rand"
+	"time"
 )
 
 func CreateShortUUID() string {
+	rand.Seed(time.Now().UnixNano())
 	CODE_CHARSET := []rune("346789ABCDEFGHJKLMNPQRTUVWXY")
 
 	b := make([]rune, 6)
