@@ -27,7 +27,19 @@ func (basket *Basket) IsValid() []error {
 	totalPrices := 0
 
 	for _, item := range basket.Items {
-		totalPrices += item.Product.DiscountedPrice
+		if item.ProductGroup != nil {
+			totalPrices += item.Product.SpecialPrice * item.Quantity
+		} else {
+			totalPrices += item.Product.DiscountedPrice * item.Quantity
+		}
+
+		if time.Now().After(item.ProductGroup.FinishTime) {
+			errs = append(errs, errors.New("productgroup finished time out"+item.Product.ID.Hex()))
+		}
+		if time.Now().Before(item.ProductGroup.StartTime) {
+			errs = append(errs, errors.New("productgroup not start yet"+item.Product.ID.Hex()))
+		}
+
 		isValidSize, isValidQuantity := false, false
 		for _, inv := range item.Product.Inventory {
 			if inv.Size == item.Size {
@@ -38,11 +50,11 @@ func (basket *Basket) IsValid() []error {
 			}
 		}
 		if !isValidSize {
-			errs = append(errs, errors.New("invalid product option "+item.Product.ProductInfo.ProductID))
+			errs = append(errs, errors.New("invalid product option "+item.Product.ID.Hex()))
 		}
 
 		if !isValidQuantity {
-			errs = append(errs, errors.New("invalid product option quantity "+item.Product.ProductInfo.ProductID))
+			errs = append(errs, errors.New("invalid product option quantity "+item.Product.ID.Hex()))
 		}
 	}
 
@@ -60,9 +72,11 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 	totalProductPrice := 0
 	for _, item := range basket.Items {
 		orderItemType := domain.NORMAL_ORDER
+		productPrice := item.Product.DiscountedPrice
 		if item.ProductGroup != nil {
 			// (TODO) 기획전이 생기면 추가되어야함.
 			orderItemType = domain.TIMEDEAL_ORDER
+			productPrice = item.Product.SpecialPrice
 		}
 
 		itemCode := utils.CreateShortUUID()
@@ -81,7 +95,7 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			BrandKeyname:           item.Product.ProductInfo.Brand.KeyName,
 			BrandKorname:           item.Product.ProductInfo.Brand.KorName,
 			Removed:                item.Product.Removed,
-			SalesPrice:             item.Product.DiscountedPrice,
+			SalesPrice:             productPrice,
 			CancelDescription:      item.Product.SalesInstruction.CancelDescription,
 			DeliveryDescription:    item.Product.SalesInstruction.DeliveryDescription,
 			OrderItemType:          orderItemType,
