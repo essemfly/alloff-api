@@ -103,7 +103,7 @@ func GetManuelSource(req *ProductManuelAddRequest) *domain.CrawlSourceDAO {
 
 func ProcessProductRequest(pd *domain.ProductDAO, request *ProductManuelAddRequest) (*domain.ProductDAO, error) {
 
-	alloffInstruction := GetProductDescription(pd)
+	alloffInstruction := GetProductDescription(pd, pd.ProductInfo.Source)
 	pd.UpdateInstruction(alloffInstruction)
 	pd.SalesInstruction.Description.Images = append(pd.SalesInstruction.Description.Images, request.Images...)
 	pd.SalesInstruction.Description.Images = append(pd.SalesInstruction.Description.Images, request.DescriptionImages...)

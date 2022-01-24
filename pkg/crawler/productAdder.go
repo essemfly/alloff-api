@@ -98,7 +98,7 @@ func ProcessProductRequest(pd *domain.ProductDAO, request product.ProductsAddReq
 		pd.UpdateAlloffCategory(alloffCat)
 	}
 
-	alloffInstruction := product.GetProductDescription(pd)
+	alloffInstruction := product.GetProductDescription(pd, request.Source)
 	pd.UpdateInstruction(alloffInstruction)
 
 	alloffScore := product.GetProductScore(pd)
