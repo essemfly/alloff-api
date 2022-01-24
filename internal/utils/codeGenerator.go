@@ -1,12 +1,15 @@
 package utils
 
-import "github.com/lithammer/shortuuid/v3"
-
-const (
-	CODE_CHARSET = "23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxy="
-	CODE_LENGTH  = 6
+import (
+	"math/rand"
 )
 
 func CreateShortUUID() string {
-	return shortuuid.NewWithAlphabet(CODE_CHARSET)[:CODE_LENGTH]
+	CODE_CHARSET := []rune("346789ABCDEFGHJKLMNPQRTUVWXY")
+
+	b := make([]rune, 6)
+	for i := range b {
+		b[i] = CODE_CHARSET[rand.Intn(len(CODE_CHARSET))]
+	}
+	return string(b)
 }
