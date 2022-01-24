@@ -31,8 +31,10 @@ func main() {
 	// scripts.UpdateHomeitems()
 	// scripts.AddProductDiffNotificaton()
 	// scripts.ConfirmOrders()
-	// scripts.SendNotification()
+	scripts.SendNotification()
+	// seeder.AddProductGroups()
 	// scripts.AddMockOrders()
-	scripts.AddMockHomeItems()
+	// scripts.AddMockHomeItems()
 	// scripts.InsertDiffNotification()
+	// scripts.TestAlimtalk()
 }
