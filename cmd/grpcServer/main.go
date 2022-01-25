@@ -27,6 +27,7 @@ func main() {
 	// (TODO) Be Refactored
 	config.InitIamPort(conf)
 	config.InitSlack(conf)
+	config.InitNotification(conf)
 
 	port := os.Getenv("GRPC_PORT")
 	if port == "" {
