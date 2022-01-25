@@ -273,6 +273,7 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 		_, err := repo.db.Model(orderDao).Update()
 		if err != nil {
 			log.Println("err on orderDAO", err)
+			return err
 		}
 
 		paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(orderDao.AlloffOrderID, int(payment.Amount))
@@ -284,6 +285,7 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 		_, err = repo.db.Model(paymentDao).Update()
 		if err != nil {
 			log.Println("err on paymentdao", err)
+			return err
 		}
 
 		alimtalk.NotifyPaymentSuccessAlarm(paymentDao)
