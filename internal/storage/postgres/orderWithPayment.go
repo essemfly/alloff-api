@@ -206,36 +206,32 @@ func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymen
 	if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
 		orderDao.UpdatedAt = time.Now()
 		orderDao.OrderStatus = domain.ORDER_RECREATED
+		_, err := repo.db.Model(orderDao).WherePK().Update()
+		if err != nil {
+			log.Println("err on orderDAO", err)
+			return err
+		}
 
 		for _, item := range orderDao.OrderItems {
 			item.UpdatedAt = time.Now()
 			item.OrderItemStatus = domain.ORDER_ITEM_RECREATED
+			_, err := repo.db.Model(item).WherePK().Update()
+			if err != nil {
+				log.Println("err on orderItemDAO", err)
+				return err
+			}
+
 			pd, err := ioc.Repo.Products.Get(item.ProductID)
 			if err != nil {
 				return err
 			}
-
 			err = pd.Revert(item.Size, item.Quantity)
 			if err != nil {
 				return err
 			}
-
 			_, err = ioc.Repo.Products.Upsert(pd)
 			if err != nil {
 				log.Println("productDao Update", err)
-				return err
-			}
-		}
-
-		_, err := repo.db.Model(orderDao).WherePK().Update()
-		if err != nil {
-			return err
-		}
-		for _, orderItemDAO := range orderDao.OrderItems {
-			orderItemDAO.OrderItemStatus = domain.ORDER_ITEM_RECREATED
-			_, err = repo.db.Model(orderItemDAO).WherePK().Update()
-			if err != nil {
-				log.Println("err on orderItemDAO", err)
 				return err
 			}
 		}
