@@ -19,6 +19,7 @@ type Product {
   category: Category!
   brand: Brand!
   name: String!
+  productGroupId: String!
   originalPrice: Int!
   soldout: Boolean!
   images: [String!]!

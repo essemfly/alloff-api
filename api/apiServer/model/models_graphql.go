@@ -321,6 +321,7 @@ type Product struct {
 	Category            *Category            `json:"category"`
 	Brand               *Brand               `json:"brand"`
 	Name                string               `json:"name"`
+	ProductGroupID      string               `json:"productGroupId"`
 	OriginalPrice       int                  `json:"originalPrice"`
 	Soldout             bool                 `json:"soldout"`
 	Images              []string             `json:"images"`
