@@ -2,12 +2,7 @@ package mongo
 
 import (
 	"context"
-	"crypto/tls"
-	"crypto/x509"
-	"errors"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config"
@@ -38,17 +33,6 @@ type MongoDB struct {
 	likeProductsCol    *mongo.Collection
 	exhibitionCol      *mongo.Collection
 }
-
-const (
-	// Path to the AWS CA file
-	caFilePath = "rds-combined-ca-bundle.pem"
-
-	// Timeout operations after N seconds
-	connectTimeout = 5
-	queryTimeout   = 30
-
-	connectionStringTemplate = "mongodb://%s:%s@%s/%s?tls=true&replicaSet=rs0&retryWrites=false"
-)
 
 func NewMongoDB(conf config.Configuration) *MongoDB {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
@@ -104,29 +88,12 @@ func (conn *MongoDB) RegisterRepos() {
 }
 
 func makeMongoClient(ctx context.Context, conf config.Configuration) (*mongo.Client, error) {
-	if conf.ENVIRONMENT == "local" {
-		credential := options.Credential{
-			Username: conf.MONGO_USERNAME,
-			Password: conf.MONGO_PASSWORD,
-		}
-		clientOptions := options.Client().ApplyURI("mongodb://" + conf.MONGO_URL).SetAuth(credential)
-		mongoClient, err := mongo.Connect(ctx, clientOptions)
-		return mongoClient, err
+	credential := options.Credential{
+		Username: conf.MONGO_USERNAME,
+		Password: conf.MONGO_PASSWORD,
 	}
-
-	connectionURI := fmt.Sprintf(connectionStringTemplate, conf.MONGO_USERNAME, conf.MONGO_PASSWORD, conf.MONGO_URL, conf.MONGO_DB_NAME)
-
-	tlsConfig, err := getCustomTLSConfig(caFilePath)
-	if err != nil {
-		log.Fatalf("Failed getting TLS configuration: %v", err)
-	}
-
-	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(connectionURI).SetTLSConfig(tlsConfig))
-	if err != nil {
-		log.Fatalf("Failed to create client: %v", err)
-	}
-
-	err = mongoClient.Connect(ctx)
+	clientOptions := options.Client().ApplyURI("mongodb://" + conf.MONGO_URL).SetAuth(credential)
+	mongoClient, err := mongo.Connect(ctx, clientOptions)
 	return mongoClient, err
 }
 
@@ -135,22 +102,4 @@ func checkErr(err error, location string) {
 		fmt.Println("Error occured: " + location)
 		fmt.Println("Message: " + err.Error())
 	}
-}
-
-func getCustomTLSConfig(caFile string) (*tls.Config, error) {
-	tlsConfig := new(tls.Config)
-	certs, err := ioutil.ReadFile(caFile)
-
-	if err != nil {
-		return tlsConfig, err
-	}
-
-	tlsConfig.RootCAs = x509.NewCertPool()
-	ok := tlsConfig.RootCAs.AppendCertsFromPEM(certs)
-
-	if !ok {
-		return tlsConfig, errors.New("failed parsing pem file")
-	}
-
-	return tlsConfig, nil
 }
