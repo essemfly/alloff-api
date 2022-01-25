@@ -173,18 +173,31 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			return err
 		}
 
-		_, err = config.PaymentService.PreparePayment(orderDao.AlloffOrderID, float64(orderDao.TotalPrice))
-		if err != nil {
-			log.Println("iamport error")
-			return err
+		_, prevFailedErr := ioc.Repo.Payments.GetByOrderIDAndAmount(orderDao.AlloffOrderID, orderDao.TotalPrice)
+
+		if prevFailedErr != nil {
+			_, err = config.PaymentService.PreparePayment(orderDao.AlloffOrderID, float64(orderDao.TotalPrice))
+			if err != nil {
+				log.Println("iamport error", err)
+				return err
+			}
+
+			paymentDao.CreatedAt = time.Now()
+			paymentDao.UpdatedAt = time.Now()
+			paymentDao.PaymentStatus = domain.PAYMENT_CREATED
+			_, err = repo.db.Model(paymentDao).Insert()
+			if err != nil {
+				log.Println("paymentDao Insert", err)
+				return err
+			}
+			return nil
 		}
 
-		paymentDao.CreatedAt = time.Now()
-		paymentDao.UpdatedAt = time.Now()
 		paymentDao.PaymentStatus = domain.PAYMENT_CREATED
-		_, err = repo.db.Model(paymentDao).Insert()
+		paymentDao.UpdatedAt = time.Now()
+		_, err = repo.db.Model(paymentDao).WherePK().Update()
 		if err != nil {
-			log.Println("paymentDao Insert")
+			log.Println("paymentDao update", err)
 			return err
 		}
 
