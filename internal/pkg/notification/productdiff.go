@@ -43,7 +43,7 @@ func InsertDiffNotification(newProduct *domain.ProductDAO, oldPrice int) error {
 
 			if len(deviceIDs) > 0 {
 				messages := "[" + newProduct.ProductInfo.Brand.KorName + "]" + newProduct.AlloffName + "\n"
-				messages += utils.PriceFormatter(like.OldProduct.DiscountedPrice) + " > " + utils.PriceFormatter(newProduct.DiscountedPrice)
+				messages += utils.PriceFormatter(like.LastPrice) + " > " + utils.PriceFormatter(newProduct.DiscountedPrice)
 				messages += ", 지금 확인해보세요!"
 				productDiffNotification := domain.NotificationDAO{
 					ID:               primitive.NewObjectID(),
