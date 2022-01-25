@@ -110,7 +110,7 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			UpdatedAt:              time.Now(),
 		})
 
-		totalProductPrice += item.Product.DiscountedPrice * item.Quantity
+		totalProductPrice += productPrice * item.Quantity
 	}
 
 	userID := ""
