@@ -231,6 +231,14 @@ func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymen
 		if err != nil {
 			return err
 		}
+		for _, orderItemDAO := range orderDao.OrderItems {
+			orderItemDAO.OrderItemStatus = domain.ORDER_ITEM_RECREATED
+			_, err = repo.db.Model(orderItemDAO).WherePK().Update()
+			if err != nil {
+				log.Println("err on orderItemDAO", err)
+				return err
+			}
+		}
 
 		paymentDao.UpdatedAt = time.Now()
 		paymentDao.PaymentStatus = domain.PAYMENT_CANCELED
