@@ -67,16 +67,16 @@ func AddNiceClaup() {
 				CrawlUrl:             crawlUrl + val,
 				CrawlModuleName:      modulename,
 				IsSalesProducts:      true,
-				IsForeignDelivery:    true,
+				IsForeignDelivery:    false,
 				PriceMarginPolicy:    "NORMAL",
 				DeliveryPrice:        0,
-				EarliestDeliveryDays: 14,
-				LatestDeliveryDays:   21,
+				EarliestDeliveryDays: 2,
+				LatestDeliveryDays:   7,
 				DeliveryDesc:         nil,
-				RefundAvailable:      false,
-				ChangeAvailable:      false,
-				RefundFee:            50000,
-				ChangeFee:            50000,
+				RefundAvailable:      true,
+				ChangeAvailable:      true,
+				RefundFee:            5000,
+				ChangeFee:            5000,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)
