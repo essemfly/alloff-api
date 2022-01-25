@@ -275,6 +275,14 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 			log.Println("err on orderDAO", err)
 			return err
 		}
+		for _, orderItemDAO := range orderDao.OrderItems {
+			orderItemDAO.OrderItemStatus = domain.ORDER_ITEM_PAYMENT_FINISHED
+			_, err = repo.db.Model(orderItemDAO).WherePK().Update()
+			if err != nil {
+				log.Println("err on orderItemDAO", err)
+				return err
+			}
+		}
 
 		paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(orderDao.AlloffOrderID, int(payment.Amount))
 		if err != nil {
