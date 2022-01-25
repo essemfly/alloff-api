@@ -2,10 +2,7 @@ package domain
 
 import (
 	"errors"
-	"strconv"
 	"time"
-
-	"github.com/lessbutter/alloff-api/api/apiServer/model"
 )
 
 type OrderItemStatusEnum string
@@ -70,93 +67,6 @@ type OrderItemDAO struct {
 	CancelRequestedAt      time.Time               `pg:"cancel_requested_at"`
 	CancelFinishedAt       time.Time               `pg:"cancel_finished_at"`
 	ConfirmedAt            time.Time               `pg:"confirmed_at"`
-}
-
-func (orderItemDao *OrderItemDAO) ToDTO() *model.OrderItem {
-	trackingNumber := ""
-	trackingUrl := ""
-
-	if len(orderItemDao.DeliveryTrackingNumber) > 0 {
-		trackingNumber = orderItemDao.DeliveryTrackingNumber[len(orderItemDao.DeliveryTrackingNumber)-1]
-		trackingUrl = orderItemDao.DeliveryTrackingUrl[len(orderItemDao.DeliveryTrackingUrl)-1]
-	}
-	return &model.OrderItem{
-		ID:                     strconv.Itoa(orderItemDao.ID),
-		ProductID:              orderItemDao.ProductID,
-		ProductName:            orderItemDao.ProductName,
-		ProductImg:             orderItemDao.ProductImg,
-		BrandKeyname:           orderItemDao.BrandKeyname,
-		BrandKorname:           orderItemDao.BrandKorname,
-		Removed:                orderItemDao.Removed,
-		SalesPrice:             orderItemDao.SalesPrice,
-		Selectsize:             orderItemDao.Size,
-		Quantity:               orderItemDao.Quantity,
-		OrderItemType:          MapOrderItemType(orderItemDao.OrderItemType),
-		OrderItemStatus:        MapOrderItemStatus(orderItemDao.OrderItemStatus),
-		CancelDescription:      orderItemDao.CancelDescription.ToDTO(),
-		DeliveryDescription:    orderItemDao.DeliveryDescription.ToDTO(),
-		DeliveryTrackingNumber: trackingNumber,
-		DeliveryTrackingURL:    trackingUrl,
-		RefundInfo:             orderItemDao.RefundInfo.ToDTO(),
-		CreatedAt:              orderItemDao.CreatedAt.String(),
-		UpdatedAt:              orderItemDao.UpdatedAt.String(),
-		OrderedAt:              orderItemDao.OrderedAt.String(),
-		DeliveryStartedAt:      orderItemDao.DeliveryStartedAt.String(),
-		DeliveryFinishedAt:     orderItemDao.DeliveryFinishedAt.String(),
-		CancelRequestedAt:      orderItemDao.CancelRequestedAt.String(),
-		CancelFinishedAt:       orderItemDao.CancelFinishedAt.String(),
-		ConfirmedAt:            orderItemDao.ConfirmedAt.String(),
-	}
-}
-
-func MapOrderItemStatus(enum OrderItemStatusEnum) model.OrderItemStatusEnum {
-	switch enum {
-	case ORDER_ITEM_PAYMENT_FINISHED:
-		return model.OrderItemStatusEnumPaymentFinished
-	case ORDER_ITEM_PRODUCT_PREPARING:
-		return model.OrderItemStatusEnumProductPreparing
-	case ORDER_ITEM_FOREIGN_PRODUCT_INSPECTING:
-		return model.OrderItemStatusEnumForeignProductInspecting
-	case ORDER_ITEM_DELIVERY_PREPARING:
-		return model.OrderItemStatusEnumDeliveryPreparing
-	case ORDER_ITEM_FOREIGN_DELIVERY_STARTED:
-		return model.OrderItemStatusEnumForeignDeliveryStatrted
-	case ORDER_ITEM_DELIVERY_STARTED:
-		return model.OrderItemStatusEnumDeliveryStarted
-	case ORDER_ITEM_DELIVERY_FINISHED:
-		return model.OrderItemStatusEnumDeliveryFinished
-	case ORDER_ITEM_CONFIRM_PAYMENT:
-		return model.OrderItemStatusEnumConfirmPayment
-	case ORDER_ITEM_CANCEL_FINISHED:
-		return model.OrderItemStatusEnumCancelFinished
-	case ORDER_ITEM_EXCHANGE_REQUESTED:
-		return model.OrderItemStatusEnumExchangeRequested
-	case ORDER_ITEM_EXCHANGE_PENDING:
-		return model.OrderItemStatusEnumExchangePending
-	case ORDER_ITEM_EXCHANGE_FINISHED:
-		return model.OrderItemStatusEnumExchangeFinished
-	case ORDER_ITEM_RETURN_REQUESTED:
-		return model.OrderItemStatusEnumReturnRequested
-	case ORDER_ITEM_RETURN_PENDING:
-		return model.OrderItemStatusEnumReturnPending
-	case ORDER_ITEM_RETURN_FINISHED:
-		return model.OrderItemStatusEnumReturnFinished
-	default:
-		return model.OrderItemStatusEnumUnknown
-	}
-}
-
-func MapOrderItemType(enum OrderItemTypeEnum) model.OrderItemTypeEnum {
-	switch enum {
-	case NORMAL_ORDER:
-		return model.OrderItemTypeEnumNormal
-	case TIMEDEAL_ORDER:
-		return model.OrderItemTypeEnumTimedeal
-	case EXHIBITION_ORDER:
-		return model.OrderItemTypeEnumExhibition
-	default:
-		return model.OrderItemTypeEnumUnknown
-	}
 }
 
 func (orderItemDao *OrderItemDAO) ConfirmOrder() error {

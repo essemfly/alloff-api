@@ -7,6 +7,7 @@ import (
 	"context"
 
 	"github.com/lessbutter/alloff-api/api/apiServer"
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 )
@@ -15,7 +16,7 @@ func (r *queryResolver) Alloffcategories(ctx context.Context, input *model.Allof
 	alloffCatDaos, _ := ioc.Repo.AlloffCategories.List(input.ParentID)
 	cats := []*model.AlloffCategory{}
 	for _, catDao := range alloffCatDaos {
-		cat := catDao.ToDTO()
+		cat := mapper.MapAlloffCatDaoToAlloffCat(catDao)
 		if cat != nil {
 			cats = append(cats, cat)
 		}
@@ -25,7 +26,7 @@ func (r *queryResolver) Alloffcategories(ctx context.Context, input *model.Allof
 
 func (r *queryResolver) Alloffcategory(ctx context.Context, input *model.AlloffCategoryID) (*model.AlloffCategory, error) {
 	catDao, _ := ioc.Repo.AlloffCategories.Get(input.ID)
-	return catDao.ToDTO(), nil
+	return mapper.MapAlloffCatDaoToAlloffCat(catDao), nil
 }
 
 // Query returns apiServer.QueryResolver implementation.

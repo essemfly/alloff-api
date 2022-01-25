@@ -6,6 +6,7 @@ package resolver
 import (
 	"context"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 )
@@ -18,7 +19,7 @@ func (r *queryResolver) Featureds(ctx context.Context) ([]*model.FeaturedItem, e
 
 	items := []*model.FeaturedItem{}
 	for _, itemDao := range featuredDaos {
-		items = append(items, itemDao.ToDTO())
+		items = append(items, mapper.MapFeatured(itemDao))
 	}
 
 	return items, nil
@@ -32,7 +33,7 @@ func (r *queryResolver) Homeitems(ctx context.Context) ([]*model.HomeItem, error
 
 	items := []*model.HomeItem{}
 	for _, itemDao := range homeitemDaos {
-		items = append(items, itemDao.ToDTO())
+		items = append(items, mapper.MapHomeitem(itemDao))
 	}
 
 	return items, nil

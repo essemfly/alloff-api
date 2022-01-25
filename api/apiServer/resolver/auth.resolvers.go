@@ -8,6 +8,7 @@ import (
 	"errors"
 
 	"github.com/lessbutter/alloff-api/api/apiServer"
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -21,7 +22,7 @@ func (r *mutationResolver) RegisterNotification(ctx context.Context, deviceID st
 	}
 
 	device, _ := ioc.Repo.Devices.GetByDeviceID(deviceID)
-	return device.ToDTO(), nil
+	return mapper.MapDeviceDaoToDevice(device), nil
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {
@@ -90,10 +91,10 @@ func (r *mutationResolver) UpdateUserInfo(ctx context.Context, input model.UserI
 
 	newUser, err := ioc.Repo.Users.Insert(user)
 	if err != nil {
-		return user.ToDTO(), err
+		return mapper.MapUserDaoToUser(user), err
 	}
 
-	return newUser.ToDTO(), nil
+	return mapper.MapUserDaoToUser(newUser), nil
 }
 
 func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string, error) {
@@ -148,7 +149,7 @@ func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
 		return nil, errors.New("invalid token")
 	}
 
-	return user.ToDTO(), nil
+	return mapper.MapUserDaoToUser(user), nil
 }
 
 // Mutation returns apiServer.MutationResolver implementation.

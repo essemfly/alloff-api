@@ -8,6 +8,7 @@ import (
 	"errors"
 	"strconv"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -48,14 +49,14 @@ func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInp
 		return &model.OrderValidityResult{
 			Available: false,
 			ErrorMsgs: errString,
-			Order:     orderDao.ToDTO(),
+			Order:     mapper.MapOrder(orderDao),
 		}, nil
 	}
 
 	return &model.OrderValidityResult{
 		Available: true,
 		ErrorMsgs: nil,
-		Order:     orderDao.ToDTO(),
+		Order:     mapper.MapOrder(orderDao),
 	}, nil
 }
 
@@ -100,10 +101,10 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 	return &model.OrderWithPayment{
 		Success:        true,
 		ErrorMsg:       "",
-		PaymentInfo:    basePayment.ToDTO(),
+		PaymentInfo:    mapper.MapPayment(basePayment),
 		PaymentMethods: basePayment.GetPaymentMethods(),
-		Order:          newOrderDao.ToDTO(),
-		User:           user.ToDTO(),
+		Order:          mapper.MapOrder(newOrderDao),
+		User:           mapper.MapUserDaoToUser(user),
 	}, nil
 }
 
@@ -141,8 +142,8 @@ func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.Paym
 	result := &model.PaymentStatus{
 		Success:     false,
 		ErrorMsg:    "",
-		PaymentInfo: paymentDao.ToDTO(),
-		Order:       orderDao.ToDTO(),
+		PaymentInfo: mapper.MapPayment(paymentDao),
+		Order:       mapper.MapOrder(orderDao),
 	}
 
 	orderDao.UserMemo = *input.Memo
@@ -180,8 +181,8 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Payme
 	result := &model.PaymentStatus{
 		Success:     false,
 		ErrorMsg:    "",
-		PaymentInfo: paymentDao.ToDTO(),
-		Order:       orderDao.ToDTO(),
+		PaymentInfo: mapper.MapPayment(paymentDao),
+		Order:       mapper.MapOrder(orderDao),
 	}
 
 	err = ioc.Service.OrderWithPaymentService.CancelPayment(orderDao, paymentDao)
@@ -252,8 +253,8 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 	result := &model.PaymentStatus{
 		Success:     false,
 		ErrorMsg:    "",
-		PaymentInfo: paymentDao.ToDTO(),
-		Order:       orderDao.ToDTO(),
+		PaymentInfo: mapper.MapPayment(paymentDao),
+		Order:       mapper.MapOrder(orderDao),
 	}
 
 	err = ioc.Service.OrderWithPaymentService.CancelOrderRequest(orderDao, orderItemDao, paymentDao)
@@ -306,7 +307,7 @@ func (r *mutationResolver) ConfirmOrderItem(ctx context.Context, orderID string,
 		Success:     true,
 		ErrorMsg:    "",
 		PaymentInfo: nil,
-		Order:       newOrderDao.ToDTO(),
+		Order:       mapper.MapOrder(newOrderDao),
 	}, nil
 }
 
@@ -321,7 +322,7 @@ func (r *queryResolver) Order(ctx context.Context, id string) (*model.OrderInfo,
 		return nil, err
 	}
 
-	return orderDao.ToDTO(), nil
+	return mapper.MapOrder(orderDao), nil
 }
 
 func (r *queryResolver) Orders(ctx context.Context) ([]*model.OrderInfo, error) {
@@ -338,7 +339,7 @@ func (r *queryResolver) Orders(ctx context.Context) ([]*model.OrderInfo, error) 
 
 	orders := []*model.OrderInfo{}
 	for _, orderDao := range orderDaos {
-		orders = append(orders, orderDao.ToDTO())
+		orders = append(orders, mapper.MapOrder(orderDao))
 	}
 
 	return orders, nil

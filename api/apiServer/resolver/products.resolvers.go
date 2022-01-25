@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -29,7 +30,7 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product,
 		return nil, err
 	}
 
-	return pdDao.ToDTO(), nil
+	return mapper.MapProductDaoToProduct(pdDao), nil
 }
 
 func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error) {
@@ -69,7 +70,7 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 
 	var products []*model.Product
 	for _, productDao := range productDaos {
-		newProd := productDao.ToDTO()
+		newProd := mapper.MapProductDaoToProduct(productDao)
 		products = append(products, newProd)
 	}
 
@@ -123,17 +124,17 @@ func (r *queryResolver) AlloffCategoryProducts(ctx context.Context, input model.
 
 	var products []*model.Product
 	for _, productDao := range productDaos {
-		products = append(products, productDao.ToDTO())
+		products = append(products, mapper.MapProductDaoToProduct(productDao))
 	}
 
 	var brands []*model.Brand
 	includeCategory := false
 	for _, brandDao := range brandDaos {
-		brands = append(brands, brandDao.ToDTO(includeCategory))
+		brands = append(brands, mapper.MapBrandDaoToBrand(brandDao, includeCategory))
 	}
 
 	return &model.AlloffCategoryProducts{
-		Alloffcategory: alloffCatDao.ToDTO(),
+		Alloffcategory: mapper.MapAlloffCatDaoToAlloffCat(alloffCatDao),
 		Products:       products,
 		AllBrands:      brands,
 		TotalCount:     totalCount,
@@ -159,10 +160,10 @@ func (r *queryResolver) Likeproducts(ctx context.Context) ([]*model.LikeProductO
 			return nil, errors.New("old product is missing")
 		}
 
-		oldProduct := like.OldProduct.ToDTO()
+		oldProduct := mapper.MapProductDaoToProduct(like.OldProduct)
 		likeProduct := model.LikeProductOutput{
 			OldProduct: oldProduct,
-			NewProduct: newProduct.ToDTO(),
+			NewProduct: mapper.MapProductDaoToProduct(newProduct),
 		}
 
 		products = append(products, &likeProduct)

@@ -6,6 +6,7 @@ package resolver
 import (
 	"context"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 )
@@ -16,7 +17,7 @@ func (r *queryResolver) ProductGroup(ctx context.Context, id string) (*model.Pro
 		return nil, err
 	}
 
-	return pgDao.ToDTO(), nil
+	return mapper.MapProductGroupDao(pgDao), nil
 }
 
 func (r *queryResolver) ProductGroups(ctx context.Context) ([]*model.ProductGroup, error) {
@@ -28,7 +29,7 @@ func (r *queryResolver) ProductGroups(ctx context.Context) ([]*model.ProductGrou
 	pgs := []*model.ProductGroup{}
 
 	for _, pgDao := range pgDaos {
-		pgs = append(pgs, pgDao.ToDTO())
+		pgs = append(pgs, mapper.MapProductGroupDao(pgDao))
 	}
 
 	return pgs, nil
@@ -40,7 +41,7 @@ func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhib
 		return nil, err
 	}
 
-	return exhibitionDao.ToDTO(), nil
+	return mapper.MapExhibition(exhibitionDao), nil
 }
 
 func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, error) {
@@ -51,8 +52,8 @@ func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, e
 
 	exs := []*model.Exhibition{}
 
-	for _, exexhibitionDao := range exhibitionDaos {
-		exs = append(exs, exexhibitionDao.ToDTO())
+	for _, exhibitionDao := range exhibitionDaos {
+		exs = append(exs, mapper.MapExhibition(exhibitionDao))
 	}
 
 	return exs, nil

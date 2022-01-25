@@ -34,28 +34,6 @@ type OrderDAO struct {
 	OrderedAt     time.Time       `pg:"ordered_at"`
 }
 
-func (orderDao *OrderDAO) ToDTO() *model.OrderInfo {
-	orderItems := []*model.OrderItem{}
-	for _, orderDao := range orderDao.OrderItems {
-		orderItems = append(orderItems, orderDao.ToDTO())
-	}
-
-	orderInfo := &model.OrderInfo{
-		ID:            orderDao.AlloffOrderID,
-		Orders:        orderItems,
-		ProductPrice:  orderDao.ProductPrice,
-		DeliveryPrice: orderDao.DeliveryPrice,
-		TotalPrice:    orderDao.TotalPrice,
-		RefundPrice:   &orderDao.RefundPrice,
-		UserMemo:      orderDao.UserMemo,
-		CreatedAt:     orderDao.CreatedAt.String(),
-		UpdatedAt:     orderDao.UpdatedAt.String(),
-		OrderedAt:     orderDao.OrderedAt.String(),
-	}
-
-	return orderInfo
-}
-
 func (orderDao *OrderDAO) GetBasePayment() *PaymentDAO {
 	return &PaymentDAO{
 		Pg:            "danal_tpay",

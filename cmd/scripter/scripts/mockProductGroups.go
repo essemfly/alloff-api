@@ -11,11 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func AddProductGroupsSeeder() {
-	log.Println("Add Dummy Product Groups")
-	AddProductGroups()
-}
-
 func AddProductGroups() {
 	loc, _ := time.LoadLocation("Asia/Seoul")
 	timedealInstrctuion := []string{
@@ -99,10 +94,10 @@ func AddProductGroups() {
 
 		pdpriorities := []*domain.ProductPriorityDAO{}
 		for idx, pd := range products {
-			pd.SpecialPrice = pd.DiscountedPrice - 12345 // For test code
+			pd.SpecialPrice = pd.DiscountedPrice // For test code
 			pdpriorities = append(pdpriorities, &domain.ProductPriorityDAO{
-				Priority: idx,
-				Product:  pd,
+				Priority:  idx,
+				ProductID: pd.ID,
 			})
 		}
 

@@ -2,8 +2,6 @@ package domain
 
 import (
 	"time"
-
-	"github.com/lessbutter/alloff-api/api/apiServer/model"
 )
 
 type RefundItemDAO struct {
@@ -15,15 +13,4 @@ type RefundItemDAO struct {
 	RefundAmount int       `pg:"refund_amount"`
 	CreatedAt    time.Time `pg:"created_at"`
 	UpdatedAt    time.Time `pg:"updated_at`
-}
-
-func (itemDao *RefundItemDAO) ToDTO() *model.RefundInfo {
-	refundInfo := &model.RefundInfo{
-		RefundFee:    itemDao.RefundFee,
-		RefundAmount: itemDao.RefundAmount,
-		CreatedAt:    itemDao.CreatedAt.String(),
-		UpdatedAt:    itemDao.UpdatedAt.String(),
-	}
-
-	return refundInfo
 }

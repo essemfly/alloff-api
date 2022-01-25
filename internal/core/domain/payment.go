@@ -42,22 +42,6 @@ type PaymentDAO struct {
 	UpdatedAt     time.Time         `pg:"updated_at"`
 }
 
-func (paymentDao *PaymentDAO) ToDTO() *model.PaymentInfo {
-	return &model.PaymentInfo{
-		Pg:            paymentDao.Pg,
-		PayMethod:     paymentDao.PayMethod,
-		Name:          paymentDao.Name,
-		MerchantUID:   paymentDao.MerchantUid,
-		Amount:        paymentDao.Amount,
-		BuyerName:     paymentDao.BuyerName,
-		BuyerMobile:   paymentDao.BuyerMobile,
-		BuyerAddress:  paymentDao.BuyerAddress,
-		BuyerPostCode: paymentDao.BuyerPostCode,
-		Company:       paymentDao.Company,
-		AppScheme:     paymentDao.AppScheme,
-	}
-}
-
 func (paymentDao *PaymentDAO) GetPaymentMethods() []*model.PaymentMethod {
 	// (TODO) To be specified in collection
 	paymentMethods := []*model.PaymentMethod{

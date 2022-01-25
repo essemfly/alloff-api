@@ -4,7 +4,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -112,13 +111,6 @@ type ProductDescriptionDAO struct {
 	Texts  []string
 }
 
-func (productDesc *ProductDescriptionDAO) ToDTO() *model.ProductDescription {
-	return &model.ProductDescription{
-		Images: productDesc.Images,
-		Texts:  productDesc.Texts,
-	}
-}
-
 type DeliveryDescriptionDAO struct {
 	DeliveryType         DeliveryType
 	DeliveryFee          int
@@ -127,38 +119,11 @@ type DeliveryDescriptionDAO struct {
 	Texts                []string
 }
 
-func (deliveryDesc *DeliveryDescriptionDAO) ToDTO() *model.DeliveryDescription {
-	deliveryType := model.DeliveryTypeDomesticDelivery
-	if deliveryDesc.DeliveryType == Foreign {
-		deliveryType = model.DeliveryTypeForeignDelivery
-	}
-
-	return &model.DeliveryDescription{
-		DeliveryType:         deliveryType,
-		DeliveryFee:          deliveryDesc.DeliveryFee,
-		EarliestDeliveryDays: deliveryDesc.EarliestDeliveryDays,
-		LatestDeliveryDays:   deliveryDesc.LatestDeliveryDays,
-		Texts:                deliveryDesc.Texts,
-	}
-}
-
 type CancelDescriptionDAO struct {
 	RefundAvailable bool
 	ChangeAvailable bool
 	ChangeFee       int
 	RefundFee       int
-}
-
-type IndentText struct {
-}
-
-func (cancelDesc *CancelDescriptionDAO) ToDTO() *model.CancelDescription {
-	return &model.CancelDescription{
-		RefundAvailable: cancelDesc.RefundAvailable,
-		ChangeAvailable: cancelDesc.ChangeAvailable,
-		ChangeFee:       cancelDesc.ChangeFee,
-		RefundFee:       cancelDesc.RefundFee,
-	}
 }
 
 type ProductDAO struct {
@@ -269,60 +234,6 @@ func (pd *ProductDAO) Revert(size string, quantity int) error {
 		}
 	}
 	return errors.New("no matched product size option")
-}
-
-func (pdDao *ProductDAO) ToDTO() *model.Product {
-	inventories := []*model.Inventory{}
-
-	for _, inv := range pdDao.Inventory {
-		inventories = append(inventories, &model.Inventory{
-			Quantity: inv.Quantity,
-			Size:     inv.Size,
-		})
-	}
-
-	var information []*model.KeyValueInfo
-	for k, v := range pdDao.ProductInfo.Information {
-		var newInfo model.KeyValueInfo
-		newInfo.Key = k
-		newInfo.Value = v
-		information = append(information, &newInfo)
-	}
-
-	deliveryDesc := pdDao.SalesInstruction.DeliveryDescription.ToDTO()
-	if pdDao.ProductInfo.Source.IsForeignDelivery {
-		deliveryDesc.DeliveryType = model.DeliveryTypeForeignDelivery
-	} else {
-		deliveryDesc.DeliveryType = model.DeliveryTypeDomesticDelivery
-	}
-
-	specialDiscount := 0
-	if pdDao.SpecialPrice < pdDao.DiscountedPrice {
-		specialDiscount = utils.CalculateDiscountRate(pdDao.ProductInfo.Price.OriginalPrice, float32(pdDao.SpecialPrice))
-	}
-
-	return &model.Product{
-		ID:                  pdDao.ID.Hex(),
-		Category:            pdDao.ProductInfo.Category.ToDTO(),
-		Brand:               pdDao.ProductInfo.Brand.ToDTO(false),
-		Name:                pdDao.AlloffName,
-		OriginalPrice:       int(pdDao.ProductInfo.Price.OriginalPrice),
-		Soldout:             pdDao.Soldout,
-		Images:              pdDao.ProductInfo.Images,
-		DiscountedPrice:     pdDao.DiscountedPrice,
-		DiscountRate:        pdDao.DiscountRate,
-		SpecialPrice:        &pdDao.SpecialPrice,
-		SpecialDiscountRate: &specialDiscount,
-		ProductURL:          pdDao.ProductInfo.ProductUrl,
-		Inventory:           inventories,
-		IsUpdated:           pdDao.IsUpdated,
-		IsNewProduct:        pdDao.Score.IsNewlyCrawled,
-		Removed:             pdDao.Removed,
-		Information:         information,
-		Description:         pdDao.SalesInstruction.Description.ToDTO(),
-		CancelDescription:   pdDao.SalesInstruction.CancelDescription.ToDTO(),
-		DeliveryDescription: deliveryDesc,
-	}
 }
 
 type PriceDAO struct {

@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -28,7 +29,7 @@ func (r *queryResolver) Brand(ctx context.Context, input *model.BrandInput) (*mo
 		return nil, err
 	}
 
-	return brandDao.ToDTO(includeCategory), nil
+	return mapper.MapBrandDaoToBrand(brandDao, includeCategory), nil
 }
 
 func (r *queryResolver) Brands(ctx context.Context, input *model.BrandsInput) ([]*model.Brand, error) {
@@ -46,7 +47,7 @@ func (r *queryResolver) Brands(ctx context.Context, input *model.BrandsInput) ([
 
 			likeBrands := []*model.Brand{}
 			for _, likebrand := range likeDao.Brands {
-				likeBrands = append(likeBrands, likebrand.ToDTO(false))
+				likeBrands = append(likeBrands, mapper.MapBrandDaoToBrand(likebrand, false))
 			}
 
 			return likeBrands, nil
@@ -62,7 +63,7 @@ func (r *queryResolver) Brands(ctx context.Context, input *model.BrandsInput) ([
 
 	brands := []*model.Brand{}
 	for _, brand := range brandDaos {
-		brands = append(brands, brand.ToDTO(false))
+		brands = append(brands, mapper.MapBrandDaoToBrand(brand, false))
 	}
 
 	return brands, nil
