@@ -129,7 +129,7 @@ type CancelDescriptionDAO struct {
 type ProductDAO struct {
 	ID               primitive.ObjectID `bson:"_id,omitempty"`
 	ProductInfo      *ProductMetaInfoDAO
-	ProductGroupId   *primitive.ObjectID
+	ProductGroupId   string
 	AlloffName       string
 	DiscountedPrice  int
 	DiscountRate     int

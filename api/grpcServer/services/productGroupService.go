@@ -81,7 +81,7 @@ func (s *ProductGroupService) PushProducts(ctx context.Context, req *grpcServer.
 			return nil, err
 		}
 
-		pd.ProductGroupId = &pgDao.ID
+		pd.ProductGroupId = pgDao.ID.Hex()
 		_, err = ioc.Repo.Products.Upsert(pd)
 		if err != nil {
 			return nil, err

@@ -42,7 +42,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		Brand:               MapBrandDaoToBrand(pdDao.ProductInfo.Brand, false),
 		Name:                pdDao.AlloffName,
 		OriginalPrice:       int(pdDao.ProductInfo.Price.OriginalPrice),
-		ProductGroupID:      pdDao.ProductGroupId.Hex(),
+		ProductGroupID:      pdDao.ProductGroupId,
 		Soldout:             pdDao.Soldout,
 		Images:              pdDao.ProductInfo.Images,
 		DiscountedPrice:     pdDao.DiscountedPrice,
