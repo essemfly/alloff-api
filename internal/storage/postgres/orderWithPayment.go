@@ -65,7 +65,7 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 			}
 			_, err = ioc.Repo.Refunds.Insert(newRefundInfo)
 			if err != nil {
-				log.Println("error on adding refund")
+				log.Println("error on adding refund", err)
 				return err
 			}
 
