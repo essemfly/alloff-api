@@ -34,21 +34,21 @@ func main() {
 	config.InitNotification(conf)
 
 	crawlModules := []string{
-//		"lottefashion",
-//		"ssfmall",
-//		"idlook",
-//		"sivillage",
-//		"kolon",
-//		"babathe",
-//		"idfmall",
-//		"daehyun",
-//		"niceclaup",
-//		"lacoste",
+		"lottefashion",
+		"ssfmall",
+		"idlook",
+		"sivillage",
+		"kolon",
+		"babathe",
+		"idfmall",
+		"daehyun",
+		"niceclaup",
+		"lacoste",
 		"sisley",
-//		"benetton",
-//		"theamall",
-//		"loungeb",
-//		"bylynn",
+		"benetton",
+		"theamall",
+		"loungeb",
+		"bylynn",
 	}
 
 	StartCrawling(crawlModules)
@@ -70,6 +70,7 @@ func StartCrawling(crawlModules []string) {
 
 	msg := "======== \n " + "Crawling Started: " + time.Now().String() + " for " + strings.Join(crawlModules[:], ", ")
 	log.Println(msg)
+	config.WriteSlackMessage(msg)
 
 	for _, module := range crawlModules {
 		filter := bson.M{
