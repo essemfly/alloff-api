@@ -270,7 +270,10 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 		orderDao.OrderStatus = domain.ORDER_PAYMENT_FINISHED
 		orderDao.UpdatedAt = time.Now()
 		orderDao.OrderedAt = time.Now()
-		repo.db.Model(orderDao).Update()
+		_, err := repo.db.Model(orderDao).Update()
+		if err != nil {
+			log.Println("err on orderDAO", err)
+		}
 
 		paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(orderDao.AlloffOrderID, int(payment.Amount))
 		if err != nil {
@@ -278,7 +281,10 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 		}
 		paymentDao.PaymentStatus = domain.PAYMENT_CONFIRMED
 		paymentDao.UpdatedAt = time.Now()
-		repo.db.Model(paymentDao).Update()
+		_, err = repo.db.Model(paymentDao).Update()
+		if err != nil {
+			log.Println("err on paymentdao", err)
+		}
 
 		alimtalk.NotifyPaymentSuccessAlarm(paymentDao)
 		// (TODO) Slack Payment Success Notification
