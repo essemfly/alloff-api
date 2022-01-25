@@ -350,7 +350,8 @@ func (repo *productLikeRepo) ListProductsLike(productId string) ([]*domain.LikeP
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	filter := bson.M{"product._id": productId, "removed": false, "ispushed": false}
+	productOID, _ := primitive.ObjectIDFromHex(productId)
+	filter := bson.M{"product._id": productOID, "removed": false, "ispushed": false}
 	cursor, err := repo.col.Find(ctx, filter)
 	if err != nil {
 		log.Println(err, "List Like Products error: Repository - ListProductsLike")
