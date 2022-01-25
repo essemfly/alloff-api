@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-pg/pg/v10"
@@ -314,7 +316,7 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 		}
 
 		alimtalk.NotifyPaymentSuccessAlarm(paymentDao)
-		// (TODO) Slack Payment Success Notification
+		WritePaymentSuccessSlack(paymentDao)
 
 		return nil
 	}); err != nil {
@@ -328,4 +330,23 @@ func PostgresOrderPaymentService(conn *PostgresDB) service.OrderWithPaymentServi
 	return &orderPaymentService{
 		db: conn.db,
 	}
+}
+func WritePaymentSuccessSlack(payment *domain.PaymentDAO) {
+	order, _ := ioc.Repo.Orders.GetByAlloffID(payment.MerchantUid)
+	orderProducts := []string{}
+	for _, orderItem := range order.OrderItems {
+		orderProducts = append(orderProducts, orderItem.ProductUrl+": "+orderItem.Size+" "+strconv.Itoa(orderItem.Quantity)+"개")
+	}
+
+	orderMsg := "**결제 완료** \n" +
+		"결제 ID: " + payment.ImpUID + "\n" +
+		"주문 ID: " + payment.MerchantUid + "\n" +
+		"주문명: " + payment.Name + "\n" +
+		"주문 정보: \n" + strings.Join(orderProducts[:], ", ") + "\n" +
+		"주문자 번호: " + payment.BuyerMobile + "\n" +
+		"가격: " + strconv.Itoa(payment.Amount) + "\n" +
+		"주소: " + payment.BuyerPostCode + " " + payment.BuyerAddress + "\n" +
+		"받는 사람 번호: " + payment.BuyerMobile
+
+	config.WriteOrderMessage(orderMsg)
 }
