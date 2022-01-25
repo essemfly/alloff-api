@@ -166,6 +166,6 @@ func removeBrand(s []*domain.BrandDAO, i int) []*domain.BrandDAO {
 
 func MongoBrandLikesRepo(conn *MongoDB) repository.LikeBrandsRepository {
 	return &brandLikeRepo{
-		col: conn.likeProductsCol,
+		col: conn.likeBrandsCol,
 	}
 }
