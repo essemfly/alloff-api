@@ -89,7 +89,7 @@ func (r *mutationResolver) UpdateUserInfo(ctx context.Context, input model.UserI
 		user.Postcode = *input.Postcode
 	}
 
-	newUser, err := ioc.Repo.Users.Insert(user)
+	newUser, err := ioc.Repo.Users.Update(user)
 	if err != nil {
 		return mapper.MapUserDaoToUser(user), err
 	}
