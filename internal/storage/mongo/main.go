@@ -76,7 +76,7 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 		deviceCol:          db.Collection("devices"),
 		notificationCol:    db.Collection("notifications"),
 		alimtalkCol:        db.Collection("alimtalks"),
-		likeBrandsCol:      db.Collection("likes"),
+		likeBrandsCol:      db.Collection("likes_brands"),
 		likeProductsCol:    db.Collection("likes_products"),
 	}
 }
