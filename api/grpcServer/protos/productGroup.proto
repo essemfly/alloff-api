@@ -10,6 +10,7 @@ service ProductGroup {
     rpc GetProductGroup(GetProductGroupRequest) returns (GetProductGroupResponse);
     rpc CreateProductGroup(CreateProductGroupRequest) returns (CreateProductGroupResponse);
     rpc ListProductGroups(ListProductGroupsRequest) returns (ListProductGroupsResponse);
+    rpc EditProductGroup(EditProductGroupRequest) returns (EditProductGroupResponse);
     rpc PushProducts(PushProductsRequest) returns (PushProductsResponse);
 }
 
@@ -33,6 +34,18 @@ message CreateProductGroupRequest {
     string finish_time = 6;
 }
 message CreateProductGroupResponse {
+    ProductGroupMessage pg = 1;
+}
+message EditProductGroupRequest {
+    optional string title = 1;
+    optional string short_title = 2;
+    repeated string instruction = 3;
+    optional string image_url = 4;
+    optional string start_time = 5;
+    optional string finish_time = 6;
+    string product_group_id = 7;
+}
+message EditProductGroupResponse {
     ProductGroupMessage pg = 1;
 }
 message ListProductGroupsRequest {}

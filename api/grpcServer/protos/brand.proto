@@ -22,7 +22,7 @@ message ListBrandResponse {
 }
 
 message EditBrandRequest {
-    optional string keyname = 1;
+    string keyname = 1;
     optional string korname = 2;
     optional string engname = 3;
     optional string logo_image_url = 4;

@@ -7,9 +7,8 @@ import (
 
 func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 	alloffCategoryName := ""
-	if pd.AlloffCategories.First != nil {
-		alloffCategoryName = pd.AlloffCategories.First.Name
-	}
+	totalScore := 0
+
 	return &grpcServer.ProductMessage{
 		AlloffProductId:      pd.ID.Hex(),
 		AlloffName:           pd.AlloffName,
@@ -31,7 +30,7 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 		AlloffCategoryName:   alloffCategoryName,
 		IsRemoved:            pd.Removed,
 		IsSoldout:            pd.Soldout,
-		TotalScore:           int32(pd.Score.TotalScore),
+		TotalScore:           int32(totalScore),
 	}
 }
 

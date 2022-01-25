@@ -25,6 +25,7 @@ type ProductGroupClient interface {
 	GetProductGroup(ctx context.Context, in *GetProductGroupRequest, opts ...grpc.CallOption) (*GetProductGroupResponse, error)
 	CreateProductGroup(ctx context.Context, in *CreateProductGroupRequest, opts ...grpc.CallOption) (*CreateProductGroupResponse, error)
 	ListProductGroups(ctx context.Context, in *ListProductGroupsRequest, opts ...grpc.CallOption) (*ListProductGroupsResponse, error)
+	EditProductGroup(ctx context.Context, in *EditProductGroupRequest, opts ...grpc.CallOption) (*EditProductGroupResponse, error)
 	PushProducts(ctx context.Context, in *PushProductsRequest, opts ...grpc.CallOption) (*PushProductsResponse, error)
 }
 
@@ -63,6 +64,15 @@ func (c *productGroupClient) ListProductGroups(ctx context.Context, in *ListProd
 	return out, nil
 }
 
+func (c *productGroupClient) EditProductGroup(ctx context.Context, in *EditProductGroupRequest, opts ...grpc.CallOption) (*EditProductGroupResponse, error) {
+	out := new(EditProductGroupResponse)
+	err := c.cc.Invoke(ctx, "/grpcServer.ProductGroup/EditProductGroup", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *productGroupClient) PushProducts(ctx context.Context, in *PushProductsRequest, opts ...grpc.CallOption) (*PushProductsResponse, error) {
 	out := new(PushProductsResponse)
 	err := c.cc.Invoke(ctx, "/grpcServer.ProductGroup/PushProducts", in, out, opts...)
@@ -79,6 +89,7 @@ type ProductGroupServer interface {
 	GetProductGroup(context.Context, *GetProductGroupRequest) (*GetProductGroupResponse, error)
 	CreateProductGroup(context.Context, *CreateProductGroupRequest) (*CreateProductGroupResponse, error)
 	ListProductGroups(context.Context, *ListProductGroupsRequest) (*ListProductGroupsResponse, error)
+	EditProductGroup(context.Context, *EditProductGroupRequest) (*EditProductGroupResponse, error)
 	PushProducts(context.Context, *PushProductsRequest) (*PushProductsResponse, error)
 	mustEmbedUnimplementedProductGroupServer()
 }
@@ -95,6 +106,9 @@ func (UnimplementedProductGroupServer) CreateProductGroup(context.Context, *Crea
 }
 func (UnimplementedProductGroupServer) ListProductGroups(context.Context, *ListProductGroupsRequest) (*ListProductGroupsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProductGroups not implemented")
+}
+func (UnimplementedProductGroupServer) EditProductGroup(context.Context, *EditProductGroupRequest) (*EditProductGroupResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditProductGroup not implemented")
 }
 func (UnimplementedProductGroupServer) PushProducts(context.Context, *PushProductsRequest) (*PushProductsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PushProducts not implemented")
@@ -166,6 +180,24 @@ func _ProductGroup_ListProductGroups_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductGroup_EditProductGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditProductGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductGroupServer).EditProductGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/grpcServer.ProductGroup/EditProductGroup",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductGroupServer).EditProductGroup(ctx, req.(*EditProductGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ProductGroup_PushProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(PushProductsRequest)
 	if err := dec(in); err != nil {
@@ -202,6 +234,10 @@ var ProductGroup_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListProductGroups",
 			Handler:    _ProductGroup_ListProductGroups_Handler,
+		},
+		{
+			MethodName: "EditProductGroup",
+			Handler:    _ProductGroup_EditProductGroup_Handler,
 		},
 		{
 			MethodName: "PushProducts",

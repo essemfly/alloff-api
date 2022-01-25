@@ -26,7 +26,7 @@ func (s *ProductGroupService) GetProductGroup(ctx context.Context, req *grpcServ
 }
 
 func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcServer.CreateProductGroupRequest) (*grpcServer.CreateProductGroupResponse, error) {
-	layout := "2006-01-02T15:04:05.000Z"
+	layout := "2006-01-02T15:04:05Z07:00"
 
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
@@ -66,6 +66,48 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 	return &grpcServer.ListProductGroupsResponse{
 		Pgs: pgs,
 	}, nil
+}
+
+func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcServer.EditProductGroupRequest) (*grpcServer.EditProductGroupResponse, error) {
+	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
+	if err != nil {
+		return nil, err
+	}
+
+	layout := "2006-01-02T15:04:05Z07:00"
+
+	if req.Title != nil {
+		pgDao.Title = *req.Title
+	}
+
+	if req.ShortTitle != nil {
+		pgDao.ShortTitle = *req.ShortTitle
+	}
+
+	if req.Instruction != nil {
+		pgDao.Instruction = req.Instruction
+	}
+
+	if req.ImageUrl != nil {
+		pgDao.ImgUrl = *req.ImageUrl
+	}
+
+	if req.StartTime != nil {
+		startTimeObj, _ := time.Parse(layout, *req.StartTime)
+		pgDao.StartTime = startTimeObj
+	}
+
+	if req.FinishTime != nil {
+		finishTimeObj, _ := time.Parse(layout, *req.FinishTime)
+		pgDao.FinishTime = finishTimeObj
+	}
+
+	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpcServer.EditProductGroupResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
 }
 
 func (s *ProductGroupService) PushProducts(ctx context.Context, req *grpcServer.PushProductsRequest) (*grpcServer.PushProductsResponse, error) {

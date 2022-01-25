@@ -91,6 +91,7 @@ func (repo *productGroupRepo) Upsert(pg *domain.ProductGroupDAO) (*domain.Produc
 		}
 		newProductGroupId = pg.ID.Hex()
 	} else {
+		pg.ID = primitive.NewObjectID()
 		insertedId, err := repo.col.InsertOne(ctx, pg)
 		if err != nil {
 			log.Println(err)

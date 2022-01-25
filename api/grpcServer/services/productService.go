@@ -25,22 +25,6 @@ func (s *ProductService) GetProduct(ctx context.Context, req *grpcServer.GetProd
 	}, nil
 }
 
-func (s *ProductService) PutProduct(ctx context.Context, req *grpcServer.PutProductRequest) (*grpcServer.PutProductResponse, error) {
-	pdDao, err := ioc.Repo.Products.Get(req.AlloffProductId)
-	if err != nil {
-		return nil, err
-	}
-
-	pdDao.SpecialPrice = int(req.SpecialPrice)
-	newPdDao, err := ioc.Repo.Products.Upsert(pdDao)
-	if err != nil {
-		return nil, err
-	}
-	return &grpcServer.PutProductResponse{
-		Product: mapper.ProductMapper(newPdDao),
-	}, nil
-}
-
 func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListProductsRequest) (*grpcServer.ListProductsResponse, error) {
 	brandID := ""
 	if req.Query.BrandId != nil {
@@ -73,14 +57,14 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 }
 
 func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.CreateProductRequest) (*grpcServer.CreateProductResponse, error) {
-	specialPrice := int(req.SpecialPrice)
-	originalPrice := specialPrice
+	discountedPrice := int(req.DiscountedPrice)
+	originalPrice := discountedPrice
 	if req.OriginalPrice != nil {
 		originalPrice = int(*req.OriginalPrice)
 	}
-	discountedPrice := specialPrice
-	if req.DiscountedPrice != nil {
-		discountedPrice = int(*req.DiscountedPrice)
+	specialPrice := discountedPrice
+	if req.SpecialPrice != nil {
+		specialPrice = int(*req.SpecialPrice)
 	}
 
 	invDaos := []domain.InventoryDAO{}
@@ -101,7 +85,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		ProductID:            productID,
 		OriginalPrice:        originalPrice,
 		DiscountedPrice:      discountedPrice,
-		SpecialPrice:         int(req.SpecialPrice),
+		SpecialPrice:         specialPrice,
 		BrandKeyName:         req.BrandKeyName,
 		Inventory:            invDaos,
 		Description:          req.Description,

@@ -63,3 +63,52 @@ func (s *BrandService) ListBrand(ctx context.Context, req *grpcServer.ListBrandR
 		Brands: brands,
 	}, nil
 }
+
+func (s *BrandService) EditBrand(ctx context.Context, req *grpcServer.EditBrandRequest) (*grpcServer.EditBrandResponse, error) {
+	brandDao, err := ioc.Repo.Brands.GetByKeyname(req.Keyname)
+	if err != nil {
+		return nil, err
+	}
+	if req.Korname != nil {
+		brandDao.KorName = *req.Korname
+	}
+	if req.Engname != nil {
+		brandDao.EngName = *req.Engname
+	}
+	if req.LogoImageUrl != nil {
+		brandDao.LogoImgUrl = *req.LogoImageUrl
+	}
+	if req.Description != nil {
+		brandDao.Description = *req.Description
+	}
+	if req.IsPopular != nil {
+		brandDao.Onpopular = *req.IsPopular
+	}
+	if req.IsOpen != nil {
+		brandDao.IsOpen = *req.IsOpen
+	}
+	if req.InMaintenance != nil {
+		brandDao.InMaintenance = *req.InMaintenance
+	}
+	if req.SizeGuide != nil {
+		guides := []domain.SizeGuideDAO{}
+
+		for _, guide := range req.SizeGuide {
+			guides = append(guides, domain.SizeGuideDAO{
+				Label:  guide.Label,
+				ImgUrl: guide.ImageUrl,
+			})
+		}
+
+		brandDao.SizeGuide = guides
+	}
+
+	newBrandDao, err := ioc.Repo.Brands.Upsert(brandDao)
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpcServer.EditBrandResponse{
+		Brand: mapper.BrandMapper(newBrandDao),
+	}, nil
+}

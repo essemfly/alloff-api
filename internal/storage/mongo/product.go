@@ -266,12 +266,12 @@ func (repo *productMetaInfoRepo) Insert(pd *domain.ProductMetaInfoDAO) (*domain.
 	defer cancel()
 
 	var oldProduct domain.ProductMetaInfoDAO
-	_, err := repo.col.InsertOne(ctx, pd)
+	oid, err := repo.col.InsertOne(ctx, pd)
 	if err != nil {
 		return nil, err
 	}
 
-	filter := bson.M{"productid": pd.ProductID, "brand.keyname": pd.Brand.KeyName}
+	filter := bson.M{"_id": oid.InsertedID}
 	err = repo.col.FindOne(ctx, filter).Decode(&oldProduct)
 	if err != nil {
 		return nil, err

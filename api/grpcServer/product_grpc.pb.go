@@ -23,7 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductClient interface {
 	GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error)
-	PutSpecialPrice(ctx context.Context, in *PutProductRequest, opts ...grpc.CallOption) (*PutProductResponse, error)
 	ListProducts(ctx context.Context, in *ListProductsRequest, opts ...grpc.CallOption) (*ListProductsResponse, error)
 	CreateProduct(ctx context.Context, in *CreateProductRequest, opts ...grpc.CallOption) (*CreateProductResponse, error)
 	EditProduct(ctx context.Context, in *EditProductRequest, opts ...grpc.CallOption) (*EditProductResponse, error)
@@ -40,15 +39,6 @@ func NewProductClient(cc grpc.ClientConnInterface) ProductClient {
 func (c *productClient) GetProduct(ctx context.Context, in *GetProductRequest, opts ...grpc.CallOption) (*GetProductResponse, error) {
 	out := new(GetProductResponse)
 	err := c.cc.Invoke(ctx, "/grpcServer.Product/GetProduct", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *productClient) PutSpecialPrice(ctx context.Context, in *PutProductRequest, opts ...grpc.CallOption) (*PutProductResponse, error) {
-	out := new(PutProductResponse)
-	err := c.cc.Invoke(ctx, "/grpcServer.Product/PutSpecialPrice", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -87,7 +77,6 @@ func (c *productClient) EditProduct(ctx context.Context, in *EditProductRequest,
 // for forward compatibility
 type ProductServer interface {
 	GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error)
-	PutSpecialPrice(context.Context, *PutProductRequest) (*PutProductResponse, error)
 	ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error)
 	CreateProduct(context.Context, *CreateProductRequest) (*CreateProductResponse, error)
 	EditProduct(context.Context, *EditProductRequest) (*EditProductResponse, error)
@@ -100,9 +89,6 @@ type UnimplementedProductServer struct {
 
 func (UnimplementedProductServer) GetProduct(context.Context, *GetProductRequest) (*GetProductResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProduct not implemented")
-}
-func (UnimplementedProductServer) PutSpecialPrice(context.Context, *PutProductRequest) (*PutProductResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PutSpecialPrice not implemented")
 }
 func (UnimplementedProductServer) ListProducts(context.Context, *ListProductsRequest) (*ListProductsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListProducts not implemented")
@@ -140,24 +126,6 @@ func _Product_GetProduct_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ProductServer).GetProduct(ctx, req.(*GetProductRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Product_PutSpecialPrice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PutProductRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProductServer).PutSpecialPrice(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/grpcServer.Product/PutSpecialPrice",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServer).PutSpecialPrice(ctx, req.(*PutProductRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -226,10 +194,6 @@ var Product_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProduct",
 			Handler:    _Product_GetProduct_Handler,
-		},
-		{
-			MethodName: "PutSpecialPrice",
-			Handler:    _Product_PutSpecialPrice_Handler,
 		},
 		{
 			MethodName: "ListProducts",
