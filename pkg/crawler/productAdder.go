@@ -31,6 +31,7 @@ func AddProduct(request product.ProductsAddRequest) {
 	} else if err != nil {
 		log.Println("IsThere?", err)
 	} else {
+		pd.ProductInfo = pdInfo
 		pd.Updated = time.Now()
 	}
 
