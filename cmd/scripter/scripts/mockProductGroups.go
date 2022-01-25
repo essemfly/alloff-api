@@ -99,6 +99,11 @@ func AddProductGroups() {
 				Priority:  idx,
 				ProductID: pd.ID,
 			})
+			pd.ProductGroupId = &pg.ID
+			_, err = ioc.Repo.Products.Upsert(pd)
+			if err != nil {
+				log.Println("product upsert failed")
+			}
 		}
 
 		pg.Products = pdpriorities

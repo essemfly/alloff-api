@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ProductGroupService struct {
@@ -68,7 +69,6 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 }
 
 func (s *ProductGroupService) PushProducts(ctx context.Context, req *grpcServer.PushProductsRequest) (*grpcServer.PushProductsResponse, error) {
-
 	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
 	if err != nil {
 		return nil, err
@@ -76,13 +76,21 @@ func (s *ProductGroupService) PushProducts(ctx context.Context, req *grpcServer.
 
 	pds := pgDao.Products
 	for idx, productID := range req.ProductId {
-		pdDao, err := ioc.Repo.Products.Get(productID)
+		pd, err := ioc.Repo.Products.Get(productID)
 		if err != nil {
 			return nil, err
 		}
+
+		pd.ProductGroupId = &pgDao.ID
+		_, err = ioc.Repo.Products.Upsert(pd)
+		if err != nil {
+			return nil, err
+		}
+
+		productObjID, _ := primitive.ObjectIDFromHex(productID)
 		pds = append(pds, &domain.ProductPriorityDAO{
-			Product:  pdDao,
-			Priority: idx,
+			ProductID: productObjID,
+			Priority:  idx,
 		})
 	}
 	pgDao.Products = pds
