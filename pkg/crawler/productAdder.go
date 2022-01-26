@@ -33,6 +33,7 @@ func AddProduct(request product.ProductsAddRequest) {
 	} else {
 		pd.ProductInfo = pdInfo
 		pd.Updated = time.Now()
+		pd.Removed = false
 	}
 
 	ProcessProductRequest(pd, request)
