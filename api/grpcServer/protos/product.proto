@@ -42,7 +42,7 @@ message CreateProductRequest {
     int32 discounted_price = 5;
     optional int32 special_price = 6;
     string brand_key_name = 7;
-    repeated InventoryMessage inventory = 8;
+    repeated ProductInventoryMessage inventory = 8;
     repeated string description = 9;
     bool is_refund_possible = 10;
     repeated string images = 11;
@@ -63,7 +63,7 @@ message EditProductRequest {
     optional int32 discounted_price = 5;
     optional int32 special_price = 6;
     optional string brand_key_name = 7;
-    repeated InventoryMessage inventory = 8;
+    repeated ProductInventoryMessage inventory = 8;
     repeated string description = 9;
     optional bool is_refund_possible = 10;
     repeated string images = 11;
@@ -91,7 +91,7 @@ message ProductMessage {
     int32 discounted_price = 5;
     int32 special_price = 6;
     string brand_kor_name = 7;
-    repeated InventoryMessage inventory = 8;
+    repeated ProductInventoryMessage inventory = 8;
     repeated string description = 9;
     int32 earliest_delivery_days = 10;
     int32 latest_delivery_days = 11;
@@ -107,7 +107,7 @@ message ProductMessage {
     string alloff_product_id = 21;
 }
 
-message InventoryMessage {
+message ProductInventoryMessage {
     string size = 1;
     int32 quantity = 2;
 }

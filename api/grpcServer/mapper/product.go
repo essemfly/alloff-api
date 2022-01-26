@@ -34,10 +34,10 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 	}
 }
 
-func InventoryMapper(pd *domain.ProductDAO) []*grpcServer.InventoryMessage {
-	invMessages := []*grpcServer.InventoryMessage{}
+func InventoryMapper(pd *domain.ProductDAO) []*grpcServer.ProductInventoryMessage {
+	invMessages := []*grpcServer.ProductInventoryMessage{}
 	for _, inv := range pd.Inventory {
-		invMessages = append(invMessages, &grpcServer.InventoryMessage{
+		invMessages = append(invMessages, &grpcServer.ProductInventoryMessage{
 			Size:     inv.Size,
 			Quantity: int32(inv.Quantity),
 		})
