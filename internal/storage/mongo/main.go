@@ -92,7 +92,8 @@ func makeMongoClient(ctx context.Context, conf config.Configuration) (*mongo.Cli
 		Username: conf.MONGO_USERNAME,
 		Password: conf.MONGO_PASSWORD,
 	}
-	clientOptions := options.Client().ApplyURI("mongodb://" + conf.MONGO_URL).SetAuth(credential)
+
+	clientOptions := options.Client().ApplyURI("mongodb://" + conf.MONGO_URL + "?replicaSet=rs0&retryWrites=false").SetAuth(credential)
 	mongoClient, err := mongo.Connect(ctx, clientOptions)
 	return mongoClient, err
 }
