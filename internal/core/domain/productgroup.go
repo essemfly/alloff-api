@@ -33,3 +33,35 @@ type ExhibitionDAO struct {
 	ShortTitle     string
 	ProductGroups  []*ProductGroupDAO
 }
+
+func (pgDao *ProductGroupDAO) AppendProduct(pdDao *ProductPriorityDAO) bool {
+	newPds := []*ProductPriorityDAO{}
+
+	isNewProduct := true
+	for _, alreadyInProduct := range pgDao.Products {
+		if alreadyInProduct.ProductID.Hex() == pdDao.ProductID.Hex() {
+			isNewProduct = false
+			if alreadyInProduct.Priority != pdDao.Priority {
+				newPds = append(newPds, pdDao)
+			}
+			break
+		}
+	}
+
+	pgDao.Products = newPds
+	if isNewProduct {
+		pgDao.Products = append(pgDao.Products, pdDao)
+		return true
+	}
+	return false
+}
+
+func (pgDao *ProductGroupDAO) RemoveProduct(productID string) {
+	newPds := []*ProductPriorityDAO{}
+	for _, pd := range pgDao.Products {
+		if pd.ProductID.Hex() != productID {
+			newPds = append(newPds, pd)
+		}
+	}
+	pgDao.Products = newPds
+}

@@ -11,7 +11,8 @@ service ProductGroup {
     rpc CreateProductGroup(CreateProductGroupRequest) returns (CreateProductGroupResponse);
     rpc ListProductGroups(ListProductGroupsRequest) returns (ListProductGroupsResponse);
     rpc EditProductGroup(EditProductGroupRequest) returns (EditProductGroupResponse);
-    rpc PushProducts(PushProductsRequest) returns (PushProductsResponse);
+    rpc PushProductsInProductGroup(PushProductsInPgRequest) returns (PushProductsInPgResponse);
+    rpc RemoveProductInProductGroup(RemoveProductInPgRequest) returns (RemoveProductInPgResponse);
 }
 
 /*
@@ -52,15 +53,20 @@ message ListProductGroupsRequest {}
 message ListProductGroupsResponse {
     repeated ProductGroupMessage pgs = 1;
 }
-message PushProductsRequest {
+message PushProductsInPgRequest {
     string product_group_id = 1;
-    repeated string product_id = 2;
-    int32 priority = 3;
+    repeated ProductPriorityMessage product_priority = 2;
 }
-message PushProductsResponse {
+message PushProductsInPgResponse {
     ProductGroupMessage pg = 1;
 }
-
+message RemoveProductInPgRequest {
+    string product_group_id = 1;
+    string product_id = 2;
+}
+message RemoveProductInPgResponse {
+    ProductGroupMessage pg = 1;
+}
 /*
     GRPC Structs
 */
@@ -79,4 +85,9 @@ message ProductGroupMessage {
     string start_time = 6;
     string finish_time = 7;
     string product_group_id = 8;
+}
+
+message ProductPriorityMessage {
+    string product_id = 1;
+    int32 priority = 2;
 }

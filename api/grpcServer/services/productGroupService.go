@@ -110,36 +110,61 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 	return &grpcServer.EditProductGroupResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
 }
 
-func (s *ProductGroupService) PushProducts(ctx context.Context, req *grpcServer.PushProductsRequest) (*grpcServer.PushProductsResponse, error) {
+func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, req *grpcServer.PushProductsInPgRequest) (*grpcServer.PushProductsInPgResponse, error) {
 	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
 	if err != nil {
 		return nil, err
 	}
 
-	pds := pgDao.Products
-	for idx, productID := range req.ProductId {
-		pd, err := ioc.Repo.Products.Get(productID)
-		if err != nil {
-			return nil, err
-		}
-
-		pd.ProductGroupId = pgDao.ID.Hex()
-		_, err = ioc.Repo.Products.Upsert(pd)
-		if err != nil {
-			return nil, err
-		}
-
-		productObjID, _ := primitive.ObjectIDFromHex(productID)
-		pds = append(pds, &domain.ProductPriorityDAO{
-			ProductID: productObjID,
-			Priority:  idx,
+	for _, productPriority := range req.ProductPriority {
+		productObjId, _ := primitive.ObjectIDFromHex(productPriority.ProductId)
+		isNewProduct := pgDao.AppendProduct(&domain.ProductPriorityDAO{
+			Priority:  int(productPriority.Priority),
+			ProductID: productObjId,
 		})
+
+		if isNewProduct {
+			pd, err := ioc.Repo.Products.Get(productPriority.ProductId)
+			if err != nil {
+				return nil, err
+			}
+			pd.ProductGroupId = pgDao.ID.Hex()
+			_, err = ioc.Repo.Products.Upsert(pd)
+			if err != nil {
+				return nil, err
+			}
+		}
 	}
-	pgDao.Products = pds
+
 	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
 	if err != nil {
 		return nil, err
 	}
 
-	return &grpcServer.PushProductsResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
+	return &grpcServer.PushProductsInPgResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
+}
+
+func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, req *grpcServer.RemoveProductInPgRequest) (*grpcServer.RemoveProductInPgResponse, error) {
+	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
+	if err != nil {
+		return nil, err
+	}
+
+	pgDao.RemoveProduct(req.ProductId)
+	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
+	if err != nil {
+		return nil, err
+	}
+
+	pd, err := ioc.Repo.Products.Get(req.ProductId)
+	if err != nil {
+		return nil, err
+	}
+	pd.ProductGroupId = ""
+	_, err = ioc.Repo.Products.Upsert(pd)
+	if err != nil {
+		return nil, err
+	}
+
+	return &grpcServer.RemoveProductInPgResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
 }
