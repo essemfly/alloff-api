@@ -7,6 +7,28 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func ProductsSearchListing(offset, limit int, brandID, categoryID, keyword string) ([]*domain.ProductDAO, int, error) {
+	filter := bson.M{"removed": false}
+
+	brandObjID, _ := primitive.ObjectIDFromHex(brandID)
+	categoryObjID, _ := primitive.ObjectIDFromHex(categoryID)
+
+	if brandID != "" {
+		filter["productinfo.brand._id"] = brandObjID
+		if categoryID != "" {
+			filter["productinfo.category._id"] = categoryObjID
+		}
+	}
+	filter["alloffname"] = "/.*" + keyword + ".*/"
+
+	products, cnt, err := ioc.Repo.Products.List(offset, limit, filter, nil)
+	if err != nil {
+		return nil, cnt, err
+	}
+
+	return products, cnt, nil
+}
+
 // (Future) Mongodb에 종속적인 함수: bson이 사용되었다.
 func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
 	filter := bson.M{"removed": false}

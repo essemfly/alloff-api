@@ -34,8 +34,11 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	if req.Query.CategoryId != nil {
 		categoryID = *req.Query.CategoryId
 	}
-
-	products, cnt, err := product.ProductsListing(int(req.Offset), int(req.Limit), brandID, categoryID, "", nil)
+	searchKeyword := ""
+	if req.Query.SearchQuery != nil {
+		searchKeyword = *req.Query.SearchQuery
+	}
+	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), brandID, categoryID, searchKeyword)
 	if err != nil {
 		return nil, err
 	}
