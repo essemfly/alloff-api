@@ -46,7 +46,7 @@ func (repo *crawlSourceRepo) Upsert(source *domain.CrawlSourceDAO) (*domain.Craw
 
 	opts := options.Update().SetUpsert(true)
 
-	filter := bson.M{"maincategorykey": source.MainCategoryKey, "brandidentifier": source.BrandIdentifier, "category.catidentifier": source.Category.CatIdentifier}
+	filter := bson.M{"maincategorykey": source.MainCategoryKey, "brandidentifier": source.BrandIdentifier, "category.catidentifier": source.Category.CatIdentifier, "brandkeyname": source.BrandKeyname}
 	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": source}, opts); err != nil {
 		return nil, err
 	}
