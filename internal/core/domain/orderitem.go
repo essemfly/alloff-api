@@ -54,8 +54,8 @@ type OrderItemDAO struct {
 	DeliveryDescription    *DeliveryDescriptionDAO `pg:"delivery_description"`
 	OrderItemType          OrderItemTypeEnum       `pg:"order_item_type"`
 	OrderItemStatus        OrderItemStatusEnum     `pg:"order_item_status"`
-	DeliveryTrackingNumber []string                `pg:"tracking_number"`
-	DeliveryTrackingUrl    []string                `pg:"tracking_url"`
+	DeliveryTrackingNumber []string                `pg:"tracking_number,array"`
+	DeliveryTrackingUrl    []string                `pg:"tracking_url,array"`
 	Size                   string                  `pg:"size"`
 	Quantity               int                     `pg:"quantity"`
 	RefundInfo             RefundItemDAO           `pg:"rel:has-one"`
