@@ -92,20 +92,33 @@ func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			detailDoc.Find("div.thumbnails a img").Each(func(i int, s *goquery.Selection) {
 				if i != 0 {
 					val, _ := s.Attr("src")
-					images = append(images, "http:"+val)
+					if !strings.HasPrefix(val, "http") {
+						images = append(images, "http:"+val)
+					} else {
+						images = append(images, val)
+					}
+
 				}
 			})
 
 			// 일반 상세이미지
 			detailDoc.Find("div.content > div > img").Each(func(i int, s *goquery.Selection) {
 				val, _ := s.Attr("src")
-				images = append(images, val)
+				if !strings.HasPrefix(val, "http") {
+					images = append(images, "http:"+val)
+				} else {
+					images = append(images, val)
+				}
 			})
 
 			// 엄청 긴 상세이미지
 			detailDoc.Find("div.content > p > img").Each(func(i int, s *goquery.Selection) {
 				val, _ := s.Attr("src")
-				images = append(images, val)
+				if !strings.HasPrefix(val, "http") {
+					images = append(images, "http:"+val)
+				} else {
+					images = append(images, val)
+				}
 			})
 
 			detailDoc.Find("div.product-info div.option dl dd").Each(func(i int, s *goquery.Selection) {
