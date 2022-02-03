@@ -108,6 +108,10 @@ func ProcessProductRequest(pd *domain.ProductDAO, request *ProductManuelAddReque
 	pd.SalesInstruction.Description.Images = append(pd.SalesInstruction.Description.Images, request.Images...)
 	pd.SalesInstruction.Description.Images = append(pd.SalesInstruction.Description.Images, request.DescriptionImages...)
 	pd.SalesInstruction.Description.Texts = request.Description
+
+	alloffScore := GetProductScore(pd)
+	pd.UpdateScore(alloffScore)
+
 	pd.UpdateInventory(request.Inventory)
 	pd.UpdatePrice(float32(request.DiscountedPrice))
 	pd.SpecialPrice = request.SpecialPrice
