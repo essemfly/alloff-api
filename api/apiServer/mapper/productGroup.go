@@ -1,6 +1,8 @@
 package mapper
 
 import (
+	"sort"
+
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -8,14 +10,25 @@ import (
 
 func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 	var pds []*model.Product
+	var soldouts []*model.Product
+
+	sort.Slice(pgDao.Products, func(i, j int) bool {
+		return pgDao.Products[i].Priority < pgDao.Products[j].Priority
+	})
+
 	for _, productInPg := range pgDao.Products {
 		pdDao, _ := ioc.Repo.Products.Get(productInPg.ProductID.Hex())
 		pd := MapProductDaoToProduct(pdDao)
-
 		if pd != nil {
-			pds = append(pds, pd)
+			if pd.Soldout {
+				soldouts = append(soldouts, pd)
+			} else {
+				pds = append(pds, pd)
+			}
 		}
 	}
+
+	pds = append(pds, soldouts...)
 
 	pg := &model.ProductGroup{
 		ID:          pgDao.ID.Hex(),
