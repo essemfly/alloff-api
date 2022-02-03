@@ -44,7 +44,8 @@ func (pgDao *ProductGroupDAO) AppendProduct(pdDao *ProductPriorityDAO) bool {
 			if alreadyInProduct.Priority != pdDao.Priority {
 				newPds = append(newPds, pdDao)
 			}
-			break
+		} else {
+			newPds = append(newPds, alreadyInProduct)
 		}
 	}
 
