@@ -85,8 +85,9 @@ func AddProductInfo(request product.ProductsAddRequest) (*domain.ProductMetaInfo
 }
 
 func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request product.ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
-	pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), request.CurrencyType)
+	pdInfo.SetBrandAndCategory(request.Brand, request.Source)
 	pdInfo.SetGeneralInfo(request.ProductName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Description)
+	pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), request.CurrencyType)
 	updatedPdInfo, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfo)
 	if err != nil {
 		log.Println("productinfo 3", err)
