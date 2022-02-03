@@ -296,6 +296,8 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 		}
 		for _, orderItemDAO := range orderDao.OrderItems {
 			orderItemDAO.OrderItemStatus = domain.ORDER_ITEM_PAYMENT_FINISHED
+			orderItemDAO.UpdatedAt = time.Now()
+			orderItemDAO.OrderedAt = time.Now()
 			_, err = repo.db.Model(orderItemDAO).WherePK().Update()
 			if err != nil {
 				log.Println("err on orderItemDAO", err)

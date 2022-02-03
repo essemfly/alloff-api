@@ -74,7 +74,12 @@ func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			inventories := []domain.InventoryDAO{}
 
 			if len(strings.Split(mainImgTag, "'")) > 1 {
-				images = append(images, strings.Split(mainImgTag, "'")[1])
+				val := strings.Split(mainImgTag, "'")[1]
+				if !strings.HasPrefix(val, "http") {
+					images = append(images, "https:"+val)
+				} else {
+					images = append(images, val)
+				}
 			}
 
 			description := map[string]string{}
