@@ -10,10 +10,12 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 	inventories := []*model.Inventory{}
 
 	for _, inv := range pdDao.Inventory {
-		inventories = append(inventories, &model.Inventory{
-			Quantity: inv.Quantity,
-			Size:     inv.Size,
-		})
+		if inv.Quantity > 0 {
+			inventories = append(inventories, &model.Inventory{
+				Quantity: inv.Quantity,
+				Size:     inv.Size,
+			})
+		}
 	}
 
 	var information []*model.KeyValueInfo
