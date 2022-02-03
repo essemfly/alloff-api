@@ -106,7 +106,6 @@ func ProcessProductRequest(pd *domain.ProductDAO, request *ProductManuelAddReque
 	alloffInstruction := GetProductDescription(pd, pd.ProductInfo.Source)
 	pd.UpdateInstruction(alloffInstruction)
 	pd.SalesInstruction.Description.Images = append(pd.SalesInstruction.Description.Images, request.Images...)
-	pd.SalesInstruction.Description.Images = append(pd.SalesInstruction.Description.Images, request.DescriptionImages...)
 	pd.SalesInstruction.Description.Texts = request.Description
 
 	alloffScore := GetProductScore(pd)
