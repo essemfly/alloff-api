@@ -54,7 +54,9 @@ func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyTyp
 	}
 
 	if pdInfo.Price != nil {
-		newHistory = append(pdInfo.Price.History, newHistory...)
+		if pdInfo.Price.CurrentPrice > float32(curPrice) {
+			newHistory = append(pdInfo.Price.History, newHistory...)
+		}
 	}
 
 	pdInfo.Price = &PriceDAO{
@@ -164,11 +166,9 @@ func (pd *ProductDAO) UpdatePrice(alloffPrice float32) bool {
 	}
 
 	if pd.PriceHistory != nil {
-		// 이 부분 가격 하락시마다 들어가야함.
 		if origPrice > pd.DiscountedPrice {
 			newHistory = append(pd.PriceHistory, newHistory...)
 		}
-		newHistory = append(pd.PriceHistory, newHistory...)
 	}
 
 	pd.PriceHistory = newHistory
