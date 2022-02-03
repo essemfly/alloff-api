@@ -19,7 +19,7 @@ func ProductsSearchListing(offset, limit int, brandID, categoryID, keyword strin
 			filter["productinfo.category._id"] = categoryObjID
 		}
 	}
-	filter["alloffname"] = "/" + keyword + "/"
+	filter["alloffname"] = bson.Regex{".*" + keyword + ".*", "i"}
 
 	sortingOptions := bson.D{{Key: "_id", Value: -1}}
 	products, cnt, err := ioc.Repo.Products.List(offset, limit, filter, sortingOptions)
