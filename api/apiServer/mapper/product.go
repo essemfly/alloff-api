@@ -38,6 +38,11 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		specialDiscount = utils.CalculateDiscountRate(pdDao.ProductInfo.Price.OriginalPrice, float32(pdDao.SpecialPrice))
 	}
 
+	isSoldout := true
+	if len(inventories) > 0 {
+		isSoldout = false
+	}
+
 	return &model.Product{
 		ID:                  pdDao.ID.Hex(),
 		Category:            MapCategoryDaoToCategory(pdDao.ProductInfo.Category),
@@ -45,7 +50,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		Name:                pdDao.AlloffName,
 		OriginalPrice:       int(pdDao.ProductInfo.Price.OriginalPrice),
 		ProductGroupID:      pdDao.ProductGroupId,
-		Soldout:             pdDao.Soldout,
+		Soldout:             isSoldout,
 		Images:              pdDao.ProductInfo.Images,
 		DiscountedPrice:     pdDao.DiscountedPrice,
 		DiscountRate:        pdDao.DiscountRate,
