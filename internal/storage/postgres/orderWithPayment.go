@@ -310,6 +310,7 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 			return err
 		}
 		paymentDao.PaymentStatus = domain.PAYMENT_CONFIRMED
+		paymentDao.ImpUID = impUID
 		paymentDao.UpdatedAt = time.Now()
 		_, err = repo.db.Model(paymentDao).WherePK().Update()
 		if err != nil {
