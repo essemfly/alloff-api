@@ -56,7 +56,7 @@ func (repo *productGroupRepo) List() ([]*domain.ProductGroupDAO, error) {
 	outDateFilter := bson.M{"finishtime": bson.M{"$lt": now}}
 	outDateOptions := options.Find()
 	outDateOptions.SetSort(bson.D{{Key: "starttime", Value: -1}})
-	outDateOptions.SetLimit(20) // Out date timedeals 20개 제한
+	outDateOptions.SetLimit(10) // Out date timedeals 10개 제한
 
 	cur, err = repo.col.Find(ctx, outDateFilter, outDateOptions)
 	if err != nil {

@@ -54,6 +54,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		Limit:       req.Limit,
 		TotalCounts: int32(cnt),
 		Products:    pds,
+		ListQuery:   req.Query,
 	}
 
 	return ret, nil
