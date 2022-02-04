@@ -22,6 +22,7 @@ func main() {
 	// (TODO) Be Refactored
 	config.InitIamPort(conf)
 	config.InitSlack(conf)
+	config.InitNotification(conf)
 
 	// scripts.AddAlloffCategory()
 	// scripts.AddBrandsSeeder()
