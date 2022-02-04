@@ -18,6 +18,9 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 
 	for _, productInPg := range pgDao.Products {
 		pdDao, _ := ioc.Repo.Products.Get(productInPg.ProductID.Hex())
+		if pdDao.Removed {
+			continue
+		}
 		pd := MapProductDaoToProduct(pdDao)
 		if pd != nil {
 			if pd.Soldout {
