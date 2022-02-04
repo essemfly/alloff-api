@@ -20,7 +20,7 @@ type NotiService struct {
 func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNotiRequest) (*grpcServer.CreateNotiResponse, error) {
 	notiDao := &domain.NotificationDAO{
 		Status:           domain.NOTIFICATION_READY,
-		NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NITIFICATION,
+		NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
 		Title:            req.Title,
 		Message:          req.Message,
 		Notificationid:   "/timedeals" + req.ReferenceId,
@@ -76,7 +76,7 @@ func (s *NotiService) SendNoti(ctx context.Context, req *grpcServer.SendNotiRequ
 			continue
 		}
 
-		if noti.NotificationType != domain.NOTIFICATION_TIMEDEAL_OPEN_NITIFICATION {
+		if noti.NotificationType != domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION {
 			continue
 		}
 

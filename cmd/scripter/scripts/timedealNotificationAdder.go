@@ -29,7 +29,7 @@ func AddTimedealNotification(timedealID, pushtitle, message string) error {
 		timedealNoti := domain.NotificationDAO{
 			ID:               primitive.NewObjectID(),
 			Status:           domain.NOTIFICATION_READY,
-			NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NITIFICATION,
+			NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
 			Title:            pushtitle,
 			Message:          message,
 			Notificationid:   "/timedeals/" + timedeal.ID.Hex(),
@@ -59,7 +59,7 @@ func AddTimedealNotification(timedealID, pushtitle, message string) error {
 			timedealNoti := domain.NotificationDAO{
 				ID:               primitive.NewObjectID(),
 				Status:           domain.NOTIFICATION_READY,
-				NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NITIFICATION,
+				NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
 				Title:            pushtitle,
 				Message:          message,
 				Notificationid:   "/timedeals/" + timedeal.ID.Hex(),
@@ -80,7 +80,7 @@ func AddTimedealNotification(timedealID, pushtitle, message string) error {
 	timedealNoti := domain.NotificationDAO{
 		ID:               primitive.NewObjectID(),
 		Status:           domain.NOTIFICATION_READY,
-		NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NITIFICATION,
+		NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
 		Title:            pushtitle,
 		Message:          message,
 		Notificationid:   "/timedeals/" + timedeal.ID.Hex(),

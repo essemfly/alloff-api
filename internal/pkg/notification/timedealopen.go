@@ -47,7 +47,7 @@ func InsertTimedealNotification(timedeal *domain.ProductGroupDAO, pushtitle stri
 		timedealNoti := &domain.NotificationDAO{
 			ID:               primitive.NewObjectID(),
 			Status:           domain.NOTIFICATION_READY,
-			NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NITIFICATION,
+			NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
 			Title:            pushtitle,
 			Message:          message,
 			DeviceIDs:        adminDeviceIDs,
@@ -78,7 +78,7 @@ func InsertTimedealNotification(timedeal *domain.ProductGroupDAO, pushtitle stri
 			timedealNoti := domain.NotificationDAO{
 				ID:               primitive.NewObjectID(),
 				Status:           domain.NOTIFICATION_READY,
-				NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NITIFICATION,
+				NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
 				Title:            pushtitle,
 				Message:          message,
 				DeviceIDs:        deviceIDs,
@@ -101,7 +101,7 @@ func InsertTimedealNotification(timedeal *domain.ProductGroupDAO, pushtitle stri
 	timedealNoti := &domain.NotificationDAO{
 		ID:               primitive.NewObjectID(),
 		Status:           domain.NOTIFICATION_READY,
-		NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NITIFICATION,
+		NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
 		Title:            pushtitle,
 		Message:          message,
 		DeviceIDs:        deviceIDs,
