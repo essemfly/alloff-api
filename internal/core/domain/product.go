@@ -214,9 +214,6 @@ func (pd *ProductDAO) Release(size string, quantity int) error {
 			}
 			option.Quantity -= quantity
 
-			if option.Quantity == 0 {
-				pd.Soldout = true
-			}
 			return nil
 		}
 	}
