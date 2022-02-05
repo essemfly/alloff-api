@@ -13,7 +13,9 @@ func AddProductInPg() {
 	for _, pg := range pgs {
 		for _, productPriority := range pg.Products {
 			product, err := ioc.Repo.Products.Get(productPriority.ProductID.Hex())
-			log.Println("err occured in pd find", err)
+			if err != nil {
+				log.Println("err occured in pd find", err)
+			}
 			productPriority.Product = product
 		}
 		_, err := ioc.Repo.ProductGroups.Upsert(pg)
