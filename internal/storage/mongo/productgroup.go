@@ -31,7 +31,7 @@ func (repo *productGroupRepo) Get(ID string) (*domain.ProductGroupDAO, error) {
 
 }
 
-func (repo *productGroupRepo) List() ([]*domain.ProductGroupDAO, error) {
+func (repo *productGroupRepo) List(numPassedItem int) ([]*domain.ProductGroupDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -39,7 +39,6 @@ func (repo *productGroupRepo) List() ([]*domain.ProductGroupDAO, error) {
 	filter := bson.M{"finishtime": bson.M{"$gte": now}}
 	onGoingOptions := options.Find()
 	onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 1}})
-
 	cur, err := repo.col.Find(ctx, filter, onGoingOptions)
 	if err != nil {
 		log.Println(err)
@@ -55,8 +54,8 @@ func (repo *productGroupRepo) List() ([]*domain.ProductGroupDAO, error) {
 
 	outDateFilter := bson.M{"finishtime": bson.M{"$lt": now}}
 	outDateOptions := options.Find()
-	outDateOptions.SetSort(bson.D{{Key: "starttime", Value: -1}})
-	outDateOptions.SetLimit(10) // Out date timedeals 10개 제한
+	outDateOptions.SetSort(bson.D{{Key: "finishtime", Value: -1}})
+	outDateOptions.SetLimit(int64(numPassedItem)) // Out date timedeals 10개 제한
 
 	cur, err = repo.col.Find(ctx, outDateFilter, outDateOptions)
 	if err != nil {

@@ -54,7 +54,8 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 }
 
 func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcServer.ListProductGroupsRequest) (*grpcServer.ListProductGroupsResponse, error) {
-	pgDaos, err := ioc.Repo.ProductGroups.List()
+	numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
+	pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
 	if err != nil {
 		return nil, err
 	}
@@ -118,9 +119,11 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 
 	for _, productPriority := range req.ProductPriority {
 		productObjId, _ := primitive.ObjectIDFromHex(productPriority.ProductId)
+		pdDao, _ := ioc.Repo.Products.Get(productPriority.ProductId)
 		isNewProduct := pgDao.AppendProduct(&domain.ProductPriorityDAO{
 			Priority:  int(productPriority.Priority),
 			ProductID: productObjId,
+			Product:   pdDao,
 		})
 
 		if isNewProduct {

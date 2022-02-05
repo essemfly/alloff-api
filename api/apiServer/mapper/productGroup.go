@@ -4,7 +4,6 @@ import (
 	"sort"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
-	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
@@ -17,17 +16,15 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 	})
 
 	for _, productInPg := range pgDao.Products {
-		pdDao, _ := ioc.Repo.Products.Get(productInPg.ProductID.Hex())
-		if pdDao.Removed {
+		if productInPg.Product.Removed {
 			continue
 		}
-		pd := MapProductDaoToProduct(pdDao)
-		if pd != nil {
-			if pd.Soldout {
-				soldouts = append(soldouts, pd)
-			} else {
-				pds = append(pds, pd)
-			}
+
+		pd := MapProductDaoToProduct(productInPg.Product)
+		if pd.Soldout {
+			soldouts = append(soldouts, pd)
+		} else {
+			pds = append(pds, pd)
 		}
 	}
 

@@ -22,6 +22,7 @@ type ProductGroupDAO struct {
 
 type ProductPriorityDAO struct {
 	Priority  int
+	Product   *ProductDAO
 	ProductID primitive.ObjectID
 }
 
@@ -34,15 +35,15 @@ type ExhibitionDAO struct {
 	ProductGroups  []*ProductGroupDAO
 }
 
-func (pgDao *ProductGroupDAO) AppendProduct(pdDao *ProductPriorityDAO) bool {
+func (pgDao *ProductGroupDAO) AppendProduct(priorityDao *ProductPriorityDAO) bool {
 	newPds := []*ProductPriorityDAO{}
 
 	isNewProduct := true
 	for _, alreadyInProduct := range pgDao.Products {
-		if alreadyInProduct.ProductID.Hex() == pdDao.ProductID.Hex() {
+		if alreadyInProduct.ProductID.Hex() == priorityDao.ProductID.Hex() {
 			isNewProduct = false
-			if alreadyInProduct.Priority != pdDao.Priority {
-				newPds = append(newPds, pdDao)
+			if alreadyInProduct.Priority != priorityDao.Priority {
+				newPds = append(newPds, priorityDao)
 			}
 		} else {
 			newPds = append(newPds, alreadyInProduct)
@@ -51,7 +52,7 @@ func (pgDao *ProductGroupDAO) AppendProduct(pdDao *ProductPriorityDAO) bool {
 
 	pgDao.Products = newPds
 	if isNewProduct {
-		pgDao.Products = append(pgDao.Products, pdDao)
+		pgDao.Products = append(pgDao.Products, priorityDao)
 		return true
 	}
 	return false

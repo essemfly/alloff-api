@@ -2,17 +2,15 @@ package mapper
 
 import (
 	"github.com/lessbutter/alloff-api/api/grpcServer"
-	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
 func ProductGroupMapper(pg *domain.ProductGroupDAO) *grpcServer.ProductGroupMessage {
 	products := []*grpcServer.ProductInGroupMessage{}
 	for _, pd := range pg.Products {
-		pdDao, _ := ioc.Repo.Products.Get(pd.ProductID.Hex())
 		products = append(products, &grpcServer.ProductInGroupMessage{
 			Priority: int32(pd.Priority),
-			Product:  ProductMapper(pdDao),
+			Product:  ProductMapper(pd.Product),
 		})
 	}
 

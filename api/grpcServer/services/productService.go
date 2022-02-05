@@ -189,6 +189,25 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		return nil, err
 	}
 
+	if newPdDao.ProductGroupId != "" {
+		pgDao, err := ioc.Repo.ProductGroups.Get(newPdDao.ProductGroupId)
+		if err != nil {
+			return nil, err
+		}
+
+		for idx, pdPriority := range pgDao.Products {
+			if pdPriority.ProductID == newPdDao.ID {
+				pdPriority.Product = newPdDao
+				pgDao.Products[idx] = pdPriority
+				_, err = ioc.Repo.ProductGroups.Upsert(pgDao)
+				if err != nil {
+					return nil, err
+				}
+				break
+			}
+		}
+	}
+
 	pdMessage := mapper.ProductMapper(newPdDao)
 	return &grpcServer.EditProductResponse{
 		Product: pdMessage,

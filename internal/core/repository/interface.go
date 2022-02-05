@@ -77,7 +77,7 @@ type HomeItemsRepository interface {
 
 type ProductGroupsRepository interface {
 	Get(ID string) (*domain.ProductGroupDAO, error)
-	List() ([]*domain.ProductGroupDAO, error)
+	List(numPassedItem int) ([]*domain.ProductGroupDAO, error)
 	Upsert(*domain.ProductGroupDAO) (*domain.ProductGroupDAO, error)
 }
 

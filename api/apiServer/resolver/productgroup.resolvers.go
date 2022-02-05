@@ -21,7 +21,8 @@ func (r *queryResolver) ProductGroup(ctx context.Context, id string) (*model.Pro
 }
 
 func (r *queryResolver) ProductGroups(ctx context.Context) ([]*model.ProductGroup, error) {
-	pgDaos, err := ioc.Repo.ProductGroups.List()
+	numPassedPgsToShow := 10
+	pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
 	if err != nil {
 		return nil, err
 	}
