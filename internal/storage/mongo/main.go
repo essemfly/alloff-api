@@ -88,8 +88,9 @@ func (conn *MongoDB) RegisterRepos() {
 }
 
 func makeMongoClient(ctx context.Context, conf config.Configuration) (*mongo.Client, error) {
-	clientOptions := options.Client().ApplyURI("mongodb://"+ conf.MONGO_USERNAME + ":" + conf.MONGO_PASSWORD + "@" + conf.MONGO_URL + "/" + conf.MONGO_DB_NAME +  "?replicaSet=rs0&retryWrites=false")
+	clientOptions := options.Client().ApplyURI("mongodb://" + conf.MONGO_USERNAME + ":" + conf.MONGO_PASSWORD + "@" + conf.MONGO_URL + "/" + conf.MONGO_DB_NAME + "?&connect=direct&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false")
 	mongoClient, err := mongo.Connect(ctx, clientOptions)
+
 	return mongoClient, err
 }
 
