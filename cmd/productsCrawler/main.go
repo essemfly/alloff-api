@@ -5,10 +5,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/lessbutter/alloff-api/cmd"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
-	"github.com/lessbutter/alloff-api/internal/storage/mongo"
-	"github.com/lessbutter/alloff-api/internal/storage/postgres"
 	"github.com/lessbutter/alloff-api/pkg/brand"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/crawler/malls"
@@ -19,19 +18,7 @@ import (
 const numWorkers = 25
 
 func main() {
-	conf := config.GetConfiguration()
-	log.Println(conf)
-
-	conn := mongo.NewMongoDB(conf)
-	conn.RegisterRepos()
-
-	pgconn := postgres.NewPostgresDB(conf)
-	pgconn.RegisterRepos()
-
-	// (TODO) Be Refactored
-	config.InitIamPort(conf)
-	config.InitSlack(conf)
-	config.InitNotification(conf)
+	cmd.SetBaseConfig()
 
 	crawlModules := []string{
 		"lottefashion",

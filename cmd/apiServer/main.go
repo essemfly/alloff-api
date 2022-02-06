@@ -16,26 +16,12 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/resolver"
-	"github.com/lessbutter/alloff-api/config"
-	"github.com/lessbutter/alloff-api/internal/storage/mongo"
-	"github.com/lessbutter/alloff-api/internal/storage/postgres"
+	"github.com/lessbutter/alloff-api/cmd"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func main() {
-	conf := config.GetConfiguration()
-	log.Println(conf)
-
-	conn := mongo.NewMongoDB(conf)
-	conn.RegisterRepos()
-
-	pgconn := postgres.NewPostgresDB(conf)
-	pgconn.RegisterRepos()
-
-	// (TODO) Be Refactored
-	config.InitIamPort(conf)
-	config.InitSlack(conf)
-	config.InitNotification(conf)
+	conf := cmd.SetBaseConfig()
 
 	port := os.Getenv("PORT")
 	if port == "" {
