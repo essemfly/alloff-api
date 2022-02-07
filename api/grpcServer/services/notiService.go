@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/notification"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const CHUNK_SIZE = 500
@@ -40,6 +41,7 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 		for _, device := range devices[i*CHUNK_SIZE : (i+1)*CHUNK_SIZE] {
 			deviceIDs = append(deviceIDs, device.DeviceId)
 		}
+		notiDao.ID = primitive.NewObjectID()
 		notiDao.DeviceIDs = deviceIDs
 		_, err := ioc.Repo.Notifications.Insert(notiDao)
 		if err != nil {
