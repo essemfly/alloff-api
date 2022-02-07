@@ -104,6 +104,7 @@ func SendNotification(noti *domain.NotificationDAO) error {
 		return err
 	}
 
+	noti.Status = domain.NOTIFICATION_SUCCEEDED
 	_, err = ioc.Repo.Notifications.Update(noti)
 	if err != nil {
 		return err
