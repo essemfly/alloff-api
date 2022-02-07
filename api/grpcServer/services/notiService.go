@@ -34,19 +34,27 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 		return nil, err
 	}
 
-	maxChunkSize := (len(devices) / CHUNK_SIZE) + 1
+	deviceIDs := []string{}
 
-	for i := 0; i < maxChunkSize; i += 1 {
-		deviceIDs := []string{}
-		for _, device := range devices[i*CHUNK_SIZE : (i+1)*CHUNK_SIZE] {
-			deviceIDs = append(deviceIDs, device.DeviceId)
+	for _, device := range devices {
+		deviceIDs = append(deviceIDs, device.DeviceId)
+		if len(deviceIDs) > 300 {
+			notiDao.ID = primitive.NewObjectID()
+			notiDao.DeviceIDs = deviceIDs
+			_, err := ioc.Repo.Notifications.Insert(notiDao)
+			if err != nil {
+				return nil, err
+			}
+
+			deviceIDs = []string{}
 		}
-		notiDao.ID = primitive.NewObjectID()
-		notiDao.DeviceIDs = deviceIDs
-		_, err := ioc.Repo.Notifications.Insert(notiDao)
-		if err != nil {
-			return nil, err
-		}
+	}
+
+	notiDao.ID = primitive.NewObjectID()
+	notiDao.DeviceIDs = deviceIDs
+	_, err = ioc.Repo.Notifications.Insert(notiDao)
+	if err != nil {
+		return nil, err
 	}
 
 	return &grpcServer.CreateNotiResponse{
