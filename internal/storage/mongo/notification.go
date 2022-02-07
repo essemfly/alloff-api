@@ -59,7 +59,7 @@ func (repo *notificationRepo) List(offset, limit int, onlyReady bool) ([]*domain
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	filter := bson.M{"notificationtype": "PRODUCT_DIFF_NOTIFICATION"}
+	filter := bson.M{}
 	if onlyReady {
 		filter["status"] = domain.NOTIFICATION_READY
 	}
