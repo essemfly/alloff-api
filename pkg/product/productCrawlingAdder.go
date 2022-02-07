@@ -1,4 +1,4 @@
-package crawler
+package product
 
 import (
 	"log"
@@ -7,12 +7,11 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/classifier"
-	"github.com/lessbutter/alloff-api/pkg/product"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func AddProduct(request product.ProductsAddRequest) {
+func AddProductInCrawling(request *ProductCrawlingAddRequest) {
 	pdInfo, err := ProcessProductInfoRequest(request)
 	if err != nil {
 		log.Println(err)
@@ -36,17 +35,18 @@ func AddProduct(request product.ProductsAddRequest) {
 		pd.Removed = false
 	}
 
-	ProcessProductRequest(pd, request)
+	// PD위의 정보 저것들을 해놓고, 밑에 또 process product request하는 이유가 뭐임?
+	ProcessCrawlingProductRequest(pd, request)
 
 }
 
-func ProcessProductInfoRequest(request product.ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
+func ProcessProductInfoRequest(request *ProductCrawlingAddRequest) (*domain.ProductMetaInfoDAO, error) {
 	pdInfo, err := ioc.Repo.ProductMetaInfos.GetByProductID(request.Brand.KeyName, request.ProductID)
 
 	var newPdInfo = &domain.ProductMetaInfoDAO{}
 	if err == mongo.ErrNoDocuments {
 		// 새로운 상품이 필요한 경우
-		newPdInfo, err = AddProductInfo(request)
+		newPdInfo, err = AddCrawlingProductInfo(request)
 		if err != nil {
 			log.Println("err on insert product info ", err)
 			return nil, err
@@ -67,7 +67,7 @@ func ProcessProductInfoRequest(request product.ProductsAddRequest) (*domain.Prod
 	return newPdInfo, nil
 }
 
-func AddProductInfo(request product.ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
+func AddCrawlingProductInfo(request *ProductCrawlingAddRequest) (*domain.ProductMetaInfoDAO, error) {
 	pdInfo := &domain.ProductMetaInfoDAO{
 		Created: time.Now(),
 		Updated: time.Now(),
@@ -84,7 +84,7 @@ func AddProductInfo(request product.ProductsAddRequest) (*domain.ProductMetaInfo
 	return newPdInfo, nil
 }
 
-func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request product.ProductsAddRequest) (*domain.ProductMetaInfoDAO, error) {
+func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *ProductCrawlingAddRequest) (*domain.ProductMetaInfoDAO, error) {
 	pdInfo.SetBrandAndCategory(request.Brand, request.Source)
 	pdInfo.SetGeneralInfo(request.ProductName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Description)
 	pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), request.CurrencyType)
@@ -96,26 +96,26 @@ func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request product.Produc
 	return updatedPdInfo, nil
 }
 
-func ProcessProductRequest(pd *domain.ProductDAO, request product.ProductsAddRequest) {
+func ProcessCrawlingProductRequest(pd *domain.ProductDAO, request *ProductCrawlingAddRequest) {
 	if pd.AlloffCategories == nil || !pd.AlloffCategories.Done {
 		alloffCat := classifier.GetAlloffCategory(pd)
 		pd.UpdateAlloffCategory(alloffCat)
 	}
 
-	alloffInstruction := product.GetProductDescription(pd, request.Source)
-	pd.ProductInfo.Source = request.Source
+	alloffInstruction := GetProductDescription(pd, request.Source)
+	pd.ProductInfo.Source = request.Source // Source가 업데이트될 시 Source 업데이트용이다.
 	pd.UpdateInstruction(alloffInstruction)
 
-	alloffScore := product.GetProductScore(pd)
+	alloffScore := GetProductScore(pd)
 	pd.UpdateScore(alloffScore)
 	pd.UpdateInventory(request.Inventories)
 
-	alloffPrice := product.GetProductPrice(pd)
+	alloffPrice := GetProductPrice(pd)
 	lastPrice := pd.DiscountedPrice
 	isPriceUpdated := pd.UpdatePrice(alloffPrice)
 
 	if isPriceUpdated {
-		err := product.InsertProductDiff(pd, lastPrice)
+		err := InsertProductDiff(pd, lastPrice)
 		if err != nil {
 			log.Println("error on insert product diff", err)
 		}

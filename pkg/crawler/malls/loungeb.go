@@ -51,7 +51,7 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 		mobileUrl := strings.Replace(productUrl, "https://lounge-b.co.kr", "https://m.lounge-b.co.kr", 1)
 
-		addRequest := product.ProductsAddRequest{
+		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     productID,
@@ -68,7 +68,7 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		}
 
 		totalProducts += 1
-		crawler.AddProduct(addRequest)
+		product.AddProductInCrawling(addRequest)
 	})
 
 	c.OnHTML(".xans-product-normalpaging a:nth-last-child(2)", func(e *colly.HTMLElement) {

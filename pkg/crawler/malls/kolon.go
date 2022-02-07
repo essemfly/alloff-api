@@ -121,7 +121,7 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 			}
 		})
 
-		addRequest := product.ProductsAddRequest{
+		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     productID,
@@ -138,7 +138,7 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 		}
 
 		totalProducts += 1
-		crawler.AddProduct(addRequest)
+		product.AddProductInCrawling(addRequest)
 	})
 
 	c.OnHTML(".product-page-arrow:last-child", func(e *colly.HTMLElement) {

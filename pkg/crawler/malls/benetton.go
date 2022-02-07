@@ -67,7 +67,7 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			productUrl := "https://benettonmall.com/product/view?productcode=" + pd.ProductCode
 			images, sizes, colors, inventories, description := CrawlBenettonDetail(productUrl)
 
-			addRequest := product.ProductsAddRequest{
+			addRequest := &product.ProductCrawlingAddRequest{
 				Brand:         brand,
 				Source:        source,
 				ProductID:     pd.ProductCode,
@@ -84,7 +84,7 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			}
 
 			totalProducts += 1
-			crawler.AddProduct(addRequest)
+			product.AddProductInCrawling(addRequest)
 		}
 
 		pageInt, _ := strconv.Atoi(crawlResponse.Page)

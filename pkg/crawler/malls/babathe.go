@@ -60,7 +60,7 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			productName, productID, productUrl, origPrice, curPrice := ParseHtml(s)
 			images, sizes, colors, inventories, description := CrawlBabatheDetail(productUrl, productID, source)
 
-			addRequest := product.ProductsAddRequest{
+			addRequest := &product.ProductCrawlingAddRequest{
 				Brand:         brand,
 				Source:        source,
 				ProductID:     productID,
@@ -77,7 +77,7 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			}
 
 			totalProducts += 1
-			crawler.AddProduct(addRequest)
+			product.AddProductInCrawling(addRequest)
 		})
 
 		if numProducts > 0 {

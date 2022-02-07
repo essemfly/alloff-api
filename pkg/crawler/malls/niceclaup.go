@@ -39,7 +39,7 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 
 		images, colors, sizes, inventories, description := getNiceClaupDetail(productUrl)
 
-		addRequest := product.ProductsAddRequest{
+		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     productID,
@@ -56,7 +56,7 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 		}
 
 		totalProducts += 1
-		crawler.AddProduct(addRequest)
+		product.AddProductInCrawling(addRequest)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {

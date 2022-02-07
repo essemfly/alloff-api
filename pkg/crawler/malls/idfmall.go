@@ -76,7 +76,7 @@ func CrawlIDFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 					images, colors, sizes, inventories, description := getIdfDetailInfo(productUrl)
 
-					addRequest := product.ProductsAddRequest{
+					addRequest := &product.ProductCrawlingAddRequest{
 						Brand:         brand,
 						Source:        source,
 						ProductID:     productID,
@@ -93,7 +93,7 @@ func CrawlIDFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 					}
 
 					totalProducts += 1
-					crawler.AddProduct(addRequest)
+					product.AddProductInCrawling(addRequest)
 				}
 			}
 		})

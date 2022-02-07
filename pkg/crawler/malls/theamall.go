@@ -166,7 +166,7 @@ func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceD
 				})
 			})
 
-			addRequest := product.ProductsAddRequest{
+			addRequest := &product.ProductCrawlingAddRequest{
 				Brand:         brand,
 				Source:        source,
 				ProductID:     productID,
@@ -183,7 +183,7 @@ func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			}
 
 			totalProducts += 1
-			crawler.AddProduct(addRequest)
+			product.AddProductInCrawling(addRequest)
 		})
 
 		if numProducts > 0 {

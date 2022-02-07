@@ -9,26 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type ProductManuelAddRequest struct {
-	AlloffName           string
-	IsForeignDelivery    bool
-	ProductID            string
-	OriginalPrice        int
-	DiscountedPrice      int
-	SpecialPrice         int
-	BrandKeyName         string
-	Inventory            []domain.InventoryDAO
-	Description          []string
-	EarliestDeliveryDays int
-	LatestDeliveryDays   int
-	IsRefundPossible     bool
-	RefundFee            int
-	Images               []string
-	DescriptionImages    []string
-}
-
 func AddProductInManuel(request *ProductManuelAddRequest) (*domain.ProductDAO, error) {
-	pdInfo, err := AddProductInfo(request)
+	pdInfo, err := AddManuelProductInfo(request)
 	if err != nil {
 		return nil, err
 	}
@@ -41,10 +23,10 @@ func AddProductInManuel(request *ProductManuelAddRequest) (*domain.ProductDAO, e
 		Updated:     time.Now(),
 	}
 
-	return ProcessProductRequest(pd, request)
+	return ProcessManuelProductRequest(pd, request)
 }
 
-func AddProductInfo(request *ProductManuelAddRequest) (*domain.ProductMetaInfoDAO, error) {
+func AddManuelProductInfo(request *ProductManuelAddRequest) (*domain.ProductMetaInfoDAO, error) {
 	pdInfo := &domain.ProductMetaInfoDAO{
 		Created: time.Now(),
 		Updated: time.Now(),
@@ -94,24 +76,21 @@ func GetManuelSource(req *ProductManuelAddRequest) *domain.CrawlSourceDAO {
 		EarliestDeliveryDays: req.EarliestDeliveryDays,
 		LatestDeliveryDays:   req.LatestDeliveryDays,
 		DeliveryDesc:         nil,
-		RefundAvailable:      true,
-		ChangeAvailable:      true,
+		RefundAvailable:      req.IsRefundPossible,
+		ChangeAvailable:      req.IsRefundPossible,
 		ChangeFee:            req.RefundFee,
 		RefundFee:            req.RefundFee,
 	}
 }
 
-func ProcessProductRequest(pd *domain.ProductDAO, request *ProductManuelAddRequest) (*domain.ProductDAO, error) {
-
-	alloffInstruction := GetProductDescription(pd, pd.ProductInfo.Source)
+func ProcessManuelProductRequest(pd *domain.ProductDAO, request *ProductManuelAddRequest) (*domain.ProductDAO, error) {
+	alloffInstruction := GetManuelProductDescription(pd, request)
 	pd.UpdateInstruction(alloffInstruction)
-	pd.SalesInstruction.Description.Images = append(pd.SalesInstruction.Description.Images, request.Images...)
-	pd.SalesInstruction.Description.Texts = request.Description
 
 	alloffScore := GetProductScore(pd)
 	pd.UpdateScore(alloffScore)
-
 	pd.UpdateInventory(request.Inventory)
+
 	pd.UpdatePrice(float32(request.DiscountedPrice))
 	pd.SpecialPrice = request.SpecialPrice
 

@@ -87,7 +87,7 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 				delete(description, askey)
 				delete(description, laundrykey)
 
-				addRequest := product.ProductsAddRequest{
+				addRequest := &product.ProductCrawlingAddRequest{
 					Brand:         brand,
 					Source:        source,
 					ProductID:     productID,
@@ -104,7 +104,7 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 				}
 
 				totalProducts += 1
-				crawler.AddProduct(addRequest)
+				product.AddProductInCrawling(addRequest)
 			}
 		})
 		pageNum += 1

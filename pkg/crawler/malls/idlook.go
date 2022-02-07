@@ -49,7 +49,7 @@ func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 		delete(description, askey)
 
-		addRequest := product.ProductsAddRequest{
+		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     productID,
@@ -66,7 +66,7 @@ func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		}
 
 		totalProducts += 1
-		crawler.AddProduct(addRequest)
+		product.AddProductInCrawling(addRequest)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {

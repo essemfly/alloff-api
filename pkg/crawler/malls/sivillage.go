@@ -41,7 +41,7 @@ func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSource
 		productUrl := "https://www.sivillage.com/goods/initDetailGoods.siv?goods_no=" + productID
 		images, colors, sizes, inventories, description := CrawlSiVillageDetail(productID)
 
-		addRequest := product.ProductsAddRequest{
+		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     productID,
@@ -58,7 +58,7 @@ func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSource
 		}
 
 		totalProducts += 1
-		crawler.AddProduct(addRequest)
+		product.AddProductInCrawling(addRequest)
 	})
 
 	c.OnHTML(".ee_paging", func(e *colly.HTMLElement) {

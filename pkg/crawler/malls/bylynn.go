@@ -55,7 +55,7 @@ func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 		title, images, sizes, colors, inventories, description := getBylynnDetail(productUrl)
 
-		addRequest := product.ProductsAddRequest{
+		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     productID,
@@ -72,7 +72,7 @@ func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		}
 
 		totalProducts += 1
-		crawler.AddProduct(addRequest)
+		product.AddProductInCrawling(addRequest)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {

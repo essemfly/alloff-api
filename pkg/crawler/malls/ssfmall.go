@@ -11,7 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	pdPackage "github.com/lessbutter/alloff-api/pkg/product"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 type SSFResponseParser struct {
@@ -98,33 +98,28 @@ func CrawlSSFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.CrawlSourceDAO, brand *domain.BrandDAO) int {
 	numProducts := 0
-	for _, product := range products {
-		// isSoldout := false
-		// if product.God.Soldout == "SLDOUT" {
-		// 	isSoldout = true
-		// }
-
-		productUrl := "https://www.ssfshop.com/" + source.BrandKeyname + "/" + product.ProductId + "/good"
+	for _, pd := range products {
+		productUrl := "https://www.ssfshop.com/" + source.BrandKeyname + "/" + pd.ProductId + "/good"
 		images, colors, sizes, inventories, description := getSSFDetailInfo(productUrl)
 
-		addRequest := pdPackage.ProductsAddRequest{
+		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
-			ProductID:     product.ProductId,
-			ProductName:   product.God.Name,
+			ProductID:     pd.ProductId,
+			ProductName:   pd.God.Name,
 			ProductUrl:    productUrl,
 			Images:        images,
 			Sizes:         sizes,
 			Inventories:   inventories,
 			Colors:        colors,
 			Description:   description,
-			OriginalPrice: float32(product.DspGodPrc.OriginalPrice),
-			SalesPrice:    float32(product.DspGodPrc.DiscountedPrice),
+			OriginalPrice: float32(pd.DspGodPrc.OriginalPrice),
+			SalesPrice:    float32(pd.DspGodPrc.DiscountedPrice),
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
 		numProducts += 1
-		crawler.AddProduct(addRequest)
+		product.AddProductInCrawling(addRequest)
 
 		// newProduct := domain.ProductDAO{
 		// 	ProductId:       product.ProductId,

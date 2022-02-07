@@ -37,3 +37,40 @@ func GetProductDescription(pd *domain.ProductDAO, source *domain.CrawlSourceDAO)
 		},
 	}
 }
+
+func GetManuelProductDescription(pd *domain.ProductDAO, request *ProductManuelAddRequest) *domain.AlloffInstructionDAO {
+	deliveryType := domain.Domestic
+	deliveryTexts := []string{
+		"도착 예정일은 택배사의 사정이나 주문량에 따라 변동될 수 있습니다.",
+		"브랜드 및 제품에 따라 입점 업체(브랜드) 배송과 올오프 자체 배송으로 나뉩니다.",
+	}
+
+	if request.IsForeignDelivery {
+		deliveryType = domain.Foreign
+		deliveryTexts = []string{
+			"도착 예정일은 현지 택배사의 사정이나 통관 과정에서 변동될 수 있습니다.",
+			"배송기간에 현지 및 한국의 공휴일, 연말이 포함된 경우 배송이 지연될 수 있습니다.",
+		}
+	}
+
+	descImages := append(pd.ProductInfo.Images, request.Images...)
+	return &domain.AlloffInstructionDAO{
+		Description: &domain.ProductDescriptionDAO{
+			Images: descImages,
+			Texts:  request.Description,
+		},
+		DeliveryDescription: &domain.DeliveryDescriptionDAO{
+			DeliveryType:         deliveryType,
+			DeliveryFee:          0,
+			EarliestDeliveryDays: request.EarliestDeliveryDays,
+			LatestDeliveryDays:   request.LatestDeliveryDays,
+			Texts:                deliveryTexts,
+		},
+		CancelDescription: &domain.CancelDescriptionDAO{
+			RefundAvailable: request.IsRefundPossible,
+			ChangeAvailable: request.IsRefundPossible,
+			ChangeFee:       request.RefundFee,
+			RefundFee:       request.RefundFee,
+		},
+	}
+}

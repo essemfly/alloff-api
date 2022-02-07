@@ -2,7 +2,7 @@ package product
 
 import "github.com/lessbutter/alloff-api/internal/core/domain"
 
-type ProductsAddRequest struct {
+type ProductCrawlingAddRequest struct {
 	Brand         *domain.BrandDAO
 	Source        *domain.CrawlSourceDAO
 	ProductID     string
@@ -16,4 +16,22 @@ type ProductsAddRequest struct {
 	OriginalPrice float32
 	SalesPrice    float32
 	CurrencyType  domain.CurrencyType
+}
+
+type ProductManuelAddRequest struct {
+	AlloffName           string
+	IsForeignDelivery    bool
+	ProductID            string
+	OriginalPrice        int
+	DiscountedPrice      int
+	SpecialPrice         int
+	BrandKeyName         string
+	Inventory            []domain.InventoryDAO
+	Description          []string
+	EarliestDeliveryDays int
+	LatestDeliveryDays   int
+	IsRefundPossible     bool
+	RefundFee            int
+	Images               []string
+	DescriptionImages    []string
 }

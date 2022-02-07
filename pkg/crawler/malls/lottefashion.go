@@ -11,7 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	pdPackage "github.com/lessbutter/alloff-api/pkg/product"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 type LotteFashionResponseParse struct {
@@ -121,10 +121,10 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 
 	numProducts := 0
 
-	for _, product := range products {
+	for _, pd := range products {
 		description := map[string]string{}
 		images := []string{}
-		for _, img := range product.Images {
+		for _, img := range pd.Images {
 			imageUrl := strings.Replace(img.Url, "/320/", "/640/", 1)
 			images = append(images, imageUrl)
 		}
@@ -132,7 +132,7 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 		colors := []string{}
 		newSizes := []string{}
 		inventories := []domain.InventoryDAO{}
-		for _, sizeOption := range product.Sizes {
+		for _, sizeOption := range pd.Sizes {
 			if !utils.ItemExists(newSizes, sizeOption.Size) {
 				newSizes = append(newSizes, sizeOption.Size)
 
@@ -145,7 +145,7 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 			}
 		}
 
-		url := "https://www.lfmall.co.kr/productNew.do?cmd=getProductDetail&PROD_CD=" + product.LotteFashionID
+		url := "https://www.lfmall.co.kr/productNew.do?cmd=getProductDetail&PROD_CD=" + pd.LotteFashionID
 
 		c.OnHTML(".tbl_accordion .table_wrap", func(e *colly.HTMLElement) {
 			e.ForEach("table tbody tr td table tbody tr", func(_ int, el *colly.HTMLElement) {
@@ -157,24 +157,24 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 
 		c.Visit(url)
 
-		addRequest := pdPackage.ProductsAddRequest{
+		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
-			ProductID:     product.LotteFashionID,
-			ProductName:   product.Name,
+			ProductID:     pd.LotteFashionID,
+			ProductName:   pd.Name,
 			ProductUrl:    url,
 			Images:        images,
 			Sizes:         newSizes,
 			Inventories:   inventories,
 			Colors:        colors,
 			Description:   description,
-			OriginalPrice: float32(product.OriginalPrice),
-			SalesPrice:    float32(product.SalePrice),
+			OriginalPrice: float32(pd.OriginalPrice),
+			SalesPrice:    float32(pd.SalePrice),
 			CurrencyType:  domain.CurrencyKRW,
 		}
 
 		numProducts += 1
-		crawler.AddProduct(addRequest)
+		product.AddProductInCrawling(addRequest)
 	}
 
 	return numProducts

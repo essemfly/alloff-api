@@ -67,7 +67,7 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			productUrl := "http://www.sisleymall.com/product/view?code=" + source.Category.CatIdentifier + "&productcode=" + pd.ProductCode
 			images, colors, sizes, inventories, description := CrawlSisleyDetail(productUrl)
 
-			addRequest := product.ProductsAddRequest{
+			addRequest := &product.ProductCrawlingAddRequest{
 				Brand:         brand,
 				Source:        source,
 				ProductID:     pd.ProductCode,
@@ -84,7 +84,7 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			}
 
 			totalProducts += 1
-			crawler.AddProduct(addRequest)
+			product.AddProductInCrawling(addRequest)
 		}
 
 		pageInt, _ := strconv.Atoi(crawlResponse.Page)
