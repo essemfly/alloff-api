@@ -167,6 +167,14 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		pdDao.SalesInstruction.Description.Texts = req.Description
 	}
 
+	if req.EarliestDeliveryDays != nil {
+		pdDao.SalesInstruction.DeliveryDescription.EarliestDeliveryDays = int(*req.EarliestDeliveryDays)
+	}
+
+	if req.LatestDeliveryDays != nil {
+		pdDao.SalesInstruction.DeliveryDescription.LatestDeliveryDays = int(*req.LatestDeliveryDays)
+	}
+
 	if req.IsRefundPossible != nil {
 		pdDao.SalesInstruction.CancelDescription.RefundAvailable = *req.IsRefundPossible
 		pdDao.SalesInstruction.CancelDescription.ChangeAvailable = *req.IsRefundPossible
