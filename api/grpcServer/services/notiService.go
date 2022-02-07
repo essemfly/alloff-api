@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"log"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
@@ -90,7 +91,10 @@ func (s *NotiService) SendNoti(ctx context.Context, req *grpcServer.SendNotiRequ
 			continue
 		}
 
-		notification.SendNotification(noti)
+		err := notification.SendNotification(noti)
+		if err != nil {
+			log.Println("err occured in send noti", err)
+		}
 	}
 	return &grpcServer.SendNotiResponse{
 		IsSent: true,
