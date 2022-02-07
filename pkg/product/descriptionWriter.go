@@ -53,7 +53,7 @@ func GetManuelProductDescription(pd *domain.ProductDAO, request *ProductManuelAd
 		}
 	}
 
-	descImages := append(pd.ProductInfo.Images, request.Images...)
+	descImages := append(pd.ProductInfo.Images, request.DescriptionImages...)
 	return &domain.AlloffInstructionDAO{
 		Description: &domain.ProductDescriptionDAO{
 			Images: descImages,
