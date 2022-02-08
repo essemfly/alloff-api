@@ -163,12 +163,10 @@ type ComplexityRoot struct {
 		Brands       func(childComplexity int) int
 		Description  func(childComplexity int) int
 		Exhibitions  func(childComplexity int) int
-		FinishedAt   func(childComplexity int) int
 		ID           func(childComplexity int) int
 		ItemType     func(childComplexity int) int
 		Products     func(childComplexity int) int
 		Reference    func(childComplexity int) int
-		StartedAt    func(childComplexity int) int
 		Tags         func(childComplexity int) int
 		Title        func(childComplexity int) int
 	}
@@ -1022,13 +1020,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.HomeTabItem.Exhibitions(childComplexity), true
 
-	case "HomeTabItem.finishedAt":
-		if e.complexity.HomeTabItem.FinishedAt == nil {
-			break
-		}
-
-		return e.complexity.HomeTabItem.FinishedAt(childComplexity), true
-
 	case "HomeTabItem.id":
 		if e.complexity.HomeTabItem.ID == nil {
 			break
@@ -1056,13 +1047,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.HomeTabItem.Reference(childComplexity), true
-
-	case "HomeTabItem.startedAt":
-		if e.complexity.HomeTabItem.StartedAt == nil {
-			break
-		}
-
-		return e.complexity.HomeTabItem.StartedAt(childComplexity), true
 
 	case "HomeTabItem.tags":
 		if e.complexity.HomeTabItem.Tags == nil {
@@ -2586,8 +2570,6 @@ type HomeTabItem {
   brands: [Brand!]
   exhibitions: [Exhibition!]
   reference: ItemReference!
-  startedAt: Date!
-  finishedAt: Date!
 }
 
 extend type Query {
@@ -6561,76 +6543,6 @@ func (ec *executionContext) _HomeTabItem_reference(ctx context.Context, field gr
 	res := resTmp.(*model.ItemReference)
 	fc.Result = res
 	return ec.marshalNItemReference2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐItemReference(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _HomeTabItem_startedAt(ctx context.Context, field graphql.CollectedField, obj *model.HomeTabItem) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "HomeTabItem",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.StartedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNDate2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _HomeTabItem_finishedAt(ctx context.Context, field graphql.CollectedField, obj *model.HomeTabItem) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "HomeTabItem",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.FinishedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Inventory_size(ctx context.Context, field graphql.CollectedField, obj *model.Inventory) (ret graphql.Marshaler) {
@@ -15132,16 +15044,6 @@ func (ec *executionContext) _HomeTabItem(ctx context.Context, sel ast.SelectionS
 			out.Values[i] = ec._HomeTabItem_exhibitions(ctx, field, obj)
 		case "reference":
 			out.Values[i] = ec._HomeTabItem_reference(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "startedAt":
-			out.Values[i] = ec._HomeTabItem_startedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "finishedAt":
-			out.Values[i] = ec._HomeTabItem_finishedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

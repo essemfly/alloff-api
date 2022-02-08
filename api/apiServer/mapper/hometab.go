@@ -40,7 +40,5 @@ func MapHomeTabItem(item *domain.HomeTabItemDAO) *model.HomeTabItem {
 		Brands:      brands,
 		Exhibitions: exhibitions,
 		Reference:   MapReference(item.Reference),
-		StartedAt:   item.StartedAt.String(),
-		FinishedAt:  item.FinishedAt.String(),
 	}
 }

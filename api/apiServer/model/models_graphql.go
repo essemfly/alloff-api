@@ -158,8 +158,6 @@ type HomeTabItem struct {
 	Brands       []*Brand            `json:"brands"`
 	Exhibitions  []*Exhibition       `json:"exhibitions"`
 	Reference    *ItemReference      `json:"reference"`
-	StartedAt    string              `json:"startedAt"`
-	FinishedAt   string              `json:"finishedAt"`
 }
 
 type Inventory struct {

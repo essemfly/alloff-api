@@ -23,8 +23,6 @@ type HomeTabItem {
   brands: [Brand!]
   exhibitions: [Exhibition!]
   reference: ItemReference!
-  startedAt: Date!
-  finishedAt: Date!
 }
 
 extend type Query {
