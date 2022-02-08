@@ -17,8 +17,9 @@ const (
 )
 
 type ReferenceTarget struct {
-	Path   string
-	Params string
+	Path    string
+	Params  string
+	Options []string
 }
 
 type HomeTabItemDAO struct {
