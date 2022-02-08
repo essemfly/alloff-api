@@ -32,6 +32,7 @@ type MongoDB struct {
 	likeBrandsCol      *mongo.Collection
 	likeProductsCol    *mongo.Collection
 	exhibitionCol      *mongo.Collection
+	hometabItemsCol    *mongo.Collection
 }
 
 func NewMongoDB(conf config.Configuration) *MongoDB {
@@ -62,6 +63,7 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 		alimtalkCol:        db.Collection("alimtalks"),
 		likeBrandsCol:      db.Collection("likes_brands"),
 		likeProductsCol:    db.Collection("likes_products"),
+		hometabItemsCol:    db.Collection("hometabitems"),
 	}
 }
 
@@ -85,6 +87,7 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.ProductGroups = MongoProductGroupsRepo(conn)
 	ioc.Repo.Exhibitions = MongoExhibitionsRepo(conn)
 	ioc.Repo.Notifications = MongoNotificationsRepo(conn)
+	ioc.Repo.HomeTabItems = MongoHometabItemsRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context, conf config.Configuration) (*mongo.Client, error) {

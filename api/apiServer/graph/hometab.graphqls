@@ -1,0 +1,37 @@
+enum HomeTabItemTypeEnum {
+  HOMETAB_ITEM_BRANDS
+  HOMETAB_ITEM_BRAND_EXHIBITION
+  HOMETAB_ITEM_EXHIBITIONS
+  HOMETAB_ITEM_EXHIBITION
+  HOMETAB_ITEM_PRODUCTS
+}
+
+type ItemReference {
+  path: String!
+  params: String!
+}
+
+type HomeTabItem {
+  id: ID!
+  title: String!
+  description: String!
+  tags: [String!]!
+  itemType: HomeTabItemTypeEnum!
+  products: [Product!]
+  brands: [Brand!]
+  exhibitions: [Exhibition!]
+  reference: ItemReference!
+  startedAt: Date!
+  endedAt: Date!
+}
+
+extend type Query {
+  homeTabItems: [HomeTabItem!]!
+  bestProducts(
+    offset: Int!
+    limit: Int!
+    alloffCategoryId: String!
+    brief: Boolean!
+  ): [Product]!
+  bestBrands(offset: Int!, limit: Int!): [Brand!]!
+}

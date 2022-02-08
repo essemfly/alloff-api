@@ -13,6 +13,7 @@ type BrandDAO struct {
 	KeyName               string
 	Description           string
 	LogoImgUrl            string
+	BackImgUrl            string
 	Category              []*CategoryDAO
 	SizeGuide             []SizeGuideDAO
 	Created               time.Time

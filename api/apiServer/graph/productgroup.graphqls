@@ -27,4 +27,5 @@ extend type Query {
   productGroups: [ProductGroup!]!
   exhibition(id: String!): Exhibition!
   exhibitions: [Exhibition!]!
+  timedeal: ProductGroup!
 }

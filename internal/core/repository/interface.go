@@ -151,3 +151,10 @@ type NotificationsRepository interface {
 	List(offset, limit int, onlyReady bool) ([]*domain.NotificationDAO, error)
 	Update(*domain.NotificationDAO) (*domain.NotificationDAO, error)
 }
+
+type HomeTabItemsRepository interface {
+	Insert(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
+	Get(itemID string) (*domain.HomeTabItemDAO, error)
+	List(offset, limit int, onlyLive bool) ([]*domain.HomeTabItemDAO, error)
+	Update(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
+}

@@ -59,3 +59,16 @@ func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, e
 
 	return exs, nil
 }
+
+func (r *queryResolver) Timedeal(ctx context.Context) (*model.ProductGroup, error) {
+	// TO BE SPECIFIED WITH PRODUCTGROUP TYPES
+	livePgs, err := ioc.Repo.ProductGroups.List(0)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(livePgs) > 0 {
+		return mapper.MapProductGroupDao(livePgs[0]), nil
+	}
+	return nil, nil
+}
