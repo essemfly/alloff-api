@@ -7,6 +7,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/core/repository"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -34,8 +35,15 @@ func (repo *notificationRepo) Get(notiID string) ([]*domain.NotificationDAO, err
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
+	notiObjID, _ := primitive.ObjectIDFromHex(notiID)
+
+	noti := &domain.NotificationDAO{}
+	if err := repo.col.FindOne(ctx, bson.M{"_id": notiObjID}).Decode(noti); err != nil {
+		return nil, err
+	}
+
 	notis := []*domain.NotificationDAO{}
-	cursor, err := repo.col.Find(ctx, bson.M{"notificationid": notiID})
+	cursor, err := repo.col.Find(ctx, bson.M{"notificationid": noti.Notificationid})
 	if err != nil {
 		return nil, err
 	}
