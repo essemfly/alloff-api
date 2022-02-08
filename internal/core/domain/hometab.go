@@ -36,5 +36,5 @@ type HomeTabItemDAO struct {
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 	StartedAt    time.Time
-	EndedAt      time.Time
+	FinishedAt   time.Time
 }

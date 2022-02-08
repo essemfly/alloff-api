@@ -9,6 +9,7 @@ enum HomeTabItemTypeEnum {
 type ItemReference {
   path: String!
   params: String!
+  options: [String!]!
 }
 
 type HomeTabItem {
@@ -16,17 +17,18 @@ type HomeTabItem {
   title: String!
   description: String!
   tags: [String!]!
+  backImageUrl: String!
   itemType: HomeTabItemTypeEnum!
   products: [Product!]
   brands: [Brand!]
   exhibitions: [Exhibition!]
   reference: ItemReference!
   startedAt: Date!
-  endedAt: Date!
+  finishedAt: Date!
 }
 
 extend type Query {
-  homeTabItems: [HomeTabItem!]!
+  homeTabItems(onlyLive: Boolean!, offset: Int, limit: Int): [HomeTabItem!]!
   bestProducts(
     offset: Int!
     limit: Int!

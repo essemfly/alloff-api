@@ -59,5 +59,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO) *model.Exhibition {
 		Title:          exDao.Title,
 		Description:    exDao.Description,
 		ProductGroups:  pgs,
+		StartTime:      exDao.StartTime.String(),
+		FinishTime:     exDao.FinishTime.String(),
 	}
 }

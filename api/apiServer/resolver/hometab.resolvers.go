@@ -5,19 +5,71 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/pkg/product"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
-func (r *queryResolver) HomeTabItems(ctx context.Context) ([]*model.HomeTabItem, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *queryResolver) HomeTabItems(ctx context.Context, onlyLive bool, offset *int, limit *int) ([]*model.HomeTabItem, error) {
+	if onlyLive {
+		tabItems, err := ioc.Repo.HomeTabItems.List(0, 100, onlyLive)
+		if err != nil {
+			return nil, err
+		}
+
+		retItems := []*model.HomeTabItem{}
+		for _, item := range tabItems {
+			retItems = append(retItems, mapper.MapHomeTabItem(item))
+		}
+		return retItems, nil
+	}
+
+	offsetParam := 0
+	limitParam := 100
+	if offset != nil {
+		offsetParam = *offset
+	}
+	if limit != nil {
+		limitParam = *limit
+	}
+	tabItems, err := ioc.Repo.HomeTabItems.List(offsetParam, limitParam, onlyLive)
+	if err != nil {
+		return nil, err
+	}
+
+	retItems := []*model.HomeTabItem{}
+	for _, item := range tabItems {
+		retItems = append(retItems, mapper.MapHomeTabItem(item))
+	}
+	return retItems, nil
 }
 
 func (r *queryResolver) BestProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) ([]*model.Product, error) {
-	panic(fmt.Errorf("not implemented"))
+	productDaos, _, err := product.AlloffCategoryProductsListing(offset, limit, nil, alloffCategoryID, "", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	pds := []*model.Product{}
+	for _, productDao := range productDaos {
+		pds = append(pds, mapper.MapProductDaoToProduct(productDao))
+	}
+	return pds, nil
 }
 
 func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) ([]*model.Brand, error) {
-	panic(fmt.Errorf("not implemented"))
+	brandDaos, _, err := ioc.Repo.Brands.List(0, 20, bson.M{"onpopular": true}, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	brands := []*model.Brand{}
+	for _, brandDao := range brandDaos {
+		brands = append(brands, mapper.MapBrandDaoToBrand(brandDao, false))
+	}
+
+	return brands, nil
 }

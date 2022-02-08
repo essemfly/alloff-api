@@ -20,6 +20,8 @@ type Exhibition {
   title: String!
   Description: String!
   productGroups: [ProductGroup!]!
+  startTime: Date!
+  finishTime: Date!
 }
 
 extend type Query {

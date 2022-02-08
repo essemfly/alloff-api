@@ -121,6 +121,8 @@ type Exhibition struct {
 	Title          string          `json:"title"`
 	Description    string          `json:"Description"`
 	ProductGroups  []*ProductGroup `json:"productGroups"`
+	StartTime      string          `json:"startTime"`
+	FinishTime     string          `json:"finishTime"`
 }
 
 type FeaturedItem struct {
@@ -146,17 +148,18 @@ type HomeItem struct {
 }
 
 type HomeTabItem struct {
-	ID          string              `json:"id"`
-	Title       string              `json:"title"`
-	Description string              `json:"description"`
-	Tags        []string            `json:"tags"`
-	ItemType    HomeTabItemTypeEnum `json:"itemType"`
-	Products    []*Product          `json:"products"`
-	Brands      []*Brand            `json:"brands"`
-	Exhibitions []*Exhibition       `json:"exhibitions"`
-	Reference   *ItemReference      `json:"reference"`
-	StartedAt   string              `json:"startedAt"`
-	EndedAt     string              `json:"endedAt"`
+	ID           string              `json:"id"`
+	Title        string              `json:"title"`
+	Description  string              `json:"description"`
+	Tags         []string            `json:"tags"`
+	BackImageURL string              `json:"backImageUrl"`
+	ItemType     HomeTabItemTypeEnum `json:"itemType"`
+	Products     []*Product          `json:"products"`
+	Brands       []*Brand            `json:"brands"`
+	Exhibitions  []*Exhibition       `json:"exhibitions"`
+	Reference    *ItemReference      `json:"reference"`
+	StartedAt    string              `json:"startedAt"`
+	FinishedAt   string              `json:"finishedAt"`
 }
 
 type Inventory struct {
@@ -170,8 +173,9 @@ type InventoryInput struct {
 }
 
 type ItemReference struct {
-	Path   string `json:"path"`
-	Params string `json:"params"`
+	Path    string   `json:"path"`
+	Params  string   `json:"params"`
+	Options []string `json:"options"`
 }
 
 type KeyValueInfo struct {

@@ -21,7 +21,7 @@ func AddHometabItem(req *HomeTabItemRequest) (*domain.HomeTabItemDAO, error) {
 		Tags:         req.Tags,
 		BackImageUrl: req.BackImageUrl,
 		StartedAt:    req.StartedAt,
-		EndedAt:      req.EndedAt,
+		FinishedAt:   req.FinishedAt,
 		CreatedAt:    time.Time{},
 		UpdatedAt:    time.Time{},
 	}

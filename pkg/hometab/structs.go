@@ -15,7 +15,7 @@ type HomeTabItemRequest struct {
 	Tags         []string
 	BackImageUrl string
 	StartedAt    time.Time
-	EndedAt      time.Time
+	FinishedAt   time.Time
 	Requester    ItemRequest
 }
 

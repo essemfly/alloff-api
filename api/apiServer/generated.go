@@ -128,8 +128,10 @@ type ComplexityRoot struct {
 	Exhibition struct {
 		BannerImage    func(childComplexity int) int
 		Description    func(childComplexity int) int
+		FinishTime     func(childComplexity int) int
 		ID             func(childComplexity int) int
 		ProductGroups  func(childComplexity int) int
+		StartTime      func(childComplexity int) int
 		ThumbnailImage func(childComplexity int) int
 		Title          func(childComplexity int) int
 	}
@@ -157,17 +159,18 @@ type ComplexityRoot struct {
 	}
 
 	HomeTabItem struct {
-		Brands      func(childComplexity int) int
-		Description func(childComplexity int) int
-		EndedAt     func(childComplexity int) int
-		Exhibitions func(childComplexity int) int
-		ID          func(childComplexity int) int
-		ItemType    func(childComplexity int) int
-		Products    func(childComplexity int) int
-		Reference   func(childComplexity int) int
-		StartedAt   func(childComplexity int) int
-		Tags        func(childComplexity int) int
-		Title       func(childComplexity int) int
+		BackImageURL func(childComplexity int) int
+		Brands       func(childComplexity int) int
+		Description  func(childComplexity int) int
+		Exhibitions  func(childComplexity int) int
+		FinishedAt   func(childComplexity int) int
+		ID           func(childComplexity int) int
+		ItemType     func(childComplexity int) int
+		Products     func(childComplexity int) int
+		Reference    func(childComplexity int) int
+		StartedAt    func(childComplexity int) int
+		Tags         func(childComplexity int) int
+		Title        func(childComplexity int) int
 	}
 
 	Inventory struct {
@@ -176,8 +179,9 @@ type ComplexityRoot struct {
 	}
 
 	ItemReference struct {
-		Params func(childComplexity int) int
-		Path   func(childComplexity int) int
+		Options func(childComplexity int) int
+		Params  func(childComplexity int) int
+		Path    func(childComplexity int) int
 	}
 
 	KeyValueInfo struct {
@@ -362,7 +366,7 @@ type ComplexityRoot struct {
 		Exhibition             func(childComplexity int, id string) int
 		Exhibitions            func(childComplexity int) int
 		Featureds              func(childComplexity int) int
-		HomeTabItems           func(childComplexity int) int
+		HomeTabItems           func(childComplexity int, onlyLive bool, offset *int, limit *int) int
 		Homeitems              func(childComplexity int) int
 		Likeproducts           func(childComplexity int) int
 		Order                  func(childComplexity int, id string) int
@@ -423,7 +427,7 @@ type QueryResolver interface {
 	User(ctx context.Context) (*model.User, error)
 	Brand(ctx context.Context, input *model.BrandInput) (*model.Brand, error)
 	Brands(ctx context.Context, input *model.BrandsInput) ([]*model.Brand, error)
-	HomeTabItems(ctx context.Context) ([]*model.HomeTabItem, error)
+	HomeTabItems(ctx context.Context, onlyLive bool, offset *int, limit *int) ([]*model.HomeTabItem, error)
 	BestProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) ([]*model.Product, error)
 	BestBrands(ctx context.Context, offset int, limit int) ([]*model.Brand, error)
 	Order(ctx context.Context, id string) (*model.OrderInfo, error)
@@ -836,6 +840,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Exhibition.Description(childComplexity), true
 
+	case "Exhibition.finishTime":
+		if e.complexity.Exhibition.FinishTime == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.FinishTime(childComplexity), true
+
 	case "Exhibition.id":
 		if e.complexity.Exhibition.ID == nil {
 			break
@@ -849,6 +860,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exhibition.ProductGroups(childComplexity), true
+
+	case "Exhibition.startTime":
+		if e.complexity.Exhibition.StartTime == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.StartTime(childComplexity), true
 
 	case "Exhibition.thumbnailImage":
 		if e.complexity.Exhibition.ThumbnailImage == nil {
@@ -976,6 +994,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.HomeItem.Title(childComplexity), true
 
+	case "HomeTabItem.backImageUrl":
+		if e.complexity.HomeTabItem.BackImageURL == nil {
+			break
+		}
+
+		return e.complexity.HomeTabItem.BackImageURL(childComplexity), true
+
 	case "HomeTabItem.brands":
 		if e.complexity.HomeTabItem.Brands == nil {
 			break
@@ -990,19 +1015,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.HomeTabItem.Description(childComplexity), true
 
-	case "HomeTabItem.endedAt":
-		if e.complexity.HomeTabItem.EndedAt == nil {
-			break
-		}
-
-		return e.complexity.HomeTabItem.EndedAt(childComplexity), true
-
 	case "HomeTabItem.exhibitions":
 		if e.complexity.HomeTabItem.Exhibitions == nil {
 			break
 		}
 
 		return e.complexity.HomeTabItem.Exhibitions(childComplexity), true
+
+	case "HomeTabItem.finishedAt":
+		if e.complexity.HomeTabItem.FinishedAt == nil {
+			break
+		}
+
+		return e.complexity.HomeTabItem.FinishedAt(childComplexity), true
 
 	case "HomeTabItem.id":
 		if e.complexity.HomeTabItem.ID == nil {
@@ -1066,6 +1091,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Inventory.Size(childComplexity), true
+
+	case "ItemReference.options":
+		if e.complexity.ItemReference.Options == nil {
+			break
+		}
+
+		return e.complexity.ItemReference.Options(childComplexity), true
 
 	case "ItemReference.params":
 		if e.complexity.ItemReference.Params == nil {
@@ -2127,7 +2159,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.HomeTabItems(childComplexity), true
+		args, err := ec.field_Query_homeTabItems_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.HomeTabItems(childComplexity, args["onlyLive"].(bool), args["offset"].(*int), args["limit"].(*int)), true
 
 	case "Query.homeitems":
 		if e.complexity.Query.Homeitems == nil {
@@ -2535,6 +2572,7 @@ extend type Mutation {
 type ItemReference {
   path: String!
   params: String!
+  options: [String!]!
 }
 
 type HomeTabItem {
@@ -2542,17 +2580,18 @@ type HomeTabItem {
   title: String!
   description: String!
   tags: [String!]!
+  backImageUrl: String!
   itemType: HomeTabItemTypeEnum!
   products: [Product!]
   brands: [Brand!]
   exhibitions: [Exhibition!]
   reference: ItemReference!
   startedAt: Date!
-  endedAt: Date!
+  finishedAt: Date!
 }
 
 extend type Query {
-  homeTabItems: [HomeTabItem!]!
+  homeTabItems(onlyLive: Boolean!, offset: Int, limit: Int): [HomeTabItem!]!
   bestProducts(
     offset: Int!
     limit: Int!
@@ -2784,6 +2823,8 @@ type Exhibition {
   title: String!
   Description: String!
   productGroups: [ProductGroup!]!
+  startTime: Date!
+  finishTime: Date!
 }
 
 extend type Query {
@@ -3408,6 +3449,39 @@ func (ec *executionContext) field_Query_exhibition_args(ctx context.Context, raw
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_homeTabItems_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 bool
+	if tmp, ok := rawArgs["onlyLive"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("onlyLive"))
+		arg0, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["onlyLive"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["offset"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["offset"] = arg1
+	var arg2 *int
+	if tmp, ok := rawArgs["limit"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+		arg2, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["limit"] = arg2
 	return args, nil
 }
 
@@ -5521,6 +5595,76 @@ func (ec *executionContext) _Exhibition_productGroups(ctx context.Context, field
 	return ec.marshalNProductGroup2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroupᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Exhibition_startTime(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StartTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exhibition_finishTime(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.FinishTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _FeaturedItem_id(ctx context.Context, field graphql.CollectedField, obj *model.FeaturedItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6218,6 +6362,41 @@ func (ec *executionContext) _HomeTabItem_tags(ctx context.Context, field graphql
 	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _HomeTabItem_backImageUrl(ctx context.Context, field graphql.CollectedField, obj *model.HomeTabItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "HomeTabItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BackImageURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _HomeTabItem_itemType(ctx context.Context, field graphql.CollectedField, obj *model.HomeTabItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6419,7 +6598,7 @@ func (ec *executionContext) _HomeTabItem_startedAt(ctx context.Context, field gr
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _HomeTabItem_endedAt(ctx context.Context, field graphql.CollectedField, obj *model.HomeTabItem) (ret graphql.Marshaler) {
+func (ec *executionContext) _HomeTabItem_finishedAt(ctx context.Context, field graphql.CollectedField, obj *model.HomeTabItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -6437,7 +6616,7 @@ func (ec *executionContext) _HomeTabItem_endedAt(ctx context.Context, field grap
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.EndedAt, nil
+		return obj.FinishedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6592,6 +6771,41 @@ func (ec *executionContext) _ItemReference_params(ctx context.Context, field gra
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ItemReference_options(ctx context.Context, field graphql.CollectedField, obj *model.ItemReference) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ItemReference",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Options, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _KeyValueInfo_key(ctx context.Context, field graphql.CollectedField, obj *model.KeyValueInfo) (ret graphql.Marshaler) {
@@ -11168,9 +11382,16 @@ func (ec *executionContext) _Query_homeTabItems(ctx context.Context, field graph
 	}
 
 	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_homeTabItems_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().HomeTabItems(rctx)
+		return ec.resolvers.Query().HomeTabItems(rctx, args["onlyLive"].(bool), args["offset"].(*int), args["limit"].(*int))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14720,6 +14941,16 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "startTime":
+			out.Values[i] = ec._Exhibition_startTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "finishTime":
+			out.Values[i] = ec._Exhibition_finishTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -14883,6 +15114,11 @@ func (ec *executionContext) _HomeTabItem(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "backImageUrl":
+			out.Values[i] = ec._HomeTabItem_backImageUrl(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "itemType":
 			out.Values[i] = ec._HomeTabItem_itemType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -14904,8 +15140,8 @@ func (ec *executionContext) _HomeTabItem(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "endedAt":
-			out.Values[i] = ec._HomeTabItem_endedAt(ctx, field, obj)
+		case "finishedAt":
+			out.Values[i] = ec._HomeTabItem_finishedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -14970,6 +15206,11 @@ func (ec *executionContext) _ItemReference(ctx context.Context, sel ast.Selectio
 			}
 		case "params":
 			out.Values[i] = ec._ItemReference_params(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "options":
+			out.Values[i] = ec._ItemReference_options(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

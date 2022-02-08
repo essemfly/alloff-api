@@ -64,7 +64,7 @@ func AddMockHomeTabs() {
 			Tags:         []string{},
 			BackImageUrl: "",
 			StartedAt:    time.Now(),
-			EndedAt:      time.Now().Add(1200 * time.Hour),
+			FinishedAt:   time.Now().Add(1200 * time.Hour),
 			Requester: &hometab.BrandsItemRequest{
 				BrandKeynames: []string{
 					"MAJE", "GAP", "NICECLAUP", "CHLOE", "SHESMISS",
@@ -77,7 +77,7 @@ func AddMockHomeTabs() {
 			Tags:         []string{},
 			BackImageUrl: "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202005/25/8ab5037f-8ac6-4597-9197-09b328f2c514.jpg",
 			StartedAt:    time.Now(),
-			EndedAt:      time.Now().Add(1200 * time.Hour),
+			FinishedAt:   time.Now().Add(1200 * time.Hour),
 			Requester: &hometab.BrandExhibitionItemRequest{
 				BrandKeyname: "THEORY",
 				ExhibitionID: exhitibionIDs[0],
@@ -89,7 +89,7 @@ func AddMockHomeTabs() {
 			Tags:         []string{},
 			BackImageUrl: "",
 			StartedAt:    time.Now(),
-			EndedAt:      time.Now().Add(1200 * time.Hour),
+			FinishedAt:   time.Now().Add(1200 * time.Hour),
 			Requester: &hometab.ExhibitionsItemRequest{
 				ExhibitionIDs: exhitibionIDs,
 			},
@@ -100,7 +100,7 @@ func AddMockHomeTabs() {
 			Tags:         []string{"여러분", "모두", "부자되세요"},
 			BackImageUrl: "https://img.huffingtonpost.com/asset/61494acf240000140118d34e.png",
 			StartedAt:    time.Now(),
-			EndedAt:      time.Now().Add(1200 * time.Hour),
+			FinishedAt:   time.Now().Add(1200 * time.Hour),
 			Requester: &hometab.ExhibitionItemRequest{
 				ExhibitionID: exhitibionIDs[0],
 			},
@@ -111,7 +111,7 @@ func AddMockHomeTabs() {
 			Tags:         []string{"묻지도 않고", "따지지도않고", "라이나생명보험"},
 			BackImageUrl: "https://i.ytimg.com/vi/zK58Ht3OQhM/maxresdefault.jpg",
 			StartedAt:    time.Now(),
-			EndedAt:      time.Now().Add(1200 * time.Hour),
+			FinishedAt:   time.Now().Add(1200 * time.Hour),
 			Requester: &hometab.ExhibitionItemRequest{
 				ExhibitionID: exhitibionIDs[1],
 			},
@@ -122,7 +122,7 @@ func AddMockHomeTabs() {
 			Tags:         []string{},
 			BackImageUrl: "",
 			StartedAt:    time.Now(),
-			EndedAt:      time.Now().Add(1200 * time.Hour),
+			FinishedAt:   time.Now().Add(1200 * time.Hour),
 			Requester: &hometab.AlloffCategoryItemRequest{
 				AlloffCategoryID: alloffcatIDs[0],
 				SortingOptions:   []string{"100", "70"},
@@ -134,7 +134,7 @@ func AddMockHomeTabs() {
 			Tags:         []string{},
 			BackImageUrl: "",
 			StartedAt:    time.Now(),
-			EndedAt:      time.Now().Add(1200 * time.Hour),
+			FinishedAt:   time.Now().Add(1200 * time.Hour),
 			Requester: &hometab.AlloffCategoryItemRequest{
 				AlloffCategoryID: alloffcatIDs[1],
 				SortingOptions:   []string{"70"},
