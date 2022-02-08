@@ -73,20 +73,7 @@ func (req *BrandExhibitionItemRequest) fillItemContents(item *domain.HomeTabItem
 	item.Exhibitions = []*domain.ExhibitionDAO{
 		exhibitionDao,
 	}
-
-	item.Products = []*domain.ProductDAO{}
-
-	if len(exhibitionDao.ProductGroups) > 0 {
-		if len(exhibitionDao.ProductGroups[0].Products) > 5 {
-			for idx, productPriority := range exhibitionDao.ProductGroups[0].Products {
-				if idx >= 10 {
-					break
-				}
-				item.Products = append(item.Products, productPriority.Product)
-			}
-		}
-	}
-
+	item.Products = exhibitionDao.ListCheifProducts()
 	item.Reference = &domain.ReferenceTarget{
 		Path:   "exhibition",
 		Params: exhibitionDao.ID.Hex(),
@@ -136,19 +123,7 @@ func (req *ExhibitionItemRequest) fillItemContents(item *domain.HomeTabItemDAO) 
 		exhibitionDao,
 	}
 
-	item.Products = []*domain.ProductDAO{}
-
-	if len(exhibitionDao.ProductGroups) > 0 {
-		if len(exhibitionDao.ProductGroups[0].Products) > 5 {
-			for idx, productPriority := range exhibitionDao.ProductGroups[0].Products {
-				if idx >= 10 {
-					break
-				}
-				item.Products = append(item.Products, productPriority.Product)
-			}
-		}
-	}
-
+	item.Products = exhibitionDao.ListCheifProducts()
 	item.Reference = &domain.ReferenceTarget{
 		Path:   "exhibition",
 		Params: exhibitionDao.ID.Hex(),

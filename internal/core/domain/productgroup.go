@@ -67,3 +67,19 @@ func (pgDao *ProductGroupDAO) RemoveProduct(productID string) {
 	}
 	pgDao.Products = newPds
 }
+
+func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {
+	numProductsToShow := 0
+	products := []*ProductDAO{}
+	if len(exDao.ProductGroups) > 0 {
+		if len(exDao.ProductGroups[0].Products) > 0 {
+			for idx, productPriority := range exDao.ProductGroups[0].Products {
+				if idx >= numProductsToShow {
+					break
+				}
+				products = append(products, productPriority.Product)
+			}
+		}
+	}
+	return products
+}
