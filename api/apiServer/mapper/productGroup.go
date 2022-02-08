@@ -57,7 +57,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO) *model.Exhibition {
 		BannerImage:    exDao.BannerImage,
 		ThumbnailImage: exDao.ThumbnailImage,
 		Title:          exDao.Title,
-		ShortTitle:     exDao.ShortTitle,
+		Description:    exDao.Description,
 		ProductGroups:  pgs,
 	}
 }

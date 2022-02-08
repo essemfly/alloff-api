@@ -127,9 +127,9 @@ type ComplexityRoot struct {
 
 	Exhibition struct {
 		BannerImage    func(childComplexity int) int
+		Description    func(childComplexity int) int
 		ID             func(childComplexity int) int
 		ProductGroups  func(childComplexity int) int
-		ShortTitle     func(childComplexity int) int
 		ThumbnailImage func(childComplexity int) int
 		Title          func(childComplexity int) int
 	}
@@ -829,6 +829,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Exhibition.BannerImage(childComplexity), true
 
+	case "Exhibition.Description":
+		if e.complexity.Exhibition.Description == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.Description(childComplexity), true
+
 	case "Exhibition.id":
 		if e.complexity.Exhibition.ID == nil {
 			break
@@ -842,13 +849,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exhibition.ProductGroups(childComplexity), true
-
-	case "Exhibition.shortTitle":
-		if e.complexity.Exhibition.ShortTitle == nil {
-			break
-		}
-
-		return e.complexity.Exhibition.ShortTitle(childComplexity), true
 
 	case "Exhibition.thumbnailImage":
 		if e.complexity.Exhibition.ThumbnailImage == nil {
@@ -2782,7 +2782,7 @@ type Exhibition {
   bannerImage: String!
   thumbnailImage: String!
   title: String!
-  shortTitle: String!
+  Description: String!
   productGroups: [ProductGroup!]!
 }
 
@@ -5451,7 +5451,7 @@ func (ec *executionContext) _Exhibition_title(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Exhibition_shortTitle(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+func (ec *executionContext) _Exhibition_Description(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5469,7 +5469,7 @@ func (ec *executionContext) _Exhibition_shortTitle(ctx context.Context, field gr
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ShortTitle, nil
+		return obj.Description, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14710,8 +14710,8 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "shortTitle":
-			out.Values[i] = ec._Exhibition_shortTitle(ctx, field, obj)
+		case "Description":
+			out.Values[i] = ec._Exhibition_Description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
