@@ -2,6 +2,7 @@ package productgroup
 
 import (
 	"log"
+	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -13,6 +14,8 @@ type ExhibitionRequest struct {
 	Title           string
 	Description     string
 	ProductGroupIDs []string
+	StartTime       time.Time
+	FinishTime      time.Time
 }
 
 func AddExhibition(req *ExhibitionRequest) (*domain.ExhibitionDAO, error) {
@@ -33,6 +36,8 @@ func AddExhibition(req *ExhibitionRequest) (*domain.ExhibitionDAO, error) {
 		Title:          req.Title,
 		Description:    req.Description,
 		ProductGroups:  pgDaos,
+		StartTime:      req.StartTime,
+		FinishTime:     req.FinishTime,
 	}
 
 	return exhibition, nil

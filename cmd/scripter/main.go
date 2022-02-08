@@ -20,6 +20,8 @@ func main() {
 	// scripts.AddMockHomeItems()
 	// scripts.InsertDiffNotification()
 	// scripts.TestAlimtalk()
-	scripts.AddTimedealNotification()
-	scripts.SendNotification()
+	// scripts.AddTimedealNotification()
+	// scripts.SendNotification()
+	scripts.AddMockExhibitions()
+	scripts.AddMockHomeTabs()
 }

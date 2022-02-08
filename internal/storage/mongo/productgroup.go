@@ -167,7 +167,8 @@ func (repo *exhibitionRepo) Upsert(exhibition *domain.ExhibitionDAO) (*domain.Ex
 		}
 		newExhibitionID = exhibition.ID.Hex()
 	} else {
-		insertedId, err := repo.col.InsertOne(ctx, exhibition)
+		exhibition.ID = primitive.NewObjectID()
+		insertedId, err := repo.col.InsertOne(ctx, *exhibition)
 		if err != nil {
 			log.Println(err)
 			return exhibition, nil

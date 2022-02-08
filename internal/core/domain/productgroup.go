@@ -27,11 +27,13 @@ type ProductPriorityDAO struct {
 }
 
 type ExhibitionDAO struct {
-	ID             primitive.ObjectID `bons:"_id, omitempty"`
+	ID             primitive.ObjectID `bson:"_id, omitempty"`
 	BannerImage    string
 	ThumbnailImage string
 	Title          string
 	Description    string
+	StartTime      time.Time
+	FinishTime     time.Time
 	ProductGroups  []*ProductGroupDAO
 }
 

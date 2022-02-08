@@ -64,6 +64,7 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 		likeBrandsCol:      db.Collection("likes_brands"),
 		likeProductsCol:    db.Collection("likes_products"),
 		hometabItemsCol:    db.Collection("hometabitems"),
+		exhibitionCol:      db.Collection("exhibitions"),
 	}
 }
 
