@@ -67,6 +67,7 @@ func (repo *notificationRepo) List(offset, limit int, onlyReady bool) ([]*domain
 	options := options.Find()
 	options.SetSkip(int64(offset))
 	options.SetLimit(int64(limit))
+	options.SetSort(bson.M{"_id": -1})
 
 	cursor, err := repo.col.Find(ctx, filter, options)
 	if err != nil {
