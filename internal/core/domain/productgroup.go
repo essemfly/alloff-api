@@ -71,7 +71,7 @@ func (pgDao *ProductGroupDAO) RemoveProduct(productID string) {
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {
-	numProductsToShow := 0
+	numProductsToShow := 10
 	products := []*ProductDAO{}
 	if len(exDao.ProductGroups) > 0 {
 		if len(exDao.ProductGroups[0].Products) > 0 {
