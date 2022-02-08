@@ -31,7 +31,7 @@ type ExhibitionDAO struct {
 	BannerImage    string
 	ThumbnailImage string
 	Title          string
-	ShortTitle     string
+	Description    string
 	ProductGroups  []*ProductGroupDAO
 }
 
