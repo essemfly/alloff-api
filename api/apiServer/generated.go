@@ -2566,9 +2566,9 @@ type HomeTabItem {
   tags: [String!]!
   backImageUrl: String!
   itemType: HomeTabItemTypeEnum!
-  products: [Product!]
-  brands: [Brand!]
-  exhibitions: [Exhibition!]
+  products: [Product!]!
+  brands: [Brand!]!
+  exhibitions: [Exhibition!]!
   reference: ItemReference!
 }
 
@@ -6439,11 +6439,14 @@ func (ec *executionContext) _HomeTabItem_products(ctx context.Context, field gra
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.([]*model.Product)
 	fc.Result = res
-	return ec.marshalOProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductᚄ(ctx, field.Selections, res)
+	return ec.marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _HomeTabItem_brands(ctx context.Context, field graphql.CollectedField, obj *model.HomeTabItem) (ret graphql.Marshaler) {
@@ -6471,11 +6474,14 @@ func (ec *executionContext) _HomeTabItem_brands(ctx context.Context, field graph
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.([]*model.Brand)
 	fc.Result = res
-	return ec.marshalOBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandᚄ(ctx, field.Selections, res)
+	return ec.marshalNBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _HomeTabItem_exhibitions(ctx context.Context, field graphql.CollectedField, obj *model.HomeTabItem) (ret graphql.Marshaler) {
@@ -6503,11 +6509,14 @@ func (ec *executionContext) _HomeTabItem_exhibitions(ctx context.Context, field 
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.([]*model.Exhibition)
 	fc.Result = res
-	return ec.marshalOExhibition2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionᚄ(ctx, field.Selections, res)
+	return ec.marshalNExhibition2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _HomeTabItem_reference(ctx context.Context, field graphql.CollectedField, obj *model.HomeTabItem) (ret graphql.Marshaler) {
@@ -15038,10 +15047,19 @@ func (ec *executionContext) _HomeTabItem(ctx context.Context, sel ast.SelectionS
 			}
 		case "products":
 			out.Values[i] = ec._HomeTabItem_products(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "brands":
 			out.Values[i] = ec._HomeTabItem_brands(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "exhibitions":
 			out.Values[i] = ec._HomeTabItem_exhibitions(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "reference":
 			out.Values[i] = ec._HomeTabItem_reference(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -18624,53 +18642,6 @@ func (ec *executionContext) marshalOCategory2ᚖgithubᚗcomᚋlessbutterᚋallo
 		return graphql.Null
 	}
 	return ec._Category(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOExhibition2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Exhibition) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNExhibition2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibition(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

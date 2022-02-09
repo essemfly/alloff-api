@@ -19,9 +19,9 @@ type HomeTabItem {
   tags: [String!]!
   backImageUrl: String!
   itemType: HomeTabItemTypeEnum!
-  products: [Product!]
-  brands: [Brand!]
-  exhibitions: [Exhibition!]
+  products: [Product!]!
+  brands: [Brand!]!
+  exhibitions: [Exhibition!]!
   reference: ItemReference!
 }
 
