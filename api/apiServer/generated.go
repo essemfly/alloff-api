@@ -831,7 +831,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Exhibition.BannerImage(childComplexity), true
 
-	case "Exhibition.Description":
+	case "Exhibition.description":
 		if e.complexity.Exhibition.Description == nil {
 			break
 		}
@@ -2803,7 +2803,7 @@ type Exhibition {
   bannerImage: String!
   thumbnailImage: String!
   title: String!
-  Description: String!
+  description: String!
   productGroups: [ProductGroup!]!
   startTime: Date!
   finishTime: Date!
@@ -5507,7 +5507,7 @@ func (ec *executionContext) _Exhibition_title(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Exhibition_Description(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+func (ec *executionContext) _Exhibition_description(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -14852,8 +14852,8 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "Description":
-			out.Values[i] = ec._Exhibition_Description(ctx, field, obj)
+		case "description":
+			out.Values[i] = ec._Exhibition_description(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

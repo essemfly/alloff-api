@@ -119,7 +119,7 @@ type Exhibition struct {
 	BannerImage    string          `json:"bannerImage"`
 	ThumbnailImage string          `json:"thumbnailImage"`
 	Title          string          `json:"title"`
-	Description    string          `json:"Description"`
+	Description    string          `json:"description"`
 	ProductGroups  []*ProductGroup `json:"productGroups"`
 	StartTime      string          `json:"startTime"`
 	FinishTime     string          `json:"finishTime"`
