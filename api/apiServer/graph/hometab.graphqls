@@ -32,6 +32,6 @@ extend type Query {
     limit: Int!
     alloffCategoryId: String!
     brief: Boolean!
-  ): [Product]!
+  ): [Product!]!
   bestBrands(offset: Int!, limit: Int!): [Brand!]!
 }
