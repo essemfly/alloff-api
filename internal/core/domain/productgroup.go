@@ -6,6 +6,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+type ProductGroupType string
+
+const (
+	PRODUCT_GROUP_TIMEDEAL   = "PRODUCT_GROUP_TIMEDEAL"
+	PRODUCT_GROUP_EXHIBITION = "PRODUCT_GROUP_EXHIBITION"
+)
+
 type ProductGroupDAO struct {
 	ID          primitive.ObjectID `bson:"_id, omitempty"`
 	Title       string             `json:"title"`
@@ -14,6 +21,7 @@ type ProductGroupDAO struct {
 	ImgUrl      string             `json:"imgurl"`
 	NumAlarms   int
 	Products    []*ProductPriorityDAO
+	GroupType   ProductGroupType
 	StartTime   time.Time
 	FinishTime  time.Time
 	Created     time.Time

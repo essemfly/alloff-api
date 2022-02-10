@@ -4,6 +4,7 @@ type Brand {
   engName: String!
   keyName: String!
   logoImgUrl: String!
+  backImgUrl: String!
   categories: [Category!]!
   onPopular: Boolean!
   description: String!

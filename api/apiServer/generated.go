@@ -70,6 +70,7 @@ type ComplexityRoot struct {
 	}
 
 	Brand struct {
+		BackImgURL      func(childComplexity int) int
 		Categories      func(childComplexity int) int
 		Description     func(childComplexity int) int
 		EngName         func(childComplexity int) int
@@ -578,6 +579,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AppVersion.MinVersion(childComplexity), true
+
+	case "Brand.backImgUrl":
+		if e.complexity.Brand.BackImgURL == nil {
+			break
+		}
+
+		return e.complexity.Brand.BackImgURL(childComplexity), true
 
 	case "Brand.categories":
 		if e.complexity.Brand.Categories == nil {
@@ -2503,6 +2511,7 @@ extend type Mutation {
   engName: String!
   keyName: String!
   logoImgUrl: String!
+  backImgUrl: String!
   categories: [Category!]!
   onPopular: Boolean!
   description: String!
@@ -4307,6 +4316,41 @@ func (ec *executionContext) _Brand_logoImgUrl(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.LogoImgURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Brand_backImgUrl(ctx context.Context, field graphql.CollectedField, obj *model.Brand) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Brand",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BackImgURL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14531,6 +14575,11 @@ func (ec *executionContext) _Brand(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "logoImgUrl":
 			out.Values[i] = ec._Brand_logoImgUrl(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "backImgUrl":
+			out.Values[i] = ec._Brand_backImgUrl(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

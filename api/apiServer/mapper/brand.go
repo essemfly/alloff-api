@@ -27,6 +27,7 @@ func MapBrandDaoToBrand(brDao *domain.BrandDAO, includeCategory bool) *model.Bra
 		KorName:         brDao.KorName,
 		KeyName:         brDao.KeyName,
 		LogoImgURL:      brDao.LogoImgUrl,
+		BackImgURL:      brDao.BackImgUrl,
 		OnPopular:       brDao.Onpopular,
 		Description:     brDao.Description,
 		MaxDiscountRate: brDao.MaxDiscountRate,

@@ -56,6 +56,7 @@ type Brand struct {
 	EngName         string       `json:"engName"`
 	KeyName         string       `json:"keyName"`
 	LogoImgURL      string       `json:"logoImgUrl"`
+	BackImgURL      string       `json:"backImgUrl"`
 	Categories      []*Category  `json:"categories"`
 	OnPopular       bool         `json:"onPopular"`
 	Description     string       `json:"description"`
