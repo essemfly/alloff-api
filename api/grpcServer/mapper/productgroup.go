@@ -23,5 +23,16 @@ func ProductGroupMapper(pg *domain.ProductGroupDAO) *grpcServer.ProductGroupMess
 		StartTime:      pg.StartTime.String(),
 		FinishTime:     pg.FinishTime.String(),
 		ProductGroupId: pg.ID.Hex(),
+		GroupType:      GroupTypeMapper(pg.GroupType),
 	}
+}
+
+func GroupTypeMapper(groupType domain.ProductGroupType) grpcServer.ProductGroupType {
+	switch groupType {
+	case domain.PRODUCT_GROUP_TIMEDEAL:
+		return grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL
+	case domain.PRODUCT_GROUP_EXHIBITION:
+		return grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION
+	}
+	return grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL
 }

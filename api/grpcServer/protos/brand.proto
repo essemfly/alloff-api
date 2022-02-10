@@ -31,7 +31,9 @@ message EditBrandRequest {
     optional bool is_open = 7;
     optional bool in_maintenance = 8;
     repeated SizeGuideMessage size_guide = 9;
+    optional string back_image_url = 10;
 }
+
 message EditBrandResponse {
     BrandMessage brand = 1;
 }
@@ -46,7 +48,9 @@ message CreateBrandRequest {
     bool is_open = 7;
     bool in_maintenance = 8;
     repeated SizeGuideMessage size_guide = 9;
+    string back_image_url = 10;
 }
+
 message CreateBrandResponse {
     BrandMessage brand = 1;
 }
@@ -62,6 +66,7 @@ message BrandMessage {
     bool is_open = 8;
     bool in_maintenance = 9;
     repeated SizeGuideMessage size_guide = 10;
+    string back_image_url = 11;
 }
 
 message SizeGuideMessage {

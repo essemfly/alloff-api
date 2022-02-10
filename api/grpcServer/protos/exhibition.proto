@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package grpcServer;
+
+import "api/grpcServer/protos/productGroup.proto";
+
+option go_package = "github.com/lessbutter/alloff-api/api/grpcServer";
+
+service Exhibition {
+    rpc GetExhibition(GetExhibitionRequest) returns (GetExhibitionResponse);
+    rpc ListExhibitions(ListExhibitionsRequest) returns (ListExhibitionsResponse);
+    rpc EditExhibition(EditExhibitionRequest) returns (EditExhibitionResponse);
+    rpc CreateExhibition(CreateExhibitionRequest) returns (CreateExhibitionResponse);
+}
+
+message GetExhibitionRequest {
+    string exhibition_id = 1;
+}
+
+message ListExhibitionsRequest {
+    int32 offset = 1;
+    int32 limit = 2;
+}
+
+message EditExhibitionRequest {
+    optional string banner_image = 1;
+    optional string thumbanil_image = 2;
+    optional string title = 3;
+    optional string description = 4;
+    optional string start_time = 5;
+    optional string finish_time = 6;
+    repeated string pg_ids = 7;
+}
+
+message CreateExhibitionRequest {
+    string banner_image = 1;
+    string thumbanil_image = 2;
+    string title = 3;
+    string description = 4;
+    string start_time = 5;
+    string finish_time = 6;
+    repeated string pg_ids = 7;
+}
+
+message GetExhibitionResponse {
+    ExhibitionMessage exhibition = 1;
+}
+
+message ListExhibitionsResponse {
+    repeated ExhibitionMessage exhibitions = 1;
+    int32 offset = 2;
+    int32 limit = 3;
+    int32 total_counts = 4;
+}
+
+message EditExhibitionResponse {
+    ExhibitionMessage exhibition = 1;
+}
+
+message CreateExhibitionResponse {
+    ExhibitionMessage exhibition = 1;
+}
+
+message ExhibitionMessage {
+    string exhibition_id = 1;
+    string banner_image = 2;
+    string thumbnail_image = 3;
+    string title = 4;
+    string description = 5;
+    string start_time = 6;
+    string finish_time = 7;
+    repeated ProductGroupMessage pgs = 8;
+}
