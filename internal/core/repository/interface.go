@@ -83,7 +83,7 @@ type ProductGroupsRepository interface {
 
 type ExhibitionsRepository interface {
 	Get(ID string) (*domain.ExhibitionDAO, error)
-	List() ([]*domain.ExhibitionDAO, error)
+	List(offset, limit int) ([]*domain.ExhibitionDAO, int, error)
 	Upsert(*domain.ExhibitionDAO) (*domain.ExhibitionDAO, error)
 }
 
@@ -155,6 +155,6 @@ type NotificationsRepository interface {
 type HomeTabItemsRepository interface {
 	Insert(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
 	Get(itemID string) (*domain.HomeTabItemDAO, error)
-	List(offset, limit int, onlyLive bool) ([]*domain.HomeTabItemDAO, error)
+	List(offset, limit int, onlyLive bool) ([]*domain.HomeTabItemDAO, int, error)
 	Update(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
 }

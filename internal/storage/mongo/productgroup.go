@@ -127,29 +127,32 @@ func (repo *exhibitionRepo) Get(ID string) (*domain.ExhibitionDAO, error) {
 
 }
 
-func (repo *exhibitionRepo) List() ([]*domain.ExhibitionDAO, error) {
+func (repo *exhibitionRepo) List(offset, limit int) ([]*domain.ExhibitionDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	now := primitive.NewDateTimeFromTime(time.Now())
 	filter := bson.M{"finishtime": bson.M{"$gte": now}}
 	onGoingOptions := options.Find()
-	onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 1}})
+	onGoingOptions.SetSkip(int64(offset))
+	onGoingOptions.SetLimit(int64(limit))
+	onGoingOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
 
+	totalCount, _ := repo.col.CountDocuments(ctx, filter)
 	cur, err := repo.col.Find(ctx, filter, onGoingOptions)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, 0, err
 	}
 
 	var exhibitions []*domain.ExhibitionDAO
 	err = cur.All(ctx, &exhibitions)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, 0, err
 	}
 
-	return exhibitions, nil
+	return exhibitions, int(totalCount), nil
 }
 
 func (repo *exhibitionRepo) Upsert(exhibition *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error) {

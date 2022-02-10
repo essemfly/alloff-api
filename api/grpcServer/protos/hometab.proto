@@ -26,19 +26,20 @@ message ListHomeTabItemsRequest {
 }
 
 message EditHomeTabItemRequest {
-    optional string title = 1;
-    optional string description = 2;
-    repeated string tags = 3;
-    optional string back_image_url = 4;
-    optional string start_time = 5;
-    optional string finish_time = 6;
-    ItemRequester contents = 7;
+    string hometab_id = 1;
+    optional string title = 2;
+    optional string description = 3;
+    repeated string tags = 4;
+    optional string back_image_url = 5;
+    optional string start_time = 6;
+    optional string finish_time = 7;
+    ItemRequester contents = 8;
 }
 
 message CreateHomeTabItemRequest {
     string title = 1;
     string description = 2;
-    string tags = 3;
+    repeated string tags = 3;
     string back_image_url = 4;
     string start_time = 5;
     string finish_time = 6;

@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HomeTabItemClient interface {
 	GetHomeTabItem(ctx context.Context, in *GetHomeTabItemRequest, opts ...grpc.CallOption) (*GetHomeTabItemResponse, error)
-	ListHHomeTabItems(ctx context.Context, in *ListHomeTabItemsRequest, opts ...grpc.CallOption) (*ListHomeTabsItemResponse, error)
+	ListHomeTabItems(ctx context.Context, in *ListHomeTabItemsRequest, opts ...grpc.CallOption) (*ListHomeTabsItemResponse, error)
 	EditHomeTabItem(ctx context.Context, in *EditHomeTabItemRequest, opts ...grpc.CallOption) (*EditHomeTabItemResponse, error)
 	CreateHomeTabItem(ctx context.Context, in *CreateHomeTabItemRequest, opts ...grpc.CallOption) (*CreateHomeTabItemResponse, error)
 }
@@ -45,9 +45,9 @@ func (c *homeTabItemClient) GetHomeTabItem(ctx context.Context, in *GetHomeTabIt
 	return out, nil
 }
 
-func (c *homeTabItemClient) ListHHomeTabItems(ctx context.Context, in *ListHomeTabItemsRequest, opts ...grpc.CallOption) (*ListHomeTabsItemResponse, error) {
+func (c *homeTabItemClient) ListHomeTabItems(ctx context.Context, in *ListHomeTabItemsRequest, opts ...grpc.CallOption) (*ListHomeTabsItemResponse, error) {
 	out := new(ListHomeTabsItemResponse)
-	err := c.cc.Invoke(ctx, "/grpcServer.HomeTabItem/ListHHomeTabItems", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/grpcServer.HomeTabItem/ListHomeTabItems", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (c *homeTabItemClient) CreateHomeTabItem(ctx context.Context, in *CreateHom
 // for forward compatibility
 type HomeTabItemServer interface {
 	GetHomeTabItem(context.Context, *GetHomeTabItemRequest) (*GetHomeTabItemResponse, error)
-	ListHHomeTabItems(context.Context, *ListHomeTabItemsRequest) (*ListHomeTabsItemResponse, error)
+	ListHomeTabItems(context.Context, *ListHomeTabItemsRequest) (*ListHomeTabsItemResponse, error)
 	EditHomeTabItem(context.Context, *EditHomeTabItemRequest) (*EditHomeTabItemResponse, error)
 	CreateHomeTabItem(context.Context, *CreateHomeTabItemRequest) (*CreateHomeTabItemResponse, error)
 	mustEmbedUnimplementedHomeTabItemServer()
@@ -90,8 +90,8 @@ type UnimplementedHomeTabItemServer struct {
 func (UnimplementedHomeTabItemServer) GetHomeTabItem(context.Context, *GetHomeTabItemRequest) (*GetHomeTabItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHomeTabItem not implemented")
 }
-func (UnimplementedHomeTabItemServer) ListHHomeTabItems(context.Context, *ListHomeTabItemsRequest) (*ListHomeTabsItemResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListHHomeTabItems not implemented")
+func (UnimplementedHomeTabItemServer) ListHomeTabItems(context.Context, *ListHomeTabItemsRequest) (*ListHomeTabsItemResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListHomeTabItems not implemented")
 }
 func (UnimplementedHomeTabItemServer) EditHomeTabItem(context.Context, *EditHomeTabItemRequest) (*EditHomeTabItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EditHomeTabItem not implemented")
@@ -130,20 +130,20 @@ func _HomeTabItem_GetHomeTabItem_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _HomeTabItem_ListHHomeTabItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _HomeTabItem_ListHomeTabItems_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListHomeTabItemsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(HomeTabItemServer).ListHHomeTabItems(ctx, in)
+		return srv.(HomeTabItemServer).ListHomeTabItems(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/grpcServer.HomeTabItem/ListHHomeTabItems",
+		FullMethod: "/grpcServer.HomeTabItem/ListHomeTabItems",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(HomeTabItemServer).ListHHomeTabItems(ctx, req.(*ListHomeTabItemsRequest))
+		return srv.(HomeTabItemServer).ListHomeTabItems(ctx, req.(*ListHomeTabItemsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -196,8 +196,8 @@ var HomeTabItem_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _HomeTabItem_GetHomeTabItem_Handler,
 		},
 		{
-			MethodName: "ListHHomeTabItems",
-			Handler:    _HomeTabItem_ListHHomeTabItems_Handler,
+			MethodName: "ListHomeTabItems",
+			Handler:    _HomeTabItem_ListHomeTabItems_Handler,
 		},
 		{
 			MethodName: "EditHomeTabItem",

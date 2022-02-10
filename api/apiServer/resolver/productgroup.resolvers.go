@@ -46,7 +46,8 @@ func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhib
 }
 
 func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, error) {
-	exhibitionDaos, err := ioc.Repo.Exhibitions.List()
+	offset, limit := 0, 100 // TO BE MODIFIED
+	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit)
 	if err != nil {
 		return nil, err
 	}

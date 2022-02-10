@@ -23,18 +23,19 @@ message ListExhibitionsRequest {
 }
 
 message EditExhibitionRequest {
-    optional string banner_image = 1;
-    optional string thumbanil_image = 2;
-    optional string title = 3;
-    optional string description = 4;
-    optional string start_time = 5;
-    optional string finish_time = 6;
-    repeated string pg_ids = 7;
+    string exhibition_id = 1;
+    optional string banner_image = 2;
+    optional string thumbnail_image = 3;
+    optional string title = 4;
+    optional string description = 5;
+    optional string start_time = 6;
+    optional string finish_time = 7;
+    repeated string pg_ids = 8;
 }
 
 message CreateExhibitionRequest {
     string banner_image = 1;
-    string thumbanil_image = 2;
+    string thumbnail_image = 2;
     string title = 3;
     string description = 4;
     string start_time = 5;

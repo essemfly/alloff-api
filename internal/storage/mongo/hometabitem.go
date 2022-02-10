@@ -46,7 +46,7 @@ func (repo *hometabitemRepo) Get(itemID string) (*domain.HomeTabItemDAO, error) 
 	return item, nil
 }
 
-func (repo *hometabitemRepo) List(offset, limit int, onlyLive bool) ([]*domain.HomeTabItemDAO, error) {
+func (repo *hometabitemRepo) List(offset, limit int, onlyLive bool) ([]*domain.HomeTabItemDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -61,20 +61,21 @@ func (repo *hometabitemRepo) List(offset, limit int, onlyLive bool) ([]*domain.H
 		options.SetSkip(int64(offset))
 	}
 
+	totalCount, _ := repo.col.CountDocuments(ctx, filter)
 	cur, err := repo.col.Find(ctx, filter, options)
 	if err != nil {
 		log.Println("err occured in hometabitem lists", err)
-		return nil, err
+		return nil, 0, err
 	}
 
 	var items []*domain.HomeTabItemDAO
 	err = cur.All(ctx, &items)
 	if err != nil {
 		log.Println("err occured in decoding", err)
-		return nil, err
+		return nil, 0, err
 	}
 
-	return items, nil
+	return items, int(totalCount), nil
 }
 
 func (repo *hometabitemRepo) Update(item *domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error) {
