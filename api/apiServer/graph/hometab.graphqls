@@ -9,7 +9,7 @@ enum HomeTabItemTypeEnum {
 type ItemReference {
   path: String!
   params: String!
-  options: [String!]!
+  options: [SortingType!]!
 }
 
 type HomeTabItem {

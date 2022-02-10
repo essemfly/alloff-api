@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -19,7 +20,7 @@ const (
 type ReferenceTarget struct {
 	Path    string
 	Params  string
-	Options []string
+	Options []model.SortingType
 }
 
 type HomeTabItemDAO struct {

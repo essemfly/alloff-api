@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/pkg/hometab"
 	"github.com/lessbutter/alloff-api/pkg/productgroup"
@@ -34,8 +35,8 @@ func getMockExhibition(idx int, pgIDs []string) *productgroup.ExhibitionRequest 
 	thumbnailIdx := strconv.Itoa(idx * 100)
 
 	return &productgroup.ExhibitionRequest{
-		BannerImage:     "https://picsum.photos/" + bannerIdx + "/237/400/600",
-		ThumbnailImage:  "https://picsum.photos/" + thumbnailIdx + "/237/100/150",
+		BannerImage:     "https://picsum.photos/seed/" + bannerIdx + "/200/300",
+		ThumbnailImage:  "https://picsum.photos/seed/" + thumbnailIdx + "/200/300",
 		Title:           "Exhibition" + bannerIdx,
 		Description:     thumbnailIdx + "이별보다 더 아픈게 그리움인데, 무시로 무시로, 외로울 때 그때 울어요",
 		ProductGroupIDs: pgIDs,
@@ -125,7 +126,9 @@ func AddMockHomeTabs() {
 			FinishedAt:   time.Now().Add(1200 * time.Hour),
 			Requester: &hometab.AlloffCategoryItemRequest{
 				AlloffCategoryID: alloffcatIDs[0],
-				SortingOptions:   []string{"100", "70"},
+				SortingOptions: []model.SortingType{
+					model.SortingTypeDiscount70_100,
+				},
 			},
 		},
 		{
@@ -137,7 +140,10 @@ func AddMockHomeTabs() {
 			FinishedAt:   time.Now().Add(1200 * time.Hour),
 			Requester: &hometab.AlloffCategoryItemRequest{
 				AlloffCategoryID: alloffcatIDs[1],
-				SortingOptions:   []string{"70"},
+				SortingOptions: []model.SortingType{
+					model.SortingTypeDiscount50_70,
+					model.SortingTypeDiscount70_100,
+				},
 			},
 		},
 	}

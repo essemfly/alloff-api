@@ -171,9 +171,9 @@ type InventoryInput struct {
 }
 
 type ItemReference struct {
-	Path    string   `json:"path"`
-	Params  string   `json:"params"`
-	Options []string `json:"options"`
+	Path    string        `json:"path"`
+	Params  string        `json:"params"`
+	Options []SortingType `json:"options"`
 }
 
 type KeyValueInfo struct {

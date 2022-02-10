@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/product"
@@ -135,12 +136,31 @@ func (req *ExhibitionItemRequest) fillItemContents(item *domain.HomeTabItemDAO) 
 // 기존 Curation: AlloffCategory와 Options로 Sorting된 것 보여주는 것
 type AlloffCategoryItemRequest struct {
 	AlloffCategoryID string
-	SortingOptions   []string
+	SortingOptions   []model.SortingType
 }
 
 func (req *AlloffCategoryItemRequest) fillItemContents(item *domain.HomeTabItemDAO) *domain.HomeTabItemDAO {
 	numProductsToShow := 10
-	products, _, err := product.AlloffCategoryProductsListing(0, numProductsToShow, nil, req.AlloffCategoryID, "", req.SortingOptions)
+	priceSorting := ""
+	var priceRange []string
+	for _, sorting := range req.SortingOptions {
+		if sorting == model.SortingTypePriceAscending {
+			priceSorting = "ascending"
+		} else if sorting == model.SortingTypePriceDescending {
+			priceSorting = "descending"
+		} else {
+			if sorting == model.SortingTypeDiscount0_30 {
+				priceRange = append(priceRange, "30")
+			} else if sorting == model.SortingTypeDiscount30_50 {
+				priceRange = append(priceRange, "50")
+			} else if sorting == model.SortingTypeDiscount50_70 {
+				priceRange = append(priceRange, "70")
+			} else {
+				priceRange = append(priceRange, "100")
+			}
+		}
+	}
+	products, _, err := product.AlloffCategoryProductsListing(0, numProductsToShow, nil, req.AlloffCategoryID, priceSorting, priceRange)
 	if err != nil {
 		log.Println("alloffcat id not found: " + req.AlloffCategoryID)
 	}

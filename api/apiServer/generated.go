@@ -2556,7 +2556,7 @@ extend type Mutation {
 type ItemReference {
   path: String!
   params: String!
-  options: [String!]!
+  options: [SortingType!]!
 }
 
 type HomeTabItem {
@@ -6724,9 +6724,9 @@ func (ec *executionContext) _ItemReference_options(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.([]model.SortingType)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingTypeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _KeyValueInfo_key(ctx context.Context, field graphql.CollectedField, obj *model.KeyValueInfo) (ret graphql.Marshaler) {
