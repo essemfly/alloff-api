@@ -82,10 +82,22 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 				return err
 			}
 
+			orderMsg :=
+				"----------결제 취소 완료---------- \n" +
+					"결제 Order ID: " + orderDao.AlloffOrderID + "-" + orderItemDao.OrderItemCode + "\n" +
+					"상품명: " + paymentDao.Name + "\n" +
+					"주문자 번호: " + paymentDao.BuyerMobile + "\n" +
+					"가격: " + strconv.Itoa(paymentDao.Amount) + "\n" +
+					"주소: " + paymentDao.BuyerPostCode + " " + paymentDao.BuyerAddress + "\n" +
+					"받는 사람 번호: " + paymentDao.BuyerMobile
+
+			config.WriteCancelMessage(orderMsg)
+
 			return nil
 		}); err != nil {
 			return err
 		}
+
 		return nil
 	}
 
