@@ -47,7 +47,7 @@ func getMockExhibition(idx int, pgIDs []string) *productgroup.ExhibitionRequest 
 
 func AddMockHomeTabs() {
 	log.Println("ADD MOCK HOME TABS START ********")
-	exhibitions, _ := ioc.Repo.Exhibitions.List()
+	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 10)
 	exhitibionIDs := []string{}
 	for _, ex := range exhibitions {
 		exhitibionIDs = append(exhitibionIDs, ex.ID.Hex())

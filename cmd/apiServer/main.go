@@ -17,6 +17,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/resolver"
 	"github.com/lessbutter/alloff-api/cmd"
+	"github.com/rs/cors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
@@ -30,6 +31,7 @@ func main() {
 
 	router := chi.NewRouter()
 	router.Use(middleware.Middleware())
+	router.Use(cors.AllowAll().Handler)
 
 	srv := handler.NewDefaultServer(apiServer.NewExecutableSchema(apiServer.Config{Resolvers: &resolver.Resolver{}}))
 	srv.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error {
