@@ -21,7 +21,7 @@ func ProductsSearchListing(offset, limit int, brandID, categoryID, keyword strin
 	}
 	filter["alloffname"] = primitive.Regex{Pattern: keyword, Options: "i"}
 
-	sortingOptions := bson.D{{Key: "_id", Value: -1}}
+	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "_id", Value: 1}, {Key: "score.totalscore", Value: -1}}
 	products, cnt, err := ioc.Repo.Products.List(offset, limit, filter, sortingOptions)
 	if err != nil {
 		return nil, cnt, err
@@ -75,7 +75,7 @@ func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting
 		filter["$or"] = priceQueryRanges
 	}
 
-	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "isnewlycrawled", Value: -1}, {Key: "_id", Value: 1}}
+	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "_id", Value: 1}, {Key: "score.totalscore", Value: -1}}
 	if priceSorting == "ascending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "descending" {
@@ -139,7 +139,7 @@ func AlloffCategoryProductsListing(offset, limit int, brandIDs []string, alloffC
 		filter["$or"] = priceQueryRanges
 	}
 
-	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "isnewlycrawled", Value: -1}, {Key: "_id", Value: 1}}
+	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "_id", Value: 1}, {Key: "score.totalscore", Value: -1}}
 	if priceSorting == "ascending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "descending" {
