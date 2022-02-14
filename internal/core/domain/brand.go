@@ -36,3 +36,7 @@ type LikeBrandDAO struct {
 	Created time.Time
 	Updated time.Time
 }
+
+func (brand *BrandDAO) IsOpenBrand() bool {
+	return brand.IsOpen && !brand.IsHide && !brand.InMaintenance
+}

@@ -62,6 +62,16 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 
 	totalCount := 0
 
+	brandDao, err := ioc.Repo.Brands.Get(*input.Brand)
+	if err != nil || !brandDao.IsOpenBrand() {
+		return &model.ProductsOutput{
+			Products:   nil,
+			Offset:     input.Offset,
+			Limit:      input.Limit,
+			TotalCount: totalCount,
+		}, err
+	}
+
 	if input.Category == nil {
 		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, "", priceSorting, priceRange)
 	} else {
@@ -74,14 +84,12 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 		products = append(products, newProd)
 	}
 
-	result := model.ProductsOutput{
+	return &model.ProductsOutput{
 		Products:   products,
 		Offset:     input.Offset,
 		Limit:      input.Limit,
 		TotalCount: totalCount,
-	}
-
-	return &result, nil
+	}, nil
 }
 
 func (r *queryResolver) AlloffCategoryProducts(ctx context.Context, input model.AlloffCategoryProductsInput) (*model.AlloffCategoryProducts, error) {
