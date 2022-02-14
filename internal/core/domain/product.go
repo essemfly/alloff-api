@@ -207,12 +207,12 @@ func (pd *ProductDAO) UpdateInstruction(instruction *AlloffInstructionDAO) {
 }
 
 func (pd *ProductDAO) Release(size string, quantity int) error {
-	for _, option := range pd.Inventory {
+	for idx, option := range pd.Inventory {
 		if option.Size == size {
 			if option.Quantity < quantity {
 				return errors.New("insufficient product quantity")
 			}
-			option.Quantity -= quantity
+			pd.Inventory[idx].Quantity -= quantity
 
 			return nil
 		}
@@ -221,12 +221,13 @@ func (pd *ProductDAO) Release(size string, quantity int) error {
 }
 
 func (pd *ProductDAO) Revert(size string, quantity int) error {
-	for _, option := range pd.Inventory {
+	for idx, option := range pd.Inventory {
 		if option.Size == size {
 			if option.Quantity == 0 {
 				pd.Soldout = false
 			}
-			option.Quantity += quantity
+			pd.Inventory[idx].Quantity += quantity
+
 			return nil
 		}
 	}
