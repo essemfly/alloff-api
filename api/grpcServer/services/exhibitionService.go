@@ -12,7 +12,7 @@ import (
 )
 
 type ExhibitionService struct {
-	grpcServer.HomeTabItemServer
+	grpcServer.ExhibitionServer
 }
 
 func (s *ExhibitionService) GetExhibition(ctx context.Context, req *grpcServer.GetExhibitionRequest) (*grpcServer.GetExhibitionResponse, error) {
