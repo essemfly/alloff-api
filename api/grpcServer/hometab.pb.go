@@ -489,7 +489,7 @@ func (x *GetHomeTabItemResponse) GetItem() *HomeTabItemMessage {
 	return nil
 }
 
-type ListHomeTabsItemResponse struct {
+type ListHomeTabItemsResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -500,8 +500,8 @@ type ListHomeTabsItemResponse struct {
 	TotalCounts int32                 `protobuf:"varint,4,opt,name=total_counts,json=totalCounts,proto3" json:"total_counts,omitempty"`
 }
 
-func (x *ListHomeTabsItemResponse) Reset() {
-	*x = ListHomeTabsItemResponse{}
+func (x *ListHomeTabItemsResponse) Reset() {
+	*x = ListHomeTabItemsResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_api_grpcServer_protos_hometab_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -509,13 +509,13 @@ func (x *ListHomeTabsItemResponse) Reset() {
 	}
 }
 
-func (x *ListHomeTabsItemResponse) String() string {
+func (x *ListHomeTabItemsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ListHomeTabsItemResponse) ProtoMessage() {}
+func (*ListHomeTabItemsResponse) ProtoMessage() {}
 
-func (x *ListHomeTabsItemResponse) ProtoReflect() protoreflect.Message {
+func (x *ListHomeTabItemsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_api_grpcServer_protos_hometab_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -527,33 +527,33 @@ func (x *ListHomeTabsItemResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ListHomeTabsItemResponse.ProtoReflect.Descriptor instead.
-func (*ListHomeTabsItemResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ListHomeTabItemsResponse.ProtoReflect.Descriptor instead.
+func (*ListHomeTabItemsResponse) Descriptor() ([]byte, []int) {
 	return file_api_grpcServer_protos_hometab_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ListHomeTabsItemResponse) GetItems() []*HomeTabItemMessage {
+func (x *ListHomeTabItemsResponse) GetItems() []*HomeTabItemMessage {
 	if x != nil {
 		return x.Items
 	}
 	return nil
 }
 
-func (x *ListHomeTabsItemResponse) GetOffset() int32 {
+func (x *ListHomeTabItemsResponse) GetOffset() int32 {
 	if x != nil {
 		return x.Offset
 	}
 	return 0
 }
 
-func (x *ListHomeTabsItemResponse) GetLimit() int32 {
+func (x *ListHomeTabItemsResponse) GetLimit() int32 {
 	if x != nil {
 		return x.Limit
 	}
 	return 0
 }
 
-func (x *ListHomeTabsItemResponse) GetTotalCounts() int32 {
+func (x *ListHomeTabItemsResponse) GetTotalCounts() int32 {
 	if x != nil {
 		return x.TotalCounts
 	}
@@ -998,7 +998,7 @@ var file_api_grpcServer_protos_hometab_proto_rawDesc = []byte{
 	0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2e,
 	0x48, 0x6f, 0x6d, 0x65, 0x54, 0x61, 0x62, 0x49, 0x74, 0x65, 0x6d, 0x4d, 0x65, 0x73, 0x73, 0x61,
 	0x67, 0x65, 0x52, 0x04, 0x69, 0x74, 0x65, 0x6d, 0x22, 0xa1, 0x01, 0x0a, 0x18, 0x4c, 0x69, 0x73,
-	0x74, 0x48, 0x6f, 0x6d, 0x65, 0x54, 0x61, 0x62, 0x73, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x65, 0x73,
+	0x74, 0x48, 0x6f, 0x6d, 0x65, 0x54, 0x61, 0x62, 0x49, 0x74, 0x65, 0x6d, 0x73, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x34, 0x0a, 0x05, 0x69, 0x74, 0x65, 0x6d, 0x73, 0x18, 0x01,
 	0x20, 0x03, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x53, 0x65, 0x72, 0x76, 0x65,
 	0x72, 0x2e, 0x48, 0x6f, 0x6d, 0x65, 0x54, 0x61, 0x62, 0x49, 0x74, 0x65, 0x6d, 0x4d, 0x65, 0x73,
@@ -1111,7 +1111,7 @@ var file_api_grpcServer_protos_hometab_proto_rawDesc = []byte{
 	0x72, 0x76, 0x65, 0x72, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x48, 0x6f, 0x6d, 0x65, 0x54, 0x61, 0x62,
 	0x49, 0x74, 0x65, 0x6d, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x24, 0x2e, 0x67,
 	0x72, 0x70, 0x63, 0x53, 0x65, 0x72, 0x76, 0x65, 0x72, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x48, 0x6f,
-	0x6d, 0x65, 0x54, 0x61, 0x62, 0x73, 0x49, 0x74, 0x65, 0x6d, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x6d, 0x65, 0x54, 0x61, 0x62, 0x49, 0x74, 0x65, 0x6d, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
 	0x73, 0x65, 0x12, 0x5a, 0x0a, 0x0f, 0x45, 0x64, 0x69, 0x74, 0x48, 0x6f, 0x6d, 0x65, 0x54, 0x61,
 	0x62, 0x49, 0x74, 0x65, 0x6d, 0x12, 0x22, 0x2e, 0x67, 0x72, 0x70, 0x63, 0x53, 0x65, 0x72, 0x76,
 	0x65, 0x72, 0x2e, 0x45, 0x64, 0x69, 0x74, 0x48, 0x6f, 0x6d, 0x65, 0x54, 0x61, 0x62, 0x49, 0x74,
@@ -1152,7 +1152,7 @@ var file_api_grpcServer_protos_hometab_proto_goTypes = []interface{}{
 	(*EditHomeTabItemRequest)(nil),      // 4: grpcServer.EditHomeTabItemRequest
 	(*CreateHomeTabItemRequest)(nil),    // 5: grpcServer.CreateHomeTabItemRequest
 	(*GetHomeTabItemResponse)(nil),      // 6: grpcServer.GetHomeTabItemResponse
-	(*ListHomeTabsItemResponse)(nil),    // 7: grpcServer.ListHomeTabsItemResponse
+	(*ListHomeTabItemsResponse)(nil),    // 7: grpcServer.ListHomeTabItemsResponse
 	(*EditHomeTabItemResponse)(nil),     // 8: grpcServer.EditHomeTabItemResponse
 	(*CreateHomeTabItemResponse)(nil),   // 9: grpcServer.CreateHomeTabItemResponse
 	(*HomeTabItemMessage)(nil),          // 10: grpcServer.HomeTabItemMessage
@@ -1166,7 +1166,7 @@ var file_api_grpcServer_protos_hometab_proto_depIdxs = []int32{
 	12, // 0: grpcServer.EditHomeTabItemRequest.contents:type_name -> grpcServer.ItemRequester
 	12, // 1: grpcServer.CreateHomeTabItemRequest.contents:type_name -> grpcServer.ItemRequester
 	10, // 2: grpcServer.GetHomeTabItemResponse.item:type_name -> grpcServer.HomeTabItemMessage
-	10, // 3: grpcServer.ListHomeTabsItemResponse.items:type_name -> grpcServer.HomeTabItemMessage
+	10, // 3: grpcServer.ListHomeTabItemsResponse.items:type_name -> grpcServer.HomeTabItemMessage
 	10, // 4: grpcServer.EditHomeTabItemResponse.item:type_name -> grpcServer.HomeTabItemMessage
 	10, // 5: grpcServer.CreateHomeTabItemResponse.item:type_name -> grpcServer.HomeTabItemMessage
 	0,  // 6: grpcServer.HomeTabItemMessage.item_type:type_name -> grpcServer.ItemType
@@ -1182,7 +1182,7 @@ var file_api_grpcServer_protos_hometab_proto_depIdxs = []int32{
 	4,  // 16: grpcServer.HomeTabItem.EditHomeTabItem:input_type -> grpcServer.EditHomeTabItemRequest
 	5,  // 17: grpcServer.HomeTabItem.CreateHomeTabItem:input_type -> grpcServer.CreateHomeTabItemRequest
 	6,  // 18: grpcServer.HomeTabItem.GetHomeTabItem:output_type -> grpcServer.GetHomeTabItemResponse
-	7,  // 19: grpcServer.HomeTabItem.ListHomeTabItems:output_type -> grpcServer.ListHomeTabsItemResponse
+	7,  // 19: grpcServer.HomeTabItem.ListHomeTabItems:output_type -> grpcServer.ListHomeTabItemsResponse
 	8,  // 20: grpcServer.HomeTabItem.EditHomeTabItem:output_type -> grpcServer.EditHomeTabItemResponse
 	9,  // 21: grpcServer.HomeTabItem.CreateHomeTabItem:output_type -> grpcServer.CreateHomeTabItemResponse
 	18, // [18:22] is the sub-list for method output_type
@@ -1262,7 +1262,7 @@ func file_api_grpcServer_protos_hometab_proto_init() {
 			}
 		}
 		file_api_grpcServer_protos_hometab_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListHomeTabsItemResponse); i {
+			switch v := v.(*ListHomeTabItemsResponse); i {
 			case 0:
 				return &v.state
 			case 1:

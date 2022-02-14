@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HomeTabItemClient interface {
 	GetHomeTabItem(ctx context.Context, in *GetHomeTabItemRequest, opts ...grpc.CallOption) (*GetHomeTabItemResponse, error)
-	ListHomeTabItems(ctx context.Context, in *ListHomeTabItemsRequest, opts ...grpc.CallOption) (*ListHomeTabsItemResponse, error)
+	ListHomeTabItems(ctx context.Context, in *ListHomeTabItemsRequest, opts ...grpc.CallOption) (*ListHomeTabItemsResponse, error)
 	EditHomeTabItem(ctx context.Context, in *EditHomeTabItemRequest, opts ...grpc.CallOption) (*EditHomeTabItemResponse, error)
 	CreateHomeTabItem(ctx context.Context, in *CreateHomeTabItemRequest, opts ...grpc.CallOption) (*CreateHomeTabItemResponse, error)
 }
@@ -45,8 +45,8 @@ func (c *homeTabItemClient) GetHomeTabItem(ctx context.Context, in *GetHomeTabIt
 	return out, nil
 }
 
-func (c *homeTabItemClient) ListHomeTabItems(ctx context.Context, in *ListHomeTabItemsRequest, opts ...grpc.CallOption) (*ListHomeTabsItemResponse, error) {
-	out := new(ListHomeTabsItemResponse)
+func (c *homeTabItemClient) ListHomeTabItems(ctx context.Context, in *ListHomeTabItemsRequest, opts ...grpc.CallOption) (*ListHomeTabItemsResponse, error) {
+	out := new(ListHomeTabItemsResponse)
 	err := c.cc.Invoke(ctx, "/grpcServer.HomeTabItem/ListHomeTabItems", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (c *homeTabItemClient) CreateHomeTabItem(ctx context.Context, in *CreateHom
 // for forward compatibility
 type HomeTabItemServer interface {
 	GetHomeTabItem(context.Context, *GetHomeTabItemRequest) (*GetHomeTabItemResponse, error)
-	ListHomeTabItems(context.Context, *ListHomeTabItemsRequest) (*ListHomeTabsItemResponse, error)
+	ListHomeTabItems(context.Context, *ListHomeTabItemsRequest) (*ListHomeTabItemsResponse, error)
 	EditHomeTabItem(context.Context, *EditHomeTabItemRequest) (*EditHomeTabItemResponse, error)
 	CreateHomeTabItem(context.Context, *CreateHomeTabItemRequest) (*CreateHomeTabItemResponse, error)
 	mustEmbedUnimplementedHomeTabItemServer()
@@ -90,7 +90,7 @@ type UnimplementedHomeTabItemServer struct {
 func (UnimplementedHomeTabItemServer) GetHomeTabItem(context.Context, *GetHomeTabItemRequest) (*GetHomeTabItemResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetHomeTabItem not implemented")
 }
-func (UnimplementedHomeTabItemServer) ListHomeTabItems(context.Context, *ListHomeTabItemsRequest) (*ListHomeTabsItemResponse, error) {
+func (UnimplementedHomeTabItemServer) ListHomeTabItems(context.Context, *ListHomeTabItemsRequest) (*ListHomeTabItemsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListHomeTabItems not implemented")
 }
 func (UnimplementedHomeTabItemServer) EditHomeTabItem(context.Context, *EditHomeTabItemRequest) (*EditHomeTabItemResponse, error) {

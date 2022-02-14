@@ -10,7 +10,7 @@ option go_package = "github.com/lessbutter/alloff-api/api/grpcServer";
 
 service HomeTabItem {
     rpc GetHomeTabItem(GetHomeTabItemRequest) returns (GetHomeTabItemResponse);
-    rpc ListHomeTabItems(ListHomeTabItemsRequest) returns (ListHomeTabsItemResponse);
+    rpc ListHomeTabItems(ListHomeTabItemsRequest) returns (ListHomeTabItemsResponse);
     rpc EditHomeTabItem(EditHomeTabItemRequest) returns (EditHomeTabItemResponse);
     rpc CreateHomeTabItem(CreateHomeTabItemRequest) returns (CreateHomeTabItemResponse);
 }
@@ -50,7 +50,7 @@ message GetHomeTabItemResponse {
     HomeTabItemMessage item = 1;
 }
 
-message ListHomeTabsItemResponse {
+message ListHomeTabItemsResponse {
     repeated HomeTabItemMessage items = 1;
     int32 offset = 2;
     int32 limit = 3;
