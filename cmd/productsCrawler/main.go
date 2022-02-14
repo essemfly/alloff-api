@@ -23,7 +23,7 @@ func main() {
 	crawlModules := []string{
 		"lottefashion",
 		"ssfmall",
-		"idlook",
+		// "idlook",
 		"sivillage",
 		"kolon",
 		"babathe",
