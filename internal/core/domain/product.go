@@ -55,17 +55,17 @@ func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyTyp
 
 	if pdInfo.Price != nil {
 		if pdInfo.Price.CurrentPrice != float32(curPrice) {
-			pdInfo.Price.History = append(pdInfo.Price.History, newHistory...)
+			newHistory = append(pdInfo.Price.History, newHistory...)
+		} else {
+			newHistory = pdInfo.Price.History
 		}
-	} else {
-		pdInfo.Price.History = newHistory
 	}
 
 	pdInfo.Price = &PriceDAO{
 		OriginalPrice: float32(origPrice),
 		CurrencyType:  currencyType,
 		CurrentPrice:  float32(curPrice),
-		History:       pdInfo.Price.History,
+		History:       newHistory,
 	}
 }
 
