@@ -211,6 +211,15 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 		return nil, errors.New("invalid token")
 	}
 
+	if !input.Success {
+		return &model.PaymentResult{
+			Success:     false,
+			ErrorMsg:    input.ErrorMsg,
+			Order:       nil,
+			PaymentInfo: nil,
+		}, nil
+	}
+
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(input.MerchantUID)
 	if err != nil {
 		return nil, err
