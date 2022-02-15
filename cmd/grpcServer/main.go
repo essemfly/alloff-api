@@ -32,6 +32,7 @@ func main() {
 	pb.RegisterNotificationServer(grpcServer, &services.NotiService{})
 	pb.RegisterHomeTabItemServer(grpcServer, &services.HomeTabService{})
 	pb.RegisterExhibitionServer(grpcServer, &services.ExhibitionService{})
+	pb.RegisterTopBannerServer(grpcServer, &services.TopBannerService{})
 
 	log.Printf("start gRPC server on %s port", port)
 	if err := grpcServer.Serve(lis); err != nil {
