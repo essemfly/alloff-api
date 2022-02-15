@@ -34,6 +34,7 @@ message EditHomeTabItemRequest {
     optional string start_time = 6;
     optional string finish_time = 7;
     ItemRequester contents = 8;
+    optional int32 weight = 9;
 }
 
 message CreateHomeTabItemRequest {
@@ -44,6 +45,7 @@ message CreateHomeTabItemRequest {
     string start_time = 5;
     string finish_time = 6;
     ItemRequester contents = 7;
+    int32 weight = 8;
 }
 
 message GetHomeTabItemResponse {
@@ -78,6 +80,7 @@ message HomeTabItemMessage {
     repeated BrandMessage brands = 10;
     repeated ExhibitionMessage exhibitions = 11;
     HomeTabItemReferenceMessage reference = 12;
+    int32 weight = 13;
 }
 
 message HomeTabItemReferenceMessage {

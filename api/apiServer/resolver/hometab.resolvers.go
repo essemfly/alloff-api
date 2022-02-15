@@ -73,3 +73,32 @@ func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) (
 
 	return brands, nil
 }
+
+func (r *queryResolver) BargainProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) ([]*model.Product, error) {
+	productDaos, _, err := product.AlloffCategoryProductsListing(offset, limit, nil, alloffCategoryID, "", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	pds := []*model.Product{}
+	for _, productDao := range productDaos {
+		pds = append(pds, mapper.MapProductDaoToProduct(productDao))
+	}
+	return pds, nil
+}
+
+func (r *queryResolver) TopBanners(ctx context.Context) ([]*model.TopBanner, error) {
+	offset, limit := 0, 100
+	onlyLive := true
+	bannerDaos, _, err := ioc.Repo.TopBanners.List(offset, limit, onlyLive)
+	if err != nil {
+		return nil, err
+	}
+
+	banners := []*model.TopBanner{}
+	for _, bannerDao := range bannerDaos {
+		banners = append(banners, mapper.MapTopBanner(bannerDao))
+	}
+
+	return banners, nil
+}

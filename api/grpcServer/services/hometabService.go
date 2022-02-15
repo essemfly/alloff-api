@@ -26,7 +26,7 @@ func (s *HomeTabService) GetHomeTabItem(ctx context.Context, req *grpcServer.Get
 	}, nil
 }
 
-func (s *HomeTabService) ListHomeTabItems(ctx context.Context, req *grpcServer.ListHomeTabItemsRequest) (*grpcServer.ListHomeTabsItemResponse, error) {
+func (s *HomeTabService) ListHomeTabItems(ctx context.Context, req *grpcServer.ListHomeTabItemsRequest) (*grpcServer.ListHomeTabItemsResponse, error) {
 	onlyLive := false
 	itemDaos, cnt, err := ioc.Repo.HomeTabItems.List(int(req.Offset), int(req.Limit), onlyLive)
 	if err != nil {
@@ -38,7 +38,7 @@ func (s *HomeTabService) ListHomeTabItems(ctx context.Context, req *grpcServer.L
 		items = append(items, mapper.HomeTabItemMapper(itemDao))
 	}
 
-	return &grpcServer.ListHomeTabsItemResponse{
+	return &grpcServer.ListHomeTabItemsResponse{
 		Offset:      req.Offset,
 		Limit:       req.Limit,
 		TotalCounts: int32(cnt),

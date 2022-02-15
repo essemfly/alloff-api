@@ -29,6 +29,8 @@ type iocRepo struct {
 	Exhibitions      repository.ExhibitionsRepository
 	Refunds          repository.RefundItemsRepository
 	HomeTabItems     repository.HomeTabItemsRepository
+	TopBanners       repository.TopBannersRepository
+	BestProducts     repository.BestProductsRepository
 }
 
 var Repo iocRepo

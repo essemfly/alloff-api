@@ -106,6 +106,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		BannerImage:    req.BannerImage,
 		ThumbnailImage: req.ThumbnailImage,
 		Title:          req.Title,
+		SubTitle:       req.Subtitle,
 		Description:    req.Description,
 		StartTime:      startTimeObj,
 		FinishTime:     finishTimeObj,

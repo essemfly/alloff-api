@@ -120,6 +120,7 @@ type Exhibition struct {
 	BannerImage    string          `json:"bannerImage"`
 	ThumbnailImage string          `json:"thumbnailImage"`
 	Title          string          `json:"title"`
+	SubTitle       string          `json:"subTitle"`
 	Description    string          `json:"description"`
 	ProductGroups  []*ProductGroup `json:"productGroups"`
 	StartTime      string          `json:"startTime"`
@@ -409,6 +410,14 @@ type RefundInfo struct {
 type SizeGuide struct {
 	Label  string `json:"label"`
 	ImgURL string `json:"imgUrl"`
+}
+
+type TopBanner struct {
+	ID           string `json:"id"`
+	ImageURL     string `json:"imageUrl"`
+	ExhibitionID string `json:"exhibitionId"`
+	Title        string `json:"title"`
+	SubTitle     string `json:"subTitle"`
 }
 
 type User struct {

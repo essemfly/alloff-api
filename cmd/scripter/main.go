@@ -24,4 +24,5 @@ func main() {
 	// scripts.SendNotification()
 	scripts.AddMockExhibitions()
 	scripts.AddMockHomeTabs()
+	scripts.AddMockTopBanners()
 }

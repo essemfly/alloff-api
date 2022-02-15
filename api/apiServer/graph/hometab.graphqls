@@ -25,6 +25,14 @@ type HomeTabItem {
   reference: ItemReference!
 }
 
+type TopBanner {
+  id: ID!
+  imageUrl: String!
+  exhibitionId: String!
+  title: String!
+  subTitle: String!
+}
+
 extend type Query {
   homeTabItems(onlyLive: Boolean!, offset: Int, limit: Int): [HomeTabItem!]!
   bestProducts(
@@ -34,4 +42,11 @@ extend type Query {
     brief: Boolean!
   ): [Product!]!
   bestBrands(offset: Int!, limit: Int!): [Brand!]!
+  bargainProducts(
+    offset: Int!
+    limit: Int!
+    alloffCategoryId: String!
+    brief: Boolean!
+  ): [Product!]!
+  topBanners: [TopBanner!]!
 }

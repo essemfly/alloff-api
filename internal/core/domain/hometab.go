@@ -24,12 +24,13 @@ type ReferenceTarget struct {
 }
 
 type HomeTabItemDAO struct {
-	ID           primitive.ObjectID `bon:"_id, omitempty"`
+	ID           primitive.ObjectID `bson:"_id, omitempty"`
 	Title        string
 	Description  string
 	Tags         []string
 	BackImageUrl string
 	Type         HomeTabItemType
+	Weight       int
 	Products     []*ProductDAO
 	Brands       []*BrandDAO
 	Exhibitions  []*ExhibitionDAO
@@ -38,4 +39,16 @@ type HomeTabItemDAO struct {
 	UpdatedAt    time.Time
 	StartedAt    time.Time
 	FinishedAt   time.Time
+}
+
+type TopBannerDAO struct {
+	ID           primitive.ObjectID `bson:"_id, omitempty"`
+	ImageUrl     string
+	ExhibitionID string
+	Title        string
+	SubTitle     string
+	IsLive       bool
+	Weight       int
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
 }

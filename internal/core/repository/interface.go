@@ -158,3 +158,15 @@ type HomeTabItemsRepository interface {
 	List(offset, limit int, onlyLive bool) ([]*domain.HomeTabItemDAO, int, error)
 	Update(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
 }
+
+type TopBannersRepository interface {
+	Insert(*domain.TopBannerDAO) (*domain.TopBannerDAO, error)
+	Get(itemID string) (*domain.TopBannerDAO, error)
+	List(offset, limit int, onlyLive bool) ([]*domain.TopBannerDAO, int, error)
+	Update(*domain.TopBannerDAO) (*domain.TopBannerDAO, error)
+}
+
+type BestProductsRepository interface {
+	Insert(*domain.BestProductDAO) (*domain.BestProductDAO, error)
+	GetLatest(alloffCategoryID string) (*domain.BestProductDAO, error)
+}

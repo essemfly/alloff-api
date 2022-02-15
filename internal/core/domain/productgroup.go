@@ -34,17 +34,6 @@ type ProductPriorityDAO struct {
 	ProductID primitive.ObjectID
 }
 
-type ExhibitionDAO struct {
-	ID             primitive.ObjectID `bson:"_id, omitempty"`
-	BannerImage    string
-	ThumbnailImage string
-	Title          string
-	Description    string
-	StartTime      time.Time
-	FinishTime     time.Time
-	ProductGroups  []*ProductGroupDAO
-}
-
 func (pgDao *ProductGroupDAO) AppendProduct(priorityDao *ProductPriorityDAO) bool {
 	newPds := []*ProductPriorityDAO{}
 
@@ -76,20 +65,4 @@ func (pgDao *ProductGroupDAO) RemoveProduct(productID string) {
 		}
 	}
 	pgDao.Products = newPds
-}
-
-func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {
-	numProductsToShow := 10
-	products := []*ProductDAO{}
-	if len(exDao.ProductGroups) > 0 {
-		if len(exDao.ProductGroups[0].Products) > 0 {
-			for idx, productPriority := range exDao.ProductGroups[0].Products {
-				if idx >= numProductsToShow {
-					break
-				}
-				products = append(products, productPriority.Product)
-			}
-		}
-	}
-	return products
 }

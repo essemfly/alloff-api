@@ -18,6 +18,7 @@ type Exhibition {
   bannerImage: String!
   thumbnailImage: String!
   title: String!
+  subTitle: String!
   description: String!
   productGroups: [ProductGroup!]!
   startTime: Date!

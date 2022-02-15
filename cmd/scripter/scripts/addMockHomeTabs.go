@@ -7,13 +7,15 @@ import (
 
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/hometab"
 	"github.com/lessbutter/alloff-api/pkg/productgroup"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func AddMockExhibitions() {
 	log.Println("ADD MOCK EXHIBITIONS START ********")
-	pgs, _ := ioc.Repo.ProductGroups.List(3)
+	pgs, _ := ioc.Repo.ProductGroups.List(5)
 	pgIDs := []string{}
 	for idx, pg := range pgs {
 		log.Println("IDX", idx)
@@ -153,6 +155,29 @@ func AddMockHomeTabs() {
 		_, err := hometab.AddHometabItem(item)
 		if err != nil {
 			log.Println(err)
+		}
+	}
+}
+
+func AddMockTopBanners() {
+	log.Println("ADD MOCK TOP BANNERS START ********")
+	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 5)
+	for id, ex := range exhibitions {
+		log.Println("IDX", id)
+		idString := strconv.Itoa(id * 77)
+		newBanner := &domain.TopBannerDAO{
+			ID:           primitive.NewObjectID(),
+			ImageUrl:     "https://picsum.photos/seed/" + idString + "/200/300",
+			ExhibitionID: ex.ID.Hex(),
+			Title:        "위기를 넘어 기회로 " + idString,
+			SubTitle:     idString + "번째 탑배너",
+			IsLive:       true,
+			Weight:       id,
+		}
+
+		_, err := ioc.Repo.TopBanners.Insert(newBanner)
+		if err != nil {
+			log.Println("Err in add top banners")
 		}
 	}
 }

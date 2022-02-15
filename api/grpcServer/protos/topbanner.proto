@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package grpcServer;
+
+
+option go_package = "github.com/lessbutter/alloff-api/api/grpcServer";
+
+
+service TopBanner {
+    rpc GetTopBanner(GetTopBannerRequest) returns (GetTopBannerResponse);
+    rpc ListTopBanners(ListTopBannersRequest) returns (ListTopBannersResponse);
+    rpc EditTopBanner(EditTopBannerRequest) returns (EditTopBannerResponse);
+    rpc CreateTopBanner(CreateTopBannerRequest) returns (CreateTopBannerResponse);
+}
+
+message GetTopBannerRequest {
+    string banner_id = 1;
+}
+
+message ListTopBannersRequest {
+    int32 offset = 1;
+    int32 limit = 2;
+}
+
+message EditTopBannerRequest {
+    string banner_id = 1;
+    optional string banner_image = 2;
+    optional string exhibition_id = 3;
+    optional string title = 4;
+    optional string subtitle = 5;
+    optional bool is_live = 6;
+    optional int32 weight = 7;
+}
+
+message CreateTopBannerRequest {
+    string banner_image = 1;
+    string exhibition_id = 2;
+    string title = 3;
+    string subtitle = 4;
+    bool is_live = 5;
+    int32 weight = 6;
+}
+
+message GetTopBannerResponse {
+    TopBannerMessage banner = 1;
+}
+
+message ListTopBannersResponse {
+    repeated TopBannerMessage banners = 1;
+    int32 offset = 2;
+    int32 limit = 3;
+    int32 total_counts = 4;
+}
+
+message EditTopBannerResponse {
+    TopBannerMessage banner = 1;
+}
+
+message CreateTopBannerResponse {
+    TopBannerMessage banner = 1;
+}
+
+message TopBannerMessage {
+    string banner_id = 1;
+    string banner_image = 2;
+    string exhibition_id = 3;
+    string title = 4;
+    string subtitle = 5;
+    bool is_live = 6;
+    int32 weight = 7;
+}
