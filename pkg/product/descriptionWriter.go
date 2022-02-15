@@ -38,7 +38,7 @@ func GetProductDescription(pd *domain.ProductDAO, source *domain.CrawlSourceDAO)
 	}
 }
 
-func GetManuelProductDescription(pd *domain.ProductDAO, request *ProductManuelAddRequest) *domain.AlloffInstructionDAO {
+func GetManualProductDescription(pd *domain.ProductDAO, request *ProductManualAddRequest) *domain.AlloffInstructionDAO {
 	deliveryType := domain.Domestic
 	deliveryTexts := []string{
 		"도착 예정일은 택배사의 사정이나 주문량에 따라 변동될 수 있습니다.",
