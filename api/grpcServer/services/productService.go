@@ -83,7 +83,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	if req.ProductId != nil {
 		productID = *req.ProductId
 	}
-	addRequest := &product.ProductManuelAddRequest{
+	addRequest := &product.ProductManualAddRequest{
 		AlloffName:           req.AlloffName,
 		IsForeignDelivery:    req.IsForeignDelivery,
 		ProductID:            productID,
@@ -101,7 +101,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		DescriptionImages:    req.DescriptionImages,
 	}
 
-	pdDao, err := product.AddProductInManuel(addRequest)
+	pdDao, err := product.AddProductManually(addRequest)
 	if err != nil {
 		return nil, err
 	}
