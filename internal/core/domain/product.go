@@ -54,8 +54,10 @@ func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyTyp
 	}
 
 	if pdInfo.Price != nil {
-		if pdInfo.Price.CurrentPrice > float32(curPrice) {
+		if pdInfo.Price.CurrentPrice != float32(curPrice) {
 			newHistory = append(pdInfo.Price.History, newHistory...)
+		} else {
+			newHistory = pdInfo.Price.History
 		}
 	}
 
@@ -152,7 +154,7 @@ func (pd *ProductDAO) UpdatePrice(alloffPrice float32) bool {
 	origPrice := pd.DiscountedPrice
 	pd.DiscountedPrice = int(alloffPrice)
 
-	if pd.SpecialPrice == 0 || pd.SpecialPrice > pd.DiscountedPrice {
+	if pd.SpecialPrice == 0 || pd.SpecialPrice != pd.DiscountedPrice {
 		pd.SpecialPrice = pd.DiscountedPrice
 	}
 
@@ -166,12 +168,12 @@ func (pd *ProductDAO) UpdatePrice(alloffPrice float32) bool {
 	}
 
 	if pd.PriceHistory != nil {
-		if origPrice > pd.DiscountedPrice {
-			newHistory = append(pd.PriceHistory, newHistory...)
+		if origPrice != pd.DiscountedPrice {
+			pd.PriceHistory = append(pd.PriceHistory, newHistory...)
 		}
+	} else {
+		pd.PriceHistory = newHistory
 	}
-
-	pd.PriceHistory = newHistory
 
 	if int(alloffPrice) < origPrice {
 		pd.IsUpdated = true

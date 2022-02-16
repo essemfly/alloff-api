@@ -18,7 +18,7 @@ type ProductCrawlingAddRequest struct {
 	CurrencyType  domain.CurrencyType
 }
 
-type ProductManuelAddRequest struct {
+type ProductManualAddRequest struct {
 	AlloffName           string
 	IsForeignDelivery    bool
 	ProductID            string

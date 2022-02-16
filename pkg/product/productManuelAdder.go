@@ -9,8 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func AddProductInManuel(request *ProductManuelAddRequest) (*domain.ProductDAO, error) {
-	pdInfo, err := AddManuelProductInfo(request)
+func AddProductManually(request *ProductManualAddRequest) (*domain.ProductDAO, error) {
+	pdInfo, err := AddManualProductInfo(request)
 	if err != nil {
 		return nil, err
 	}
@@ -23,10 +23,10 @@ func AddProductInManuel(request *ProductManuelAddRequest) (*domain.ProductDAO, e
 		Updated:     time.Now(),
 	}
 
-	return ProcessManuelProductRequest(pd, request)
+	return ProcessManualProductRequest(pd, request)
 }
 
-func AddManuelProductInfo(request *ProductManuelAddRequest) (*domain.ProductMetaInfoDAO, error) {
+func AddManualProductInfo(request *ProductManualAddRequest) (*domain.ProductMetaInfoDAO, error) {
 	pdInfo := &domain.ProductMetaInfoDAO{
 		Created: time.Now(),
 		Updated: time.Now(),
@@ -37,7 +37,7 @@ func AddManuelProductInfo(request *ProductManuelAddRequest) (*domain.ProductMeta
 		return nil, err
 	}
 
-	source := GetManuelSource(request)
+	source := GetManualSource(request)
 	newSource, err := ioc.Repo.CrawlSources.Upsert(source)
 	if err != nil {
 		return nil, err
@@ -61,14 +61,14 @@ func AddManuelProductInfo(request *ProductManuelAddRequest) (*domain.ProductMeta
 	return newPdInfo, nil
 }
 
-func GetManuelSource(req *ProductManuelAddRequest) *domain.CrawlSourceDAO {
+func GetManualSource(req *ProductManualAddRequest) *domain.CrawlSourceDAO {
 	return &domain.CrawlSourceDAO{
 		BrandKeyname:         req.BrandKeyName,
 		BrandIdentifier:      "",
 		MainCategoryKey:      "",
 		Category:             domain.CategoryDAO{},
 		CrawlUrl:             "",
-		CrawlModuleName:      "manuel",
+		CrawlModuleName:      "manual",
 		IsSalesProducts:      true,
 		IsForeignDelivery:    req.IsForeignDelivery,
 		PriceMarginPolicy:    "NORMAL",
@@ -83,8 +83,8 @@ func GetManuelSource(req *ProductManuelAddRequest) *domain.CrawlSourceDAO {
 	}
 }
 
-func ProcessManuelProductRequest(pd *domain.ProductDAO, request *ProductManuelAddRequest) (*domain.ProductDAO, error) {
-	alloffInstruction := GetManuelProductDescription(pd, request)
+func ProcessManualProductRequest(pd *domain.ProductDAO, request *ProductManualAddRequest) (*domain.ProductDAO, error) {
+	alloffInstruction := GetManualProductDescription(pd, request)
 	pd.UpdateInstruction(alloffInstruction)
 
 	alloffScore := GetProductScore(pd)

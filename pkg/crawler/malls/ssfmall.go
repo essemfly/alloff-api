@@ -162,16 +162,16 @@ func getSSFDetailInfo(productUrl string) (imageUrls, colors, sizes []string, inv
 		})
 	})
 
-	c.OnHTML("#prdInfoOptionArea #optSelectGnrlDiv .option ul", func(e *colly.HTMLElement) {
-		e.ForEach("li a em", func(_ int, el *colly.HTMLElement) {
-			size := el.Text
-			size = strings.Replace(size, "\n", "", -1)
-			size = strings.Replace(size, "\t", "", -1)
-			sizes = append(sizes, size)
-			if !strings.Contains(size, "품절") {
+	c.OnHTML(".size_wrap ul", func(e *colly.HTMLElement) {
+		e.ForEach("input", func(_ int, el *colly.HTMLElement) {
+			if el.Attr("name") == "sizeItmNo" {
+				size := el.Attr("sizeitmnm")
+				sizes = append(sizes, size)
+				stockInStr := el.Attr("onlineusefulinvqty")
+				stock, _ := strconv.Atoi(stockInStr)
 				inventories = append(inventories, domain.InventoryDAO{
 					Size:     size,
-					Quantity: 10,
+					Quantity: stock,
 				})
 			}
 		})
