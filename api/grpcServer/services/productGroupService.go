@@ -60,19 +60,60 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 }
 
 func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcServer.ListProductGroupsRequest) (*grpcServer.ListProductGroupsResponse, error) {
-	numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
-	pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
-	if err != nil {
-		return nil, err
+	if req.Query == nil {
+		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
+		pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
+		if err != nil {
+			return nil, err
+		}
+		pgs := []*grpcServer.ProductGroupMessage{}
+		for _, pgDao := range pgDaos {
+			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+		}
+		return &grpcServer.ListProductGroupsResponse{
+			Pgs: pgs,
+		}, nil
 	}
 
-	pgs := []*grpcServer.ProductGroupMessage{}
-	for _, pgDao := range pgDaos {
-		pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+	if req.Query.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL.Enum() {
+		pgDaos, err := ioc.Repo.ProductGroups.ListTimedeals(int(req.Offset), int(req.Limit))
+		if err != nil {
+			return nil, err
+		}
+		pgs := []*grpcServer.ProductGroupMessage{}
+		for _, pgDao := range pgDaos {
+			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+		}
+		return &grpcServer.ListProductGroupsResponse{
+			Pgs: pgs,
+		}, nil
+	} else if req.Query.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION.Enum() {
+		pgDaos, err := ioc.Repo.ProductGroups.ListExhibitionPg(int(req.Offset), int(req.Limit))
+		if err != nil {
+			return nil, err
+		}
+		pgs := []*grpcServer.ProductGroupMessage{}
+		for _, pgDao := range pgDaos {
+			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+		}
+		return &grpcServer.ListProductGroupsResponse{
+			Pgs: pgs,
+		}, nil
+	} else {
+		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
+		pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
+		if err != nil {
+			return nil, err
+		}
+		pgs := []*grpcServer.ProductGroupMessage{}
+		for _, pgDao := range pgDaos {
+			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+		}
+		return &grpcServer.ListProductGroupsResponse{
+			Pgs: pgs,
+		}, nil
 	}
-	return &grpcServer.ListProductGroupsResponse{
-		Pgs: pgs,
-	}, nil
+
 }
 
 func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcServer.EditProductGroupRequest) (*grpcServer.EditProductGroupResponse, error) {
