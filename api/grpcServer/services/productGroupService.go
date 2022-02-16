@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer"
@@ -61,6 +62,7 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 
 func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcServer.ListProductGroupsRequest) (*grpcServer.ListProductGroupsResponse, error) {
 	if req.Query == nil {
+		log.Println("1")
 		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
 		pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
 		if err != nil {
@@ -71,12 +73,16 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
 		}
 		return &grpcServer.ListProductGroupsResponse{
-			Pgs: pgs,
+			Pgs:         pgs,
+			Offset:      req.Offset,
+			Limit:       req.Limit,
+			TotalCounts: 0,
 		}, nil
 	}
 
-	if req.Query.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL.Enum() {
-		pgDaos, err := ioc.Repo.ProductGroups.ListTimedeals(int(req.Offset), int(req.Limit))
+	if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL {
+		log.Println("2")
+		pgDaos, err := ioc.Repo.ProductGroups.ListTimedeals(int(req.Offset), int(req.Limit), false)
 		if err != nil {
 			return nil, err
 		}
@@ -85,9 +91,13 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
 		}
 		return &grpcServer.ListProductGroupsResponse{
-			Pgs: pgs,
+			Pgs:         pgs,
+			Offset:      req.Offset,
+			Limit:       req.Limit,
+			TotalCounts: 0,
 		}, nil
-	} else if req.Query.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION.Enum() {
+	} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
+		log.Println("3")
 		pgDaos, err := ioc.Repo.ProductGroups.ListExhibitionPg(int(req.Offset), int(req.Limit))
 		if err != nil {
 			return nil, err
@@ -97,9 +107,13 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
 		}
 		return &grpcServer.ListProductGroupsResponse{
-			Pgs: pgs,
+			Pgs:         pgs,
+			Offset:      req.Offset,
+			Limit:       req.Limit,
+			TotalCounts: 0,
 		}, nil
 	} else {
+		log.Println("4")
 		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
 		pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
 		if err != nil {
@@ -110,10 +124,12 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
 		}
 		return &grpcServer.ListProductGroupsResponse{
-			Pgs: pgs,
+			Pgs:         pgs,
+			Offset:      req.Offset,
+			Limit:       req.Limit,
+			TotalCounts: 0,
 		}, nil
 	}
-
 }
 
 func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcServer.EditProductGroupRequest) (*grpcServer.EditProductGroupResponse, error) {

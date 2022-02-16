@@ -63,7 +63,7 @@ func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, e
 
 func (r *queryResolver) Timedeal(ctx context.Context) (*model.ProductGroup, error) {
 	// TO BE SPECIFIED WITH PRODUCTGROUP TYPES
-	livePgs, err := ioc.Repo.ProductGroups.ListTimedeals(0, 1)
+	livePgs, err := ioc.Repo.ProductGroups.ListTimedeals(0, 1, true)
 	if err != nil {
 		return nil, err
 	}

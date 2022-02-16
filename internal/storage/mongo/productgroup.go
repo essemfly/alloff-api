@@ -75,15 +75,38 @@ func (repo *productGroupRepo) List(numPassedItem int) ([]*domain.ProductGroupDAO
 	return productGroups, nil
 }
 
-func (repo *productGroupRepo) ListTimedeals(offset, limit int) ([]*domain.ProductGroupDAO, error) {
+func (repo *productGroupRepo) ListTimedeals(offset, limit int, isLive bool) ([]*domain.ProductGroupDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	now := primitive.NewDateTimeFromTime(time.Now())
-	filter := bson.M{"finishtime": bson.M{"$gte": now}, "grouptype": domain.PRODUCT_GROUP_TIMEDEAL}
-	onGoingOptions := options.Find()
-	onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 1}})
-	cur, err := repo.col.Find(ctx, filter, onGoingOptions)
+	if isLive {
+		now := primitive.NewDateTimeFromTime(time.Now())
+		filter := bson.M{"finishtime": bson.M{"$gte": now}, "grouptype": domain.PRODUCT_GROUP_TIMEDEAL}
+		onGoingOptions := options.Find()
+		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 1}})
+		cur, err := repo.col.Find(ctx, filter, onGoingOptions)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		var productGroups []*domain.ProductGroupDAO
+		err = cur.All(ctx, &productGroups)
+		if err != nil {
+			log.Println(err)
+			return nil, err
+		}
+
+		return productGroups, nil
+	}
+
+	outDateFilter := bson.M{"grouptype": domain.PRODUCT_GROUP_TIMEDEAL}
+	outDateOptions := options.Find()
+	outDateOptions.SetSort(bson.D{{Key: "finishtime", Value: -1}})
+	outDateOptions.SetSkip(int64(offset))
+	outDateOptions.SetLimit(int64(limit))
+
+	cur, err := repo.col.Find(ctx, outDateFilter, outDateOptions)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -96,27 +119,6 @@ func (repo *productGroupRepo) ListTimedeals(offset, limit int) ([]*domain.Produc
 		return nil, err
 	}
 
-	outDateFilter := bson.M{"finishtime": bson.M{"$lt": now}}
-	outDateOptions := options.Find()
-	outDateOptions.SetSort(bson.D{{Key: "finishtime", Value: -1}})
-	outDateOptions.SetSkip(int64(offset))
-	outDateOptions.SetLimit(int64(limit))
-
-	cur, err = repo.col.Find(ctx, outDateFilter, outDateOptions)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	var outdatedProductGroups []*domain.ProductGroupDAO
-	err = cur.All(ctx, &outdatedProductGroups)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-
-	productGroups = append(productGroups, outdatedProductGroups...)
-
 	return productGroups, nil
 }
 
@@ -124,15 +126,13 @@ func (repo *productGroupRepo) ListExhibitionPg(offset, limit int) ([]*domain.Pro
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	now := primitive.NewDateTimeFromTime(time.Now())
-
-	outDateFilter := bson.M{"finishtime": bson.M{"$lt": now}}
+	filter := bson.M{"grouptype": domain.PRODUCT_GROUP_EXHIBITION}
 	outDateOptions := options.Find()
 	outDateOptions.SetSort(bson.D{{Key: "finishtime", Value: -1}})
 	outDateOptions.SetSkip(int64(offset))
 	outDateOptions.SetLimit(int64(limit))
 
-	cur, err := repo.col.Find(ctx, outDateFilter, outDateOptions)
+	cur, err := repo.col.Find(ctx, filter, outDateOptions)
 	if err != nil {
 		log.Println(err)
 		return nil, err
