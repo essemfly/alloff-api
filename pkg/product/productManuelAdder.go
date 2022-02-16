@@ -68,7 +68,7 @@ func GetManualSource(req *ProductManualAddRequest) *domain.CrawlSourceDAO {
 		MainCategoryKey:      "",
 		Category:             domain.CategoryDAO{},
 		CrawlUrl:             "",
-		CrawlModuleName:      "manual",
+		CrawlModuleName:      req.ModuleName,
 		IsSalesProducts:      true,
 		IsForeignDelivery:    req.IsForeignDelivery,
 		PriceMarginPolicy:    "NORMAL",

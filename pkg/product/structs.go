@@ -34,4 +34,5 @@ type ProductManualAddRequest struct {
 	RefundFee            int
 	Images               []string
 	DescriptionImages    []string
+	ModuleName           string
 }
