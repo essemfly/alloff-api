@@ -1,6 +1,8 @@
 package mapper
 
 import (
+	"time"
+
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -23,7 +25,11 @@ func MapHomeitem(item *domain.HomeItemDAO) *model.HomeItem {
 	}
 
 	grouopItems := []*model.ProductGroup{}
+	today := time.Now()
 	for _, groupItem := range item.ProductGroups {
+		if today.Before(groupItem.StartTime) || today.After(groupItem.FinishTime) {
+			continue
+		}
 		pg, _ := ioc.Repo.ProductGroups.Get(groupItem.ID.Hex())
 		grouopItems = append(grouopItems, MapProductGroupDao(pg))
 	}

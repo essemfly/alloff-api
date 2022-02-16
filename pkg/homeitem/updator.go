@@ -17,7 +17,7 @@ func UpdateHomeItems() {
 	}
 	for _, item := range homeitemDaos {
 		if item.ItemType == model.HomeItemTypeTimedeal {
-			numPassedPgsToShow := 10
+			numPassedPgsToShow := 15
 			pgs, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
 			if err != nil {
 				log.Println("Errors productgroups: ", err)
