@@ -130,11 +130,9 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		return nil, err
 	}
 
-	if req.ModuleName != nil {
-		if *req.ModuleName != "manual" && *req.ModuleName != "" {
-			if pdDao.ProductInfo.Source.CrawlModuleName != *req.ModuleName {
-				return nil, errors.New("not authorized product for this module" + *req.ModuleName)
-			}
+	if req.ModuleName != "" && req.ModuleName != "manual" {
+		if pdDao.ProductInfo.Source.CrawlModuleName != req.ModuleName {
+			return nil, errors.New("not authorized product for this module" + req.ModuleName)
 		}
 	}
 

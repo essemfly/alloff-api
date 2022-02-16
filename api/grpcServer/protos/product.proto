@@ -77,7 +77,7 @@ message EditProductRequest {
     optional int32 latest_delivery_days = 15;
     optional int32 refund_fee = 16;
     string alloff_product_id = 17;
-    optional string module_name = 18;
+    string module_name = 18;
 }
 
 message EditProductResponse {
