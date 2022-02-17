@@ -25,7 +25,6 @@ func FindExhibitionInProductGroup(productGroupID string) (*domain.ExhibitionDAO,
 }
 
 func UpdateExhibition(exhibition *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error) {
-
 	newPgs := []*domain.ProductGroupDAO{}
 	for _, pg := range exhibition.ProductGroups {
 		pgDao, err := ioc.Repo.ProductGroups.Get(pg.ID.Hex())

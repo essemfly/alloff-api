@@ -27,7 +27,13 @@ func AddExhibition(req *ExhibitionRequest) (*domain.ExhibitionDAO, error) {
 			log.Println("Add exhibition not found pgID: "+pgID, err)
 			continue
 		}
-		pgDaos = append(pgDaos, pgDao)
+		pgDao.StartTime = req.StartTime
+		pgDao.FinishTime = req.FinishTime
+		newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
+		if err != nil {
+			log.Println("update product group failed: "+pgID, err)
+		}
+		pgDaos = append(pgDaos, newPgDao)
 	}
 
 	exhibition := &domain.ExhibitionDAO{

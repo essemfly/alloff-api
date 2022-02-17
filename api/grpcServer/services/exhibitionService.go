@@ -80,7 +80,13 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 				log.Println("get product group failed: "+pgID, err)
 				continue
 			}
-			pgs = append(pgs, pg)
+			pg.StartTime = exDao.StartTime
+			pg.FinishTime = exDao.FinishTime
+			newPg, err := ioc.Repo.ProductGroups.Upsert(pg)
+			if err != nil {
+				log.Println("update product group failed: "+pgID, err)
+			}
+			pgs = append(pgs, newPg)
 		}
 
 		exDao.ProductGroups = pgs
@@ -119,7 +125,13 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 			log.Println("get product group failed: "+pgID, err)
 			continue
 		}
-		pgs = append(pgs, pg)
+		pg.StartTime = startTimeObj
+		pg.FinishTime = startTimeObj
+		newPg, err := ioc.Repo.ProductGroups.Upsert(pg)
+		if err != nil {
+			log.Println("update product group failed: "+pgID, err)
+		}
+		pgs = append(pgs, newPg)
 	}
 
 	exDao.ProductGroups = pgs
