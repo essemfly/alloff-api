@@ -48,11 +48,22 @@ func (r *queryResolver) HomeTabItems(ctx context.Context, onlyLive bool, offset 
 }
 
 func (r *queryResolver) BestProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) ([]*model.Product, error) {
+	if alloffCategoryID == "" {
+		productDaos, _, err := product.ProductsListing(offset, limit, "", "", "", nil)
+		if err != nil {
+			return nil, err
+		}
+		pds := []*model.Product{}
+		for _, productDao := range productDaos {
+			pds = append(pds, mapper.MapProductDaoToProduct(productDao))
+		}
+		return pds, nil
+	}
+
 	productDaos, _, err := product.AlloffCategoryProductsListing(offset, limit, nil, alloffCategoryID, "", nil)
 	if err != nil {
 		return nil, err
 	}
-
 	pds := []*model.Product{}
 	for _, productDao := range productDaos {
 		pds = append(pds, mapper.MapProductDaoToProduct(productDao))
@@ -75,6 +86,18 @@ func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) (
 }
 
 func (r *queryResolver) BargainProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) ([]*model.Product, error) {
+	if alloffCategoryID == "" {
+		productDaos, _, err := product.ProductsListing(offset, limit, "", "", "", nil)
+		if err != nil {
+			return nil, err
+		}
+		pds := []*model.Product{}
+		for _, productDao := range productDaos {
+			pds = append(pds, mapper.MapProductDaoToProduct(productDao))
+		}
+		return pds, nil
+	}
+
 	productDaos, _, err := product.AlloffCategoryProductsListing(offset, limit, nil, alloffCategoryID, "", nil)
 	if err != nil {
 		return nil, err
