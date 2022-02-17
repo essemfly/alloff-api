@@ -232,7 +232,8 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 			}
 		}
 		if pgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
-			exhibition.UpdateExhibition()
+			ex, _ := exhibition.FindExhibitionInProductGroup(pgDao.ID.Hex())
+			exhibition.UpdateExhibition(ex)
 		}
 	}
 
