@@ -34,11 +34,8 @@ func (basket *Basket) IsValid() []error {
 		}
 
 		if item.ProductGroup != nil {
-			if time.Now().After(item.ProductGroup.FinishTime) {
-				errs = append(errs, errors.New("productgroup finished time out"+item.Product.ID.Hex()))
-			}
-			if time.Now().Before(item.ProductGroup.StartTime) {
-				errs = append(errs, errors.New("productgroup not start yet"+item.Product.ID.Hex()))
+			if !item.ProductGroup.IsLive() {
+				errs = append(errs, errors.New("productgroup time out"+item.Product.ID.Hex()))
 			}
 		}
 
@@ -76,8 +73,12 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 		orderItemType := domain.NORMAL_ORDER
 		productPrice := item.Product.DiscountedPrice
 		if item.ProductGroup != nil {
-			// (TODO) 기획전이 생기면 추가되어야함.
-			orderItemType = domain.TIMEDEAL_ORDER
+			if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
+				orderItemType = domain.EXHIBITION_ORDER
+			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_TIMEDEAL {
+				orderItemType = domain.TIMEDEAL_ORDER
+			}
+
 			productPrice = item.Product.SpecialPrice
 		}
 
