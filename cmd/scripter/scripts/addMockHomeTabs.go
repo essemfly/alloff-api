@@ -8,8 +8,8 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"github.com/lessbutter/alloff-api/pkg/hometab"
-	"github.com/lessbutter/alloff-api/pkg/productgroup"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -21,7 +21,7 @@ func AddMockExhibitions() {
 		log.Println("IDX", idx)
 		pgIDs = append(pgIDs, pg.ID.Hex())
 		req := getMockExhibition(idx+1, pgIDs)
-		exhibitionDao, err := productgroup.AddExhibition(req)
+		exhibitionDao, err := exhibition.AddExhibition(req)
 		if err != nil {
 			log.Println("err on aadd mock exhibitions", err)
 		}
@@ -32,11 +32,11 @@ func AddMockExhibitions() {
 	}
 }
 
-func getMockExhibition(idx int, pgIDs []string) *productgroup.ExhibitionRequest {
+func getMockExhibition(idx int, pgIDs []string) *exhibition.ExhibitionRequest {
 	bannerIdx := strconv.Itoa(idx)
 	thumbnailIdx := strconv.Itoa(idx * 100)
 
-	return &productgroup.ExhibitionRequest{
+	return &exhibition.ExhibitionRequest{
 		BannerImage:     "https://picsum.photos/seed/" + bannerIdx + "/200/300",
 		ThumbnailImage:  "https://picsum.photos/seed/" + thumbnailIdx + "/200/300",
 		Title:           "Exhibition" + bannerIdx,
