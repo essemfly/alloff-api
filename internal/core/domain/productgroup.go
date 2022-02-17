@@ -69,7 +69,7 @@ func (pgDao *ProductGroupDAO) RemoveProduct(productID string) {
 
 func (pgDao *ProductGroupDAO) IsLive() bool {
 	now := time.Now()
-	if now.After(pgDao.FinishTime) && pgDao.StartTime.After(now) {
+	if now.After(pgDao.StartTime) && now.Before(pgDao.FinishTime) {
 		return true
 	}
 	return false
