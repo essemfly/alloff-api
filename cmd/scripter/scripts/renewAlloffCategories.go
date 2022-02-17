@@ -28,7 +28,7 @@ func RenewAlloffCategories() {
 
 	for cnt > limit+offset {
 		log.Println("current offset", offset, cnt)
-		pds, _, _ := ioc.Repo.Products.List(offset, limit, nil, nil)
+		pds, _, _ := ioc.Repo.Products.List(offset, limit, filter, nil)
 		for _, pd := range pds {
 			alloffCat := classifier.GetAlloffCategory(pd)
 			pd.UpdateAlloffCategory(alloffCat)
