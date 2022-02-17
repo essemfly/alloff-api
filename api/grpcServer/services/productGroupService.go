@@ -61,8 +61,7 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 }
 
 func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcServer.ListProductGroupsRequest) (*grpcServer.ListProductGroupsResponse, error) {
-	if req.Query == nil {
-		log.Println("1")
+	if req.Query == nil || req.Query.GroupType == nil {
 		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
 		pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
 		if err != nil {
