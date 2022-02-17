@@ -6,6 +6,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"github.com/lessbutter/alloff-api/pkg/seeder"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 func RenewAlloffCategories() {
@@ -18,7 +19,8 @@ func RenewAlloffCategories() {
 	AddClassifyRules()
 
 	offset, limit := 0, 1000
-	_, cnt, err := ioc.Repo.Products.List(offset, limit, nil, nil)
+	filter := bson.M{}
+	_, cnt, err := ioc.Repo.Products.List(offset, limit, filter, nil)
 	log.Println("cnt", cnt)
 	if err != nil {
 		log.Println("err occured inrenew alloff cats", err)
