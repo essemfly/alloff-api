@@ -40,8 +40,9 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 	}
 
 	if pdDao.ProductGroupId != "" {
-		pgDao, _ := ioc.Repo.ProductGroups.Get(pdDao.ProductGroupId)
-		if pgDao.IsLive() {
+		pgDao, err := ioc.Repo.ProductGroups.Get(pdDao.ProductGroupId)
+
+		if err == nil && pgDao.IsLive() {
 			alloffPrice = pdDao.SpecialPrice
 		}
 	}

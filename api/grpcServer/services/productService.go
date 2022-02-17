@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
@@ -229,6 +230,9 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 				}
 				break
 			}
+		}
+		if pgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
+			exhibition.UpdateExhibition()
 		}
 	}
 

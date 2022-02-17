@@ -1,4 +1,4 @@
-package productgroup
+package exhibition
 
 import (
 	"log"

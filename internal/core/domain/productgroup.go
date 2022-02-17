@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -69,6 +70,7 @@ func (pgDao *ProductGroupDAO) RemoveProduct(productID string) {
 
 func (pgDao *ProductGroupDAO) IsLive() bool {
 	now := time.Now()
+	log.Println("PG", pgDao)
 	if now.After(pgDao.FinishTime) && pgDao.StartTime.After(now) {
 		return true
 	}
