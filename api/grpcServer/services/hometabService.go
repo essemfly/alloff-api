@@ -110,11 +110,12 @@ func (s *HomeTabService) CreateHomeTabItem(ctx context.Context, req *grpcServer.
 			BrandKeynames: req.Contents.BrandKeynames,
 		}
 	case grpcServer.ItemType_HOMETAB_ITEM_BRAND_EXHIBITION:
-		if len(req.Contents.BrandKeynames) == 0 {
+		if len(req.Contents.BrandKeynames) == 0 || len(req.Contents.ExhibitionIds) == 0 {
 			break
 		}
 		addItemRequest.Requester = &hometab.BrandExhibitionItemRequest{
 			BrandKeyname: req.Contents.BrandKeynames[0],
+			ExhibitionID: req.Contents.ExhibitionIds[0],
 		}
 	case grpcServer.ItemType_HOMETAB_ITEM_EXHIBITION:
 		if len(req.Contents.ExhibitionIds) == 0 {

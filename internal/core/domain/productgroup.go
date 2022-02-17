@@ -66,3 +66,11 @@ func (pgDao *ProductGroupDAO) RemoveProduct(productID string) {
 	}
 	pgDao.Products = newPds
 }
+
+func (pgDao *ProductGroupDAO) IsLive() bool {
+	now := time.Now()
+	if now.After(pgDao.FinishTime) && pgDao.StartTime.After(now) {
+		return true
+	}
+	return false
+}
