@@ -58,7 +58,7 @@ func categoryClassifier(product *domain.ProductDAO) (category1, category2 *domai
 		}
 	}
 
-	if classifier.AlloffCategory1.Name == "티셔츠" || classifier.AlloffCategory1.Name == "원피스" || classifier.AlloffCategory1.Name == "스커트" {
+	if classifier.AlloffCategory1.Name == "가방" || classifier.AlloffCategory1.Name == "원피스/세트" || classifier.AlloffCategory1.Name == "신발" || classifier.AlloffCategory1.Name == "스커트" || classifier.AlloffCategory1.Name == "라운지/언더웨어" || classifier.AlloffCategory1.Name == "패션잡화" {
 		return classifier.AlloffCategory1, nil, true
 	}
 
@@ -71,6 +71,14 @@ func categoryClassifier(product *domain.ProductDAO) (category1, category2 *domai
 	} else if len(possibleCat2) == 1 {
 		cat2, _ := ioc.Repo.AlloffCategories.GetByName(possibleCat2[0])
 		return classifier.AlloffCategory1, cat2, true
+	} else {
+		log.Println("Possible Cats", possibleCat2)
+		// for _, possibleCat := range possibleCat2 {
+		// 	if possibleCat == "티셔츠" {
+		// 		cat2, _ := ioc.Repo.AlloffCategories.GetByName(possibleCat)
+		// 		return classifier.AlloffCategory1, cat2, true
+		// 	}
+		// }
 	}
 
 	return classifier.AlloffCategory1, nil, false

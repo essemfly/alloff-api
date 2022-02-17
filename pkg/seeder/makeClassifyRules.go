@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
-const categoryFileSeeder = "pkg/seeder/category_classifier_seeder_210913.csv"
+const categoryFileSeeder = "pkg/seeder/category_classifier_seeder_220217.csv"
 
 type CsvData struct {
 	OriginalName    string

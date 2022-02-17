@@ -22,6 +22,7 @@ func main() {
 	// scripts.TestAlimtalk()
 	// scripts.AddTimedealNotification()
 	// scripts.SendNotification()
+	scripts.RenewAlloffCategories()
 	scripts.AddMockExhibitions()
 	scripts.AddMockHomeTabs()
 	scripts.AddMockTopBanners()
