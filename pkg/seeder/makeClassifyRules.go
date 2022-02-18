@@ -38,6 +38,11 @@ func MakeClassifyRules() {
 	cats, _ := ioc.Repo.AlloffCategories.List(nil)
 	for _, cat := range cats {
 		catNameMapper[cat.Name] = cat
+		catID := cat.ID.Hex()
+		subcats, _ := ioc.Repo.AlloffCategories.List(&catID)
+		for _, subcat := range subcats {
+			catNameMapper[subcat.Name] = subcat
+		}
 	}
 
 	for _, row := range rows {
