@@ -77,16 +77,17 @@ func HomeTabItemMapper(item *domain.HomeTabItemDAO) *grpcServer.HomeTabItemMessa
 	}
 
 	return &grpcServer.HomeTabItemMessage{
-		ItemId:      item.ID.Hex(),
-		Title:       item.Title,
-		Description: item.Description,
-		Tags:        item.Tags,
-		ItemType:    ItemTypeMapper(item.Type),
-		Products:    pds,
-		Brands:      brands,
-		Exhibitions: exhibitions,
-		StartTime:   item.StartedAt.String(),
-		FinishTime:  item.FinishedAt.String(),
-		Reference:   ReferenceMapper(item.Reference),
+		ItemId:       item.ID.Hex(),
+		Title:        item.Title,
+		Description:  item.Description,
+		Tags:         item.Tags,
+		ItemType:     ItemTypeMapper(item.Type),
+		Products:     pds,
+		Brands:       brands,
+		Exhibitions:  exhibitions,
+		BackImageUrl: item.BackImageUrl,
+		StartTime:    item.StartedAt.String(),
+		FinishTime:   item.FinishedAt.String(),
+		Reference:    ReferenceMapper(item.Reference),
 	}
 }
