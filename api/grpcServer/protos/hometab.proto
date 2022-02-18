@@ -41,7 +41,7 @@ message CreateHomeTabItemRequest {
     string title = 1;
     string description = 2;
     repeated string tags = 3;
-    string back_image_url = 4;
+    optional string back_image_url = 4;
     string start_time = 5;
     string finish_time = 6;
     ItemRequester contents = 7;

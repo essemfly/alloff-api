@@ -94,11 +94,15 @@ func (s *HomeTabService) CreateHomeTabItem(ctx context.Context, req *grpcServer.
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
+	backImageUrl := ""
+	if req.BackImageUrl != nil {
+		backImageUrl = *req.BackImageUrl
+	}
 	addItemRequest := &hometab.HomeTabItemRequest{
 		Title:        req.Title,
 		Description:  req.Description,
 		Tags:         req.Tags,
-		BackImageUrl: req.BackImageUrl,
+		BackImageUrl: backImageUrl,
 		StartedAt:    startTimeObj,
 		FinishedAt:   finishTimeObj,
 	}
