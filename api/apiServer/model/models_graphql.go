@@ -44,10 +44,11 @@ type AlloffCategoryProductsInput struct {
 }
 
 type AppVersion struct {
-	LatestVersion string  `json:"latestVersion"`
-	MinVersion    string  `json:"minVersion"`
-	Message       *string `json:"message"`
-	IsMaintenance bool    `json:"isMaintenance"`
+	LatestVersion     string  `json:"latestVersion"`
+	MinVersion        string  `json:"minVersion"`
+	SubmissionVersion string  `json:"submissionVersion"`
+	Message           *string `json:"message"`
+	IsMaintenance     bool    `json:"isMaintenance"`
 }
 
 type Brand struct {
@@ -56,6 +57,7 @@ type Brand struct {
 	EngName         string       `json:"engName"`
 	KeyName         string       `json:"keyName"`
 	LogoImgURL      string       `json:"logoImgUrl"`
+	BackImgURL      string       `json:"backImgUrl"`
 	Categories      []*Category  `json:"categories"`
 	OnPopular       bool         `json:"onPopular"`
 	Description     string       `json:"description"`
@@ -119,8 +121,11 @@ type Exhibition struct {
 	BannerImage    string          `json:"bannerImage"`
 	ThumbnailImage string          `json:"thumbnailImage"`
 	Title          string          `json:"title"`
-	ShortTitle     string          `json:"shortTitle"`
+	SubTitle       string          `json:"subTitle"`
+	Description    string          `json:"description"`
 	ProductGroups  []*ProductGroup `json:"productGroups"`
+	StartTime      string          `json:"startTime"`
+	FinishTime     string          `json:"finishTime"`
 }
 
 type FeaturedItem struct {
@@ -145,6 +150,19 @@ type HomeItem struct {
 	ProductGroups  []*ProductGroup  `json:"productGroups"`
 }
 
+type HomeTabItem struct {
+	ID           string              `json:"id"`
+	Title        string              `json:"title"`
+	Description  string              `json:"description"`
+	Tags         []string            `json:"tags"`
+	BackImageURL string              `json:"backImageUrl"`
+	ItemType     HomeTabItemTypeEnum `json:"itemType"`
+	Products     []*Product          `json:"products"`
+	Brands       []*Brand            `json:"brands"`
+	Exhibitions  []*Exhibition       `json:"exhibitions"`
+	Reference    *ItemReference      `json:"reference"`
+}
+
 type Inventory struct {
 	Size     string `json:"size"`
 	Quantity int    `json:"quantity"`
@@ -153,6 +171,12 @@ type Inventory struct {
 type InventoryInput struct {
 	Size     string `json:"size"`
 	Quantity int    `json:"quantity"`
+}
+
+type ItemReference struct {
+	Path    string        `json:"path"`
+	Params  string        `json:"params"`
+	Options []SortingType `json:"options"`
 }
 
 type KeyValueInfo struct {
@@ -389,6 +413,14 @@ type SizeGuide struct {
 	ImgURL string `json:"imgUrl"`
 }
 
+type TopBanner struct {
+	ID           string `json:"id"`
+	ImageURL     string `json:"imageUrl"`
+	ExhibitionID string `json:"exhibitionId"`
+	Title        string `json:"title"`
+	SubTitle     string `json:"subTitle"`
+}
+
 type User struct {
 	ID            string  `json:"id"`
 	UUID          string  `json:"uuid"`
@@ -536,6 +568,53 @@ func (e *HomeItemType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e HomeItemType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type HomeTabItemTypeEnum string
+
+const (
+	HomeTabItemTypeEnumHometabItemBrands          HomeTabItemTypeEnum = "HOMETAB_ITEM_BRANDS"
+	HomeTabItemTypeEnumHometabItemBrandExhibition HomeTabItemTypeEnum = "HOMETAB_ITEM_BRAND_EXHIBITION"
+	HomeTabItemTypeEnumHometabItemExhibitions     HomeTabItemTypeEnum = "HOMETAB_ITEM_EXHIBITIONS"
+	HomeTabItemTypeEnumHometabItemExhibition      HomeTabItemTypeEnum = "HOMETAB_ITEM_EXHIBITION"
+	HomeTabItemTypeEnumHometabItemProducts        HomeTabItemTypeEnum = "HOMETAB_ITEM_PRODUCTS"
+)
+
+var AllHomeTabItemTypeEnum = []HomeTabItemTypeEnum{
+	HomeTabItemTypeEnumHometabItemBrands,
+	HomeTabItemTypeEnumHometabItemBrandExhibition,
+	HomeTabItemTypeEnumHometabItemExhibitions,
+	HomeTabItemTypeEnumHometabItemExhibition,
+	HomeTabItemTypeEnumHometabItemProducts,
+}
+
+func (e HomeTabItemTypeEnum) IsValid() bool {
+	switch e {
+	case HomeTabItemTypeEnumHometabItemBrands, HomeTabItemTypeEnumHometabItemBrandExhibition, HomeTabItemTypeEnumHometabItemExhibitions, HomeTabItemTypeEnumHometabItemExhibition, HomeTabItemTypeEnumHometabItemProducts:
+		return true
+	}
+	return false
+}
+
+func (e HomeTabItemTypeEnum) String() string {
+	return string(e)
+}
+
+func (e *HomeTabItemTypeEnum) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = HomeTabItemTypeEnum(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid HomeTabItemTypeEnum", str)
+	}
+	return nil
+}
+
+func (e HomeTabItemTypeEnum) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

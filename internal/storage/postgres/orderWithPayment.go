@@ -45,18 +45,36 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
+
+			orderMsg :=
+				"----------결제 취소 요청 ---------- \n" +
+					"결제 Order ID: " + orderDao.AlloffOrderID + ": " + orderItemDao.OrderItemCode + "\n" +
+					"상품명: " + paymentDao.Name + "\n" +
+					"주문자 번호: " + paymentDao.BuyerMobile + "\n" +
+					"가격: " + strconv.Itoa(paymentDao.Amount) + "\n" +
+					"주소: " + paymentDao.BuyerPostCode + " " + paymentDao.BuyerAddress + "\n" +
+					"받는 사람 번호: " + paymentDao.BuyerMobile
+
+			config.WriteCancelMessage(orderMsg)
+
+			refundPrice := orderItemDao.SalesPrice * orderItemDao.Quantity
+			_, err := config.PaymentService.CancelPaymentImpUID(paymentDao.ImpUID, orderDao.AlloffOrderID, float64(refundPrice), 0, "cancel before products ready", "", "", "")
+			if err != nil {
+				log.Println("cancel payment error on iamport")
+				return err
+			}
+
 			orderItemDao.OrderItemStatus = domain.ORDER_ITEM_CANCEL_FINISHED
 			orderItemDao.CancelRequestedAt = time.Now()
 			orderItemDao.CancelFinishedAt = time.Now()
 			orderItemDao.UpdatedAt = time.Now()
 			paymentDao.PaymentStatus = domain.PAYMENT_REFUND_FINISHED
 			paymentDao.UpdatedAt = time.Now()
-			_, err := ioc.Repo.OrderItems.Update(orderItemDao)
+			_, err = ioc.Repo.OrderItems.Update(orderItemDao)
 			if err != nil {
 				return err
 			}
 
-			refundPrice := orderItemDao.SalesPrice * orderItemDao.Quantity
 			newRefundInfo := &domain.RefundItemDAO{
 				OrderID:      orderDao.ID,
 				OrderItemID:  orderItemDao.ID,
@@ -70,20 +88,13 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 				log.Println("error on adding refund", err)
 				return err
 			}
-
-			_, err = config.PaymentService.CancelPaymentImpUID(paymentDao.ImpUID, orderDao.AlloffOrderID, float64(refundPrice), 0, float64(orderDao.TotalPrice), "cancel before products ready", "", "", "")
-			if err != nil {
-				log.Println("cancel payment error on iamport")
-				return err
-			}
-
 			_, err = ioc.Repo.Payments.Update(paymentDao)
 			if err != nil {
 				return err
 			}
 
-			orderMsg :=
-				"----------결제 취소 완료---------- \n" +
+			orderMsg =
+				"----------결제 취소 완료 ---------- \n" +
 					"결제 Order ID: " + orderDao.AlloffOrderID + ": " + orderItemDao.OrderItemCode + "\n" +
 					"상품명: " + paymentDao.Name + "\n" +
 					"주문자 번호: " + paymentDao.BuyerMobile + "\n" +
@@ -97,6 +108,7 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 		}); err != nil {
 			return err
 		}
+
 		return nil
 	}
 

@@ -7,9 +7,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func ProductsSearchListing(offset, limit int, brandID, categoryID, keyword string) ([]*domain.ProductDAO, int, error) {
+func ProductsSearchListing(offset, limit int, moduleName, brandID, categoryID, keyword string) ([]*domain.ProductDAO, int, error) {
 	filter := bson.M{"removed": false}
 
+	if moduleName != "" {
+		filter["productinfo.source.crawlmodulename"] = moduleName
+	}
 	brandObjID, _ := primitive.ObjectIDFromHex(brandID)
 	categoryObjID, _ := primitive.ObjectIDFromHex(categoryID)
 

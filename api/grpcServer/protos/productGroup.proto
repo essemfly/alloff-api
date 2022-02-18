@@ -23,9 +23,11 @@ service ProductGroup {
 message GetProductGroupRequest {
     string product_group_id = 1;
 }
+
 message GetProductGroupResponse {
     ProductGroupMessage pg = 1;
 }
+
 message CreateProductGroupRequest {
     string title = 1;
     string short_title = 2;
@@ -33,10 +35,13 @@ message CreateProductGroupRequest {
     string image_url = 4;
     string start_time = 5;
     string finish_time = 6;
+    ProductGroupType group_type = 7;
 }
+
 message CreateProductGroupResponse {
     ProductGroupMessage pg = 1;
 }
+
 message EditProductGroupRequest {
     optional string title = 1;
     optional string short_title = 2;
@@ -45,25 +50,40 @@ message EditProductGroupRequest {
     optional string start_time = 5;
     optional string finish_time = 6;
     string product_group_id = 7;
+    optional ProductGroupType group_type = 9;
 }
+
 message EditProductGroupResponse {
     ProductGroupMessage pg = 1;
 }
-message ListProductGroupsRequest {}
+
+message ListProductGroupsRequest {
+    ProductGroupQuery query = 1;
+    int32 offset = 2;
+    int32 limit = 3;
+}
+
 message ListProductGroupsResponse {
     repeated ProductGroupMessage pgs = 1;
+    int32 offset = 2;
+    int32 limit = 3;
+    int32 total_counts = 4;
 }
+
 message PushProductsInPgRequest {
     string product_group_id = 1;
     repeated ProductPriorityMessage product_priority = 2;
 }
+
 message PushProductsInPgResponse {
     ProductGroupMessage pg = 1;
 }
+
 message RemoveProductInPgRequest {
     string product_group_id = 1;
     string product_id = 2;
 }
+
 message RemoveProductInPgResponse {
     ProductGroupMessage pg = 1;
 }
@@ -85,9 +105,20 @@ message ProductGroupMessage {
     string start_time = 6;
     string finish_time = 7;
     string product_group_id = 8;
+    ProductGroupType group_type = 9;
 }
 
 message ProductPriorityMessage {
     string product_id = 1;
     int32 priority = 2;
+}
+
+enum ProductGroupType {
+    PRODUCT_GROUP_TIMEDEAL = 0;
+    PRODUCT_GROUP_EXHIBITION = 1;
+}
+
+message ProductGroupQuery {
+    optional string search_query = 1;
+    optional ProductGroupType group_type = 2;
 }

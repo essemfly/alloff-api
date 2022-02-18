@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer"
@@ -31,6 +32,11 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
+	groupType := domain.PRODUCT_GROUP_TIMEDEAL
+	if req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
+		groupType = domain.PRODUCT_GROUP_EXHIBITION
+	}
+
 	pgDao := &domain.ProductGroupDAO{
 		Title:       req.Title,
 		ShortTitle:  req.ShortTitle,
@@ -39,6 +45,7 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 		Products:    []*domain.ProductPriorityDAO{},
 		StartTime:   startTimeObj,
 		FinishTime:  finishTimeObj,
+		GroupType:   domain.ProductGroupType(groupType),
 		Created:     time.Now(),
 		Updated:     time.Now(),
 	}
@@ -54,19 +61,74 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 }
 
 func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcServer.ListProductGroupsRequest) (*grpcServer.ListProductGroupsResponse, error) {
-	numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
-	pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
-	if err != nil {
-		return nil, err
+	if req.Query == nil || req.Query.GroupType == nil {
+		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
+		pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
+		if err != nil {
+			return nil, err
+		}
+		pgs := []*grpcServer.ProductGroupMessage{}
+		for _, pgDao := range pgDaos {
+			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+		}
+		return &grpcServer.ListProductGroupsResponse{
+			Pgs:         pgs,
+			Offset:      req.Offset,
+			Limit:       req.Limit,
+			TotalCounts: 0,
+		}, nil
 	}
 
-	pgs := []*grpcServer.ProductGroupMessage{}
-	for _, pgDao := range pgDaos {
-		pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+	if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL {
+		log.Println("2")
+		pgDaos, err := ioc.Repo.ProductGroups.ListTimedeals(int(req.Offset), int(req.Limit), false)
+		if err != nil {
+			return nil, err
+		}
+		pgs := []*grpcServer.ProductGroupMessage{}
+		for _, pgDao := range pgDaos {
+			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+		}
+		return &grpcServer.ListProductGroupsResponse{
+			Pgs:         pgs,
+			Offset:      req.Offset,
+			Limit:       req.Limit,
+			TotalCounts: 0,
+		}, nil
+	} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
+		log.Println("3")
+		pgDaos, err := ioc.Repo.ProductGroups.ListExhibitionPg(int(req.Offset), int(req.Limit))
+		if err != nil {
+			return nil, err
+		}
+		pgs := []*grpcServer.ProductGroupMessage{}
+		for _, pgDao := range pgDaos {
+			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+		}
+		return &grpcServer.ListProductGroupsResponse{
+			Pgs:         pgs,
+			Offset:      req.Offset,
+			Limit:       req.Limit,
+			TotalCounts: 0,
+		}, nil
+	} else {
+		log.Println("4")
+		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
+		pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
+		if err != nil {
+			return nil, err
+		}
+		pgs := []*grpcServer.ProductGroupMessage{}
+		for _, pgDao := range pgDaos {
+			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+		}
+		return &grpcServer.ListProductGroupsResponse{
+			Pgs:         pgs,
+			Offset:      req.Offset,
+			Limit:       req.Limit,
+			TotalCounts: 0,
+		}, nil
 	}
-	return &grpcServer.ListProductGroupsResponse{
-		Pgs: pgs,
-	}, nil
 }
 
 func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcServer.EditProductGroupRequest) (*grpcServer.EditProductGroupResponse, error) {
@@ -101,6 +163,14 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 	if req.FinishTime != nil {
 		finishTimeObj, _ := time.Parse(layout, *req.FinishTime)
 		pgDao.FinishTime = finishTimeObj
+	}
+
+	if req.GroupType != nil {
+		groupType := domain.PRODUCT_GROUP_TIMEDEAL
+		if *req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
+			groupType = domain.PRODUCT_GROUP_EXHIBITION
+		}
+		pgDao.GroupType = domain.ProductGroupType(groupType)
 	}
 
 	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)

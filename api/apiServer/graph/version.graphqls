@@ -1,6 +1,7 @@
 type AppVersion {
   latestVersion: String!
   minVersion: String!
+  submissionVersion: String!
   message: String
   isMaintenance: Boolean!
 }

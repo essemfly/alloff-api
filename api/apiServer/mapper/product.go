@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 )
@@ -33,10 +34,20 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		deliveryDesc.DeliveryType = model.DeliveryTypeDomesticDelivery
 	}
 
-	specialDiscount := 0
-	if pdDao.SpecialPrice < pdDao.DiscountedPrice {
-		specialDiscount = utils.CalculateDiscountRate(pdDao.ProductInfo.Price.OriginalPrice, float32(pdDao.SpecialPrice))
+	alloffPrice := pdDao.DiscountedPrice
+	if alloffPrice == 0 {
+		alloffPrice = int(pdDao.ProductInfo.Price.OriginalPrice)
 	}
+
+	if pdDao.ProductGroupId != "" {
+		pgDao, err := ioc.Repo.ProductGroups.Get(pdDao.ProductGroupId)
+
+		if err == nil && pgDao.IsLive() {
+			alloffPrice = pdDao.SpecialPrice
+		}
+	}
+
+	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.ProductInfo.Price.OriginalPrice, float32(alloffPrice))
 
 	isSoldout := true
 	if len(inventories) > 0 {
@@ -52,10 +63,10 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		ProductGroupID:      pdDao.ProductGroupId,
 		Soldout:             isSoldout,
 		Images:              pdDao.ProductInfo.Images,
-		DiscountedPrice:     pdDao.DiscountedPrice,
-		DiscountRate:        pdDao.DiscountRate,
-		SpecialPrice:        &pdDao.SpecialPrice,
-		SpecialDiscountRate: &specialDiscount,
+		DiscountedPrice:     alloffPrice,
+		DiscountRate:        alloffPriceDiscountRate,
+		SpecialPrice:        &alloffPrice,
+		SpecialDiscountRate: &alloffPriceDiscountRate,
 		ProductURL:          pdDao.ProductInfo.ProductUrl,
 		Inventory:           inventories,
 		IsUpdated:           pdDao.IsUpdated,

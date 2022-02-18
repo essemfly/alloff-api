@@ -2,11 +2,13 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
@@ -26,6 +28,10 @@ func (s *ProductService) GetProduct(ctx context.Context, req *grpcServer.GetProd
 }
 
 func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListProductsRequest) (*grpcServer.ListProductsResponse, error) {
+	moduleName := ""
+	if req.ModuleName != nil {
+		moduleName = *req.ModuleName
+	}
 	brandID := ""
 	if req.Query.BrandId != nil {
 		brandID = *req.Query.BrandId
@@ -38,7 +44,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	if req.Query.SearchQuery != nil {
 		searchKeyword = *req.Query.SearchQuery
 	}
-	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), brandID, categoryID, searchKeyword)
+	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), moduleName, brandID, categoryID, searchKeyword)
 	if err != nil {
 		return nil, err
 	}
@@ -70,6 +76,10 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	if req.SpecialPrice != nil {
 		specialPrice = int(*req.SpecialPrice)
 	}
+	moduleName := "manual"
+	if req.ModuleName != nil {
+		moduleName = *req.ModuleName
+	}
 
 	invDaos := []domain.InventoryDAO{}
 	for _, inv := range req.Inventory {
@@ -83,7 +93,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	if req.ProductId != nil {
 		productID = *req.ProductId
 	}
-	addRequest := &product.ProductManuelAddRequest{
+	addRequest := &product.ProductManualAddRequest{
 		AlloffName:           req.AlloffName,
 		IsForeignDelivery:    req.IsForeignDelivery,
 		ProductID:            productID,
@@ -99,9 +109,10 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		RefundFee:            int(req.RefundFee),
 		Images:               req.Images,
 		DescriptionImages:    req.DescriptionImages,
+		ModuleName:           moduleName,
 	}
 
-	pdDao, err := product.AddProductInManuel(addRequest)
+	pdDao, err := product.AddProductManually(addRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +129,12 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	pdDao, err := ioc.Repo.Products.Get(req.AlloffProductId)
 	if err != nil {
 		return nil, err
+	}
+
+	if req.ModuleName != "" && req.ModuleName != "manual" {
+		if pdDao.ProductInfo.Source.CrawlModuleName != req.ModuleName {
+			return nil, errors.New("not authorized product for this module" + req.ModuleName)
+		}
 	}
 
 	if req.AlloffName != nil {
@@ -213,6 +230,10 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 				}
 				break
 			}
+		}
+		if pgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
+			ex, _ := exhibition.FindExhibitionInProductGroup(pgDao.ID.Hex())
+			exhibition.UpdateExhibition(ex)
 		}
 	}
 

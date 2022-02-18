@@ -78,12 +78,14 @@ type HomeItemsRepository interface {
 type ProductGroupsRepository interface {
 	Get(ID string) (*domain.ProductGroupDAO, error)
 	List(numPassedItem int) ([]*domain.ProductGroupDAO, error)
+	ListTimedeals(offset, limit int, isLive bool) ([]*domain.ProductGroupDAO, error)
+	ListExhibitionPg(offset, limit int) ([]*domain.ProductGroupDAO, error)
 	Upsert(*domain.ProductGroupDAO) (*domain.ProductGroupDAO, error)
 }
 
 type ExhibitionsRepository interface {
 	Get(ID string) (*domain.ExhibitionDAO, error)
-	List() ([]*domain.ExhibitionDAO, error)
+	List(offset, limit int) ([]*domain.ExhibitionDAO, int, error)
 	Upsert(*domain.ExhibitionDAO) (*domain.ExhibitionDAO, error)
 }
 
@@ -150,4 +152,23 @@ type NotificationsRepository interface {
 	Get(notiID string) ([]*domain.NotificationDAO, error)
 	List(offset, limit int, onlyReady bool) ([]*domain.NotificationDAO, error)
 	Update(*domain.NotificationDAO) (*domain.NotificationDAO, error)
+}
+
+type HomeTabItemsRepository interface {
+	Insert(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
+	Get(itemID string) (*domain.HomeTabItemDAO, error)
+	List(offset, limit int, onlyLive bool) ([]*domain.HomeTabItemDAO, int, error)
+	Update(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
+}
+
+type TopBannersRepository interface {
+	Insert(*domain.TopBannerDAO) (*domain.TopBannerDAO, error)
+	Get(itemID string) (*domain.TopBannerDAO, error)
+	List(offset, limit int, onlyLive bool) ([]*domain.TopBannerDAO, int, error)
+	Update(*domain.TopBannerDAO) (*domain.TopBannerDAO, error)
+}
+
+type BestProductsRepository interface {
+	Insert(*domain.BestProductDAO) (*domain.BestProductDAO, error)
+	GetLatest(alloffCategoryID string) (*domain.BestProductDAO, error)
 }

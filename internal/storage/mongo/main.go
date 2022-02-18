@@ -32,6 +32,9 @@ type MongoDB struct {
 	likeBrandsCol      *mongo.Collection
 	likeProductsCol    *mongo.Collection
 	exhibitionCol      *mongo.Collection
+	hometabItemsCol    *mongo.Collection
+	topBannersCol      *mongo.Collection
+	bestProductsCol    *mongo.Collection
 }
 
 func NewMongoDB(conf config.Configuration) *MongoDB {
@@ -62,6 +65,10 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 		alimtalkCol:        db.Collection("alimtalks"),
 		likeBrandsCol:      db.Collection("likes_brands"),
 		likeProductsCol:    db.Collection("likes_products"),
+		hometabItemsCol:    db.Collection("hometabitems"),
+		exhibitionCol:      db.Collection("exhibitions"),
+		topBannersCol:      db.Collection("top_banners"),
+		bestProductsCol:    db.Collection("best_products"),
 	}
 }
 
@@ -85,10 +92,16 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.ProductGroups = MongoProductGroupsRepo(conn)
 	ioc.Repo.Exhibitions = MongoExhibitionsRepo(conn)
 	ioc.Repo.Notifications = MongoNotificationsRepo(conn)
+	ioc.Repo.HomeTabItems = MongoHometabItemsRepo(conn)
+	ioc.Repo.TopBanners = MongoTopBannersRepo(conn)
+	ioc.Repo.BestProducts = MongoBestProductsRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context, conf config.Configuration) (*mongo.Client, error) {
-	clientOptions := options.Client().ApplyURI("mongodb://" + conf.MONGO_USERNAME + ":" + conf.MONGO_PASSWORD + "@" + conf.MONGO_URL + "/" + conf.MONGO_DB_NAME + "?&connect=direct&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false")
+	clientOptions := options.Client().ApplyURI("mongodb://" + conf.MONGO_URL + "/" + conf.MONGO_DB_NAME + "?&connect=direct&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false").SetAuth(options.Credential{
+		Username: conf.MONGO_USERNAME,
+		Password: conf.MONGO_PASSWORD,
+	})
 	mongoClient, err := mongo.Connect(ctx, clientOptions)
 
 	return mongoClient, err

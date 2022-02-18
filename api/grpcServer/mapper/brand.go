@@ -13,6 +13,7 @@ func BrandMapper(brand *domain.BrandDAO) *grpcServer.BrandMessage {
 		Engname:       brand.EngName,
 		Description:   brand.Description,
 		LogoImageUrl:  brand.LogoImgUrl,
+		BackImageUrl:  brand.BackImgUrl,
 		IsPopular:     brand.Onpopular,
 		IsOpen:        brand.IsOpen,
 		InMaintenance: brand.InMaintenance,

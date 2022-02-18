@@ -1,0 +1,119 @@
+syntax = "proto3";
+
+package grpcServer;
+
+import "api/grpcServer/protos/exhibition.proto";
+import "api/grpcServer/protos/product.proto";
+import "api/grpcServer/protos/brand.proto";
+
+option go_package = "github.com/lessbutter/alloff-api/api/grpcServer";
+
+service HomeTabItem {
+    rpc GetHomeTabItem(GetHomeTabItemRequest) returns (GetHomeTabItemResponse);
+    rpc ListHomeTabItems(ListHomeTabItemsRequest) returns (ListHomeTabItemsResponse);
+    rpc EditHomeTabItem(EditHomeTabItemRequest) returns (EditHomeTabItemResponse);
+    rpc CreateHomeTabItem(CreateHomeTabItemRequest) returns (CreateHomeTabItemResponse);
+}
+
+
+message GetHomeTabItemRequest {
+    string item_id = 1;
+}
+
+message ListHomeTabItemsRequest {
+    int32 offset = 1;
+    int32 limit = 2;
+}
+
+message EditHomeTabItemRequest {
+    string hometab_id = 1;
+    optional string title = 2;
+    optional string description = 3;
+    repeated string tags = 4;
+    optional string back_image_url = 5;
+    optional string start_time = 6;
+    optional string finish_time = 7;
+    ItemRequester contents = 8;
+    optional int32 weight = 9;
+}
+
+message CreateHomeTabItemRequest {
+    string title = 1;
+    string description = 2;
+    repeated string tags = 3;
+    optional string back_image_url = 4;
+    string start_time = 5;
+    string finish_time = 6;
+    ItemRequester contents = 7;
+    int32 weight = 8;
+}
+
+message GetHomeTabItemResponse {
+    HomeTabItemMessage item = 1;
+}
+
+message ListHomeTabItemsResponse {
+    repeated HomeTabItemMessage items = 1;
+    int32 offset = 2;
+    int32 limit = 3;
+    int32 total_counts = 4;
+}
+
+message EditHomeTabItemResponse {
+    HomeTabItemMessage item = 1;
+}
+
+message CreateHomeTabItemResponse {
+    HomeTabItemMessage item = 1;
+}
+
+message HomeTabItemMessage {
+    string item_id = 1;
+    string title = 2;
+    string description = 3;
+    repeated string tags = 4;
+    string back_image_url = 5;
+    ItemType item_type = 6;
+    string start_time = 7;
+    string finish_time = 8;
+    repeated ProductMessage products = 9;
+    repeated BrandMessage brands = 10;
+    repeated ExhibitionMessage exhibitions = 11;
+    HomeTabItemReferenceMessage reference = 12;
+    int32 weight = 13;
+}
+
+message HomeTabItemReferenceMessage {
+    string path = 1;
+    string params = 2;
+    repeated SortingOptions options = 3;
+}
+
+message ItemRequester{
+    ItemType item_type = 1;
+    repeated string brand_keynames = 2;
+    repeated string exhibition_ids = 3;
+    optional string alloffcategory_id = 4;
+    repeated SortingOptions options = 5;
+
+}
+
+enum ItemType {
+    HOMETAB_ITEM_BRANDS = 0;
+    HOMETAB_ITEM_BRAND_EXHIBITION = 1;
+    HOMETAB_ITEM_EXHIBITIONS = 2;
+    HOMETAB_ITEM_EXHIBITION = 3;
+    HOMETAB_ITEM_PRODUCTS_BRANDS = 4;
+    HOMETAB_ITEM_PRODUCTS_CATEGORIES = 5;
+}
+
+enum SortingOptions {
+    PRICE_ASCENDING = 0;
+    PRICE_DESCENDING = 1;
+    DISCOUNT_0_30 = 2;
+    DISCOUNT_30_50 = 3;
+    DISCOUNT_50_70 = 4;
+    DISCOUNT_70_100 = 5;
+    DISCOUNTRATE_ASCENDING = 6;
+    DISCOUNTRATE_DESCENDING = 7;
+}

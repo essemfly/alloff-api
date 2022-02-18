@@ -6,6 +6,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+type ProductGroupType string
+
+const (
+	PRODUCT_GROUP_TIMEDEAL   = "PRODUCT_GROUP_TIMEDEAL"
+	PRODUCT_GROUP_EXHIBITION = "PRODUCT_GROUP_EXHIBITION"
+)
+
 type ProductGroupDAO struct {
 	ID          primitive.ObjectID `bson:"_id, omitempty"`
 	Title       string             `json:"title"`
@@ -14,6 +21,7 @@ type ProductGroupDAO struct {
 	ImgUrl      string             `json:"imgurl"`
 	NumAlarms   int
 	Products    []*ProductPriorityDAO
+	GroupType   ProductGroupType
 	StartTime   time.Time
 	FinishTime  time.Time
 	Created     time.Time
@@ -24,15 +32,6 @@ type ProductPriorityDAO struct {
 	Priority  int
 	Product   *ProductDAO
 	ProductID primitive.ObjectID
-}
-
-type ExhibitionDAO struct {
-	ID             primitive.ObjectID `bons:"_id, omitempty"`
-	BannerImage    string
-	ThumbnailImage string
-	Title          string
-	ShortTitle     string
-	ProductGroups  []*ProductGroupDAO
 }
 
 func (pgDao *ProductGroupDAO) AppendProduct(priorityDao *ProductPriorityDAO) bool {
@@ -66,4 +65,12 @@ func (pgDao *ProductGroupDAO) RemoveProduct(productID string) {
 		}
 	}
 	pgDao.Products = newPds
+}
+
+func (pgDao *ProductGroupDAO) IsLive() bool {
+	now := time.Now()
+	if now.After(pgDao.StartTime) && now.Before(pgDao.FinishTime) {
+		return true
+	}
+	return false
 }

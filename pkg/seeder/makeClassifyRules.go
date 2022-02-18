@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
-const categoryFileSeeder = "pkg/seeder/category_classifier_seeder_210913.csv"
+const categoryFileSeeder = "pkg/seeder/category_classifier_seeder_220217.csv"
 
 type CsvData struct {
 	OriginalName    string
@@ -38,6 +38,11 @@ func MakeClassifyRules() {
 	cats, _ := ioc.Repo.AlloffCategories.List(nil)
 	for _, cat := range cats {
 		catNameMapper[cat.Name] = cat
+		catID := cat.ID.Hex()
+		subcats, _ := ioc.Repo.AlloffCategories.List(&catID)
+		for _, subcat := range subcats {
+			catNameMapper[subcat.Name] = subcat
+		}
 	}
 
 	for _, row := range rows {

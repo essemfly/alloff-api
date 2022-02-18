@@ -6,6 +6,7 @@ package resolver
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
@@ -163,7 +164,11 @@ func (r *queryResolver) Likeproducts(ctx context.Context) ([]*model.LikeProductO
 	var products []*model.LikeProductOutput
 
 	for _, like := range likes {
-		newProduct, _ := ioc.Repo.Products.Get(like.Productid)
+		newProduct, err := ioc.Repo.Products.Get(like.Productid)
+		if err != nil {
+			log.Println("like products id not found :" + like.Productid)
+			continue
+		}
 		if like.OldProduct == nil {
 			return nil, errors.New("old product is missing")
 		}

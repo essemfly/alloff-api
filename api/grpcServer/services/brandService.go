@@ -30,10 +30,11 @@ func (s *BrandService) CreateBrand(ctx context.Context, req *grpcServer.CreateBr
 		KeyName:       req.Keyname,
 		Description:   req.Description,
 		LogoImgUrl:    req.LogoImageUrl,
+		BackImgUrl:    req.BackImageUrl,
 		Onpopular:     false,
 		Created:       time.Now(),
 		IsOpen:        false,
-		Modulename:    "manuel",
+		Modulename:    "manual",
 		InMaintenance: false,
 		SizeGuide:     sizeGuideDaos,
 	}
@@ -77,6 +78,9 @@ func (s *BrandService) EditBrand(ctx context.Context, req *grpcServer.EditBrandR
 	}
 	if req.LogoImageUrl != nil {
 		brandDao.LogoImgUrl = *req.LogoImageUrl
+	}
+	if req.BackImageUrl != nil {
+		brandDao.BackImgUrl = *req.BackImageUrl
 	}
 	if req.Description != nil {
 		brandDao.Description = *req.Description

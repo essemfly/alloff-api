@@ -18,8 +18,11 @@ type Exhibition {
   bannerImage: String!
   thumbnailImage: String!
   title: String!
-  shortTitle: String!
+  subTitle: String!
+  description: String!
   productGroups: [ProductGroup!]!
+  startTime: Date!
+  finishTime: Date!
 }
 
 extend type Query {
@@ -27,4 +30,5 @@ extend type Query {
   productGroups: [ProductGroup!]!
   exhibition(id: String!): Exhibition!
   exhibitions: [Exhibition!]!
+  timedeal: ProductGroup!
 }
