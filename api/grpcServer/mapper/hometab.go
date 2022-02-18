@@ -83,6 +83,8 @@ func HomeTabItemMapper(item *domain.HomeTabItemDAO) *grpcServer.HomeTabItemMessa
 		Products:    pds,
 		Brands:      brands,
 		Exhibitions: exhibitions,
+		StartTime:   item.StartedAt.String(),
+		FinishTime:  item.FinishedAt.String(),
 		Reference:   ReferenceMapper(item.Reference),
 	}
 }
