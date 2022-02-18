@@ -168,7 +168,7 @@ func (req *AlloffCategoryItemRequest) fillItemContents(item *domain.HomeTabItemD
 	item.Type = domain.HOMETAB_ITEM_PRODUCTS
 	item.Products = products
 	item.Reference = &domain.ReferenceTarget{
-		Path:    "products",
+		Path:    "products-category",
 		Params:  req.AlloffCategoryID,
 		Options: req.SortingOptions,
 	}
