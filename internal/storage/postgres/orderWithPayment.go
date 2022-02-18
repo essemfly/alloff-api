@@ -58,7 +58,7 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 			config.WriteCancelMessage(orderMsg)
 
 			refundPrice := orderItemDao.SalesPrice * orderItemDao.Quantity
-			_, err := config.PaymentService.CancelPaymentImpUID(paymentDao.ImpUID, orderDao.AlloffOrderID, float64(refundPrice), 0, float64(orderDao.TotalPrice), "cancel before products ready", "", "", "")
+			_, err := config.PaymentService.CancelPaymentImpUID(paymentDao.ImpUID, orderDao.AlloffOrderID, float64(refundPrice), 0, "cancel before products ready", "", "", "")
 			if err != nil {
 				log.Println("cancel payment error on iamport")
 				return err

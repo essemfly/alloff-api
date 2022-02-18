@@ -291,7 +291,7 @@ func (iamport *Iamport) GetPaymentBalanceImpUID(iuid string) (*TypePayment.Payme
 // CancelPaymentImpUID imp_uid로 결제 취소하기
 //
 // POST /payments/cancel
-func (iamport *Iamport) CancelPaymentImpUID(iuid string, merchantUID string, amount float64, taxFree float64, checkSum float64, reason string, refundHolder string, refundBank string, refundAccount string) (*TypePayment.Payment, error) {
+func (iamport *Iamport) CancelPaymentImpUID(iuid string, merchantUID string, amount float64, taxFree float64, reason string, refundHolder string, refundBank string, refundAccount string) (*TypePayment.Payment, error) {
 	if iuid == "" && merchantUID == "" {
 		return nil, errors.New(ErrMustExistImpUIDorMerchantUID)
 	}
@@ -310,7 +310,6 @@ func (iamport *Iamport) CancelPaymentImpUID(iuid string, merchantUID string, amo
 		MerchantUid:   merchantUID,
 		Amount:        amount,
 		TaxFree:       taxFree,
-		Checksum:      checkSum,
 		Reason:        reason,
 		RefundHolder:  refundHolder,
 		RefundBank:    refundBank,
