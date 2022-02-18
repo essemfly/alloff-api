@@ -27,7 +27,7 @@ func AddNewAlloffCats() {
 			Level:        1,
 			ParentId:     primitive.NilObjectID,
 			CategoryType: "NORMAL",
-			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_outer.svg",
+			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_outer.png",
 		},
 		{
 			ID:           topOID,
@@ -36,7 +36,7 @@ func AddNewAlloffCats() {
 			Level:        1,
 			ParentId:     primitive.NilObjectID,
 			CategoryType: "NORMAL",
-			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_top.svg",
+			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_top.png",
 		},
 		{
 			ID:           bottomOID,
@@ -45,7 +45,7 @@ func AddNewAlloffCats() {
 			Level:        1,
 			ParentId:     primitive.NilObjectID,
 			CategoryType: "NORMAL",
-			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_bottom.svg",
+			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_bottom.png",
 		},
 		{
 			ID:           onePieceOID,
@@ -54,7 +54,7 @@ func AddNewAlloffCats() {
 			Level:        1,
 			ParentId:     primitive.NilObjectID,
 			CategoryType: "NORMAL",
-			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_onePiece.svg",
+			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_onePiece.png",
 		},
 		{
 			ID:           skirtOID,
@@ -63,7 +63,7 @@ func AddNewAlloffCats() {
 			Level:        1,
 			ParentId:     primitive.NilObjectID,
 			CategoryType: "NORMAL",
-			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_skirt.svg",
+			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_skirt.png",
 		},
 		{
 			ID:           underwearOID,
@@ -72,7 +72,7 @@ func AddNewAlloffCats() {
 			Level:        1,
 			ParentId:     primitive.NilObjectID,
 			CategoryType: "NORMAL",
-			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_underwear.svg",
+			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_underwear.png",
 		},
 		{
 			ID:           bagsOID,
@@ -81,7 +81,7 @@ func AddNewAlloffCats() {
 			Level:        1,
 			ParentId:     primitive.NilObjectID,
 			CategoryType: "NORMAL",
-			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_bags.svg",
+			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_bags.png",
 		},
 		{
 			ID:           shoesOID,
@@ -90,7 +90,7 @@ func AddNewAlloffCats() {
 			Level:        1,
 			ParentId:     primitive.NilObjectID,
 			CategoryType: "NORMAL",
-			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_shoes.svg",
+			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_shoes.png",
 		},
 		{
 			ID:           accessoryOID,
@@ -99,7 +99,7 @@ func AddNewAlloffCats() {
 			Level:        1,
 			ParentId:     primitive.NilObjectID,
 			CategoryType: "NORMAL",
-			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_accessory.svg",
+			ImgURL:       "https://alloff.s3.ap-northeast-2.amazonaws.com/alloffcategories/1_accessory.png",
 		},
 	}
 
