@@ -44,10 +44,11 @@ type AlloffCategoryProductsInput struct {
 }
 
 type AppVersion struct {
-	LatestVersion string  `json:"latestVersion"`
-	MinVersion    string  `json:"minVersion"`
-	Message       *string `json:"message"`
-	IsMaintenance bool    `json:"isMaintenance"`
+	LatestVersion     string  `json:"latestVersion"`
+	MinVersion        string  `json:"minVersion"`
+	SubmissionVersion string  `json:"submissionVersion"`
+	Message           *string `json:"message"`
+	IsMaintenance     bool    `json:"isMaintenance"`
 }
 
 type Brand struct {

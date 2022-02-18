@@ -63,10 +63,11 @@ type ComplexityRoot struct {
 	}
 
 	AppVersion struct {
-		IsMaintenance func(childComplexity int) int
-		LatestVersion func(childComplexity int) int
-		Message       func(childComplexity int) int
-		MinVersion    func(childComplexity int) int
+		IsMaintenance     func(childComplexity int) int
+		LatestVersion     func(childComplexity int) int
+		Message           func(childComplexity int) int
+		MinVersion        func(childComplexity int) int
+		SubmissionVersion func(childComplexity int) int
 	}
 
 	Brand struct {
@@ -592,6 +593,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AppVersion.MinVersion(childComplexity), true
+
+	case "AppVersion.submissionVersion":
+		if e.complexity.AppVersion.SubmissionVersion == nil {
+			break
+		}
+
+		return e.complexity.AppVersion.SubmissionVersion(childComplexity), true
 
 	case "Brand.backImgUrl":
 		if e.complexity.Brand.BackImgURL == nil {
@@ -3101,6 +3109,7 @@ extend type Query {
 	{Name: "api/apiServer/graph/version.graphqls", Input: `type AppVersion {
   latestVersion: String!
   minVersion: String!
+  submissionVersion: String!
   message: String
   isMaintenance: Boolean!
 }
@@ -4206,6 +4215,41 @@ func (ec *executionContext) _AppVersion_minVersion(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.MinVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AppVersion_submissionVersion(ctx context.Context, field graphql.CollectedField, obj *model.AppVersion) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AppVersion",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SubmissionVersion, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14940,6 +14984,11 @@ func (ec *executionContext) _AppVersion(ctx context.Context, sel ast.SelectionSe
 			}
 		case "minVersion":
 			out.Values[i] = ec._AppVersion_minVersion(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "submissionVersion":
+			out.Values[i] = ec._AppVersion_submissionVersion(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
