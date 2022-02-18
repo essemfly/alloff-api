@@ -132,7 +132,7 @@ func (s *HomeTabService) CreateHomeTabItem(ctx context.Context, req *grpcServer.
 		addItemRequest.Requester = &hometab.ExhibitionsItemRequest{
 			ExhibitionIDs: req.Contents.ExhibitionIds,
 		}
-	case grpcServer.ItemType_HOMETAB_ITEM_PRODUCTS_A:
+	case grpcServer.ItemType_HOMETAB_ITEM_PRODUCTS_CATEGORIES:
 		sortingOptions := []model.SortingType{}
 		for _, option := range req.Contents.Options {
 			sortingOptions = append(sortingOptions, model.SortingType(option.Descriptor().FullName()))
@@ -140,6 +140,15 @@ func (s *HomeTabService) CreateHomeTabItem(ctx context.Context, req *grpcServer.
 		addItemRequest.Requester = &hometab.AlloffCategoryItemRequest{
 			AlloffCategoryID: *req.Contents.AlloffcategoryId,
 			SortingOptions:   sortingOptions, // TO BE SPECIFIED
+		}
+	case grpcServer.ItemType_HOMETAB_ITEM_PRODUCTS_BRANDS:
+		sortingOptions := []model.SortingType{}
+		for _, option := range req.Contents.Options {
+			sortingOptions = append(sortingOptions, model.SortingType(option.Descriptor().FullName()))
+		}
+		addItemRequest.Requester = &hometab.BrandProductsItemRequest{
+			BrandKeyname:   req.Contents.BrandKeynames[0],
+			SortingOptions: sortingOptions,
 		}
 	}
 

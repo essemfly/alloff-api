@@ -51,8 +51,10 @@ func ItemTypeMapper(itemType domain.HomeTabItemType) grpcServer.ItemType {
 		return grpcServer.ItemType_HOMETAB_ITEM_EXHIBITION
 	case domain.HOMETAB_ITEM_EXHIBITIONS:
 		return grpcServer.ItemType_HOMETAB_ITEM_EXHIBITIONS
-	case domain.HOMETAB_ITEM_PRODUCTS:
-		return grpcServer.ItemType_HOMETAB_ITEM_PRODUCTS_A
+	case domain.HOMETAB_ITEM_PRODUCTS_BRANDS:
+		return grpcServer.ItemType_HOMETAB_ITEM_PRODUCTS_BRANDS
+	case domain.HOMETAB_ITEM_PRODUCTS_CATEGORIES:
+		return grpcServer.ItemType_HOMETAB_ITEM_PRODUCTS_CATEGORIES
 	}
 	return 0
 }

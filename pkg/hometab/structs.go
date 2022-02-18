@@ -165,7 +165,7 @@ func (req *AlloffCategoryItemRequest) fillItemContents(item *domain.HomeTabItemD
 		log.Println("alloffcat id not found: " + req.AlloffCategoryID)
 	}
 
-	item.Type = domain.HOMETAB_ITEM_PRODUCTS
+	item.Type = domain.HOMETAB_ITEM_PRODUCTS_CATEGORIES
 	item.Products = products
 	item.Reference = &domain.ReferenceTarget{
 		Path:    "products-category",
@@ -173,5 +173,51 @@ func (req *AlloffCategoryItemRequest) fillItemContents(item *domain.HomeTabItemD
 		Options: req.SortingOptions,
 	}
 
+	return item
+}
+
+type BrandProductsItemRequest struct {
+	BrandKeyname   string
+	SortingOptions []model.SortingType
+}
+
+func (req *BrandProductsItemRequest) fillItemContents(item *domain.HomeTabItemDAO) *domain.HomeTabItemDAO {
+	brand, err := ioc.Repo.Brands.GetByKeyname(req.BrandKeyname)
+	if err != nil {
+		log.Println("error on add brand products", err)
+	}
+
+	numProductsToShow := 10
+	priceSorting := ""
+	var priceRange []string
+	for _, sorting := range req.SortingOptions {
+		if sorting == model.SortingTypePriceAscending {
+			priceSorting = "ascending"
+		} else if sorting == model.SortingTypePriceDescending {
+			priceSorting = "descending"
+		} else {
+			if sorting == model.SortingTypeDiscount0_30 {
+				priceRange = append(priceRange, "30")
+			} else if sorting == model.SortingTypeDiscount30_50 {
+				priceRange = append(priceRange, "50")
+			} else if sorting == model.SortingTypeDiscount50_70 {
+				priceRange = append(priceRange, "70")
+			} else {
+				priceRange = append(priceRange, "100")
+			}
+		}
+	}
+	products, _, err := product.ProductsListing(0, numProductsToShow, brand.ID.Hex(), "", priceSorting, priceRange)
+	if err != nil {
+		log.Println("brand id not found: " + brand.ID.Hex())
+	}
+
+	item.Type = domain.HOMETAB_ITEM_PRODUCTS_BRANDS
+	item.Products = products
+	item.Reference = &domain.ReferenceTarget{
+		Path:    "products-brand",
+		Params:  brand.ID.Hex(),
+		Options: req.SortingOptions,
+	}
 	return item
 }
