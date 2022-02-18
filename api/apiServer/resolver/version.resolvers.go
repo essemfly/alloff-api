@@ -12,7 +12,7 @@ import (
 func (r *queryResolver) Version(ctx context.Context) (*model.AppVersion, error) {
 	return &model.AppVersion{
 		LatestVersion:     "0.7.0",
-		MinVersion:        "0.7.0",
+		MinVersion:        "0.6.1",
 		SubmissionVersion: "0.7.0",
 		Message:           nil,
 		IsMaintenance:     false,
