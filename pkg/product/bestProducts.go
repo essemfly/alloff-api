@@ -39,7 +39,7 @@ func MakeSnapshot() {
 }
 
 func GetAlloffCategoryProducts(alloffCatID string) []*domain.ProductDAO {
-	pds, _, err := AlloffCategoryProductsListing(0, 100, nil, alloffCatID, "", nil)
+	pds, _, err := AlloffCategoryProductsListing(0, 100, nil, alloffCatID, "", []string{"70"})
 	if err != nil {
 		log.Println("err occured in alloff cats product recording")
 	}
@@ -48,7 +48,7 @@ func GetAlloffCategoryProducts(alloffCatID string) []*domain.ProductDAO {
 }
 
 func GetBestProductsFromAll() []*domain.ProductDAO {
-	productDaos, _, err := ProductsListing(0, 100, "", "", "", nil)
+	productDaos, _, err := ProductsListing(0, 100, "", "", "", []string{"70"})
 	if err != nil {
 		log.Println("err occured in products listing")
 	}
