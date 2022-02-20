@@ -19,7 +19,11 @@ func ParsePriceString(letter string) int {
 }
 
 func CalculateDiscountRate(originalPrice int, salesPrice int) int {
-	return int(((originalPrice - salesPrice) / originalPrice) * 100)
+	if originalPrice == 0 {
+		return 0
+	}
+
+	return int((float32(originalPrice-salesPrice) / float32(originalPrice)) * 100)
 }
 
 func StandardizeSpaces(s string) []string {
