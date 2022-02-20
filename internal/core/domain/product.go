@@ -13,6 +13,7 @@ type CurrencyType string
 const (
 	CurrencyKRW CurrencyType = "KRW"
 	CurrencyUSD CurrencyType = "USD"
+	CurrencyEUR CurrencyType = "EUR"
 )
 
 type DeliveryType string
@@ -49,7 +50,7 @@ func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyTyp
 	newHistory := []*PriceHistoryDAO{
 		{
 			Date:  time.Now(),
-			Price: float32(curPrice),
+			Price: curPrice,
 		},
 	}
 
@@ -81,7 +82,7 @@ func (pdInfo *ProductMetaInfoDAO) SetGeneralInfo(productName, productID, product
 
 type PriceHistoryDAO struct {
 	Date  time.Time
-	Price float32
+	Price int
 }
 
 type InventoryDAO struct {
@@ -135,6 +136,7 @@ type ProductDAO struct {
 	ProductInfo      *ProductMetaInfoDAO
 	ProductGroupId   string
 	AlloffName       string
+	OriginalPrice    int
 	DiscountedPrice  int
 	DiscountRate     int
 	SpecialPrice     int
@@ -150,27 +152,28 @@ type ProductDAO struct {
 	Updated          time.Time
 }
 
-func (pd *ProductDAO) UpdatePrice(alloffPrice float32) bool {
-	origPrice := pd.DiscountedPrice
-	pd.DiscountedPrice = int(alloffPrice)
-	pd.DiscountRate = utils.CalculateDiscountRate(pd.ProductInfo.Price.OriginalPrice, alloffPrice)
+func (pd *ProductDAO) UpdatePrice(origPrice, discountedPrice int) bool {
+	lastPrice := pd.DiscountedPrice
+	pd.OriginalPrice = origPrice
+	pd.DiscountedPrice = discountedPrice
+	pd.DiscountRate = utils.CalculateDiscountRate(origPrice, discountedPrice)
 
 	newHistory := []PriceHistoryDAO{
 		{
 			Date:  time.Now(),
-			Price: alloffPrice,
+			Price: discountedPrice,
 		},
 	}
 
 	if pd.PriceHistory != nil {
-		if origPrice != pd.DiscountedPrice {
+		if lastPrice != pd.DiscountedPrice {
 			pd.PriceHistory = append(pd.PriceHistory, newHistory...)
 		}
 	} else {
 		pd.PriceHistory = newHistory
 	}
 
-	if int(alloffPrice) < origPrice {
+	if int(discountedPrice) < lastPrice {
 		pd.IsUpdated = true
 		return true
 	}

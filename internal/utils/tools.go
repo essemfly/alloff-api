@@ -18,7 +18,7 @@ func ParsePriceString(letter string) int {
 	return retInt
 }
 
-func CalculateDiscountRate(originalPrice float32, salesPrice float32) int {
+func CalculateDiscountRate(originalPrice int, salesPrice int) int {
 	return int(((originalPrice - salesPrice) / originalPrice) * 100)
 }
 

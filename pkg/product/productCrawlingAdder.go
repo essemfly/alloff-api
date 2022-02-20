@@ -74,7 +74,7 @@ func AddCrawlingProductInfo(request *ProductCrawlingAddRequest) (*domain.Product
 	}
 	pdInfo.SetBrandAndCategory(request.Brand, request.Source)
 	pdInfo.SetGeneralInfo(request.ProductName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Description)
-	pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), domain.CurrencyKRW)
+	pdInfo.SetPrices(int(request.OriginalPrice), int(request.SalesPrice), request.CurrencyType)
 
 	newPdInfo, err := ioc.Repo.ProductMetaInfos.Insert(pdInfo)
 	if err != nil {
@@ -110,9 +110,9 @@ func ProcessCrawlingProductRequest(pd *domain.ProductDAO, request *ProductCrawli
 	pd.UpdateScore(alloffScore)
 	pd.UpdateInventory(request.Inventories)
 
-	alloffPrice := GetProductPrice(pd)
 	lastPrice := pd.DiscountedPrice
-	isPriceUpdated := pd.UpdatePrice(alloffPrice)
+	newOrigPrice, newDiscPrice := GetProductPrice(pd)
+	isPriceUpdated := pd.UpdatePrice(newOrigPrice, newDiscPrice)
 
 	if isPriceUpdated {
 		err := InsertProductDiff(pd, lastPrice)

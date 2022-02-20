@@ -15,27 +15,28 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const numWorkers = 25
+const numWorkers = 10
 
 func main() {
 	cmd.SetBaseConfig()
 
 	crawlModules := []string{
-		"lottefashion",
-		"ssfmall",
-		// "idlook",
-		"sivillage",
-		"kolon",
-		"babathe",
-		"idfmall",
-		"daehyun",
-		"niceclaup",
-		"lacoste",
-		"sisley",
-		"benetton",
-		"theamall",
-		"loungeb",
-		"bylynn",
+		// "lottefashion",
+		// "ssfmall",
+		// // "idlook",
+		// "sivillage",
+		// "kolon",
+		// "babathe",
+		// "idfmall",
+		// "daehyun",
+		// "niceclaup",
+		// "lacoste",
+		// "sisley",
+		// "benetton",
+		// "theamall",
+		// "loungeb",
+		// "bylynn",
+		"intrend",
 	}
 
 	StartCrawling(crawlModules)
@@ -102,6 +103,8 @@ func StartCrawling(crawlModules []string) {
 				go malls.CrawlLoungeB(workers, done, source)
 			case "bylynn":
 				go malls.CrawlBylynn(workers, done, source)
+			case "intrend":
+				go malls.CrawlIntrend(workers, done, source)
 			default:
 				log.Println("Empty Source")
 				<-workers

@@ -91,7 +91,7 @@ func ProcessManualProductRequest(pd *domain.ProductDAO, request *ProductManualAd
 	pd.UpdateScore(alloffScore)
 	pd.UpdateInventory(request.Inventory)
 
-	pd.UpdatePrice(float32(request.DiscountedPrice))
+	pd.UpdatePrice(request.OriginalPrice, request.DiscountedPrice)
 	pd.SpecialPrice = request.SpecialPrice
 
 	if pd.ID == primitive.NilObjectID {

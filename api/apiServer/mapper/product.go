@@ -36,7 +36,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 
 	alloffPrice := pdDao.DiscountedPrice
 	if alloffPrice == 0 {
-		alloffPrice = int(pdDao.ProductInfo.Price.OriginalPrice)
+		alloffPrice = int(pdDao.OriginalPrice)
 	}
 
 	if pdDao.ProductGroupId != "" {
@@ -47,7 +47,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		}
 	}
 
-	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.ProductInfo.Price.OriginalPrice, float32(alloffPrice))
+	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.OriginalPrice, alloffPrice)
 
 	isSoldout := true
 	if len(inventories) > 0 {

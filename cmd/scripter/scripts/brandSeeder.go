@@ -21,5 +21,6 @@ func AddBrandsSeeder() {
 	malls.AddLoungeB()
 	malls.AddBylynn()
 	malls.AddTheAMall()
+	malls.AddIntrend()
 	malls.AddOthers()
 }
