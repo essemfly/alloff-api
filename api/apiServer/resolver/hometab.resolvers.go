@@ -59,7 +59,7 @@ func (r *queryResolver) BestProducts(ctx context.Context, offset int, limit int,
 }
 
 func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) ([]*model.Brand, error) {
-	brandDaos, _, err := ioc.Repo.Brands.List(0, 20, bson.M{"onpopular": true}, nil)
+	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, bson.M{"onpopular": true}, nil)
 	if err != nil {
 		return nil, err
 	}
