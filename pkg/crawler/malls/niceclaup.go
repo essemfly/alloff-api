@@ -105,7 +105,6 @@ func getNiceClaupDetail(productUrl string) (imageUrls, colors, sizes []string, i
 				})
 			}
 		})
-		log.Println("inventory", inventories)
 	})
 
 	c.OnHTML(".item_dt_dinfo .fr", func(e *colly.HTMLElement) {
@@ -116,7 +115,6 @@ func getNiceClaupDetail(productUrl string) (imageUrls, colors, sizes []string, i
 		})
 	})
 
-	log.Println("producturl", productUrl)
 	c.Visit(productUrl)
 	return
 }
