@@ -1,6 +1,7 @@
 package product
 
 import (
+	"math/rand"
 	"time"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -13,11 +14,11 @@ func GetProductScore(pd *domain.ProductDAO) *domain.ProductScoreInfoDAO {
 	if pd.Created.Before(newlyCrawledCriterion) {
 		isNew = false
 	}
-
+	totalScore := rand.Intn(100)
 	return &domain.ProductScoreInfoDAO{
 		IsNewlyCrawled: isNew,
 		ManualScore:    10,
 		AutoScore:      10,
-		TotalScore:     20,
+		TotalScore:     totalScore,
 	}
 }

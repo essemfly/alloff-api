@@ -143,7 +143,7 @@ func AddNewAlloffCats() {
 		{
 			ID:           primitive.NewObjectID(),
 			KeyName:      "2_field",
-			Name:         "아우터",
+			Name:         "야상",
 			Level:        2,
 			ParentId:     outerOID,
 			CategoryType: "NORMAL",
