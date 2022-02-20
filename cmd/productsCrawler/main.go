@@ -11,7 +11,6 @@ import (
 	"github.com/lessbutter/alloff-api/pkg/brand"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/crawler/malls"
-	"github.com/lessbutter/alloff-api/pkg/homeitem"
 	"github.com/lessbutter/alloff-api/pkg/product"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -43,7 +42,6 @@ func main() {
 
 	brand.UpdateBrandCategory()
 	brand.UpdateBrandDiscountRate()
-	homeitem.UpdateHomeItems()
 	product.MakeSnapshot()
 	crawler.WriteCrawlRecords(crawlModules)
 }
