@@ -62,6 +62,10 @@ func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyTyp
 		}
 	}
 
+	if origPrice == 0 {
+		origPrice = curPrice
+	}
+
 	pdInfo.Price = &PriceDAO{
 		OriginalPrice: float32(origPrice),
 		CurrencyType:  currencyType,
@@ -156,6 +160,9 @@ func (pd *ProductDAO) UpdatePrice(origPrice, discountedPrice int) bool {
 	lastPrice := pd.DiscountedPrice
 	pd.OriginalPrice = origPrice
 	pd.DiscountedPrice = discountedPrice
+	if origPrice == 0 {
+		pd.OriginalPrice = discountedPrice
+	}
 	pd.DiscountRate = utils.CalculateDiscountRate(origPrice, discountedPrice)
 
 	newHistory := []PriceHistoryDAO{

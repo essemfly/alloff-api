@@ -59,7 +59,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		Category:            MapCategoryDaoToCategory(pdDao.ProductInfo.Category),
 		Brand:               MapBrandDaoToBrand(pdDao.ProductInfo.Brand, false),
 		Name:                pdDao.AlloffName,
-		OriginalPrice:       int(pdDao.ProductInfo.Price.OriginalPrice),
+		OriginalPrice:       pdDao.OriginalPrice,
 		ProductGroupID:      pdDao.ProductGroupId,
 		Soldout:             isSoldout,
 		Images:              pdDao.ProductInfo.Images,
