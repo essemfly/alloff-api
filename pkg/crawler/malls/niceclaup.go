@@ -14,7 +14,6 @@ import (
 )
 
 func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
-	log.Println("GOGOSING?", source.CrawlUrl)
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.niceclaup.co.kr"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
