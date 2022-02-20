@@ -37,6 +37,8 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 	alloffPrice := pdDao.DiscountedPrice
 	if alloffPrice == 0 {
 		alloffPrice = int(pdDao.OriginalPrice)
+	} else if pdDao.OriginalPrice == 0 {
+		pdDao.OriginalPrice = alloffPrice
 	}
 
 	if pdDao.ProductGroupId != "" {
