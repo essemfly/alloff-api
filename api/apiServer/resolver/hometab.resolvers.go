@@ -74,7 +74,7 @@ func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) (
 
 func (r *queryResolver) BargainProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) ([]*model.Product, error) {
 	if alloffCategoryID == "" {
-		productDaos, _, err := product.ProductsListing(offset, limit, "", "", "", nil)
+		productDaos, _, err := product.ProductsListing(offset, limit, "", "", "", []string{"100"})
 		if err != nil {
 			return nil, err
 		}
@@ -85,7 +85,7 @@ func (r *queryResolver) BargainProducts(ctx context.Context, offset int, limit i
 		return pds, nil
 	}
 
-	productDaos, _, err := product.AlloffCategoryProductsListing(offset, limit, nil, alloffCategoryID, "", nil)
+	productDaos, _, err := product.AlloffCategoryProductsListing(offset, limit, nil, alloffCategoryID, "", []string{"100"})
 	if err != nil {
 		return nil, err
 	}
