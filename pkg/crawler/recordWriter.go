@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
@@ -40,4 +41,5 @@ func WriteCrawlRecords(brandModules []string) {
 
 	msg := "Update Finished: " + lastUpdatedDate.Format("2006-01-02 15:04:05") + "\n" + "New Products: " + strconv.Itoa(numNewProducts) + "  Out Products: " + strconv.Itoa(numOutProducts)
 	log.Println(msg)
+	config.WriteSlackMessage(msg)
 }
