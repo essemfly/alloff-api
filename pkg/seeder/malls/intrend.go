@@ -14,12 +14,12 @@ func AddIntrend() {
 
 	// 카테고리 코드 안먹음.
 	categories := map[string]string{
-		"SOPRABITI": "cappotti-e-giacche/impermeabili",
-		"BORSE":     "borse-e-accessori/borse",
-		"SCARPE":    "scarpe/tutte",
-		"PANTALONI": "abbigliamento/pantaloni",
+		"OVERCOATS": "cappotti-e-giacche/impermeabili",
+		"TROUSERS":  "abbigliamento/pantaloni",
 		"T-SHIRT":   "abbigliamento/top-e-t-shirt",
-		"ABITI":     "abbigliamento/abiti",
+		"CLOTHES":   "abbigliamento/abiti",
+		"BAGS":      "borse-e-accessori/borse",
+		"SHOES":     "scarpe/tutte",
 	}
 
 	brands := map[string]domain.BrandDAO{

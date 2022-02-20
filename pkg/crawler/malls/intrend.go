@@ -59,6 +59,12 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 		title, images, sizes, colors, inventories, description := getIntrendDetail(productUrl)
 
+		if len(sizes) == 0 {
+			inventories = append(inventories, domain.InventoryDAO{
+				Size:     "normal",
+				Quantity: 10,
+			})
+		}
 		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
@@ -84,7 +90,7 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		lastPageNum, _ := strconv.Atoi(lastPageStr)
 		if currentPageNum < lastPageNum {
 			currentPageNum += 1
-			url := source.CrawlUrl + "&page=" + strconv.Itoa(currentPageNum)
+			url := source.CrawlUrl + "?page=" + strconv.Itoa(currentPageNum)
 			c.Visit(url)
 		}
 	})
