@@ -122,7 +122,6 @@ func (s *HomeTabService) CreateHomeTabItem(ctx context.Context, req *grpcServer.
 			break
 		}
 		addItemRequest.Requester = &hometab.BrandExhibitionItemRequest{
-			BrandKeyname: req.Contents.BrandKeynames[0],
 			ExhibitionID: req.Contents.ExhibitionIds[0],
 			ProductIDs:   req.Contents.ProductIds,
 		}
