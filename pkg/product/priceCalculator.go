@@ -2,6 +2,7 @@ package product
 
 import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/utils"
 )
 
 const (
@@ -21,8 +22,10 @@ func GetProductPrice(pd *domain.ProductDAO) (int, int) {
 	}
 
 	if pd.ProductInfo.Source.PriceMarginPolicy == "INTREND" {
-		origPriceKRW := CalculateIntrendPrice(int(origPrice))
+		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateIntrendPrice(int(discPrice))
+		origPriceKRW := (100 + discountRate) * discPriceKRW / 10000
+		origPriceKRW = origPriceKRW * 100
 		return origPriceKRW, discPriceKRW
 	}
 
@@ -31,9 +34,9 @@ func GetProductPrice(pd *domain.ProductDAO) (int, int) {
 
 func CalculateIntrendPrice(priceKRW int) int {
 	priceKRW = priceKRW * 89 / 100 //  뉴 공급가
-	if (priceKRW / DOLLAR_EXCHANGE_RATE) > 150 {
-		priceKRW = priceKRW * 11 / 10
-	} // 관세 포함 공급가
+	// if (priceKRW / DOLLAR_EXCHANGE_RATE) > 150 {
+	// 	priceKRW = priceKRW * 11 / 10
+	// } // 관세 포함 공급가
 	priceKRW += 16000             // 해외 배송비 추가
 	priceKRW = priceKRW * 11 / 10 // 마진
 	priceKRW += 3000              // 국내 배송비
