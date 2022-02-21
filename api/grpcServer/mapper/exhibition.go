@@ -17,6 +17,7 @@ func ExhibitionMapper(exDao *domain.ExhibitionDAO) *grpcServer.ExhibitionMessage
 		BannerImage:    exDao.BannerImage,
 		ThumbnailImage: exDao.ThumbnailImage,
 		Title:          exDao.Title,
+		Subtitle:       exDao.SubTitle,
 		Description:    exDao.Description,
 		StartTime:      exDao.StartTime.String(),
 		FinishTime:     exDao.FinishTime.String(),
