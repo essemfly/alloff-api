@@ -36,7 +36,7 @@ func (repo *productGroupRepo) List(numPassedItem int) ([]*domain.ProductGroupDAO
 	defer cancel()
 
 	now := primitive.NewDateTimeFromTime(time.Now())
-	filter := bson.M{"finishtime": bson.M{"$gte": now}}
+	filter := bson.M{"finishtime": bson.M{"$gte": now}, "grouptype": domain.PRODUCT_GROUP_TIMEDEAL}
 	onGoingOptions := options.Find()
 	onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 1}})
 	cur, err := repo.col.Find(ctx, filter, onGoingOptions)
