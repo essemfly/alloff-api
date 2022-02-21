@@ -31,6 +31,7 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 		IsRemoved:            pd.Removed,
 		IsSoldout:            pd.Soldout,
 		TotalScore:           int32(totalScore),
+		ModuleName:           pd.ProductInfo.Source.CrawlModuleName,
 	}
 }
 
