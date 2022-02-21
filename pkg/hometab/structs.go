@@ -53,6 +53,7 @@ func (req *BrandsItemRequest) fillItemContents(item *domain.HomeTabItemDAO) *dom
 type BrandExhibitionItemRequest struct {
 	BrandKeyname string
 	ExhibitionID string
+	ProductIDs   []string
 }
 
 // 하나의 브랜드와 3,4개의 상품들이 포함된 기획전 보여주는 것
@@ -74,7 +75,23 @@ func (req *BrandExhibitionItemRequest) fillItemContents(item *domain.HomeTabItem
 	item.Exhibitions = []*domain.ExhibitionDAO{
 		exhibitionDao,
 	}
-	item.Products = exhibitionDao.ListCheifProducts()
+
+	if len(req.ProductIDs) != 0 {
+		productDaos := []*domain.ProductDAO{}
+		for _, productID := range req.ProductIDs {
+			pd, err := ioc.Repo.Products.Get(productID)
+			if err != nil {
+				log.Println("not found product id :" + productID)
+				continue
+			}
+			productDaos = append(productDaos, pd)
+
+		}
+		item.Products = productDaos
+	} else {
+		item.Products = exhibitionDao.ListCheifProducts()
+	}
+
 	item.Reference = &domain.ReferenceTarget{
 		Path:   "exhibition",
 		Params: exhibitionDao.ID.Hex(),
@@ -111,6 +128,7 @@ func (req *ExhibitionsItemRequest) fillItemContents(item *domain.HomeTabItemDAO)
 // 기획전인데 기획전에 속한 상품 몇개 보여주는 것
 type ExhibitionItemRequest struct {
 	ExhibitionID string
+	ProductIDs   []string
 }
 
 func (req *ExhibitionItemRequest) fillItemContents(item *domain.HomeTabItemDAO) *domain.HomeTabItemDAO {
@@ -119,12 +137,27 @@ func (req *ExhibitionItemRequest) fillItemContents(item *domain.HomeTabItemDAO) 
 		log.Println("err in brand exhibition item req", err)
 	}
 
-	item.Type = domain.HOMETAB_ITEM_BRAND_EXHIBITION
+	item.Type = domain.HOMETAB_ITEM_EXHIBITION
 	item.Exhibitions = []*domain.ExhibitionDAO{
 		exhibitionDao,
 	}
 
-	item.Products = exhibitionDao.ListCheifProducts()
+	if len(req.ProductIDs) != 0 {
+		productDaos := []*domain.ProductDAO{}
+		for _, productID := range req.ProductIDs {
+			pd, err := ioc.Repo.Products.Get(productID)
+			if err != nil {
+				log.Println("not found product id :" + productID)
+				continue
+			}
+			productDaos = append(productDaos, pd)
+
+		}
+		item.Products = productDaos
+	} else {
+		item.Products = exhibitionDao.ListCheifProducts()
+	}
+
 	item.Reference = &domain.ReferenceTarget{
 		Path:   "exhibition",
 		Params: exhibitionDao.ID.Hex(),

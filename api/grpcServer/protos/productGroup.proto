@@ -30,9 +30,9 @@ message GetProductGroupResponse {
 
 message CreateProductGroupRequest {
     string title = 1;
-    string short_title = 2;
+    optional string short_title = 2;
     repeated string instruction = 3;
-    string image_url = 4;
+    optional string image_url = 4;
     string start_time = 5;
     string finish_time = 6;
     ProductGroupType group_type = 7;

@@ -37,11 +37,20 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 		groupType = domain.PRODUCT_GROUP_EXHIBITION
 	}
 
+	shortTitle := ""
+	if *req.ShortTitle != "" {
+		shortTitle = *req.ShortTitle
+	}
+	imageUrl := ""
+	if *req.ImageUrl != "" {
+		imageUrl = *req.ImageUrl
+	}
+
 	pgDao := &domain.ProductGroupDAO{
 		Title:       req.Title,
-		ShortTitle:  req.ShortTitle,
+		ShortTitle:  shortTitle,
 		Instruction: req.Instruction,
-		ImgUrl:      req.ImageUrl,
+		ImgUrl:      imageUrl,
 		Products:    []*domain.ProductPriorityDAO{},
 		StartTime:   startTimeObj,
 		FinishTime:  finishTimeObj,

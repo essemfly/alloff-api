@@ -95,6 +95,7 @@ message ItemRequester{
     repeated string exhibition_ids = 3;
     optional string alloffcategory_id = 4;
     repeated SortingOptions options = 5;
+    repeated string product_ids = 6;
 
 }
 

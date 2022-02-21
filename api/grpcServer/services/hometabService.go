@@ -120,6 +120,7 @@ func (s *HomeTabService) CreateHomeTabItem(ctx context.Context, req *grpcServer.
 		addItemRequest.Requester = &hometab.BrandExhibitionItemRequest{
 			BrandKeyname: req.Contents.BrandKeynames[0],
 			ExhibitionID: req.Contents.ExhibitionIds[0],
+			ProductIDs:   req.Contents.ProductIds,
 		}
 	case grpcServer.ItemType_HOMETAB_ITEM_EXHIBITION:
 		if len(req.Contents.ExhibitionIds) == 0 {
@@ -127,6 +128,7 @@ func (s *HomeTabService) CreateHomeTabItem(ctx context.Context, req *grpcServer.
 		}
 		addItemRequest.Requester = &hometab.ExhibitionItemRequest{
 			ExhibitionID: req.Contents.ExhibitionIds[0],
+			ProductIDs:   req.Contents.ProductIds,
 		}
 	case grpcServer.ItemType_HOMETAB_ITEM_EXHIBITIONS:
 		addItemRequest.Requester = &hometab.ExhibitionsItemRequest{
