@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
@@ -91,13 +92,16 @@ func (s *HomeTabService) EditHomeTabItem(ctx context.Context, req *grpcServer.Ed
 func (s *HomeTabService) CreateHomeTabItem(ctx context.Context, req *grpcServer.CreateHomeTabItemRequest) (*grpcServer.CreateHomeTabItemResponse, error) {
 	layout := "2006-01-02T15:04:05Z07:00"
 
+	log.Println("1")
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
+	log.Println("2")
 	backImageUrl := ""
 	if req.BackImageUrl != nil {
 		backImageUrl = *req.BackImageUrl
 	}
+	log.Println("3")
 	addItemRequest := &hometab.HomeTabItemRequest{
 		Title:        req.Title,
 		Description:  req.Description,
@@ -113,8 +117,8 @@ func (s *HomeTabService) CreateHomeTabItem(ctx context.Context, req *grpcServer.
 		addItemRequest.Requester = &hometab.BrandsItemRequest{
 			BrandKeynames: req.Contents.BrandKeynames,
 		}
-	case grpcServer.ItemType_HOMETAB_ITEM_BRAND_EXHIBITION:
-		if len(req.Contents.BrandKeynames) == 0 || len(req.Contents.ExhibitionIds) == 0 {
+	case grpcServer.ItemType_HOMETAB_ITEM_EXHIBITION_A:
+		if len(req.Contents.ExhibitionIds) == 0 {
 			break
 		}
 		addItemRequest.Requester = &hometab.BrandExhibitionItemRequest{

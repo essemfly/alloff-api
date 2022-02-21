@@ -51,7 +51,6 @@ func (req *BrandsItemRequest) fillItemContents(item *domain.HomeTabItemDAO) *dom
 }
 
 type BrandExhibitionItemRequest struct {
-	BrandKeyname string
 	ExhibitionID string
 	ProductIDs   []string
 }
@@ -63,15 +62,7 @@ func (req *BrandExhibitionItemRequest) fillItemContents(item *domain.HomeTabItem
 		log.Println("err in brand exhibition item req", err)
 	}
 
-	brandDao, err := ioc.Repo.Brands.GetByKeyname(req.BrandKeyname)
-	if err != nil {
-		log.Println("err in brand exhibition item req", err)
-	}
-
 	item.Type = domain.HOMETAB_ITEM_BRAND_EXHIBITION
-	item.Brands = []*domain.BrandDAO{
-		brandDao,
-	}
 	item.Exhibitions = []*domain.ExhibitionDAO{
 		exhibitionDao,
 	}
