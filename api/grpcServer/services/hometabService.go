@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
@@ -75,9 +74,11 @@ func (s *HomeTabService) EditHomeTabItem(ctx context.Context, req *grpcServer.Ed
 		finishTimeObj, _ := time.Parse(layout, *req.FinishTime)
 		itemDao.FinishedAt = finishTimeObj
 	}
-
 	if req.Weight != nil {
 		itemDao.Weight = int(*req.Weight)
+	}
+	if req.IsLive != nil {
+		itemDao.IsLive = *req.IsLive
 	}
 
 	// TO BE SPECIFIED LATER
@@ -96,16 +97,13 @@ func (s *HomeTabService) EditHomeTabItem(ctx context.Context, req *grpcServer.Ed
 func (s *HomeTabService) CreateHomeTabItem(ctx context.Context, req *grpcServer.CreateHomeTabItemRequest) (*grpcServer.CreateHomeTabItemResponse, error) {
 	layout := "2006-01-02T15:04:05Z07:00"
 
-	log.Println("1")
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
-	log.Println("2")
 	backImageUrl := ""
 	if req.BackImageUrl != nil {
 		backImageUrl = *req.BackImageUrl
 	}
-	log.Println("3")
 	addItemRequest := &hometab.HomeTabItemRequest{
 		Title:        req.Title,
 		Description:  req.Description,

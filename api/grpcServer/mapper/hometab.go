@@ -90,5 +90,6 @@ func HomeTabItemMapper(item *domain.HomeTabItemDAO) *grpcServer.HomeTabItemMessa
 		FinishTime:   item.FinishedAt.String(),
 		Reference:    ReferenceMapper(item.Reference),
 		Weight:       int32(item.Weight),
+		IsLive:       item.IsLive,
 	}
 }

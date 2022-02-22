@@ -35,6 +35,7 @@ message EditHomeTabItemRequest {
     optional string finish_time = 7;
     ItemRequester contents = 8;
     optional int32 weight = 9;
+    optional bool is_live = 10;
 }
 
 message CreateHomeTabItemRequest {
@@ -81,6 +82,8 @@ message HomeTabItemMessage {
     repeated ExhibitionMessage exhibitions = 11;
     HomeTabItemReferenceMessage reference = 12;
     int32 weight = 13;
+    bool is_live = 14;
+
 }
 
 message HomeTabItemReferenceMessage {

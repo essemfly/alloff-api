@@ -27,7 +27,8 @@ func (s *ExhibitionService) GetExhibition(ctx context.Context, req *grpcServer.G
 }
 
 func (s *ExhibitionService) ListExhibitions(ctx context.Context, req *grpcServer.ListExhibitionsRequest) (*grpcServer.ListExhibitionsResponse, error) {
-	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit))
+	onlyLive := false
+	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive)
 	if err != nil {
 		return nil, err
 	}
@@ -71,6 +72,9 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	if req.FinishTime != nil {
 		finishTimeObj, _ := time.Parse(layout, *req.FinishTime)
 		exDao.FinishTime = finishTimeObj
+	}
+	if req.IsLive != nil {
+		exDao.IsLive = *req.IsLive
 	}
 	if req.PgIds != nil && len(req.PgIds) > 0 {
 		pgs := []*domain.ProductGroupDAO{}
@@ -116,6 +120,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		Description:    req.Description,
 		StartTime:      startTimeObj,
 		FinishTime:     finishTimeObj,
+		IsLive:         false,
 	}
 
 	pgs := []*domain.ProductGroupDAO{}

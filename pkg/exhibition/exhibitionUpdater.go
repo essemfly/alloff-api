@@ -9,7 +9,8 @@ import (
 
 func FindExhibitionInProductGroup(productGroupID string) (*domain.ExhibitionDAO, error) {
 	offset, limit := 0, 1000 // Dev code
-	exhibitions, _, err := ioc.Repo.Exhibitions.List(offset, limit)
+	onlyLive := false
+	exhibitions, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive)
 	if err != nil {
 		log.Println("Exhibition err in find exhibition from group", err)
 	}

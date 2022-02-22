@@ -7,7 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func ProductsSearchListing(offset, limit int, moduleName, brandID, categoryID, keyword string) ([]*domain.ProductDAO, int, error) {
+func ProductsSearchListing(offset, limit int, moduleName, brandID, categoryID, alloffCategoryID, keyword string) ([]*domain.ProductDAO, int, error) {
 	filter := bson.M{"removed": false}
 
 	if moduleName != "" {
@@ -22,6 +22,18 @@ func ProductsSearchListing(offset, limit int, moduleName, brandID, categoryID, k
 			filter["productinfo.category._id"] = categoryObjID
 		}
 	}
+
+	if alloffCategoryID != "" {
+		alloffcat, err := ioc.Repo.AlloffCategories.Get(alloffCategoryID)
+		if err == nil {
+			if alloffcat.Level == 1 {
+				filter["alloffcategories.first.keyname"] = alloffcat.KeyName
+			} else if alloffcat.Level == 2 {
+				filter["alloffcategories.second.keyname"] = alloffcat.KeyName
+			}
+		}
+	}
+
 	filter["alloffname"] = primitive.Regex{Pattern: keyword, Options: "i"}
 
 	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "_id", Value: 1}, {Key: "score.totalscore", Value: -1}}

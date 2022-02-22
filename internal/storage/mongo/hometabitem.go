@@ -55,6 +55,7 @@ func (repo *hometabitemRepo) List(offset, limit int, onlyLive bool) ([]*domain.H
 	options := options.Find()
 	if onlyLive {
 		filter["finishedat"] = bson.M{"$gte": now}
+		filter["islive"] = true
 		options.SetSort(bson.D{{Key: "weight", Value: -1}})
 	} else {
 		options.SetLimit(int64(limit))

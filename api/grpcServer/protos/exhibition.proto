@@ -32,6 +32,7 @@ message EditExhibitionRequest {
     optional string start_time = 7;
     optional string finish_time = 8;
     repeated string pg_ids = 9;
+    optional bool is_live = 10;
 }
 
 message CreateExhibitionRequest {
@@ -74,4 +75,5 @@ message ExhibitionMessage {
     string start_time = 7;
     string finish_time = 8;
     repeated ProductGroupMessage pgs = 9;
+    bool is_live = 10;
 }

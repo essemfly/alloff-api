@@ -32,6 +32,7 @@ type HomeTabItemDAO struct {
 	BackImageUrl string
 	Type         HomeTabItemType
 	Weight       int
+	IsLive       bool
 	Products     []*ProductDAO
 	Brands       []*BrandDAO
 	Exhibitions  []*ExhibitionDAO

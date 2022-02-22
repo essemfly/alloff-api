@@ -31,16 +31,21 @@ func (repo *exhibitionRepo) Get(ID string) (*domain.ExhibitionDAO, error) {
 
 }
 
-func (repo *exhibitionRepo) List(offset, limit int) ([]*domain.ExhibitionDAO, int, error) {
+func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool) ([]*domain.ExhibitionDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	now := primitive.NewDateTimeFromTime(time.Now())
-	filter := bson.M{"finishtime": bson.M{"$gte": now}}
+	filter := bson.M{}
 	onGoingOptions := options.Find()
 	onGoingOptions.SetSkip(int64(offset))
 	onGoingOptions.SetLimit(int64(limit))
-	onGoingOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
+	if onlyLive {
+		filter = bson.M{"finishtime": bson.M{"$gte": now}, "islive": true}
+		onGoingOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
+	} else {
+		onGoingOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
+	}
 
 	totalCount, _ := repo.col.CountDocuments(ctx, filter)
 	cur, err := repo.col.Find(ctx, filter, onGoingOptions)
@@ -63,6 +68,7 @@ func (repo *exhibitionRepo) Upsert(exhibition *domain.ExhibitionDAO) (*domain.Ex
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
+	exhibition.UpdatedAt = time.Now()
 	opts := options.Update().SetUpsert(true)
 	newExhibitionID := ""
 	if exhibition.ID != primitive.NilObjectID {
@@ -75,6 +81,7 @@ func (repo *exhibitionRepo) Upsert(exhibition *domain.ExhibitionDAO) (*domain.Ex
 		newExhibitionID = exhibition.ID.Hex()
 	} else {
 		exhibition.ID = primitive.NewObjectID()
+		exhibition.CreatedAt = time.Now()
 		insertedId, err := repo.col.InsertOne(ctx, *exhibition)
 		if err != nil {
 			log.Println(err)

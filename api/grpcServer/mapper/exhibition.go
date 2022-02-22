@@ -22,5 +22,6 @@ func ExhibitionMapper(exDao *domain.ExhibitionDAO) *grpcServer.ExhibitionMessage
 		StartTime:      exDao.StartTime.String(),
 		FinishTime:     exDao.FinishTime.String(),
 		Pgs:            pgs,
+		IsLive:         exDao.IsLive,
 	}
 }

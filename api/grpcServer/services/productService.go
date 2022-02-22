@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"github.com/lessbutter/alloff-api/pkg/product"
 )
@@ -40,11 +41,15 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	if req.Query.CategoryId != nil {
 		categoryID = *req.Query.CategoryId
 	}
+	alloffCategoryID := ""
+	if req.Query.AlloffCategoryId != nil {
+		alloffCategoryID = *req.Query.AlloffCategoryId
+	}
 	searchKeyword := ""
 	if req.Query.SearchQuery != nil {
 		searchKeyword = *req.Query.SearchQuery
 	}
-	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), moduleName, brandID, categoryID, searchKeyword)
+	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), moduleName, brandID, categoryID, alloffCategoryID, searchKeyword)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +85,6 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	if req.ModuleName != nil {
 		moduleName = *req.ModuleName
 	}
-
 	invDaos := []domain.InventoryDAO{}
 	for _, inv := range req.Inventory {
 		invDaos = append(invDaos, domain.InventoryDAO{
@@ -88,11 +92,15 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 			Quantity: int(inv.Quantity),
 		})
 	}
-
 	productID := ""
 	if req.ProductId != nil {
 		productID = *req.ProductId
 	}
+	alloffCatID := ""
+	if req.AlloffCategoryId != nil {
+		alloffCatID = *req.AlloffCategoryId
+	}
+
 	addRequest := &product.ProductManualAddRequest{
 		AlloffName:           req.AlloffName,
 		IsForeignDelivery:    req.IsForeignDelivery,
@@ -110,6 +118,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		Images:               req.Images,
 		DescriptionImages:    req.DescriptionImages,
 		ModuleName:           moduleName,
+		AlloffCategoryID:     alloffCatID,
 	}
 
 	pdDao, err := product.AddProductManually(addRequest)
@@ -207,6 +216,11 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 
 	if req.IsRemoved != nil {
 		pdDao.Removed = *req.IsRemoved
+	}
+
+	if req.AlloffCategoryId != nil {
+		productCatDao := classifier.ClassifyProducts(*req.AlloffCategoryId)
+		pdDao.UpdateAlloffCategory(productCatDao)
 	}
 
 	newPdDao, err := ioc.Repo.Products.Upsert(pdDao)

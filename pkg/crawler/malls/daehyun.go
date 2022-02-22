@@ -35,6 +35,7 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		errorMessage := "Crawl Failed: Source " + source.Category.KeyName
 		resp, err := utils.RequestRetryer(url, utils.REQUEST_GET, utils.GetGeneralHeader(), "", errorMessage)
 		if err != nil {
+			log.Println("err", err)
 			break
 		}
 

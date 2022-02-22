@@ -53,6 +53,7 @@ message CreateProductRequest {
     int32 latest_delivery_days = 14;
     int32 refund_fee = 15;
     optional string module_name = 16;
+    optional string alloff_category_id = 17;
 }
 
 message CreateProductResponse {
@@ -78,6 +79,7 @@ message EditProductRequest {
     optional int32 refund_fee = 16;
     string alloff_product_id = 17;
     string module_name = 18;
+    optional string alloff_category_id = 19;
 }
 
 message EditProductResponse {

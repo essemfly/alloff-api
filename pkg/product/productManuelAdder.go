@@ -6,6 +6,7 @@ import (
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -84,6 +85,11 @@ func GetManualSource(req *ProductManualAddRequest) *domain.CrawlSourceDAO {
 }
 
 func ProcessManualProductRequest(pd *domain.ProductDAO, request *ProductManualAddRequest) (*domain.ProductDAO, error) {
+	if request.AlloffCategoryID != "" {
+		productCatDao := classifier.ClassifyProducts(request.AlloffCategoryID)
+		pd.UpdateAlloffCategory(productCatDao)
+	}
+
 	alloffInstruction := GetManualProductDescription(pd, request)
 	pd.UpdateInstruction(alloffInstruction)
 

@@ -16,6 +16,9 @@ type ExhibitionDAO struct {
 	StartTime      time.Time
 	FinishTime     time.Time
 	ProductGroups  []*ProductGroupDAO
+	IsLive         bool
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {
