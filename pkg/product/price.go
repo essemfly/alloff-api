@@ -17,7 +17,11 @@ func GetCurrentPrice(pdDao *domain.ProductDAO) int {
 		pgDao, err := ioc.Repo.ProductGroups.Get(pdDao.ProductGroupId)
 
 		if err == nil && pgDao.IsLive() {
-			alloffPrice = pdDao.SpecialPrice
+			if pdDao.SpecialPrice != 0 {
+				alloffPrice = pdDao.SpecialPrice
+			} else {
+				alloffPrice = pdDao.DiscountedPrice
+			}
 		}
 	}
 	return alloffPrice
