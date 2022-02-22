@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"errors"
-	"math/rand"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -80,9 +79,6 @@ func (repo *brandsRepo) List(offset, limit int, onlyPopular bool, sortingOptions
 	}
 
 	// Best Brands need to be snapshoted
-	rand.Seed(1010)
-	rand.Shuffle(len(brands), func(i, j int) { brands[i], brands[j] = brands[j], brands[i] })
-
 	return brands, int(totalCount), nil
 }
 
