@@ -7,6 +7,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
+	"github.com/lessbutter/alloff-api/pkg/product"
 	"github.com/rs/xid"
 )
 
@@ -27,11 +28,8 @@ func (basket *Basket) IsValid() []error {
 	totalPrices := 0
 
 	for _, item := range basket.Items {
-		if item.ProductGroup != nil {
-			totalPrices += item.Product.SpecialPrice * item.Quantity
-		} else {
-			totalPrices += item.Product.DiscountedPrice * item.Quantity
-		}
+		currentPrice := product.GetCurrentPrice(item.Product)
+		totalPrices += currentPrice * item.Quantity
 
 		if item.ProductGroup != nil {
 			if !item.ProductGroup.IsLive() {
@@ -71,15 +69,13 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 	totalProductPrice := 0
 	for _, item := range basket.Items {
 		orderItemType := domain.NORMAL_ORDER
-		productPrice := item.Product.DiscountedPrice
+		productPrice := product.GetCurrentPrice(item.Product)
 		if item.ProductGroup != nil {
 			if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
 				orderItemType = domain.EXHIBITION_ORDER
 			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_TIMEDEAL {
 				orderItemType = domain.TIMEDEAL_ORDER
 			}
-
-			productPrice = item.Product.SpecialPrice
 		}
 
 		itemCode := utils.CreateShortUUID()

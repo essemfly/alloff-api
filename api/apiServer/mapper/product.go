@@ -2,9 +2,9 @@ package mapper
 
 import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
-	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
@@ -34,21 +34,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		deliveryDesc.DeliveryType = model.DeliveryTypeDomesticDelivery
 	}
 
-	alloffPrice := pdDao.DiscountedPrice
-	if alloffPrice == 0 {
-		alloffPrice = int(pdDao.OriginalPrice)
-	} else if pdDao.OriginalPrice == 0 {
-		pdDao.OriginalPrice = alloffPrice
-	}
-
-	if pdDao.ProductGroupId != "" {
-		pgDao, err := ioc.Repo.ProductGroups.Get(pdDao.ProductGroupId)
-
-		if err == nil && pgDao.IsLive() {
-			alloffPrice = pdDao.SpecialPrice
-		}
-	}
-
+	alloffPrice := product.GetCurrentPrice(pdDao)
 	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.OriginalPrice, alloffPrice)
 
 	isSoldout := true
