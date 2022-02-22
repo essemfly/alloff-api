@@ -9,7 +9,7 @@ import (
 type BrandsRepository interface {
 	Get(ID string) (*domain.BrandDAO, error)
 	GetByKeyname(keyname string) (*domain.BrandDAO, error)
-	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.BrandDAO, int, error)
+	List(offset, limit int, onlyPopular bool, sortingOptions interface{}) ([]*domain.BrandDAO, int, error)
 	Upsert(*domain.BrandDAO) (*domain.BrandDAO, error)
 }
 

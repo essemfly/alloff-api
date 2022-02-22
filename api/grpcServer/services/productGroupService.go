@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer"
@@ -89,7 +88,6 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 	}
 
 	if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL {
-		log.Println("2")
 		pgDaos, err := ioc.Repo.ProductGroups.ListTimedeals(int(req.Offset), int(req.Limit), false)
 		if err != nil {
 			return nil, err
@@ -105,7 +103,6 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 			TotalCounts: 0,
 		}, nil
 	} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
-		log.Println("3")
 		pgDaos, err := ioc.Repo.ProductGroups.ListExhibitionPg(int(req.Offset), int(req.Limit))
 		if err != nil {
 			return nil, err
@@ -121,7 +118,6 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 			TotalCounts: 0,
 		}, nil
 	} else {
-		log.Println("4")
 		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
 		pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
 		if err != nil {

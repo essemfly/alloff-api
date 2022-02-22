@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"math/rand"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -51,7 +52,7 @@ func (repo *brandsRepo) GetByKeyname(keyname string) (*domain.BrandDAO, error) {
 	return brand, nil
 }
 
-func (repo *brandsRepo) List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.BrandDAO, int, error) {
+func (repo *brandsRepo) List(offset, limit int, onlyPopular bool, sortingOptions interface{}) ([]*domain.BrandDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -62,6 +63,10 @@ func (repo *brandsRepo) List(offset, limit int, filter, sortingOptions interface
 	options.SetSkip(int64(offset))
 
 	newFilter := bson.M{"ishide": false}
+	if onlyPopular {
+		newFilter["onpopular"] = true
+	}
+
 	totalCount, _ := repo.col.CountDocuments(ctx, newFilter)
 	cursor, err := repo.col.Find(ctx, newFilter, options)
 	if err != nil {
@@ -73,6 +78,10 @@ func (repo *brandsRepo) List(offset, limit int, filter, sortingOptions interface
 	if err != nil {
 		return nil, 0, err
 	}
+
+	// Best Brands need to be snapshoted
+	rand.Seed(1010)
+	rand.Shuffle(len(brands), func(i, j int) { brands[i], brands[j] = brands[j], brands[i] })
 
 	return brands, int(totalCount), nil
 }

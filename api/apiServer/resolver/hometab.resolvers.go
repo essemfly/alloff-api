@@ -11,7 +11,6 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/pkg/product"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 func (r *queryResolver) HomeTabItems(ctx context.Context, onlyLive bool, offset *int, limit *int) ([]*model.HomeTabItem, error) {
@@ -59,7 +58,7 @@ func (r *queryResolver) BestProducts(ctx context.Context, offset int, limit int,
 }
 
 func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) ([]*model.Brand, error) {
-	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, bson.M{"onpopular": true}, nil)
+	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, true, nil)
 	if err != nil {
 		return nil, err
 	}
