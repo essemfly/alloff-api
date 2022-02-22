@@ -49,7 +49,7 @@ func getMockExhibition(idx int, pgIDs []string) *exhibition.ExhibitionRequest {
 
 func AddMockHomeTabs() {
 	log.Println("ADD MOCK HOME TABS START ********")
-	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 10)
+	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 10, true)
 	exhitibionIDs := []string{}
 	for _, ex := range exhibitions {
 		exhitibionIDs = append(exhitibionIDs, ex.ID.Hex())
@@ -82,7 +82,6 @@ func AddMockHomeTabs() {
 			StartedAt:    time.Now(),
 			FinishedAt:   time.Now().Add(1200 * time.Hour),
 			Requester: &hometab.BrandExhibitionItemRequest{
-				BrandKeyname: "THEORY",
 				ExhibitionID: exhitibionIDs[0],
 			},
 		},
@@ -161,7 +160,7 @@ func AddMockHomeTabs() {
 
 func AddMockTopBanners() {
 	log.Println("ADD MOCK TOP BANNERS START ********")
-	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 5)
+	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 5, true)
 	for id, ex := range exhibitions {
 		log.Println("IDX", id)
 		idString := strconv.Itoa(id * 77)
@@ -178,6 +177,49 @@ func AddMockTopBanners() {
 		_, err := ioc.Repo.TopBanners.Insert(newBanner)
 		if err != nil {
 			log.Println("Err in add top banners")
+		}
+	}
+}
+
+func AddHomeTab() {
+	hometabItems := []*hometab.HomeTabItemRequest{
+		{
+			Title:        "봄까지 입기 좋은 가디건, 아울렛 특가",
+			Description:  "",
+			Tags:         []string{},
+			BackImageUrl: "",
+			StartedAt:    time.Now(),
+			FinishedAt:   time.Now().Add(240 * time.Hour),
+			Requester: &hometab.AlloffCategoryItemRequest{
+				AlloffCategoryID: "621008161c35be7a91ccbfc8",
+				SortingOptions: []model.SortingType{
+					model.SortingTypeDiscount70_100,
+					model.SortingTypeDiscount50_70,
+				},
+			},
+		},
+		{
+			Title:        "올오프 프리미엄 아울렛, 자켓 특가",
+			Description:  "",
+			Tags:         []string{},
+			BackImageUrl: "",
+			StartedAt:    time.Now(),
+			FinishedAt:   time.Now().Add(1200 * time.Hour),
+			Requester: &hometab.AlloffCategoryItemRequest{
+				AlloffCategoryID: "621008161c35be7a91ccbfc2",
+				SortingOptions: []model.SortingType{
+					model.SortingTypeDiscount50_70,
+					model.SortingTypeDiscount70_100,
+				},
+			},
+		},
+	}
+
+	for idx, item := range hometabItems {
+		log.Println("IDX", idx)
+		_, err := hometab.AddHometabItem(item)
+		if err != nil {
+			log.Println(err)
 		}
 	}
 }

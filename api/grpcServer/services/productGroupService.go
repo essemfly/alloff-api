@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -183,6 +184,11 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 		return nil, err
 	}
 
+	if pgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
+		ex, _ := exhibition.FindExhibitionInProductGroup(newPgDao.ID.Hex())
+		exhibition.UpdateExhibition(ex)
+	}
+
 	return &grpcServer.EditProductGroupResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
 }
 
@@ -219,6 +225,11 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		return nil, err
 	}
 
+	if pgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
+		ex, _ := exhibition.FindExhibitionInProductGroup(newPgDao.ID.Hex())
+		exhibition.UpdateExhibition(ex)
+	}
+
 	return &grpcServer.PushProductsInPgResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
 }
 
@@ -242,6 +253,11 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 	_, err = ioc.Repo.Products.Upsert(pd)
 	if err != nil {
 		return nil, err
+	}
+
+	if pgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
+		ex, _ := exhibition.FindExhibitionInProductGroup(newPgDao.ID.Hex())
+		exhibition.UpdateExhibition(ex)
 	}
 
 	return &grpcServer.RemoveProductInPgResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
