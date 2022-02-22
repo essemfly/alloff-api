@@ -206,7 +206,7 @@ type BrandProductsItemRequest struct {
 }
 
 func (req *BrandProductsItemRequest) fillItemContents(item *domain.HomeTabItemDAO) *domain.HomeTabItemDAO {
-	brand, err := ioc.Repo.Brands.GetByKeyname(req.BrandKeyname)
+	brand, err := ioc.Repo.Brands.Get(req.BrandKeyname)
 	if err != nil {
 		log.Println("error on add brand products", err)
 	}
@@ -231,6 +231,8 @@ func (req *BrandProductsItemRequest) fillItemContents(item *domain.HomeTabItemDA
 			}
 		}
 	}
+
+	log.Println("BRANDID", brand.ID.Hex())
 	products, _, err := product.ProductsListing(0, numProductsToShow, brand.ID.Hex(), "", priceSorting, priceRange)
 	if err != nil {
 		log.Println("brand id not found: " + brand.ID.Hex())
