@@ -76,6 +76,10 @@ func (s *HomeTabService) EditHomeTabItem(ctx context.Context, req *grpcServer.Ed
 		itemDao.FinishedAt = finishTimeObj
 	}
 
+	if req.Weight != nil {
+		itemDao.Weight = int(*req.Weight)
+	}
+
 	// TO BE SPECIFIED LATER
 	// Contents
 
