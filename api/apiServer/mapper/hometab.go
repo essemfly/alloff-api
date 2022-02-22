@@ -31,15 +31,16 @@ func MapHomeTabItem(item *domain.HomeTabItemDAO) *model.HomeTabItem {
 	}
 
 	return &model.HomeTabItem{
-		ID:          item.ID.Hex(),
-		Title:       item.Title,
-		Description: item.Description,
-		Tags:        item.Tags,
-		ItemType:    model.HomeTabItemTypeEnum(item.Type),
-		Products:    pds,
-		Brands:      brands,
-		Exhibitions: exhibitions,
-		Reference:   MapReference(item.Reference),
+		ID:           item.ID.Hex(),
+		Title:        item.Title,
+		Description:  item.Description,
+		Tags:         item.Tags,
+		BackImageURL: item.BackImageUrl,
+		ItemType:     model.HomeTabItemTypeEnum(item.Type),
+		Products:     pds,
+		Brands:       brands,
+		Exhibitions:  exhibitions,
+		Reference:    MapReference(item.Reference),
 	}
 }
 
