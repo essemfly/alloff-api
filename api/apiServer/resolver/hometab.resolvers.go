@@ -55,7 +55,7 @@ func (r *queryResolver) BestProducts(ctx context.Context, offset int, limit int,
 		return nil, err
 	}
 
-	return mapper.MapBestProducts(bestproductDao, brief), nil
+	return mapper.MapBestProducts(bestproductDao, brief, offset, limit), nil
 }
 
 func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) ([]*model.Brand, error) {
