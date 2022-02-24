@@ -42,7 +42,7 @@ func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhib
 		return nil, err
 	}
 
-	return mapper.MapExhibition(exhibitionDao), nil
+	return mapper.MapExhibition(exhibitionDao, false), nil
 }
 
 func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, error) {
@@ -56,7 +56,7 @@ func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, e
 	exs := []*model.Exhibition{}
 
 	for _, exhibitionDao := range exhibitionDaos {
-		exs = append(exs, mapper.MapExhibition(exhibitionDao))
+		exs = append(exs, mapper.MapExhibition(exhibitionDao, true))
 	}
 
 	return exs, nil

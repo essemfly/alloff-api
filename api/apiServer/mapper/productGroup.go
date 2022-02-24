@@ -45,11 +45,13 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 	return pg
 }
 
-func MapExhibition(exDao *domain.ExhibitionDAO) *model.Exhibition {
+func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 	pgs := []*model.ProductGroup{}
 
-	for _, pg := range exDao.ProductGroups {
-		pgs = append(pgs, MapProductGroupDao(pg))
+	if !brief {
+		for _, pg := range exDao.ProductGroups {
+			pgs = append(pgs, MapProductGroupDao(pg))
+		}
 	}
 
 	return &model.Exhibition{

@@ -27,7 +27,7 @@ func MapHomeTabItem(item *domain.HomeTabItemDAO) *model.HomeTabItem {
 	}
 
 	for _, exhibitionDao := range item.Exhibitions {
-		exhibitions = append(exhibitions, MapExhibition(exhibitionDao))
+		exhibitions = append(exhibitions, MapExhibition(exhibitionDao, true))
 	}
 
 	return &model.HomeTabItem{

@@ -33,17 +33,22 @@ func GetProductPrice(pd *domain.ProductDAO) (int, int) {
 }
 
 func CalculateIntrendPrice(priceKRW int) int {
-	priceKRW = priceKRW * 89 / 100 //  뉴 공급가
-	// if (priceKRW / DOLLAR_EXCHANGE_RATE) > 150 {
-	// 	priceKRW = priceKRW * 11 / 10
-	// } // 관세 포함 공급가
-	priceKRW += 16000             // 해외 배송비 추가
+	if (priceKRW / DOLLAR_EXCHANGE_RATE) >= 150 {
+		priceKRW += 16000
+		priceKRW = priceKRW * 11 / 10
+	} else {
+		priceKRW += 16000
+	}
 	priceKRW = priceKRW * 11 / 10 // 마진
 	priceKRW += 3000              // 국내 배송비
 	priceKRW += 13000             // 사업자 통관
 
-	priceKRW = priceKRW / 100
-	priceKRW = priceKRW * 100
+	remainder := priceKRW % 1000
+	priceKRW = priceKRW / 1000
+	if remainder >= 500 {
+		priceKRW += 1
+	}
+	priceKRW = priceKRW * 1000
 
 	return priceKRW
 }
