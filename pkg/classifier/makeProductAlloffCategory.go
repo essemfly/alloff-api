@@ -17,7 +17,7 @@ func ClassifyProducts(alloffCategoryID string) *domain.ProductAlloffCategoryDAO 
 			}
 		} else if alloffCat.Level == 2 {
 			parentCat, err := ioc.Repo.AlloffCategories.Get(alloffCat.ParentId.Hex())
-			if err != nil {
+			if err == nil {
 				return &domain.ProductAlloffCategoryDAO{
 					First:   parentCat,
 					Second:  alloffCat,
