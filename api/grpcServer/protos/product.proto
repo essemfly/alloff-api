@@ -113,6 +113,7 @@ message ProductMessage {
     int32 total_score = 20;
     string alloff_product_id = 21;
     string module_name = 22;
+    string alloff_category_id = 23;
 }
 
 message ProductInventoryMessage {
