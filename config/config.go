@@ -30,9 +30,9 @@ type Configuration struct {
 	GRPC_PORT          int
 }
 
-func GetConfiguration() Configuration {
+func GetConfiguration(env string) Configuration {
 	configuration := Configuration{}
-	err := gonfig.GetConf(getFileName(), &configuration)
+	err := gonfig.GetConf(getFileName(env), &configuration)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(500)
@@ -41,11 +41,7 @@ func GetConfiguration() Configuration {
 	return configuration
 }
 
-func getFileName() string {
-	env := os.Getenv("ENV")
-	if len(env) == 0 {
-		env = "local"
-	}
+func getFileName(env string) string {
 	filename := []string{"/", "config.", env, ".json"}
 	_, dirname, _, _ := runtime.Caller(0)
 	filePath := path.Join(filepath.Dir(dirname), strings.Join(filename, ""))
