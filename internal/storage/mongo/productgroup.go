@@ -122,7 +122,7 @@ func (repo *productGroupRepo) ListTimedeals(offset, limit int, isLive bool) ([]*
 	return productGroups, nil
 }
 
-func (repo *productGroupRepo) ListExhibitionPg(offset, limit int) ([]*domain.ProductGroupDAO, error) {
+func (repo *productGroupRepo) ListExhibitionPg(offset, limit int) ([]*domain.ProductGroupDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -132,20 +132,21 @@ func (repo *productGroupRepo) ListExhibitionPg(offset, limit int) ([]*domain.Pro
 	outDateOptions.SetSkip(int64(offset))
 	outDateOptions.SetLimit(int64(limit))
 
+	totalCount, _ := repo.col.CountDocuments(ctx, filter)
 	cur, err := repo.col.Find(ctx, filter, outDateOptions)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, 0, err
 	}
 
 	var productGroups []*domain.ProductGroupDAO
 	err = cur.All(ctx, &productGroups)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, 0, err
 	}
 
-	return productGroups, nil
+	return productGroups, int(totalCount), nil
 }
 
 func (repo *productGroupRepo) Upsert(pg *domain.ProductGroupDAO) (*domain.ProductGroupDAO, error) {

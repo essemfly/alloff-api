@@ -79,7 +79,7 @@ type ProductGroupsRepository interface {
 	Get(ID string) (*domain.ProductGroupDAO, error)
 	List(numPassedItem int) ([]*domain.ProductGroupDAO, error)
 	ListTimedeals(offset, limit int, isLive bool) ([]*domain.ProductGroupDAO, error)
-	ListExhibitionPg(offset, limit int) ([]*domain.ProductGroupDAO, error)
+	ListExhibitionPg(offset, limit int) ([]*domain.ProductGroupDAO, int, error)
 	Upsert(*domain.ProductGroupDAO) (*domain.ProductGroupDAO, error)
 }
 

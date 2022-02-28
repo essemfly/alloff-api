@@ -104,7 +104,7 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 			TotalCounts: 0,
 		}, nil
 	} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
-		pgDaos, err := ioc.Repo.ProductGroups.ListExhibitionPg(int(req.Offset), int(req.Limit))
+		pgDaos, cnt, err := ioc.Repo.ProductGroups.ListExhibitionPg(int(req.Offset), int(req.Limit))
 		if err != nil {
 			return nil, err
 		}
@@ -116,7 +116,7 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 			Pgs:         pgs,
 			Offset:      req.Offset,
 			Limit:       req.Limit,
-			TotalCounts: 0,
+			TotalCounts: int32(cnt),
 		}, nil
 	} else {
 		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
