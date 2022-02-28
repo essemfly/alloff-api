@@ -7,14 +7,15 @@ import (
 )
 
 type UserDAO struct {
-	ID            primitive.ObjectID `json:"id" bson:"_id"`
-	Name          string             `json:"name"`
-	Uuid          string             `json:"uuid" bson:"uuid"`
-	Mobile        string             `json:"mobile"`
-	Email         string             `json:"email"`
-	BaseAddress   string             `json:"baseaddress"`
-	DetailAddress string             `json:"detailaddress"`
-	Postcode      string             `json:"postcode"`
+	ID                    primitive.ObjectID `json:"id" bson:"_id"`
+	Name                  string             `json:"name"`
+	Uuid                  string             `json:"uuid" bson:"uuid"`
+	Mobile                string             `json:"mobile"`
+	Email                 string             `json:"email"`
+	BaseAddress           string             `json:"baseaddress"`
+	DetailAddress         string             `json:"detailaddress"`
+	Postcode              string             `json:"postcode"`
+	PersonalCustomsNumber string
 }
 
 func (userDao *UserDAO) GetUserAddress() string {

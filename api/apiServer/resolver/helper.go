@@ -36,16 +36,17 @@ func BuildBasketItems(input *model.OrderInput) ([]*order.BasketItem, error) {
 
 func BuildPaymentDao(input *model.PaymentClientInput) *domain.PaymentDAO {
 	return &domain.PaymentDAO{
-		Pg:            input.Pg,
-		PayMethod:     input.PayMethod,
-		MerchantUid:   input.MerchantUID,
-		Amount:        input.Amount,
-		Name:          *input.Name,
-		BuyerName:     *input.BuyerName,
-		BuyerMobile:   *input.BuyerMobile,
-		BuyerAddress:  *input.BuyerAddress,
-		BuyerPostCode: *input.BuyerPostCode,
-		Company:       "alloff",
-		AppScheme:     "appscheme",
+		Pg:                    input.Pg,
+		PayMethod:             input.PayMethod,
+		MerchantUid:           input.MerchantUID,
+		Amount:                input.Amount,
+		Name:                  *input.Name,
+		BuyerName:             *input.BuyerName,
+		BuyerMobile:           *input.BuyerMobile,
+		BuyerAddress:          *input.BuyerAddress,
+		BuyerPostCode:         *input.BuyerPostCode,
+		PersonalCustomsNumber: *input.PersonalCustomsNumber,
+		Company:               "alloff",
+		AppScheme:             "appscheme",
 	}
 }

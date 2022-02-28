@@ -203,13 +203,14 @@ type Login struct {
 }
 
 type NewUser struct {
-	UUID          string  `json:"uuid"`
-	Mobile        string  `json:"mobile"`
-	Name          *string `json:"name"`
-	Email         *string `json:"email"`
-	BaseAddress   *string `json:"baseAddress"`
-	DetailAddress *string `json:"detailAddress"`
-	Postcode      *string `json:"postcode"`
+	UUID                  string  `json:"uuid"`
+	Mobile                string  `json:"mobile"`
+	Name                  *string `json:"name"`
+	Email                 *string `json:"email"`
+	BaseAddress           *string `json:"baseAddress"`
+	DetailAddress         *string `json:"detailAddress"`
+	Postcode              *string `json:"postcode"`
+	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
 }
 
 type OrderInfo struct {
@@ -294,31 +295,33 @@ type OrderWithPayment struct {
 }
 
 type PaymentClientInput struct {
-	Pg            string  `json:"pg"`
-	PayMethod     string  `json:"payMethod"`
-	MerchantUID   string  `json:"merchantUid"`
-	Amount        int     `json:"amount"`
-	Name          *string `json:"name"`
-	BuyerName     *string `json:"buyerName"`
-	BuyerMobile   *string `json:"buyerMobile"`
-	BuyerAddress  *string `json:"buyerAddress"`
-	BuyerPostCode *string `json:"buyerPostCode"`
-	Memo          *string `json:"memo"`
-	AppScheme     *string `json:"appScheme"`
+	Pg                    string  `json:"pg"`
+	PayMethod             string  `json:"payMethod"`
+	MerchantUID           string  `json:"merchantUid"`
+	Amount                int     `json:"amount"`
+	Name                  *string `json:"name"`
+	BuyerName             *string `json:"buyerName"`
+	BuyerMobile           *string `json:"buyerMobile"`
+	BuyerAddress          *string `json:"buyerAddress"`
+	BuyerPostCode         *string `json:"buyerPostCode"`
+	Memo                  *string `json:"memo"`
+	AppScheme             *string `json:"appScheme"`
+	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
 }
 
 type PaymentInfo struct {
-	Pg            string `json:"pg"`
-	PayMethod     string `json:"payMethod"`
-	MerchantUID   string `json:"merchantUid"`
-	Amount        int    `json:"amount"`
-	Name          string `json:"name"`
-	BuyerName     string `json:"buyerName"`
-	BuyerMobile   string `json:"buyerMobile"`
-	BuyerAddress  string `json:"buyerAddress"`
-	BuyerPostCode string `json:"buyerPostCode"`
-	Company       string `json:"company"`
-	AppScheme     string `json:"appScheme"`
+	Pg                    string  `json:"pg"`
+	PayMethod             string  `json:"payMethod"`
+	MerchantUID           string  `json:"merchantUid"`
+	Amount                int     `json:"amount"`
+	Name                  string  `json:"name"`
+	BuyerName             string  `json:"buyerName"`
+	BuyerMobile           string  `json:"buyerMobile"`
+	BuyerAddress          string  `json:"buyerAddress"`
+	BuyerPostCode         string  `json:"buyerPostCode"`
+	Company               string  `json:"company"`
+	AppScheme             string  `json:"appScheme"`
+	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
 }
 
 type PaymentMethod struct {
@@ -382,6 +385,12 @@ type ProductGroup struct {
 	SetAlarm    bool       `json:"setAlarm"`
 }
 
+type ProductQueryInput struct {
+	Offset  int    `json:"offset"`
+	Limit   int    `json:"limit"`
+	Keyword string `json:"keyword"`
+}
+
 type ProductsInput struct {
 	Offset   int           `json:"offset"`
 	Limit    int           `json:"limit"`
@@ -422,24 +431,26 @@ type TopBanner struct {
 }
 
 type User struct {
-	ID            string  `json:"id"`
-	UUID          string  `json:"uuid"`
-	Mobile        string  `json:"mobile"`
-	Name          *string `json:"name"`
-	Email         *string `json:"email"`
-	BaseAddress   *string `json:"baseAddress"`
-	DetailAddress *string `json:"detailAddress"`
-	Postcode      *string `json:"postcode"`
+	ID                    string  `json:"id"`
+	UUID                  string  `json:"uuid"`
+	Mobile                string  `json:"mobile"`
+	Name                  *string `json:"name"`
+	Email                 *string `json:"email"`
+	BaseAddress           *string `json:"baseAddress"`
+	DetailAddress         *string `json:"detailAddress"`
+	Postcode              *string `json:"postcode"`
+	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
 }
 
 type UserInfoInput struct {
-	UUID          *string `json:"uuid"`
-	Name          *string `json:"name"`
-	Mobile        *string `json:"mobile"`
-	Email         *string `json:"email"`
-	BaseAddress   *string `json:"baseAddress"`
-	DetailAddress *string `json:"detailAddress"`
-	Postcode      *string `json:"postcode"`
+	UUID                  *string `json:"uuid"`
+	Name                  *string `json:"name"`
+	Mobile                *string `json:"mobile"`
+	Email                 *string `json:"email"`
+	BaseAddress           *string `json:"baseAddress"`
+	DetailAddress         *string `json:"detailAddress"`
+	Postcode              *string `json:"postcode"`
+	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
 }
 
 type CommunityItemType string

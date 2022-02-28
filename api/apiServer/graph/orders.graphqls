@@ -118,6 +118,7 @@ input PaymentClientInput {
   buyerPostCode: String
   memo: String
   appScheme: String
+  personalCustomsNumber: String
 }
 
 type PaymentInfo {
@@ -132,6 +133,7 @@ type PaymentInfo {
   buyerPostCode: String!
   company: String!
   appScheme: String!
+  personalCustomsNumber: String
 }
 
 input OrderResponse {

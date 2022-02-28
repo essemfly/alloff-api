@@ -115,7 +115,14 @@ type LikeProductOutput {
   newProduct: Product!
 }
 
+input ProductQueryInput {
+  offset: Int!
+  limit: Int!
+  keyword: String!
+}
+
 extend type Query {
+  find(input: ProductQueryInput!): ProductsOutput!
   product(id: String!): Product!
   products(input: ProductsInput!): ProductsOutput!
   alloffCategoryProducts(

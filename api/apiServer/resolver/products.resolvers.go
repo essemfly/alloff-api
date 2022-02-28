@@ -25,6 +25,25 @@ func (r *mutationResolver) LikeProduct(ctx context.Context, input *model.LikePro
 	return ioc.Repo.LikeProducts.Like(user.ID.Hex(), input.ProductID)
 }
 
+func (r *queryResolver) Find(ctx context.Context, input model.ProductQueryInput) (*model.ProductsOutput, error) {
+	pdDaos, cnt, err := product.ProductsSearchListing(input.Offset, input.Limit, "", "", "", "", input.Keyword)
+	if err != nil {
+		return nil, err
+	}
+
+	products := []*model.Product{}
+	for _, pd := range pdDaos {
+		products = append(products, mapper.MapProductDaoToProduct(pd))
+	}
+
+	return &model.ProductsOutput{
+		Products:   products,
+		Offset:     input.Offset,
+		Limit:      input.Limit,
+		TotalCount: cnt,
+	}, nil
+}
+
 func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product, error) {
 	pdDao, err := ioc.Repo.Products.Get(id)
 	if err != nil {

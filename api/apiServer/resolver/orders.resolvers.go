@@ -110,20 +110,6 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 
 func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error) {
 	/*
-		type PaymentClientInput struct {
-			Pg            string  `json:"pg"`
-			PayMethod     string  `json:"payMethod"`
-			MerchantUID   string  `json:"merchantUid"`
-			Amount        int     `json:"amount"`
-			Name          *string `json:"name"`
-			BuyerName     *string `json:"buyerName"`
-			BuyerMobile   *string `json:"buyerMobile"`
-			BuyerAddress  *string `json:"buyerAddress"`
-			BuyerPostCode *string `json:"buyerPostCode"`
-			Memo          *string `json:"memo"`
-			AppScheme     *string `json:"appScheme"`
-		}
-
 		1. 결제창 띄우면서, iamport에 등록하는 작업을 해야합니다.
 		2. 동시에 상품에서 주문한 상품의 재고를 없애줍니다.
 	*/

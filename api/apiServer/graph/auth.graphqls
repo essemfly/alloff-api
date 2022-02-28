@@ -6,6 +6,7 @@ input NewUser {
   baseAddress: String
   detailAddress: String
   postcode: String
+  personalCustomsNumber: String
 }
 
 input Login {
@@ -26,6 +27,7 @@ type User {
   baseAddress: String
   detailAddress: String
   postcode: String
+  personalCustomsNumber: String
 }
 
 type Device {
@@ -43,6 +45,7 @@ input UserInfoInput {
   baseAddress: String
   detailAddress: String
   postcode: String
+  personalCustomsNumber: String
 }
 
 extend type Query {
@@ -50,7 +53,11 @@ extend type Query {
 }
 
 extend type Mutation {
-  registerNotification(deviceId: String!, allowNotification: Boolean!, userId: String): Device!
+  registerNotification(
+    deviceId: String!
+    allowNotification: Boolean!
+    userId: String
+  ): Device!
   createUser(input: NewUser!): String!
   updateUserInfo(input: UserInfoInput!): User!
   login(input: Login!): String!

@@ -275,17 +275,18 @@ type ComplexityRoot struct {
 	}
 
 	PaymentInfo struct {
-		Amount        func(childComplexity int) int
-		AppScheme     func(childComplexity int) int
-		BuyerAddress  func(childComplexity int) int
-		BuyerMobile   func(childComplexity int) int
-		BuyerName     func(childComplexity int) int
-		BuyerPostCode func(childComplexity int) int
-		Company       func(childComplexity int) int
-		MerchantUID   func(childComplexity int) int
-		Name          func(childComplexity int) int
-		PayMethod     func(childComplexity int) int
-		Pg            func(childComplexity int) int
+		Amount                func(childComplexity int) int
+		AppScheme             func(childComplexity int) int
+		BuyerAddress          func(childComplexity int) int
+		BuyerMobile           func(childComplexity int) int
+		BuyerName             func(childComplexity int) int
+		BuyerPostCode         func(childComplexity int) int
+		Company               func(childComplexity int) int
+		MerchantUID           func(childComplexity int) int
+		Name                  func(childComplexity int) int
+		PayMethod             func(childComplexity int) int
+		PersonalCustomsNumber func(childComplexity int) int
+		Pg                    func(childComplexity int) int
 	}
 
 	PaymentMethod struct {
@@ -368,6 +369,7 @@ type ComplexityRoot struct {
 		Exhibition             func(childComplexity int, id string) int
 		Exhibitions            func(childComplexity int) int
 		Featureds              func(childComplexity int) int
+		Find                   func(childComplexity int, input model.ProductQueryInput) int
 		HomeTabItems           func(childComplexity int, onlyLive bool, offset *int, limit *int) int
 		Homeitems              func(childComplexity int) int
 		Likeproducts           func(childComplexity int) int
@@ -405,14 +407,15 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		BaseAddress   func(childComplexity int) int
-		DetailAddress func(childComplexity int) int
-		Email         func(childComplexity int) int
-		ID            func(childComplexity int) int
-		Mobile        func(childComplexity int) int
-		Name          func(childComplexity int) int
-		Postcode      func(childComplexity int) int
-		UUID          func(childComplexity int) int
+		BaseAddress           func(childComplexity int) int
+		DetailAddress         func(childComplexity int) int
+		Email                 func(childComplexity int) int
+		ID                    func(childComplexity int) int
+		Mobile                func(childComplexity int) int
+		Name                  func(childComplexity int) int
+		PersonalCustomsNumber func(childComplexity int) int
+		Postcode              func(childComplexity int) int
+		UUID                  func(childComplexity int) int
 	}
 }
 
@@ -451,6 +454,7 @@ type QueryResolver interface {
 	Exhibition(ctx context.Context, id string) (*model.Exhibition, error)
 	Exhibitions(ctx context.Context) ([]*model.Exhibition, error)
 	Timedeal(ctx context.Context) (*model.ProductGroup, error)
+	Find(ctx context.Context, input model.ProductQueryInput) (*model.ProductsOutput, error)
 	Product(ctx context.Context, id string) (*model.Product, error)
 	Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error)
 	AlloffCategoryProducts(ctx context.Context, input model.AlloffCategoryProductsInput) (*model.AlloffCategoryProducts, error)
@@ -1728,6 +1732,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PaymentInfo.PayMethod(childComplexity), true
 
+	case "PaymentInfo.personalCustomsNumber":
+		if e.complexity.PaymentInfo.PersonalCustomsNumber == nil {
+			break
+		}
+
+		return e.complexity.PaymentInfo.PersonalCustomsNumber(childComplexity), true
+
 	case "PaymentInfo.pg":
 		if e.complexity.PaymentInfo.Pg == nil {
 			break
@@ -2186,6 +2197,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Featureds(childComplexity), true
 
+	case "Query.find":
+		if e.complexity.Query.Find == nil {
+			break
+		}
+
+		args, err := ec.field_Query_find_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Find(childComplexity, args["input"].(model.ProductQueryInput)), true
+
 	case "Query.homeTabItems":
 		if e.complexity.Query.HomeTabItems == nil {
 			break
@@ -2428,6 +2451,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Name(childComplexity), true
 
+	case "User.personalCustomsNumber":
+		if e.complexity.User.PersonalCustomsNumber == nil {
+			break
+		}
+
+		return e.complexity.User.PersonalCustomsNumber(childComplexity), true
+
 	case "User.postcode":
 		if e.complexity.User.Postcode == nil {
 			break
@@ -2536,6 +2566,7 @@ extend type Query {
   baseAddress: String
   detailAddress: String
   postcode: String
+  personalCustomsNumber: String
 }
 
 input Login {
@@ -2556,6 +2587,7 @@ type User {
   baseAddress: String
   detailAddress: String
   postcode: String
+  personalCustomsNumber: String
 }
 
 type Device {
@@ -2573,6 +2605,7 @@ input UserInfoInput {
   baseAddress: String
   detailAddress: String
   postcode: String
+  personalCustomsNumber: String
 }
 
 extend type Query {
@@ -2580,7 +2613,11 @@ extend type Query {
 }
 
 extend type Mutation {
-  registerNotification(deviceId: String!, allowNotification: Boolean!, userId: String): Device!
+  registerNotification(
+    deviceId: String!
+    allowNotification: Boolean!
+    userId: String
+  ): Device!
   createUser(input: NewUser!): String!
   updateUserInfo(input: UserInfoInput!): User!
   login(input: Login!): String!
@@ -2809,6 +2846,7 @@ input PaymentClientInput {
   buyerPostCode: String
   memo: String
   appScheme: String
+  personalCustomsNumber: String
 }
 
 type PaymentInfo {
@@ -2823,6 +2861,7 @@ type PaymentInfo {
   buyerPostCode: String!
   company: String!
   appScheme: String!
+  personalCustomsNumber: String
 }
 
 input OrderResponse {
@@ -3041,7 +3080,14 @@ type LikeProductOutput {
   newProduct: Product!
 }
 
+input ProductQueryInput {
+  offset: Int!
+  limit: Int!
+  keyword: String!
+}
+
 extend type Query {
+  find(input: ProductQueryInput!): ProductsOutput!
   product(id: String!): Product!
   products(input: ProductsInput!): ProductsOutput!
   alloffCategoryProducts(
@@ -3581,6 +3627,21 @@ func (ec *executionContext) field_Query_exhibition_args(ctx context.Context, raw
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_find_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.ProductQueryInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNProductQueryInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductQueryInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
 	return args, nil
 }
 
@@ -9727,6 +9788,38 @@ func (ec *executionContext) _PaymentInfo_appScheme(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _PaymentInfo_personalCustomsNumber(ctx context.Context, field graphql.CollectedField, obj *model.PaymentInfo) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "PaymentInfo",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PersonalCustomsNumber, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _PaymentMethod_label(ctx context.Context, field graphql.CollectedField, obj *model.PaymentMethod) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -12046,6 +12139,48 @@ func (ec *executionContext) _Query_timedeal(ctx context.Context, field graphql.C
 	return ec.marshalNProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_find(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_find_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().Find(rctx, args["input"].(model.ProductQueryInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ProductsOutput)
+	fc.Result = res
+	return ec.marshalNProductsOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductsOutput(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_product(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -13020,6 +13155,38 @@ func (ec *executionContext) _User_postcode(ctx context.Context, field graphql.Co
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.Postcode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _User_personalCustomsNumber(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PersonalCustomsNumber, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14475,6 +14642,14 @@ func (ec *executionContext) unmarshalInputNewUser(ctx context.Context, obj inter
 			if err != nil {
 				return it, err
 			}
+		case "personalCustomsNumber":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("personalCustomsNumber"))
+			it.PersonalCustomsNumber, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -14703,6 +14878,53 @@ func (ec *executionContext) unmarshalInputPaymentClientInput(ctx context.Context
 			if err != nil {
 				return it, err
 			}
+		case "personalCustomsNumber":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("personalCustomsNumber"))
+			it.PersonalCustomsNumber, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputProductQueryInput(ctx context.Context, obj interface{}) (model.ProductQueryInput, error) {
+	var it model.ProductQueryInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "offset":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("offset"))
+			it.Offset, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "limit":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+			it.Limit, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "keyword":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keyword"))
+			it.Keyword, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -14849,6 +15071,14 @@ func (ec *executionContext) unmarshalInputUserInfoInput(ctx context.Context, obj
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postcode"))
 			it.Postcode, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "personalCustomsNumber":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("personalCustomsNumber"))
+			it.PersonalCustomsNumber, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -16223,6 +16453,8 @@ func (ec *executionContext) _PaymentInfo(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "personalCustomsNumber":
+			out.Values[i] = ec._PaymentInfo_personalCustomsNumber(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -16857,6 +17089,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "find":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_find(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "product":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -17127,6 +17373,8 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_detailAddress(ctx, field, obj)
 		case "postcode":
 			out.Values[i] = ec._User_postcode(ctx, field, obj)
+		case "personalCustomsNumber":
+			out.Values[i] = ec._User_personalCustomsNumber(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -18611,6 +18859,11 @@ func (ec *executionContext) marshalNProductGroup2ᚖgithubᚗcomᚋlessbutterᚋ
 		return graphql.Null
 	}
 	return ec._ProductGroup(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNProductQueryInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductQueryInput(ctx context.Context, v interface{}) (model.ProductQueryInput, error) {
+	res, err := ec.unmarshalInputProductQueryInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNProductsInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductsInput(ctx context.Context, v interface{}) (model.ProductsInput, error) {
