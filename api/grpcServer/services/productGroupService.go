@@ -186,7 +186,9 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 
 	if newPgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
 		ex, _ := exhibition.FindExhibitionInProductGroup(newPgDao.ID.Hex())
-		exhibition.UpdateExhibition(ex)
+		if ex != nil {
+			exhibition.UpdateExhibition(ex)
+		}
 	}
 
 	return &grpcServer.EditProductGroupResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
@@ -259,7 +261,9 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 
 	if newPgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
 		ex, _ := exhibition.FindExhibitionInProductGroup(newPgDao.ID.Hex())
-		exhibition.UpdateExhibition(ex)
+		if ex != nil {
+			exhibition.UpdateExhibition(ex)
+		}
 	}
 
 	return &grpcServer.RemoveProductInPgResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
