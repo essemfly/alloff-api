@@ -22,12 +22,12 @@ type NotiService struct {
 func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNotiRequest) (*grpcServer.CreateNotiResponse, error) {
 	notiDao := &domain.NotificationDAO{
 		Status:           domain.NOTIFICATION_READY,
-		NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
+		NotificationType: domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION,
 		Title:            req.Title,
 		Message:          req.Message,
-		Notificationid:   "/timedeals" + req.ReferenceId,
+		Notificationid:   "/exhibition" + req.ReferenceId,
 		ReferenceID:      "/" + req.ReferenceId,
-		NavigateTo:       "/timedeals",
+		NavigateTo:       "/exhibition",
 	}
 
 	devices, err := ioc.Repo.Devices.ListAllowed()
