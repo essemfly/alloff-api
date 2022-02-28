@@ -227,7 +227,9 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 
 	if newPgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
 		ex, _ := exhibition.FindExhibitionInProductGroup(newPgDao.ID.Hex())
-		exhibition.UpdateExhibition(ex)
+		if ex != nil {
+			exhibition.UpdateExhibition(ex)
+		}
 	}
 
 	return &grpcServer.PushProductsInPgResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
