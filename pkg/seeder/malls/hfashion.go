@@ -34,7 +34,6 @@ func AddHfashion() {
 			Description:   "트래디셔널 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/TOMMY+HILFIGER_TOP.png"},
@@ -50,7 +49,6 @@ func AddHfashion() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Calvin+Klein_TOP.png"},
@@ -66,7 +64,6 @@ func AddHfashion() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/SJYP_TOP.png"},
@@ -84,7 +81,6 @@ func AddHfashion() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DKNY_TOP.png"},

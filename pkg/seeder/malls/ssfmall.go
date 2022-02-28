@@ -33,7 +33,6 @@ func AddSSFMall() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/PLAN+C_TOP.png"},
@@ -48,7 +47,6 @@ func AddSSFMall() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/OIAUER_TOP:BOTTOM.png"},
@@ -63,7 +61,6 @@ func AddSSFMall() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Aspesi_TOP.png"},
@@ -79,7 +76,6 @@ func AddSSFMall() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/SLOWEAR_TOP:BOTTOM.png"},
@@ -94,7 +90,6 @@ func AddSSFMall() {
 			Description:   "트레디셔널 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Beanpole+Ladies_TOP.png"},
@@ -110,7 +105,6 @@ func AddSSFMall() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/BEAKER_TOP.png"},
@@ -126,7 +120,6 @@ func AddSSFMall() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Barena+Venezia_TOP.png"},
@@ -142,7 +135,6 @@ func AddSSFMall() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Melissa_TOP.png"},
@@ -158,7 +150,6 @@ func AddSSFMall() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Maison+Kitsune_TOP.png"},
@@ -174,7 +165,6 @@ func AddSSFMall() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide:     []domain.SizeGuideDAO{},
 		},
@@ -187,7 +177,6 @@ func AddSSFMall() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide:     []domain.SizeGuideDAO{},
 		},
@@ -200,7 +189,6 @@ func AddSSFMall() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/rag+%26+bone_TOP.png"},
@@ -216,7 +204,6 @@ func AddSSFMall() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Theory_TOP.png"},
@@ -232,7 +219,6 @@ func AddSSFMall() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Danton_TOP.png"},
@@ -248,7 +234,6 @@ func AddSSFMall() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/KUHO_TOP.png"},
@@ -265,7 +250,6 @@ func AddSSFMall() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "ssfmall",
 			InMaintenance: false,
 			SizeGuide:     []domain.SizeGuideDAO{},
 		},

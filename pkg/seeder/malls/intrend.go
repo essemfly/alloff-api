@@ -32,7 +32,6 @@ func AddIntrend() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "intrend",
 			InMaintenance: false,
 			SizeGuide:     []domain.SizeGuideDAO{},
 		},

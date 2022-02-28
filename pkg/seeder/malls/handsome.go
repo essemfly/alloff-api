@@ -29,7 +29,6 @@ func AddHandsome() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/TIME_TOP.png"},
@@ -45,7 +44,6 @@ func AddHandsome() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/MINE_TOP.png"},
@@ -61,7 +59,6 @@ func AddHandsome() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/SYSTEM_TOP.png"},
@@ -77,7 +74,6 @@ func AddHandsome() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/SJSJ_TOP.png"},
@@ -93,7 +89,6 @@ func AddHandsome() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/the+CASHMERE_TOP.png"},
@@ -109,7 +104,6 @@ func AddHandsome() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/LANVIN+COLLECTION_TOP.png"},
@@ -125,7 +119,6 @@ func AddHandsome() {
 			Description:   "커리어",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/LATT_TOP.png"},
@@ -141,7 +134,6 @@ func AddHandsome() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/OBZEE_TOP.png"},
@@ -157,7 +149,6 @@ func AddHandsome() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/CLUB+MONACO_TOP.png"},
@@ -173,7 +164,6 @@ func AddHandsome() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "handsome",
 			InMaintenance: true,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/O'2nd_TOP.png"},

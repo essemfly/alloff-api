@@ -34,7 +34,6 @@ func AddLacoste() {
 		Onpopular:     false,
 		Created:       time.Now(),
 		IsOpen:        true,
-		Modulename:    "lacoste",
 		InMaintenance: false,
 		SizeGuide: []domain.SizeGuideDAO{
 			{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/LACOSTE_TOP.png"},

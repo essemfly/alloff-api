@@ -35,7 +35,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/g-cut_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/g-cut_BOTTOM.png"},
@@ -50,7 +49,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/ALLSAINTS_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/ALLSAINTS_BOTTOM.png"},
@@ -65,7 +63,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VOV_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VOV_BOTTOM.png"},
@@ -80,7 +77,6 @@ func AddSiVillages() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VPPLEMENT_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VPPLEMENT_BOTTOM.png"},
@@ -95,7 +91,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VIS+A+VIS_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VIS+A+VIS_BOTTOM.png"},
@@ -110,7 +105,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/TATRAS_TOP:BOTTOM.png"},
 			},
@@ -124,7 +118,6 @@ func AddSiVillages() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/STUDIO+TOMBOY_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/STUDIO+TOMBOY_BOTTOM.png"},
@@ -139,7 +132,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/STELLA+McCARTNEY_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/STELLA+McCARTNEY_BOTTOM.png"},
@@ -154,7 +146,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/St.John_TOP.png"},
 			},
@@ -168,7 +159,6 @@ func AddSiVillages() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/SAVE+THE+DUCK_TOP.png"},
 			},
@@ -182,7 +172,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/sacai_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/sacai_BOTTOM.png"},
@@ -197,7 +186,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Rick+Owens_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Rick+Owens_BOTTOM.png"},
@@ -212,7 +200,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/REISS_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/REISS_BOTTOM.png"},
@@ -227,7 +214,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/PROENZA+SCHOULER_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/PROENZA+SCHOULER_BOTTOM.png"},
@@ -242,7 +228,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Paul+Smith_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Paul+Smith_BOTTOM.png"},
@@ -257,7 +242,6 @@ func AddSiVillages() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/NOBIS_TOP.png"},
 			},
@@ -271,7 +255,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/MOOSE+KNUCKLES_TOP.png"},
 			},
@@ -285,7 +268,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/MARNI_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/MARNI_BOTTOM.png"},
@@ -300,7 +282,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Maison+Margiela_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Maison+Margiela_BOTTOM.png"},
@@ -315,7 +296,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Juicy+Couture_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Juicy+Couture_BOTTOM.png"},
@@ -330,7 +310,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/ILAIL_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/ILAIL_BOTTOM.png"},
@@ -345,7 +324,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/HERNO_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/HERNO_BOTTOM.png"},
@@ -360,7 +338,6 @@ func AddSiVillages() {
 			Description:   "클래식",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/GIORGIO+ARMANI_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/GIORGIO+ARMANI_BOTTOM.png"},
@@ -375,7 +352,6 @@ func AddSiVillages() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/GAP_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/GAP_BOTTOM.png"},
@@ -391,7 +367,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/EMPORIO+ARMANI_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/EMPORIO+ARMANI_BOTTOM.png"},
@@ -406,7 +381,6 @@ func AddSiVillages() {
 			Description:   "진 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DSQUARED2_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DSQUARED2_BOTTOM.png"},
@@ -421,7 +395,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DIRES+VAN+NOTEN_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DIRES+VAN+NOTEN_BOTTOM.png"},
@@ -436,7 +409,6 @@ func AddSiVillages() {
 			Description:   "진 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DIESEL_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DIESEL_BOTTOM.png"},
@@ -451,7 +423,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Della+Lana_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Della+Lana_BOTTOM.png"},
@@ -466,7 +437,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Chloe_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Chloe_BOTTOM.png"},
@@ -481,7 +451,6 @@ func AddSiVillages() {
 			Description:   "클래식",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Brunello+Cucinelli_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Brunello+Cucinelli_BOTTOM.png"},
@@ -496,7 +465,6 @@ func AddSiVillages() {
 			Description:   "진 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/ARMANI+EXCHANGE_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/ARMANI+EXCHANGE_BOTTOM.png"},
@@ -511,7 +479,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/alexanderwang_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/alexanderwang_BOTTOM.png"},
@@ -526,7 +493,6 @@ func AddSiVillages() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sivillage",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Acne+Studios_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Acne+Studios_BOTTOM.png"},

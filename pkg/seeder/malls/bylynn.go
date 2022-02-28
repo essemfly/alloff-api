@@ -27,7 +27,6 @@ func AddBylynn() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    modulename,
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/KENNETHLADY_TOP:BOTTOM.png"},
@@ -42,7 +41,6 @@ func AddBylynn() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    modulename,
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/LYNN_TOP:BOTTOM.png"},
@@ -57,7 +55,6 @@ func AddBylynn() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    modulename,
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/LINE_TOP:BOTTOM.png"},
@@ -72,7 +69,6 @@ func AddBylynn() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    modulename,
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/MOE_TOP:BOTTOM.png"},

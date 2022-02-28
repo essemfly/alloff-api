@@ -41,7 +41,6 @@ func AddLotteFashion() {
 			Description:   "트레디셔널 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/HAZZYS+LADIES_TOP.png"},
@@ -57,7 +56,6 @@ func AddLotteFashion() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/JILLSTUART+NEW+YORK_TOP.png"},
@@ -73,7 +71,6 @@ func AddLotteFashion() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/JOSEPH_TOP.png"},
@@ -89,7 +86,6 @@ func AddLotteFashion() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/ISABEL+MARANT_TOP:BOTTOM.png"},
@@ -104,7 +100,6 @@ func AddLotteFashion() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Officine+Generale_TOP.png"},
@@ -120,7 +115,6 @@ func AddLotteFashion() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VINCE_TOP.png"},
@@ -136,7 +130,6 @@ func AddLotteFashion() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VANESSABRUNO_TOP.png"},
@@ -152,7 +145,6 @@ func AddLotteFashion() {
 			Description:   "커리어",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DAKS+LADIES_TOP.png"},
@@ -168,7 +160,6 @@ func AddLotteFashion() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/N21_TOP.png"},
@@ -184,7 +175,6 @@ func AddLotteFashion() {
 			Description:   "트레디셔널 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/JSNY_TOP:BOTTOM.png"},
@@ -199,7 +189,6 @@ func AddLotteFashion() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
-			Modulename:    "lottefashion",
 			InMaintenance: false,
 			SizeGuide:     []domain.SizeGuideDAO{},
 		},

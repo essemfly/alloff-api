@@ -32,7 +32,6 @@ func AddNiceClaup() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "niceclaup",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/NICECLAUP_TOP:BOTTOM.png"},

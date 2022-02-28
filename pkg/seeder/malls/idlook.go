@@ -58,7 +58,6 @@ func AddIdLook() {
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "idlook",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/eleventy_TOP:BOTTOM.png"},
 				{Label: "데님/진", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/eleventy_DENIM:JEAN.png"},
@@ -74,7 +73,6 @@ func AddIdLook() {
 			Description: "컨템포러리",
 			Created:     time.Now(),
 			IsOpen:      false,
-			Modulename:  "idlook",
 			SizeGuide:   []domain.SizeGuideDAO{},
 		},
 		"Q": {
@@ -86,7 +84,6 @@ func AddIdLook() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "idlook",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/sandro_TOP:BOTTOM.png"},
 				{Label: "데님/진", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/sandro_DENIM:JEAN.png"},
@@ -102,7 +99,6 @@ func AddIdLook() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "idlook",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Berenice_TOP:BOTTOM.png"},
 				{Label: "데님/진", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Berenice_DENIM:JEAN.png"},
@@ -118,7 +114,6 @@ func AddIdLook() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "idlook",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Maje_TOP:BOTTOM.png"},
 				{Label: "데님/진", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Maje_DENIM:JEAN.png"},
@@ -134,7 +129,6 @@ func AddIdLook() {
 			Description:   "라이프 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "idlook",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/marimekko_TOP:BOTTOM.png"},
 			},
@@ -148,7 +142,6 @@ func AddIdLook() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "idlook",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/RENEEVON_TOP:BOTTOM.png"},
 			},
@@ -162,7 +155,6 @@ func AddIdLook() {
 			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "idlook",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/CLAUDIE+PIERLOT_TOP:BOTTOM.png"},
 				{Label: "데님/진", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/CLAUDIE+PIERLOT_DENIM:JEAN.png"},
@@ -178,7 +170,6 @@ func AddIdLook() {
 			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "idlook",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/A.P.C_TOP.png"},
 				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/A.P.C_BOTTOM.png"},

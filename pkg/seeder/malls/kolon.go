@@ -33,7 +33,6 @@ func AddKolonMall() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "kolon",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/IRO_TOP.png"},
@@ -50,7 +49,6 @@ func AddKolonMall() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "kolon",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/epigram_TOP:BOTTOM.png"},
@@ -65,7 +63,6 @@ func AddKolonMall() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "kolon",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Saint+James_TOP.png"},
@@ -81,7 +78,6 @@ func AddKolonMall() {
 			Onpopular:     true,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "kolon",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/LUCKY+CHOUETTE_TOP.png"},

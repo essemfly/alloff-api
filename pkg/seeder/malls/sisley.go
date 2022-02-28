@@ -30,7 +30,6 @@ func AddSisley() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "sisley",
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/SISLEY_TOP.png"},
 				{Label: "드레스", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/SISLEY_DRESS.png"},

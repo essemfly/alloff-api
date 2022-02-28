@@ -22,7 +22,6 @@ func AddIDFMall() {
 			Onpopular:     true,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "idfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/SHESMISS_TOP:BOTTOM.png"},
@@ -37,7 +36,6 @@ func AddIDFMall() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    "idfmall",
 			InMaintenance: false,
 			SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/LIST_TOP:BOTTOM.png"},

@@ -22,7 +22,6 @@ func AddTheAMall() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    modulename,
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/PLASTICISLAND_TOP:BOTTOM.png"},
 			},
@@ -36,7 +35,6 @@ func AddTheAMall() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    modulename,
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/EGOIST_TOP:BOTTOM.png"},
 			},
@@ -50,7 +48,6 @@ func AddTheAMall() {
 			Onpopular:     false,
 			Created:       time.Now(),
 			IsOpen:        true,
-			Modulename:    modulename,
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/LAP_TOP:BOTTOM.png"},
 			},

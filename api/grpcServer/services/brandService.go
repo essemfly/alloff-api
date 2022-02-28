@@ -34,7 +34,6 @@ func (s *BrandService) CreateBrand(ctx context.Context, req *grpcServer.CreateBr
 		Onpopular:     false,
 		Created:       time.Now(),
 		IsOpen:        false,
-		Modulename:    "manual",
 		InMaintenance: false,
 		SizeGuide:     sizeGuideDaos,
 	}

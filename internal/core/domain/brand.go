@@ -17,7 +17,6 @@ type BrandDAO struct {
 	Category              []*CategoryDAO
 	SizeGuide             []SizeGuideDAO
 	Created               time.Time
-	Modulename            string
 	Onpopular             bool
 	MaxDiscountRate       int
 	IsOpen                bool

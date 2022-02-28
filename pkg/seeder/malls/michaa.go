@@ -36,7 +36,6 @@ func AddMichaa() {
 		Description:   "컨템포러리",
 		Created:       time.Now(),
 		IsOpen:        true,
-		Modulename:    "michaa",
 		InMaintenance: false,
 		SizeGuide: []domain.SizeGuideDAO{
 			{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/MICHAA_TOP:BOTTOM.png"},

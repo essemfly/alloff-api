@@ -26,7 +26,6 @@ func AddBenetton() {
 			Description:   "컨템포러리 캐주얼",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/BENETTON.png",
 			Onpopular:     false,
-			Modulename:    "benetton",
 			Created:       time.Now(),
 			IsOpen:        true,
 			InMaintenance: false,
