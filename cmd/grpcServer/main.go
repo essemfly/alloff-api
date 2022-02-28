@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -12,8 +13,17 @@ import (
 	"google.golang.org/grpc"
 )
 
+var (
+	GitInfo   = "no info"
+	BuildTime = "no datetime"
+	Env       = "local"
+)
+
 func main() {
-	conf := cmd.SetBaseConfig()
+	fmt.Println("Git commit information: ", GitInfo)
+	fmt.Println("Build date, time: ", BuildTime)
+
+	conf := cmd.SetBaseConfig(Env)
 
 	port := os.Getenv("GRPC_PORT")
 	if port == "" {

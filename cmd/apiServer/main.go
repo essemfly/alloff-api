@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -21,8 +22,17 @@ import (
 	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
+var (
+	GitInfo   = "no info"
+	BuildTime = "no datetime"
+	Env       = "local"
+)
+
 func main() {
-	conf := cmd.SetBaseConfig()
+	fmt.Println("Git commit information: ", GitInfo)
+	fmt.Println("Build date, time: ", BuildTime)
+
+	conf := cmd.SetBaseConfig(Env)
 
 	port := os.Getenv("PORT")
 	if port == "" {

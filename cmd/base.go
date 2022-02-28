@@ -8,8 +8,8 @@ import (
 	"github.com/lessbutter/alloff-api/internal/storage/postgres"
 )
 
-func SetBaseConfig() config.Configuration {
-	conf := config.GetConfiguration()
+func SetBaseConfig(Env string) config.Configuration {
+	conf := config.GetConfiguration(Env)
 	log.Println(conf)
 
 	conn := mongo.NewMongoDB(conf)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -11,14 +12,22 @@ import (
 	"github.com/lessbutter/alloff-api/pkg/brand"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/crawler/malls"
-	"github.com/lessbutter/alloff-api/pkg/product"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const numWorkers = 10
+const numWorkers = 20
+
+var (
+	GitInfo   = "no info"
+	BuildTime = "no datetime"
+	Env       = "local"
+)
 
 func main() {
-	cmd.SetBaseConfig()
+	fmt.Println("Git commit information: ", GitInfo)
+	fmt.Println("Build date, time: ", BuildTime)
+
+	cmd.SetBaseConfig(Env)
 
 	crawlModules := []string{
 		// "lottefashion",
@@ -28,7 +37,7 @@ func main() {
 		// "kolon",
 		// "babathe",
 		// "idfmall",
-		// "daehyun",
+		"daehyun",
 		// "niceclaup",
 		// "lacoste",
 		// "sisley",
@@ -43,7 +52,7 @@ func main() {
 
 	brand.UpdateBrandCategory()
 	brand.UpdateBrandDiscountRate()
-	product.MakeSnapshot()
+	// product.MakeSnapshot()
 	crawler.WriteCrawlRecords(crawlModules)
 }
 

@@ -7,7 +7,19 @@ import (
 
 func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 	alloffCategoryName := ""
-	totalScore := 0
+	alloffCategoryID := ""
+	if pd.AlloffCategories != nil {
+		if pd.AlloffCategories.Done {
+			if pd.AlloffCategories.Second != nil {
+				alloffCategoryName = pd.AlloffCategories.Second.Name
+				alloffCategoryID = pd.AlloffCategories.Second.ID.Hex()
+			} else if pd.AlloffCategories.First != nil {
+				alloffCategoryName = pd.AlloffCategories.First.Name
+				alloffCategoryID = pd.AlloffCategories.First.ID.Hex()
+			}
+		}
+	}
+	totalScore := pd.Score.TotalScore
 
 	return &grpcServer.ProductMessage{
 		AlloffProductId:      pd.ID.Hex(),
@@ -28,6 +40,7 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 		DescriptionImages:    pd.SalesInstruction.Description.Images,
 		CategoryName:         pd.ProductInfo.Category.Name,
 		AlloffCategoryName:   alloffCategoryName,
+		AlloffCategoryId:     alloffCategoryID,
 		IsRemoved:            pd.Removed,
 		IsSoldout:            pd.Soldout,
 		TotalScore:           int32(totalScore),
