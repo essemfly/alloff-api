@@ -386,9 +386,10 @@ type ProductGroup struct {
 }
 
 type ProductQueryInput struct {
-	Offset  int    `json:"offset"`
-	Limit   int    `json:"limit"`
-	Keyword string `json:"keyword"`
+	Offset  int           `json:"offset"`
+	Limit   int           `json:"limit"`
+	Keyword string        `json:"keyword"`
+	Sorting []SortingType `json:"sorting"`
 }
 
 type ProductsInput struct {

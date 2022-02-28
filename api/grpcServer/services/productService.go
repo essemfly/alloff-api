@@ -49,7 +49,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	if req.Query.SearchQuery != nil {
 		searchKeyword = *req.Query.SearchQuery
 	}
-	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), moduleName, brandID, categoryID, alloffCategoryID, searchKeyword)
+	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), moduleName, brandID, categoryID, alloffCategoryID, searchKeyword, "", nil)
 	if err != nil {
 		return nil, err
 	}

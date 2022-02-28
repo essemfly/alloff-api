@@ -3084,6 +3084,7 @@ input ProductQueryInput {
   offset: Int!
   limit: Int!
   keyword: String!
+  sorting: [SortingType!]
 }
 
 extend type Query {
@@ -14922,6 +14923,14 @@ func (ec *executionContext) unmarshalInputProductQueryInput(ctx context.Context,
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("keyword"))
 			it.Keyword, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sorting":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sorting"))
+			it.Sorting, err = ec.unmarshalOSortingType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSortingTypeᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}

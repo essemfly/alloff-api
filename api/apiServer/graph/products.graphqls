@@ -119,6 +119,7 @@ input ProductQueryInput {
   offset: Int!
   limit: Int!
   keyword: String!
+  sorting: [SortingType!]
 }
 
 extend type Query {

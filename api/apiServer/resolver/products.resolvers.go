@@ -26,7 +26,32 @@ func (r *mutationResolver) LikeProduct(ctx context.Context, input *model.LikePro
 }
 
 func (r *queryResolver) Find(ctx context.Context, input model.ProductQueryInput) (*model.ProductsOutput, error) {
-	pdDaos, cnt, err := product.ProductsSearchListing(input.Offset, input.Limit, "", "", "", "", input.Keyword)
+
+	priceSorting := ""
+	var priceRange []string
+	for _, sorting := range input.Sorting {
+		if sorting == model.SortingTypePriceAscending {
+			priceSorting = "ascending"
+		} else if sorting == model.SortingTypePriceDescending {
+			priceSorting = "descending"
+		} else if sorting == model.SortingTypeDiscountrateAscending {
+			priceSorting = "discountrateAescending"
+		} else if sorting == model.SortingTypeDiscountrateDescending {
+			priceSorting = "discountrateDescending"
+		} else {
+			if sorting == model.SortingTypeDiscount0_30 {
+				priceRange = append(priceRange, "30")
+			} else if sorting == model.SortingTypeDiscount30_50 {
+				priceRange = append(priceRange, "50")
+			} else if sorting == model.SortingTypeDiscount50_70 {
+				priceRange = append(priceRange, "70")
+			} else {
+				priceRange = append(priceRange, "100")
+			}
+		}
+	}
+
+	pdDaos, cnt, err := product.ProductsSearchListing(input.Offset, input.Limit, "", "", "", "", input.Keyword, priceSorting, priceRange)
 	if err != nil {
 		return nil, err
 	}
