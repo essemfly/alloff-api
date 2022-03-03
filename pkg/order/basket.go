@@ -53,6 +53,10 @@ func (basket *Basket) IsValid() []error {
 		if !isValidQuantity {
 			errs = append(errs, errors.New("invalid product option quantity "+item.Product.ID.Hex()))
 		}
+
+		if item.Product.Removed {
+			errs = append(errs, errors.New(""))
+		}
 	}
 
 	if basket.ProductPrice != totalPrices {
