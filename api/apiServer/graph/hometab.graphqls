@@ -33,6 +33,16 @@ type TopBanner {
   subTitle: String!
 }
 
+type ProductsResult {
+  products: [Product!]!
+  lastUpdated: Date!
+}
+
+type BrandsResult {
+  brands: [Brand!]!
+  lastUpdated: Date!
+}
+
 extend type Query {
   homeTabItems(onlyLive: Boolean!, offset: Int, limit: Int): [HomeTabItem!]!
   bestProducts(
@@ -40,8 +50,8 @@ extend type Query {
     limit: Int!
     alloffCategoryId: String!
     brief: Boolean!
-  ): [Product!]!
-  bestBrands(offset: Int!, limit: Int!): [Brand!]!
+  ): ProductsResult!
+  bestBrands(offset: Int!, limit: Int!): BrandsResult!
   bargainProducts(
     offset: Int!
     limit: Int!

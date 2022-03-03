@@ -26,7 +26,6 @@ func (r *mutationResolver) LikeProduct(ctx context.Context, input *model.LikePro
 }
 
 func (r *queryResolver) Find(ctx context.Context, input model.ProductQueryInput) (*model.ProductsOutput, error) {
-
 	priceSorting := ""
 	var priceRange []string
 	for _, sorting := range input.Sorting {

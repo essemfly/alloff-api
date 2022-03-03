@@ -6,6 +6,7 @@ package resolver
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
@@ -47,17 +48,20 @@ func (r *queryResolver) HomeTabItems(ctx context.Context, onlyLive bool, offset 
 	return retItems, nil
 }
 
-func (r *queryResolver) BestProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) ([]*model.Product, error) {
+func (r *queryResolver) BestProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) (*model.ProductsResult, error) {
 	bestproductDao, err := ioc.Repo.BestProducts.GetLatest(alloffCategoryID)
 	if err != nil {
 		log.Println("Err occured in get latest best products", err)
 		return nil, err
 	}
 
-	return mapper.MapBestProducts(bestproductDao, brief, offset, limit), nil
+	return &model.ProductsResult{
+		Products:    mapper.MapBestProducts(bestproductDao, brief, offset, limit),
+		LastUpdated: bestproductDao.CreatedAt.String(),
+	}, nil
 }
 
-func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) ([]*model.Brand, error) {
+func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) (*model.BrandsResult, error) {
 	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, true, nil)
 	if err != nil {
 		return nil, err
@@ -68,7 +72,10 @@ func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) (
 		brands = append(brands, mapper.MapBrandDaoToBrand(brandDao, false))
 	}
 
-	return brands, nil
+	return &model.BrandsResult{
+		Brands:      brands,
+		LastUpdated: time.Now().String(),
+	}, nil
 }
 
 func (r *queryResolver) BargainProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) ([]*model.Product, error) {

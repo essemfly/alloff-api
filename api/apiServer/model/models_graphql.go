@@ -81,6 +81,11 @@ type BrandsInput struct {
 	OnlyLikes *bool `json:"onlyLikes"`
 }
 
+type BrandsResult struct {
+	Brands      []*Brand `json:"brands"`
+	LastUpdated string   `json:"lastUpdated"`
+}
+
 type CancelDescription struct {
 	RefundAvailable bool `json:"refundAvailable"`
 	ChangeAvailable bool `json:"changeAvailable"`
@@ -405,6 +410,11 @@ type ProductsOutput struct {
 	Offset     int        `json:"offset"`
 	Limit      int        `json:"limit"`
 	Products   []*Product `json:"products"`
+}
+
+type ProductsResult struct {
+	Products    []*Product `json:"products"`
+	LastUpdated string     `json:"lastUpdated"`
 }
 
 type RefreshTokenInput struct {
