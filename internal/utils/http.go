@@ -106,3 +106,14 @@ func GetSSFHeaders() map[string]string {
 		"Cookie": "PCID=" + s,
 	}
 }
+
+func GetTheoutnetHeaders() map[string]string {
+	return map[string]string{
+		"x-ibm-client-id": "19c36e19-5bc7-4de4-a4a9-65ffb9dcb727",
+		"accept":          "*/*",
+		"accept-encoding": "gzip, deflate, br",
+		"connection":      "keep-alive",
+		"user-agent":      "PostmanRuntime/7.29.0",
+		"content-type":    "application/x-www-form-urlencoded",
+	}
+}
