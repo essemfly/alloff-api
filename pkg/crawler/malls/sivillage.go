@@ -102,7 +102,7 @@ func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inv
 
 	c.OnHTML(".gds_chk", func(e *colly.HTMLElement) {
 		e.ForEach("dl", func(_ int, el *colly.HTMLElement) {
-			if el.ChildText("dt") == "사이즈" {
+			if el.ChildText("dt") == "옵션" {
 				el.ForEach("dd ul li", func(_ int, ele *colly.HTMLElement) {
 					sizeInClass := ele.ChildAttr("button", "class")
 					size := ele.ChildText("button")
