@@ -75,6 +75,20 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 				return err
 			}
 
+			pd, err := ioc.Repo.Products.Get(orderItemDao.ProductID)
+			if err != nil {
+				return err
+			}
+			err = pd.Revert(orderItemDao.Size, orderItemDao.Quantity)
+			if err != nil {
+				return err
+			}
+			_, err = ioc.Repo.Products.Upsert(pd)
+			if err != nil {
+				log.Println("productDao Update", err)
+				return err
+			}
+
 			newRefundInfo := &domain.RefundItemDAO{
 				OrderID:      orderDao.ID,
 				OrderItemID:  orderItemDao.ID,
