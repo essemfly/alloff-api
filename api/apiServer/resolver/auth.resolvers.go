@@ -89,6 +89,10 @@ func (r *mutationResolver) UpdateUserInfo(ctx context.Context, input model.UserI
 		user.Postcode = *input.Postcode
 	}
 
+	if input.Name != nil {
+		user.Name = *input.Name
+	}
+
 	if input.PersonalCustomsNumber != nil {
 		user.PersonalCustomsNumber = *input.PersonalCustomsNumber
 	}
