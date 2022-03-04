@@ -87,10 +87,6 @@ func (s *NotiService) SendNoti(ctx context.Context, req *grpcServer.SendNotiRequ
 			continue
 		}
 
-		if noti.NotificationType != domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION {
-			continue
-		}
-
 		err := notification.SendNotification(noti)
 		if err != nil {
 			log.Println("err occured in send noti", err)
