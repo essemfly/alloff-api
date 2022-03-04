@@ -38,8 +38,10 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.OriginalPrice, alloffPrice)
 
 	isSoldout := true
-	if len(inventories) > 0 {
-		isSoldout = false
+	for _, inv := range inventories {
+		if inv.Quantity > 0 {
+			isSoldout = false
+		}
 	}
 
 	return &model.Product{
