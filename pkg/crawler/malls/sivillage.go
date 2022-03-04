@@ -76,7 +76,11 @@ func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSource
 		}
 	})
 
-	c.Visit(source.CrawlUrl + "&page_size=80")
+	err = c.Visit(source.CrawlUrl + "&page_size=80")
+	if err != nil {
+		log.Println("err on crawling", err)
+	}
+
 	crawler.PrintCrawlResults(source, totalProducts)
 
 	<-worker
@@ -101,21 +105,37 @@ func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inv
 	})
 
 	c.OnHTML(".gds_chk", func(e *colly.HTMLElement) {
+		sizeFound := false
 		e.ForEach("dl", func(_ int, el *colly.HTMLElement) {
 			if el.ChildText("dt") == "옵션" {
 				el.ForEach("dd ul li", func(_ int, ele *colly.HTMLElement) {
 					sizeInClass := ele.ChildAttr("button", "class")
 					size := ele.ChildText("button")
+					size = strings.Trim(size, " ")
 					if len(size) > 0 {
+						sizeFound = true
 						sizes = append(sizes, size)
-					}
-					if !strings.Contains(sizeInClass, "disabled") {
-						inventories = append(inventories, domain.InventoryDAO{
-							Size:     size,
-							Quantity: 10,
-						})
+						if !strings.Contains(sizeInClass, "disabled") {
+							inventories = append(inventories, domain.InventoryDAO{
+								Size:     size,
+								Quantity: 10,
+							})
+						}
 					}
 				})
+				if !sizeFound {
+					el.ForEach("dd span ul li", func(_ int, ele *colly.HTMLElement) {
+						size := ele.ChildText(".ee_txt")
+						size = strings.Trim(size, " ")
+						sizes = append(sizes, size)
+						if ele.Attr("class") != "ee_disabled" {
+							inventories = append(inventories, domain.InventoryDAO{
+								Size:     size,
+								Quantity: 10,
+							})
+						}
+					})
+				}
 			}
 		})
 	})
