@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer"
@@ -9,6 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/notification"
+	"github.com/lessbutter/alloff-api/internal/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -20,14 +22,29 @@ type NotiService struct {
 
 // (TODO) 현재는 timedeal 만 생성 할 수 있다. + 이 코드는 pkg안의 코드로 바껴서 사용되어야 한다.
 func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNotiRequest) (*grpcServer.CreateNotiResponse, error) {
-	notiDao := &domain.NotificationDAO{
-		Status:           domain.NOTIFICATION_READY,
-		NotificationType: domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION,
-		Title:            req.Title,
-		Message:          req.Message,
-		Notificationid:   "/exhibition" + req.ReferenceId,
-		ReferenceID:      "/" + req.ReferenceId,
-		NavigateTo:       "/exhibition",
+	var notiDao *domain.NotificationDAO
+	if req.NotiType == string(domain.NOTIFICATION_GENERAL_NOTIFICATION) {
+		notiDao = &domain.NotificationDAO{
+			Status:           domain.NOTIFICATION_READY,
+			NotificationType: domain.NOTIFICATION_GENERAL_NOTIFICATION,
+			Title:            req.Title,
+			Message:          req.Message,
+			Notificationid:   "/" + utils.CreateShortUUID(),
+			ReferenceID:      req.ReferenceId,
+			NavigateTo:       "/",
+		}
+	} else if req.NotiType == string(domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION) {
+		notiDao = &domain.NotificationDAO{
+			Status:           domain.NOTIFICATION_READY,
+			NotificationType: domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION,
+			Title:            req.Title,
+			Message:          req.Message,
+			Notificationid:   "/exhibition" + req.ReferenceId,
+			ReferenceID:      "/" + req.ReferenceId,
+			NavigateTo:       "/exhibition",
+		}
+	} else {
+		return nil, errors.New("invalid notification type")
 	}
 
 	devices, err := ioc.Repo.Devices.ListAllowed()
