@@ -14,18 +14,19 @@ const (
 )
 
 type ProductGroupDAO struct {
-	ID          primitive.ObjectID `bson:"_id, omitempty"`
-	Title       string             `json:"title"`
-	ShortTitle  string             `json:"shorttitle"`
-	Instruction []string           `json:"instruction"`
-	ImgUrl      string             `json:"imgurl"`
-	NumAlarms   int
-	Products    []*ProductPriorityDAO
-	GroupType   ProductGroupType
-	StartTime   time.Time
-	FinishTime  time.Time
-	Created     time.Time
-	Updated     time.Time
+	ID           primitive.ObjectID `bson:"_id, omitempty"`
+	Title        string             `json:"title"`
+	ShortTitle   string             `json:"shorttitle"`
+	Instruction  []string           `json:"instruction"`
+	ImgUrl       string             `json:"imgurl"`
+	NumAlarms    int
+	Products     []*ProductPriorityDAO
+	GroupType    ProductGroupType
+	StartTime    time.Time
+	FinishTime   time.Time
+	Created      time.Time
+	Updated      time.Time
+	ExhibitionID string
 }
 
 type ProductPriorityDAO struct {

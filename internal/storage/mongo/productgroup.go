@@ -149,6 +149,27 @@ func (repo *productGroupRepo) ListExhibitionPg(offset, limit int) ([]*domain.Pro
 	return productGroups, int(totalCount), nil
 }
 
+func (repo *productGroupRepo) ListPgInExhibition(exhibitionID string) ([]*domain.ProductGroupDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{"exhibitionid": exhibitionID}
+	cur, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	var productGroups []*domain.ProductGroupDAO
+	err = cur.All(ctx, &productGroups)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	return productGroups, nil
+}
+
 func (repo *productGroupRepo) Upsert(pg *domain.ProductGroupDAO) (*domain.ProductGroupDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
