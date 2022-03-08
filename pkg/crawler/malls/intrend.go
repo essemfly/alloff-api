@@ -152,12 +152,24 @@ func getIntrendDetail(productUrl string) (title string, imageUrls []string, size
 		})
 	})
 
+	c.OnHTML("#description .details-tab-content", func(e *colly.HTMLElement) {
+		description["설명"] = e.ChildText("p")
+	})
+
 	c.OnHTML("#composition .details-tab-content", func(e *colly.HTMLElement) {
 		texts := ""
 		e.ForEach("ul li", func(idx int, el *colly.HTMLElement) {
 			texts += el.Text
 		})
 		description["소재"] = texts
+	})
+
+	c.OnHTML("#fitting .details-tab-content", func(e *colly.HTMLElement) {
+		texts := ""
+		e.ForEach("ul li", func(idx int, el *colly.HTMLElement) {
+			texts += el.Text
+		})
+		description["모델"] = texts
 	})
 
 	c.Visit(productUrl)

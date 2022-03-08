@@ -102,7 +102,6 @@ func CrawlTheoutnet(worker chan bool, done chan bool, source *domain.CrawlSource
 	values.Add("pageNumber", strconv.Itoa(pageNum))
 	values.Add("category", "/designers/"+source.BrandIdentifier+source.Category.CatIdentifier)
 	url.RawQuery = values.Encode()
-
 	errorMessage := "Crawl Failed: Source " + source.Category.KeyName
 	resp, err := utils.RequestRetryer(url.String(), utils.REQUEST_GET, utils.GetTheoutnetHeaders(), "", errorMessage)
 	if err != nil {
@@ -165,20 +164,39 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 	for _, pd := range pds {
 		sizes, inventories, description := CrawlTheoutnetDetail(pd.Seo.SeoUrl)
 
+		imageKeys := []string{}
 		images := []string{}
 		for _, imgResponse := range pd.Images {
-			if imgResponse.Size.Width == 580 {
+			alreadyRegistered := false
+			for _, imageKey := range imageKeys {
+				if imageKey == imgResponse.View {
+					alreadyRegistered = true
+					break
+				}
+			}
+
+			if !alreadyRegistered && imgResponse.Size.Width > 500 {
 				if strings.HasPrefix(imgResponse.Url, "//") {
 					images = append(images, "https:"+imgResponse.Url)
 				} else {
 					images = append(images, imgResponse.Url)
 				}
+				imageKeys = append(imageKeys, imgResponse.View)
 			}
 		}
 
 		colors := []string{}
 		for _, colorResp := range pd.Colors {
 			colors = append(colors, colorResp.Label)
+		}
+
+		if len(sizes) == 0 && len(colors) > 0 {
+			for _, color := range colors {
+				inventories = append(inventories, domain.InventoryDAO{
+					Quantity: 10,
+					Size:     color,
+				})
+			}
 		}
 
 		addRequest := &product.ProductCrawlingAddRequest{
@@ -208,6 +226,15 @@ func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []doma
 		colly.AllowedDomains("www.theoutnet.com", "www.theoutnet.com:443"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
 	)
+
+	c.OnRequest(func(r *colly.Request) {
+		r.Headers.Set("x-ibm-client-id", "19c36e19-5bc7-4de4-a4a9-65ffb9dcb727")
+		r.Headers.Set("accept", "*/*")
+		r.Headers.Set("accept-encoding", "gzip, deflate, br")
+		r.Headers.Set("connection", "keep-alive")
+		r.Headers.Set("user-agent", "PostmanRuntime/7.29.0")
+		r.Headers.Set("content-type", "application/x-www-form-urlencoded")
+	})
 
 	urlPrefix := "https://www.theoutnet.com/en-de/shop/product"
 	description = map[string]string{}

@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
-const categoryFileSeeder = "pkg/seeder/category_classifier_seeder_220217.csv"
+const categoryFileSeeder = "pkg/seeder/category_classifier_seeder_220308.csv"
 
 type CsvData struct {
 	OriginalName    string
@@ -31,7 +31,10 @@ func MakeClassifyRules() {
 	reader := csv.NewReader(bufio.NewReader(file))
 	reader.LazyQuotes = true
 
-	rows, _ := reader.ReadAll()
+	rows, err := reader.ReadAll()
+	if err != nil {
+		log.Println("Err found in reader", err)
+	}
 
 	catNameMapper := map[string]*domain.AlloffCategoryDAO{}
 
