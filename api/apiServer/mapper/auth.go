@@ -7,14 +7,15 @@ import (
 
 func MapUserDaoToUser(userDao *domain.UserDAO) *model.User {
 	return &model.User{
-		ID:            userDao.ID.Hex(),
-		UUID:          userDao.Uuid,
-		Mobile:        userDao.Mobile,
-		Name:          &userDao.Name,
-		Email:         &userDao.Email,
-		BaseAddress:   &userDao.BaseAddress,
-		DetailAddress: &userDao.DetailAddress,
-		Postcode:      &userDao.Postcode,
+		ID:                    userDao.ID.Hex(),
+		UUID:                  userDao.Uuid,
+		Mobile:                userDao.Mobile,
+		Name:                  &userDao.Name,
+		Email:                 &userDao.Email,
+		BaseAddress:           &userDao.BaseAddress,
+		DetailAddress:         &userDao.DetailAddress,
+		Postcode:              &userDao.Postcode,
+		PersonalCustomsNumber: &userDao.PersonalCustomsNumber,
 	}
 }
 

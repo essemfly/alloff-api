@@ -35,6 +35,10 @@ func BuildBasketItems(input *model.OrderInput) ([]*order.BasketItem, error) {
 }
 
 func BuildPaymentDao(input *model.PaymentClientInput) *domain.PaymentDAO {
+	personalCustomsNumber := ""
+	if input.PersonalCustomsNumber != nil {
+		personalCustomsNumber = *input.PersonalCustomsNumber
+	}
 	return &domain.PaymentDAO{
 		Pg:                    input.Pg,
 		PayMethod:             input.PayMethod,
@@ -45,7 +49,7 @@ func BuildPaymentDao(input *model.PaymentClientInput) *domain.PaymentDAO {
 		BuyerMobile:           *input.BuyerMobile,
 		BuyerAddress:          *input.BuyerAddress,
 		BuyerPostCode:         *input.BuyerPostCode,
-		PersonalCustomsNumber: "",
+		PersonalCustomsNumber: personalCustomsNumber,
 		Company:               "alloff",
 		AppScheme:             "appscheme",
 	}
