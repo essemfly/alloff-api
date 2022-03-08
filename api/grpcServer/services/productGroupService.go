@@ -2,13 +2,14 @@ package services
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/pkg/exhibition"
+	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -184,14 +185,11 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 		return nil, err
 	}
 
-	if newPgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
-		ex, _ := exhibition.FindExhibitionInProductGroup(newPgDao.ID.Hex())
-		if ex != nil {
-			exhibition.UpdateExhibition(ex)
-		}
+	updatedPgDao, err := broker.ProductGroupSyncer(newPgDao)
+	if err != nil {
+		log.Println("product group syncing error", err)
 	}
-
-	return &grpcServer.EditProductGroupResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
+	return &grpcServer.EditProductGroupResponse{Pg: mapper.ProductGroupMapper(updatedPgDao)}, nil
 }
 
 func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, req *grpcServer.PushProductsInPgRequest) (*grpcServer.PushProductsInPgResponse, error) {
@@ -227,14 +225,11 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		return nil, err
 	}
 
-	if newPgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
-		ex, _ := exhibition.FindExhibitionInProductGroup(newPgDao.ID.Hex())
-		if ex != nil {
-			exhibition.UpdateExhibition(ex)
-		}
+	updatedPgDao, err := broker.ProductGroupSyncer(newPgDao)
+	if err != nil {
+		log.Println("product group syncing error", err)
 	}
-
-	return &grpcServer.PushProductsInPgResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
+	return &grpcServer.PushProductsInPgResponse{Pg: mapper.ProductGroupMapper(updatedPgDao)}, nil
 }
 
 func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, req *grpcServer.RemoveProductInPgRequest) (*grpcServer.RemoveProductInPgResponse, error) {
@@ -259,12 +254,10 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 		return nil, err
 	}
 
-	if newPgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
-		ex, _ := exhibition.FindExhibitionInProductGroup(newPgDao.ID.Hex())
-		if ex != nil {
-			exhibition.UpdateExhibition(ex)
-		}
+	updatedPgDao, err := broker.ProductGroupSyncer(newPgDao)
+	if err != nil {
+		log.Println("product group syncing error", err)
 	}
 
-	return &grpcServer.RemoveProductInPgResponse{Pg: mapper.ProductGroupMapper(newPgDao)}, nil
+	return &grpcServer.RemoveProductInPgResponse{Pg: mapper.ProductGroupMapper(updatedPgDao)}, nil
 }

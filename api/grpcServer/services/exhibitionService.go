@@ -9,6 +9,8 @@ import (
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/pkg/broker"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ExhibitionService struct {
@@ -101,6 +103,8 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 		return nil, err
 	}
 
+	broker.ExhibitionSyncer(newExhibitionDao)
+
 	return &grpcServer.EditExhibitionResponse{
 		Exhibition: mapper.ExhibitionMapper(newExhibitionDao),
 	}, nil
@@ -113,6 +117,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
 	exDao := &domain.ExhibitionDAO{
+		ID:             primitive.NewObjectID(),
 		BannerImage:    req.BannerImage,
 		ThumbnailImage: req.ThumbnailImage,
 		Title:          req.Title,
@@ -132,6 +137,8 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		}
 		pg.StartTime = startTimeObj
 		pg.FinishTime = startTimeObj
+		pg.GroupType = domain.PRODUCT_GROUP_EXHIBITION
+		pg.ExhibitionID = exDao.ID.Hex()
 		newPg, err := ioc.Repo.ProductGroups.Upsert(pg)
 		if err != nil {
 			log.Println("update product group failed: "+pgID, err)

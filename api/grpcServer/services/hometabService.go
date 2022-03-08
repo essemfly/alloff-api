@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 	"github.com/lessbutter/alloff-api/pkg/hometab"
 )
 
@@ -88,6 +89,8 @@ func (s *HomeTabService) EditHomeTabItem(ctx context.Context, req *grpcServer.Ed
 	if err != nil {
 		return nil, err
 	}
+
+	broker.HomeTabSyncer()
 
 	return &grpcServer.EditHomeTabItemResponse{
 		Item: mapper.HomeTabItemMapper(newItemDao),
