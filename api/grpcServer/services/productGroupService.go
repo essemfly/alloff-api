@@ -105,7 +105,11 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 			TotalCounts: 0,
 		}, nil
 	} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
-		pgDaos, cnt, err := ioc.Repo.ProductGroups.ListExhibitionPg(int(req.Offset), int(req.Limit))
+		keyword := ""
+		if *req.Query.SearchQuery != "" {
+			keyword = *req.Query.SearchQuery
+		}
+		pgDaos, cnt, err := ioc.Repo.ProductGroups.ListExhibitionPg(int(req.Offset), int(req.Limit), keyword)
 		if err != nil {
 			return nil, err
 		}

@@ -122,7 +122,7 @@ func (repo *productGroupRepo) ListTimedeals(offset, limit int, isLive bool) ([]*
 	return productGroups, nil
 }
 
-func (repo *productGroupRepo) ListExhibitionPg(offset, limit int) ([]*domain.ProductGroupDAO, int, error) {
+func (repo *productGroupRepo) ListExhibitionPg(offset, limit int, keyword string) ([]*domain.ProductGroupDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -131,6 +131,14 @@ func (repo *productGroupRepo) ListExhibitionPg(offset, limit int) ([]*domain.Pro
 	outDateOptions.SetSort(bson.D{{Key: "finishtime", Value: -1}})
 	outDateOptions.SetSkip(int64(offset))
 	outDateOptions.SetLimit(int64(limit))
+
+	if keyword != "" {
+		filter["$or"] = []bson.M{
+			{"title": primitive.Regex{Pattern: keyword, Options: "i"}},
+			{"shorttitle": primitive.Regex{Pattern: keyword, Options: "i"}},
+			{"_id": primitive.Regex{Pattern: keyword, Options: "i"}},
+		}
+	}
 
 	totalCount, _ := repo.col.CountDocuments(ctx, filter)
 	cur, err := repo.col.Find(ctx, filter, outDateOptions)
