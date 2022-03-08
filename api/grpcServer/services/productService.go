@@ -3,13 +3,14 @@ package services
 import (
 	"context"
 	"errors"
+	"log"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 	"github.com/lessbutter/alloff-api/pkg/classifier"
-	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
@@ -229,26 +230,18 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	}
 
 	if newPdDao.ProductGroupId != "" {
-		pgDao, err := ioc.Repo.ProductGroups.Get(newPdDao.ProductGroupId)
+		pg, err := ioc.Repo.ProductGroups.Get(newPdDao.ProductGroupId)
 		if err != nil {
-			return nil, err
-		}
-
-		for idx, pdPriority := range pgDao.Products {
-			if pdPriority.ProductID == newPdDao.ID {
-				pdPriority.Product = newPdDao
-				pgDao.Products[idx] = pdPriority
-				_, err = ioc.Repo.ProductGroups.Upsert(pgDao)
+			log.Println("err found in product group update", err)
+		} else {
+			broker.ProductGroupSyncer(pg)
+			if pg.ExhibitionID != "" {
+				exDao, err := ioc.Repo.Exhibitions.Get(pg.ExhibitionID)
 				if err != nil {
-					return nil, err
+					log.Println("exhibbition find error", err)
+				} else {
+					broker.ExhibitionSyncer(exDao)
 				}
-				break
-			}
-		}
-		if pgDao.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
-			ex, _ := exhibition.FindExhibitionInProductGroup(pgDao.ID.Hex())
-			if ex != nil {
-				exhibition.UpdateExhibition(ex)
 			}
 		}
 	}
