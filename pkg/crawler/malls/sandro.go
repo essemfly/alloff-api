@@ -15,17 +15,15 @@ import (
 )
 
 const (
-	allowedDomain           = "de.sandro-paris.com"
-	userAgent               = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"
-	defaultStock            = 100
-	recommendingDescription = "passt perfekt zum"
-	referenceDescription    = "Référence"
-	inlineSizeDescription   = "Größenentsprechung"
-	modelDescription        = "Das Model"
+	sandroAllowedDomain           = "de.sandro-paris.com"
+	sandroRecommendingDescription = "passt perfekt zum"
+	sandroReferenceDescription    = "Référence"
+	sandroInlineSizeDescription   = "Größenentsprechung"
+	sandroModelDescription        = "Das Model"
 )
 
 func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
-	c := getCollyCollector()
+	c := getCollyCollector(sandroAllowedDomain)
 	totalProducts := 0
 
 	brand, err := ioc.Repo.Brands.GetByKeyname(source.Category.BrandKeyname)
@@ -93,7 +91,7 @@ func getSandroDetail(productUrl string) (
 	originalPrice float32,
 	salesPrice float32,
 ) {
-	c := getCollyCollector()
+	c := getCollyCollector(sandroAllowedDomain)
 
 	// 상품명
 	c.OnHTML("h1.prod-title", func(h1 *colly.HTMLElement) {
@@ -139,20 +137,20 @@ func getSandroDetail(productUrl string) (
 			text := strings.Replace(node, `<br \=""/>`, "", -1)
 			text = strings.Replace(text, `•`, "", -1)
 			text = strings.TrimSpace(text)
-			if strings.Contains(text, recommendingDescription) {
+			if strings.Contains(text, sandroRecommendingDescription) {
 				// "이런 상품과 함께 입으면 좋습니다"는 설명은 쓰지 않음
 				return
 			}
-			if strings.Contains(text, referenceDescription) {
+			if strings.Contains(text, sandroReferenceDescription) {
 				// 레퍼런스 넘버는 쓰지 않음
 				return
 			}
-			if strings.Contains(text, inlineSizeDescription) {
+			if strings.Contains(text, sandroInlineSizeDescription) {
 				// 설명 내부의 사이즈 정보는 쓰지 않음
 				return
 			}
 			key := descriptionKey
-			if strings.Contains(text, modelDescription) {
+			if strings.Contains(text, sandroModelDescription) {
 				key = "모델"
 			}
 
@@ -190,12 +188,4 @@ func getSandroDetail(productUrl string) (
 
 	c.Visit(productUrl)
 	return
-}
-
-func getCollyCollector() *colly.Collector {
-	c := colly.NewCollector(
-		colly.AllowedDomains(allowedDomain),
-		colly.UserAgent(userAgent),
-	)
-	return c
 }
