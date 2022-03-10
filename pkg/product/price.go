@@ -1,7 +1,6 @@
 package product
 
 import (
-	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
@@ -14,14 +13,8 @@ func GetCurrentPrice(pdDao *domain.ProductDAO) int {
 	}
 
 	if pdDao.ProductGroupId != "" {
-		pgDao, err := ioc.Repo.ProductGroups.Get(pdDao.ProductGroupId)
-
-		if err == nil && pgDao.IsLive() {
-			if pdDao.SpecialPrice != 0 {
-				alloffPrice = pdDao.SpecialPrice
-			} else {
-				alloffPrice = pdDao.DiscountedPrice
-			}
+		if pdDao.SpecialPrice != 0 {
+			alloffPrice = pdDao.SpecialPrice
 		}
 	}
 	return alloffPrice
