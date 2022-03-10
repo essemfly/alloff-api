@@ -2,12 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"time"
 
 	"github.com/lessbutter/alloff-api/cmd"
 	"github.com/lessbutter/alloff-api/cmd/scripter/scripts"
-	"github.com/lessbutter/alloff-api/config/ioc"
 )
 
 var (
@@ -100,13 +97,13 @@ func main() {
 	// ProductSyncer()
 	// HomeTabSyncer()
 	// AddProductInSize()
-	item, _ := ioc.Repo.HomeTabItems.Get("6214fbb5a1466e95e4bc069a")
-	item.Exhibitions[0].FinishTime = time.Date(
-		2022, 2, 28, 14, 59, 59, 0, time.UTC)
-	_, err := ioc.Repo.HomeTabItems.Update(item)
-	if err != nil {
-		log.Println("err", err)
-	}
+	// item, _ := ioc.Repo.HomeTabItems.Get("6214fbb5a1466e95e4bc069a")
+	// item.Exhibitions[0].FinishTime = time.Date(
+	// 	2022, 2, 28, 14, 59, 59, 0, time.UTC)
+	// _, err := ioc.Repo.HomeTabItems.Update(item)
+	// if err != nil {
+	// 	log.Println("err", err)
+	// }
 
 }
 

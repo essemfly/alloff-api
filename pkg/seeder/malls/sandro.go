@@ -3,6 +3,7 @@ package malls
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -11,23 +12,28 @@ import (
 
 func AddSandro() {
 	modulename := "sandro"
-	crawlUrl := "https://de.sandro-paris.com/de/damen/last-chance/jede-auswahl/?prefn1=smcp_subFamily&prefv1=%s&sz=1000000&format=ajax"
+	sandroExhibitions := []string{
+		"outlet",
+		"last-chance",
+		"sale",
+	}
+	crawlUrl := "https://de.sandro-paris.com/de/damen/%s/jede-auswahl/?prefn1=smcp_subFamily&prefv1=%s&sz=1000000&format=ajax"
 
 	categories := map[string]string{
-		"CLOHTES":                "Kleider",
-		"COATS":                  "Mäntel",
-		"JACKETS":                "Jacken",
-		"TOPS_AND_SHIRTS":        "Tops%20%26%20Hemden",
-		"JEANS":                  "Jeans",
-		"PANTS":                  "Hosen",
-		"T_SHIRTS":               "T-shirts",
-		"SKIRTS_AND_SHORTS":      "Röcke%20%26%20Shorts",
-		"PULLOVER_AND_CARDIGANS": "Pullover%20%26%20Cardigans",
-		"ACCESSORIES":            "Accessoires",
+		"CLOHTES@%s":                "Kleider",
+		"COATS@%s":                  "Mäntel",
+		"JACKETS@%s":                "Jacken",
+		"TOPS_AND_SHIRTS@%s":        "Tops%20%26%20Hemden",
+		"JEANS@%s":                  "Jeans",
+		"PANTS@%s":                  "Hosen",
+		"T_SHIRTS@%s":               "T-shirts",
+		"SKIRTS_AND_SHORTS@%s":      "Röcke%20%26%20Shorts",
+		"PULLOVER_AND_CARDIGANS@%s": "Pullover%20%26%20Cardigans",
+		"ACCESSORIES@%s":            "Accessoires",
 	}
 
 	brands := map[string]domain.BrandDAO{
-		"InTrend": {
+		"Sandro": {
 			KorName:       "산드로",
 			EngName:       "Sandro",
 			KeyName:       "SANDRO",
@@ -47,42 +53,44 @@ func AddSandro() {
 			log.Println(err)
 		}
 
-		for key, val := range categories {
-			category := domain.CategoryDAO{
-				Name:          key,
-				KeyName:       brand.KeyName + "-" + key,
-				CatIdentifier: key,
-				BrandKeyname:  upsertedBrand.KeyName,
-			}
+		for _categoryKey, categoryValue := range categories {
+			for _, exhibition := range sandroExhibitions {
+				categoryKey := fmt.Sprintf(_categoryKey, exhibition)
+				category := domain.CategoryDAO{
+					Name:          categoryKey,
+					KeyName:       brand.KeyName + "-" + categoryKey,
+					CatIdentifier: strings.Split(categoryKey, "@")[0],
+					BrandKeyname:  upsertedBrand.KeyName,
+				}
 
-			updatedCat, err := ioc.Repo.Categories.Upsert(&category)
-			if err != nil {
-				log.Println(err)
-			}
+				updatedCat, err := ioc.Repo.Categories.Upsert(&category)
+				if err != nil {
+					log.Println(err)
+				}
+				source := domain.CrawlSourceDAO{
+					BrandKeyname:         upsertedBrand.KeyName,
+					BrandIdentifier:      brandId,
+					MainCategoryKey:      updatedCat.CatIdentifier,
+					Category:             *updatedCat,
+					CrawlUrl:             fmt.Sprintf(crawlUrl, exhibition, categoryValue),
+					CrawlModuleName:      modulename,
+					IsSalesProducts:      true,
+					IsForeignDelivery:    true,
+					PriceMarginPolicy:    "SANDRO",
+					DeliveryPrice:        0,
+					EarliestDeliveryDays: 14,
+					LatestDeliveryDays:   21,
+					DeliveryDesc:         nil,
+					RefundAvailable:      false,
+					ChangeAvailable:      false,
+					RefundFee:            5000,
+					ChangeFee:            5000,
+				}
 
-			source := domain.CrawlSourceDAO{
-				BrandKeyname:         upsertedBrand.KeyName,
-				BrandIdentifier:      brandId,
-				MainCategoryKey:      updatedCat.CatIdentifier,
-				Category:             *updatedCat,
-				CrawlUrl:             fmt.Sprintf(crawlUrl, val),
-				CrawlModuleName:      modulename,
-				IsSalesProducts:      true,
-				IsForeignDelivery:    true,
-				PriceMarginPolicy:    "SANDRO",
-				DeliveryPrice:        0,
-				EarliestDeliveryDays: 14,
-				LatestDeliveryDays:   21,
-				DeliveryDesc:         nil,
-				RefundAvailable:      false,
-				ChangeAvailable:      false,
-				RefundFee:            5000,
-				ChangeFee:            5000,
-			}
-
-			_, err = ioc.Repo.CrawlSources.Upsert(&source)
-			if err != nil {
-				log.Println(err)
+				_, err = ioc.Repo.CrawlSources.Upsert(&source)
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		}
 	}
