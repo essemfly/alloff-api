@@ -8,8 +8,10 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/pkg/translater"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/product"
+	"golang.org/x/text/language"
 )
 
 func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -65,17 +67,48 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 				Quantity: 10,
 			})
 		}
+
+		titleInKorean, err := translater.TranslateText(language.Korean.String(), title)
+		informationKorean := map[string]string{}
+		for key, value := range description {
+			keyKorean, err := translater.TranslateText(language.Korean.String(), key)
+			if err != nil {
+				log.Println("info translate key err", err)
+			}
+			valueKorean, err := translater.TranslateText(language.Korean.String(), value)
+			if err != nil {
+				log.Println("info translate value err", err)
+			}
+			informationKorean[keyKorean] = valueKorean
+		}
+
+		inventoryKorean := []domain.InventoryDAO{}
+		for _, inv := range inventories {
+			sizeKorean, err := translater.TranslateText(language.Korean.String(), inv.Size)
+			if err != nil {
+				log.Println("inventory korean err", err)
+			}
+			inventoryKorean = append(inventoryKorean, domain.InventoryDAO{
+				Size:     sizeKorean,
+				Quantity: inv.Quantity,
+			})
+		}
+
+		if err != nil {
+			log.Println("err in translater", err)
+		}
+
 		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     productID,
-			ProductName:   title,
+			ProductName:   titleInKorean,
 			ProductUrl:    productUrl,
 			Images:        images,
 			Sizes:         sizes,
-			Inventories:   inventories,
+			Inventories:   inventoryKorean,
 			Colors:        colors,
-			Description:   description,
+			Description:   informationKorean,
 			OriginalPrice: float32(originalPrice),
 			SalesPrice:    float32(discountedPrice),
 			CurrencyType:  domain.CurrencyEUR,

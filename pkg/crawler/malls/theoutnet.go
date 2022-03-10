@@ -12,9 +12,11 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/pkg/translater"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/product"
+	"golang.org/x/text/language"
 )
 
 type TheOutnetResponseParser struct {
@@ -33,8 +35,7 @@ type TheOutnetResponseProduct struct {
 	Seo struct {
 		SeoUrl string `json:"seoURLKeyword"`
 	}
-	Images []TheOutnetResponseImage `json:"images"`
-	Price  struct {
+	Price struct {
 		RdDiscount struct {
 			Amount  int
 			Divisor int
@@ -71,15 +72,6 @@ type TheOutnetResponseProduct struct {
 			Label      string
 		}
 	} `json:"attributes"`
-}
-
-type TheOutnetResponseImage struct {
-	View string
-	Size struct {
-		Width  int
-		Height int
-	}
-	Url string
 }
 
 func CrawlTheoutnet(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -162,28 +154,7 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 	urlPrefix := "https://www.theoutnet.com/en-de/shop/product"
 
 	for _, pd := range pds {
-		sizes, inventories, description := CrawlTheoutnetDetail(pd.Seo.SeoUrl)
-
-		imageKeys := []string{}
-		images := []string{}
-		for _, imgResponse := range pd.Images {
-			alreadyRegistered := false
-			for _, imageKey := range imageKeys {
-				if imageKey == imgResponse.View {
-					alreadyRegistered = true
-					break
-				}
-			}
-
-			if !alreadyRegistered && imgResponse.Size.Width > 500 {
-				if strings.HasPrefix(imgResponse.Url, "//") {
-					images = append(images, "https:"+imgResponse.Url)
-				} else {
-					images = append(images, imgResponse.Url)
-				}
-				imageKeys = append(imageKeys, imgResponse.View)
-			}
-		}
+		sizes, inventories, description, images := CrawlTheoutnetDetail(pd.Seo.SeoUrl)
 
 		colors := []string{}
 		for _, colorResp := range pd.Colors {
@@ -199,17 +170,47 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			}
 		}
 
+		titleInKorean, err := translater.TranslateText(language.Korean.String(), pd.Name)
+		informationKorean := map[string]string{}
+		for key, value := range description {
+			keyKorean, err := translater.TranslateText(language.Korean.String(), key)
+			if err != nil {
+				log.Println("info translate key err", err)
+			}
+			valueKorean, err := translater.TranslateText(language.Korean.String(), value)
+			if err != nil {
+				log.Println("info translate value err", err)
+			}
+			informationKorean[keyKorean] = valueKorean
+		}
+
+		inventoryKorean := []domain.InventoryDAO{}
+		for _, inv := range inventories {
+			sizeKorean, err := translater.TranslateText(language.Korean.String(), inv.Size)
+			if err != nil {
+				log.Println("inventory korean err", err)
+			}
+			inventoryKorean = append(inventoryKorean, domain.InventoryDAO{
+				Size:     sizeKorean,
+				Quantity: inv.Quantity,
+			})
+		}
+
+		if err != nil {
+			log.Println("err in translater", err)
+		}
+
 		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:         brand,
 			Source:        source,
 			ProductID:     pd.ProductID,
-			ProductName:   pd.Name,
+			ProductName:   titleInKorean,
 			ProductUrl:    urlPrefix + pd.Seo.SeoUrl,
 			Images:        images,
 			Sizes:         sizes,
-			Inventories:   inventories,
+			Inventories:   inventoryKorean,
 			Colors:        colors,
-			Description:   description,
+			Description:   informationKorean,
 			OriginalPrice: float32(pd.Price.WasPrice.Amount) / float32(pd.Price.WasPrice.Divisor),
 			SalesPrice:    float32(pd.Price.SellingPrice.Amount) / float32(pd.Price.SellingPrice.Divisor),
 			CurrencyType:  domain.CurrencyEUR,
@@ -221,7 +222,7 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 	return numProducts
 }
 
-func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []domain.InventoryDAO, description map[string]string, images []string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.theoutnet.com", "www.theoutnet.com:443"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
@@ -257,6 +258,25 @@ func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []doma
 		title := e.ChildText(".EditorialAccordion84__accordionTitle")
 		descs := e.ChildText(".EditorialAccordion84__accordionContent")
 		description[title] = descs
+	})
+
+	c.OnHTML("ul.ImageCarousel84__track", func(e *colly.HTMLElement) {
+		e.ForEach("li.ImageCarousel84__slide", func(_ int, el *colly.HTMLElement) {
+			imageUrlBeforeParsing := el.ChildAttr(".ZoomedImage84", "style")
+
+			newString := strings.TrimPrefix(imageUrlBeforeParsing, "background-image:url(//")
+			newString = strings.TrimSuffix(newString, ")")
+			alreadyRegistered := false
+			for _, alreadyImage := range images {
+				if alreadyImage == newString {
+					alreadyRegistered = true
+					break
+				}
+			}
+			if !alreadyRegistered {
+				images = append(images, "https://"+newString)
+			}
+		})
 	})
 
 	err := c.Visit(urlPrefix + productUrl)
