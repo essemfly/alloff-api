@@ -17,11 +17,12 @@ func AddProductManually(request *ProductManualAddRequest) (*domain.ProductDAO, e
 	}
 
 	pd := &domain.ProductDAO{
-		AlloffName:  pdInfo.OriginalName,
-		ProductInfo: pdInfo,
-		Removed:     false,
-		Created:     time.Now(),
-		Updated:     time.Now(),
+		AlloffName:    pdInfo.OriginalName,
+		ProductInfo:   pdInfo,
+		Removed:       false,
+		Created:       time.Now(),
+		Updated:       time.Now(),
+		IsImageCached: true,
 	}
 
 	return ProcessManualProductRequest(pd, request)
@@ -99,6 +100,9 @@ func ProcessManualProductRequest(pd *domain.ProductDAO, request *ProductManualAd
 
 	pd.UpdatePrice(request.OriginalPrice, request.DiscountedPrice)
 	pd.SpecialPrice = request.SpecialPrice
+
+	pd.Images = request.Images
+	pd.IsTranslateRequired = false
 
 	if pd.ID == primitive.NilObjectID {
 		newPd, err := ioc.Repo.Products.Insert(pd)

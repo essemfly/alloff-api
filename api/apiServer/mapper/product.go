@@ -43,6 +43,10 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 			isSoldout = false
 		}
 	}
+	images := pdDao.ProductInfo.Images
+	if pdDao.IsImageCached {
+		images = pdDao.Images
+	}
 
 	return &model.Product{
 		ID:                  pdDao.ID.Hex(),
@@ -52,7 +56,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		OriginalPrice:       pdDao.OriginalPrice,
 		ProductGroupID:      pdDao.ProductGroupId,
 		Soldout:             isSoldout,
-		Images:              pdDao.ProductInfo.Images,
+		Images:              images,
 		DiscountedPrice:     alloffPrice,
 		DiscountRate:        alloffPriceDiscountRate,
 		SpecialPrice:        &alloffPrice,
