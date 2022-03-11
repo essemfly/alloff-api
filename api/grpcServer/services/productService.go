@@ -224,6 +224,8 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		pdDao.UpdateAlloffCategory(productCatDao)
 	}
 
+	pdDao.CheckSoldout()
+
 	newPdDao, err := ioc.Repo.Products.Upsert(pdDao)
 	if err != nil {
 		return nil, err

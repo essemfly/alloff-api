@@ -195,6 +195,18 @@ func (pd *ProductDAO) UpdateScore(newScore *ProductScoreInfoDAO) {
 	pd.Score = newScore
 }
 
+func (pd *ProductDAO) CheckSoldout() {
+	isSoldout := true
+	for _, inv := range pd.Inventory {
+		if inv.Quantity > 0 {
+			isSoldout = false
+			break
+		}
+	}
+
+	pd.Soldout = isSoldout
+}
+
 func (pd *ProductDAO) UpdateInventory(newInven []InventoryDAO) {
 	pd.Inventory = newInven
 

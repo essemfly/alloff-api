@@ -83,6 +83,8 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 			if err != nil {
 				return err
 			}
+
+			pd.CheckSoldout()
 			_, err = ioc.Repo.Products.Upsert(pd)
 			if err != nil {
 				log.Println("productDao Update", err)
@@ -200,6 +202,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 				return err
 			}
 			totalProductPrices += item.Quantity * item.SalesPrice
+			pd.CheckSoldout()
 
 			_, err = ioc.Repo.Products.Upsert(pd)
 			if err != nil {
@@ -293,6 +296,7 @@ func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymen
 			if err != nil {
 				return err
 			}
+			pd.CheckSoldout()
 			_, err = ioc.Repo.Products.Upsert(pd)
 			if err != nil {
 				log.Println("productDao Update", err)
