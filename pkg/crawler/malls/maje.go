@@ -7,19 +7,19 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 const (
-	majeAllowedDomain           = "de.maje.com"
-	majeReferenceDescription    = "Ref : "
-	majeModelDescription        = "trägt Größe"
-	majeRecommendingDescription = "passt perfekt zum"  // Not found on Maje site yet. Same as Sandro spec.
-	majeInlineSizeDescription   = "Größenentsprechung" // Not found on Maje site yet. Same as Sandro spec.
+	majeAllowedDomain    = "de.maje.com"
+	majeReferenceRegex   = `(?m)Ref\s?:\s?.*`
+	majeModelDescription = "trägt Größe"
 )
 
 func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -31,7 +31,7 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 		log.Println(err)
 	}
 
-	c.OnHTML(".product-info", func(e *colly.HTMLElement) {
+	c.OnHTML(".infosProduct", func(e *colly.HTMLElement) {
 		colorMap := map[string]string{}
 		e.ForEach("ul.swatch-list li", func(_ int, li *colly.HTMLElement) {
 			colorId := li.ChildAttr("img", "data-colorid")
@@ -43,8 +43,8 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 		productId := strings.Split(urlNodes[len(urlNodes)-1], ".html")[0]
 		for colorId, colorName := range colorMap {
 			totalProducts++
-			productDetailUrl := getSandroDetailUrl(productId, colorId)
-			productName, images, sizes, inventories, description, originalPrice, salesPrice := getSandroDetail(productDetailUrl)
+			productDetailUrl := getMajeDetailUrl(productId, colorId)
+			productName, images, sizes, inventories, description, originalPrice, salesPrice := getMajeDetail(productDetailUrl)
 			addRequest := &product.ProductCrawlingAddRequest{
 				Brand:         brand,
 				Images:        images,
@@ -57,7 +57,7 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 				Source:        source,
 				ProductID:     productId,
 				ProductName:   productName + " - " + colorName,
-				ProductUrl:    getSandroProductUrl(productId, colorId),
+				ProductUrl:    getMajeProductUrl(productId, colorId),
 			}
 			totalProducts += 1
 			product.AddProductInCrawling(addRequest)
@@ -66,7 +66,7 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 
 	err = c.Visit(source.CrawlUrl)
 	if err != nil {
-		log.Println("err occured in crawling sandro", err)
+		log.Println("err occured in crawling maje", err)
 	}
 
 	crawler.PrintCrawlResults(source, totalProducts)
@@ -74,15 +74,15 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 	done <- true
 }
 
-func getSandroDetailUrl(productId string, colorId string) string {
-	return getSandroProductUrl(productId, colorId) + "&format=ajax"
+func getMajeDetailUrl(productId string, colorId string) string {
+	return getMajeProductUrl(productId, colorId) + "&ContentTarget=swiper&format=ajax"
 }
 
-func getSandroProductUrl(productId string, colorId string) string {
-	return fmt.Sprintf("https://de.sandro-paris.com/on/demandware.store/Sites-Sandro-DE-Site/de_DE/Product-Variation?pid=%s&dwvar_%s_color=%s&Quantity=1", productId, productId, colorId)
+func getMajeProductUrl(productId string, colorId string) string {
+	return fmt.Sprintf("https://de.maje.com/on/demandware.store/Sites-Maje-DE-Site/de/Product-Variation?pid=%s&dwvar_%s_color=%s&Quantity=1", productId, productId, colorId)
 }
 
-func getSandroDetail(productUrl string) (
+func getMajeDetail(productUrl string) (
 	productName string,
 	images []string,
 	sizes []string,
@@ -94,15 +94,15 @@ func getSandroDetail(productUrl string) (
 	c := getCollyCollector(majeAllowedDomain)
 
 	// 상품명
-	c.OnHTML("h1.prod-title", func(h1 *colly.HTMLElement) {
-		productName = h1.Text
+	c.OnHTML("h1.productName", func(h1 *colly.HTMLElement) {
+		productName = strings.TrimSpace(h1.Text)
 	})
 
 	// 사이즈 & 재고
 	c.OnHTML(".siz-list-container", func(e *colly.HTMLElement) {
 		e.ForEach("li.emptyswatch", func(_ int, li *colly.HTMLElement) {
-			outOfStock := strings.Contains(li.Attr("class"), "notinstock")
-			size := li.ChildText("span.sizeDisplayValue")
+			outOfStock := strings.Contains(li.Attr("class"), "unselectable")
+			size := li.ChildText("div.defaultSize")
 			stock := defaultStock
 			if outOfStock {
 				stock = 0
@@ -115,41 +115,20 @@ func getSandroDetail(productUrl string) (
 		})
 	})
 
-	// 설명
 	description = map[string]string{}
-	c.OnHTML(".titleDescPr.toggleMe", func(h2 *colly.HTMLElement) {
-		descriptionType := strings.ToLower(strings.TrimSpace(h2.Text))
-		descriptionKey := ""
-		switch descriptionType {
-		case "produktbeschreibung":
-			descriptionKey = "설명"
-		case "zusammensetzung":
-			descriptionKey = "소재"
-		}
-		if descriptionKey == "" {
-			// 다른 설명란의 정보는 쓰지 않음
+
+	// 설명 1
+	alreadyCrawledDescription1 := false
+	c.OnHTML("ul.product-short-info", func(ul *colly.HTMLElement) {
+		if alreadyCrawledDescription1 {
+			// This info appears twice. Crawl only once.
 			return
 		}
-
-		html, _ := h2.DOM.Next().Find(".detaildesc").Html()
-		nodes := strings.Split(html, "<br/>")
-		for _, node := range nodes {
-			text := strings.Replace(node, `<br \=""/>`, "", -1)
-			text = strings.Replace(text, `•`, "", -1)
+		ul.ForEach("li", func(_ int, li *colly.HTMLElement) {
+			text := strings.Replace(li.Text, `•`, "", -1)
 			text = strings.TrimSpace(text)
-			if strings.Contains(text, majeRecommendingDescription) {
-				// "이런 상품과 함께 입으면 좋습니다"는 설명은 쓰지 않음
-				return
-			}
-			if strings.Contains(text, majeReferenceDescription) {
-				// 레퍼런스 넘버는 쓰지 않음
-				return
-			}
-			if strings.Contains(text, majeInlineSizeDescription) {
-				// 설명 내부의 사이즈 정보는 쓰지 않음
-				return
-			}
-			key := descriptionKey
+
+			key := "설명"
 			if strings.Contains(text, majeModelDescription) {
 				key = "모델"
 			}
@@ -159,7 +138,61 @@ func getSandroDetail(productUrl string) (
 			} else {
 				description[key] = text
 			}
+		})
+		alreadyCrawledDescription1 = true
+	})
+
+	// 설명 2
+	c.OnHTML("div.wrapper-tabs-product ul li h2", func(h2 *colly.HTMLElement) {
+		descriptionType := strings.TrimSpace(h2.Text)
+		descriptionKey := ""
+		switch descriptionType {
+		case "Beschreibung":
+			descriptionKey = "설명"
+		case "Hauptstoff & Pflege":
+			descriptionKey = "소재"
 		}
+		if descriptionKey == "" {
+			// 다른 설명란의 정보는 쓰지 않음
+			return
+		}
+
+		h2.DOM.Next().Each(func(i int, s *goquery.Selection) {
+			itemprop, _ := s.Attr("itemprop")
+			if descriptionKey == "설명" && itemprop != "description" {
+				// Use description div only for 설명.
+				return
+			}
+
+			key := descriptionKey
+			re := regexp.MustCompile(majeReferenceRegex)
+			text := re.ReplaceAllString(strings.TrimSpace(s.Text()), "")
+
+			textNodes := strings.Split(text, "\n")
+			trimRe := regexp.MustCompile(`\s*`)
+			trimmedNodes := utils.Map(textNodes, func(s string) string {
+				noWhiteSpaces := trimRe.ReplaceAllString(s, "")
+				if noWhiteSpaces == "" {
+					return ""
+				}
+				return strings.TrimSpace(s)
+			})
+			joinnableNodes := []string{}
+			for _, trimmedNode := range trimmedNodes {
+				if trimmedNode != "" {
+					joinnableNodes = append(joinnableNodes, trimmedNode)
+				}
+			}
+
+			text = strings.Join(joinnableNodes, "\n")
+
+			if val, exists := description[key]; exists {
+				description[key] = val + "\n" + text
+			} else {
+				description[key] = text
+			}
+		})
+
 	})
 
 	// 가격
@@ -177,7 +210,7 @@ func getSandroDetail(productUrl string) (
 	})
 
 	// 이미지
-	c.OnHTML("div.image-container", func(container *colly.HTMLElement) {
+	c.OnHTML("ul.swiper-wrapper li", func(container *colly.HTMLElement) {
 		src, exists := container.DOM.Find("source").First().Attr("data-srcset")
 		if !exists {
 			return

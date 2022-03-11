@@ -3,7 +3,6 @@ package malls
 import (
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -17,6 +16,7 @@ func AddMaje() {
 		"last-chance",
 		"sale",
 	}
+
 	crawlUrl := "https://de.maje.com/de/%s/kategorien/alles-einsehen/?prefn1=smcp_subFamily&prefv1=%s&format=ajax&sz=1000000"
 	categories := map[string]string{
 		"SWEATERS_AND_CARDIGANS@%s": "Pullover%20%26%20Strickjacken",
@@ -56,10 +56,11 @@ func AddMaje() {
 		for _categoryKey, categoryValue := range categories {
 			for _, exhibition := range majeExhibitions {
 				categoryKey := fmt.Sprintf(_categoryKey, exhibition)
+				keyname := brand.KeyName + "-" + categoryKey
 				category := domain.CategoryDAO{
 					Name:          categoryKey,
-					KeyName:       brand.KeyName + "-" + categoryKey,
-					CatIdentifier: strings.Split(categoryKey, "@")[0],
+					KeyName:       keyname,
+					CatIdentifier: keyname,
 					BrandKeyname:  upsertedBrand.KeyName,
 				}
 
