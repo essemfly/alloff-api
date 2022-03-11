@@ -39,8 +39,8 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 		ImgURL:      pgDao.ImgUrl,
 		NumAlarms:   pgDao.NumAlarms,
 		Products:    pds,
-		StartTime:   pgDao.StartTime.String(),
-		FinishTime:  pgDao.FinishTime.String(),
+		StartTime:   pgDao.StartTime.Add(9 * time.Hour).String(),
+		FinishTime:  pgDao.FinishTime.Add(9 * time.Hour).String(),
 		SetAlarm:    false,
 	}
 	return pg
