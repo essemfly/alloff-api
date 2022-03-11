@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -21,9 +22,9 @@ func MapOrder(orderDao *domain.OrderDAO) *model.OrderInfo {
 		TotalPrice:    orderDao.TotalPrice,
 		RefundPrice:   &orderDao.RefundPrice,
 		UserMemo:      orderDao.UserMemo,
-		CreatedAt:     orderDao.CreatedAt.String(),
-		UpdatedAt:     orderDao.UpdatedAt.String(),
-		OrderedAt:     orderDao.OrderedAt.String(),
+		CreatedAt:     orderDao.CreatedAt.Add(9 * time.Hour).String(),
+		UpdatedAt:     orderDao.UpdatedAt.Add(9 * time.Hour).String(),
+		OrderedAt:     orderDao.OrderedAt.Add(9 * time.Hour).String(),
 	}
 
 	return orderInfo
@@ -55,14 +56,14 @@ func MapOrderItem(orderItemDao *domain.OrderItemDAO) *model.OrderItem {
 		DeliveryTrackingNumber: trackingNumber,
 		DeliveryTrackingURL:    trackingUrl,
 		RefundInfo:             MapRefund(orderItemDao.RefundInfo),
-		CreatedAt:              orderItemDao.CreatedAt.String(),
-		UpdatedAt:              orderItemDao.UpdatedAt.String(),
-		OrderedAt:              orderItemDao.OrderedAt.String(),
-		DeliveryStartedAt:      orderItemDao.DeliveryStartedAt.String(),
-		DeliveryFinishedAt:     orderItemDao.DeliveryFinishedAt.String(),
-		CancelRequestedAt:      orderItemDao.CancelRequestedAt.String(),
-		CancelFinishedAt:       orderItemDao.CancelFinishedAt.String(),
-		ConfirmedAt:            orderItemDao.ConfirmedAt.String(),
+		CreatedAt:              orderItemDao.CreatedAt.Add(9 * time.Hour).String(),
+		UpdatedAt:              orderItemDao.UpdatedAt.Add(9 * time.Hour).String(),
+		OrderedAt:              orderItemDao.OrderedAt.Add(9 * time.Hour).String(),
+		DeliveryStartedAt:      orderItemDao.DeliveryStartedAt.Add(9 * time.Hour).String(),
+		DeliveryFinishedAt:     orderItemDao.DeliveryFinishedAt.Add(9 * time.Hour).String(),
+		CancelRequestedAt:      orderItemDao.CancelRequestedAt.Add(9 * time.Hour).String(),
+		CancelFinishedAt:       orderItemDao.CancelFinishedAt.Add(9 * time.Hour).String(),
+		ConfirmedAt:            orderItemDao.ConfirmedAt.Add(9 * time.Hour).String(),
 	}
 }
 
@@ -136,7 +137,7 @@ func MapRefund(itemDao domain.RefundItemDAO) *model.RefundInfo {
 	return &model.RefundInfo{
 		RefundFee:    itemDao.RefundFee,
 		RefundAmount: itemDao.RefundAmount,
-		CreatedAt:    itemDao.CreatedAt.String(),
-		UpdatedAt:    itemDao.UpdatedAt.String(),
+		CreatedAt:    itemDao.CreatedAt.Add(9 * time.Hour).String(),
+		UpdatedAt:    itemDao.UpdatedAt.Add(9 * time.Hour).String(),
 	}
 }

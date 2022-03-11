@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"sort"
+	"time"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -38,8 +39,8 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 		ImgURL:      pgDao.ImgUrl,
 		NumAlarms:   pgDao.NumAlarms,
 		Products:    pds,
-		StartTime:   pgDao.StartTime.String(),
-		FinishTime:  pgDao.FinishTime.String(),
+		StartTime:   pgDao.StartTime.Add(9 * time.Hour).String(),
+		FinishTime:  pgDao.FinishTime.Add(9 * time.Hour).String(),
 		SetAlarm:    false,
 	}
 	return pg
@@ -62,7 +63,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		SubTitle:       exDao.SubTitle,
 		Description:    exDao.Description,
 		ProductGroups:  pgs,
-		StartTime:      exDao.StartTime.String(),
-		FinishTime:     exDao.FinishTime.String(),
+		StartTime:      exDao.StartTime.Add(9 * time.Hour).String(),
+		FinishTime:     exDao.FinishTime.Add(9 * time.Hour).String(),
 	}
 }
