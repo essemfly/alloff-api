@@ -24,20 +24,21 @@ const (
 )
 
 type ProductMetaInfoDAO struct {
-	ID           primitive.ObjectID `bson:"_id,omitempty"`
-	ProductID    string
-	Category     *CategoryDAO
-	Brand        *BrandDAO
-	OriginalName string
-	Price        *PriceDAO
-	Images       []string
-	ProductUrl   string
-	Sizes        []string
-	Colors       []string
-	Created      time.Time
-	Updated      time.Time
-	Source       *CrawlSourceDAO
-	Information  map[string]string
+	ID             primitive.ObjectID `bson:"_id,omitempty"`
+	ProductID      string
+	Category       *CategoryDAO
+	Brand          *BrandDAO
+	OriginalName   string
+	Price          *PriceDAO
+	Images         []string
+	ProductUrl     string
+	Sizes          []string
+	Colors         []string
+	Created        time.Time
+	Updated        time.Time
+	Source         *CrawlSourceDAO
+	Information    map[string]string
+	OriginalImages []string
 }
 
 func (pdInfo *ProductMetaInfoDAO) SetBrandAndCategory(brand *BrandDAO, source *CrawlSourceDAO) {
@@ -136,24 +137,27 @@ type CancelDescriptionDAO struct {
 }
 
 type ProductDAO struct {
-	ID               primitive.ObjectID `bson:"_id,omitempty"`
-	ProductInfo      *ProductMetaInfoDAO
-	ProductGroupId   string
-	AlloffName       string
-	OriginalPrice    int
-	DiscountedPrice  int
-	DiscountRate     int
-	SpecialPrice     int
-	AlloffCategories *ProductAlloffCategoryDAO
-	Soldout          bool
-	Removed          bool
-	Inventory        []InventoryDAO
-	Score            *ProductScoreInfoDAO
-	SalesInstruction *AlloffInstructionDAO
-	PriceHistory     []PriceHistoryDAO
-	IsUpdated        bool
-	Created          time.Time
-	Updated          time.Time
+	ID                  primitive.ObjectID `bson:"_id,omitempty"`
+	ProductInfo         *ProductMetaInfoDAO
+	Images              []string
+	ProductGroupId      string
+	AlloffName          string
+	OriginalPrice       int
+	DiscountedPrice     int
+	DiscountRate        int
+	SpecialPrice        int
+	AlloffCategories    *ProductAlloffCategoryDAO
+	Soldout             bool
+	Removed             bool
+	Inventory           []InventoryDAO
+	Score               *ProductScoreInfoDAO
+	SalesInstruction    *AlloffInstructionDAO
+	PriceHistory        []PriceHistoryDAO
+	IsUpdated           bool
+	Created             time.Time
+	Updated             time.Time
+	IsImageCached       bool
+	IsTranslateRequired bool
 }
 
 func (pd *ProductDAO) UpdatePrice(origPrice, discountedPrice int) bool {

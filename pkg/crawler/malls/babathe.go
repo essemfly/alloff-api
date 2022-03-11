@@ -61,19 +61,20 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			images, sizes, colors, inventories, description := CrawlBabatheDetail(productUrl, productID, source)
 
 			addRequest := &product.ProductCrawlingAddRequest{
-				Brand:         brand,
-				Source:        source,
-				ProductID:     productID,
-				ProductName:   productName,
-				ProductUrl:    productUrl,
-				Images:        images,
-				Sizes:         sizes,
-				Inventories:   inventories,
-				Colors:        colors,
-				Description:   description,
-				OriginalPrice: float32(origPrice),
-				SalesPrice:    float32(curPrice),
-				CurrencyType:  domain.CurrencyKRW,
+				Brand:               brand,
+				Source:              source,
+				ProductID:           productID,
+				ProductName:         productName,
+				ProductUrl:          productUrl,
+				Images:              images,
+				Sizes:               sizes,
+				Inventories:         inventories,
+				Colors:              colors,
+				Description:         description,
+				OriginalPrice:       float32(origPrice),
+				SalesPrice:          float32(curPrice),
+				CurrencyType:        domain.CurrencyKRW,
+				IsTranslateRequired: false,
 			}
 
 			totalProducts += 1

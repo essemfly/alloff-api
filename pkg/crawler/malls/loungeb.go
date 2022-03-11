@@ -52,19 +52,20 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		mobileUrl := strings.Replace(productUrl, "https://lounge-b.co.kr", "https://m.lounge-b.co.kr", 1)
 
 		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:         brand,
-			Source:        source,
-			ProductID:     productID,
-			ProductName:   title,
-			ProductUrl:    mobileUrl,
-			Images:        images,
-			Sizes:         sizes,
-			Inventories:   inventories,
-			Colors:        colors,
-			Description:   nil,
-			OriginalPrice: float32(originalPrice),
-			SalesPrice:    float32(discountedPrice),
-			CurrencyType:  domain.CurrencyKRW,
+			Brand:               brand,
+			Source:              source,
+			ProductID:           productID,
+			ProductName:         title,
+			ProductUrl:          mobileUrl,
+			Images:              images,
+			Sizes:               sizes,
+			Inventories:         inventories,
+			Colors:              colors,
+			Description:         nil,
+			OriginalPrice:       float32(originalPrice),
+			SalesPrice:          float32(discountedPrice),
+			CurrencyType:        domain.CurrencyKRW,
+			IsTranslateRequired: false,
 		}
 
 		totalProducts += 1

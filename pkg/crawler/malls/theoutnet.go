@@ -201,19 +201,20 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 		}
 
 		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:         brand,
-			Source:        source,
-			ProductID:     pd.ProductID,
-			ProductName:   titleInKorean,
-			ProductUrl:    urlPrefix + pd.Seo.SeoUrl,
-			Images:        images,
-			Sizes:         sizes,
-			Inventories:   inventoryKorean,
-			Colors:        colors,
-			Description:   informationKorean,
-			OriginalPrice: float32(pd.Price.WasPrice.Amount) / float32(pd.Price.WasPrice.Divisor),
-			SalesPrice:    float32(pd.Price.SellingPrice.Amount) / float32(pd.Price.SellingPrice.Divisor),
-			CurrencyType:  domain.CurrencyEUR,
+			Brand:               brand,
+			Source:              source,
+			ProductID:           pd.ProductID,
+			ProductName:         titleInKorean,
+			ProductUrl:          urlPrefix + pd.Seo.SeoUrl,
+			Images:              images,
+			Sizes:               sizes,
+			Inventories:         inventoryKorean,
+			Colors:              colors,
+			Description:         informationKorean,
+			OriginalPrice:       float32(pd.Price.WasPrice.Amount) / float32(pd.Price.WasPrice.Divisor),
+			SalesPrice:          float32(pd.Price.SellingPrice.Amount) / float32(pd.Price.SellingPrice.Divisor),
+			CurrencyType:        domain.CurrencyEUR,
+			IsTranslateRequired: true,
 		}
 
 		numProducts += 1

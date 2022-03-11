@@ -103,19 +103,20 @@ func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.Cra
 		images, colors, sizes, inventories, description := getSSFDetailInfo(productUrl)
 
 		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:         brand,
-			Source:        source,
-			ProductID:     pd.ProductId,
-			ProductName:   pd.God.Name,
-			ProductUrl:    productUrl,
-			Images:        images,
-			Sizes:         sizes,
-			Inventories:   inventories,
-			Colors:        colors,
-			Description:   description,
-			OriginalPrice: float32(pd.DspGodPrc.OriginalPrice),
-			SalesPrice:    float32(pd.DspGodPrc.DiscountedPrice),
-			CurrencyType:  domain.CurrencyKRW,
+			Brand:               brand,
+			Source:              source,
+			ProductID:           pd.ProductId,
+			ProductName:         pd.God.Name,
+			ProductUrl:          productUrl,
+			Images:              images,
+			Sizes:               sizes,
+			Inventories:         inventories,
+			Colors:              colors,
+			Description:         description,
+			OriginalPrice:       float32(pd.DspGodPrc.OriginalPrice),
+			SalesPrice:          float32(pd.DspGodPrc.DiscountedPrice),
+			CurrencyType:        domain.CurrencyKRW,
+			IsTranslateRequired: false,
 		}
 
 		numProducts += 1

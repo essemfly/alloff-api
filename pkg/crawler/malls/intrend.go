@@ -99,19 +99,20 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		}
 
 		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:         brand,
-			Source:        source,
-			ProductID:     productID,
-			ProductName:   titleInKorean,
-			ProductUrl:    productUrl,
-			Images:        images,
-			Sizes:         sizes,
-			Inventories:   inventoryKorean,
-			Colors:        colors,
-			Description:   informationKorean,
-			OriginalPrice: float32(originalPrice),
-			SalesPrice:    float32(discountedPrice),
-			CurrencyType:  domain.CurrencyEUR,
+			Brand:               brand,
+			Source:              source,
+			ProductID:           productID,
+			ProductName:         titleInKorean,
+			ProductUrl:          productUrl,
+			Images:              images,
+			Sizes:               sizes,
+			Inventories:         inventoryKorean,
+			Colors:              colors,
+			Description:         informationKorean,
+			OriginalPrice:       float32(originalPrice),
+			SalesPrice:          float32(discountedPrice),
+			CurrencyType:        domain.CurrencyEUR,
+			IsTranslateRequired: true,
 		}
 
 		totalProducts += 1

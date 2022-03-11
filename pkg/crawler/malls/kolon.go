@@ -122,19 +122,20 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 		})
 
 		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:         brand,
-			Source:        source,
-			ProductID:     productID,
-			ProductName:   productName,
-			ProductUrl:    productUrl,
-			Images:        images,
-			Sizes:         sizes,
-			Inventories:   inventories,
-			Colors:        colors,
-			Description:   description,
-			OriginalPrice: float32(originalPrice),
-			SalesPrice:    float32(discountedPrice),
-			CurrencyType:  domain.CurrencyKRW,
+			Brand:               brand,
+			Source:              source,
+			ProductID:           productID,
+			ProductName:         productName,
+			ProductUrl:          productUrl,
+			Images:              images,
+			Sizes:               sizes,
+			Inventories:         inventories,
+			Colors:              colors,
+			Description:         description,
+			OriginalPrice:       float32(originalPrice),
+			SalesPrice:          float32(discountedPrice),
+			CurrencyType:        domain.CurrencyKRW,
+			IsTranslateRequired: false,
 		}
 
 		totalProducts += 1

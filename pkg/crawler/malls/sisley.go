@@ -68,19 +68,20 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			images, colors, sizes, inventories, description := CrawlSisleyDetail(productUrl)
 
 			addRequest := &product.ProductCrawlingAddRequest{
-				Brand:         brand,
-				Source:        source,
-				ProductID:     pd.ProductCode,
-				ProductName:   pd.ProductName,
-				ProductUrl:    productUrl,
-				Images:        images,
-				Sizes:         sizes,
-				Inventories:   inventories,
-				Colors:        colors,
-				Description:   description,
-				OriginalPrice: float32(originalPriceInt),
-				SalesPrice:    float32(discountedPriceInt),
-				CurrencyType:  domain.CurrencyKRW,
+				Brand:               brand,
+				Source:              source,
+				ProductID:           pd.ProductCode,
+				ProductName:         pd.ProductName,
+				ProductUrl:          productUrl,
+				Images:              images,
+				Sizes:               sizes,
+				Inventories:         inventories,
+				Colors:              colors,
+				Description:         description,
+				OriginalPrice:       float32(originalPriceInt),
+				SalesPrice:          float32(discountedPriceInt),
+				CurrencyType:        domain.CurrencyKRW,
+				IsTranslateRequired: false,
 			}
 
 			totalProducts += 1
