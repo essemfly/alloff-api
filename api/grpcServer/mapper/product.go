@@ -36,7 +36,7 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 		LatestDeliveryDays:   int32(pd.SalesInstruction.DeliveryDescription.LatestDeliveryDays),
 		RefundFee:            int32(pd.SalesInstruction.CancelDescription.RefundFee),
 		IsRefundPossible:     pd.SalesInstruction.CancelDescription.RefundAvailable,
-		Images:               pd.ProductInfo.Images,
+		Images:               pd.Images,
 		DescriptionImages:    pd.SalesInstruction.Description.Images,
 		CategoryName:         pd.ProductInfo.Category.Name,
 		AlloffCategoryName:   alloffCategoryName,
