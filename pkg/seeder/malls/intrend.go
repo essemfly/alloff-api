@@ -70,10 +70,10 @@ func AddIntrend() {
 				EarliestDeliveryDays: 14,
 				LatestDeliveryDays:   21,
 				DeliveryDesc:         nil,
-				RefundAvailable:      false,
-				ChangeAvailable:      false,
-				RefundFee:            5000,
-				ChangeFee:            5000,
+				RefundAvailable:      true,
+				ChangeAvailable:      true,
+				RefundFee:            100000,
+				ChangeFee:            100000,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)

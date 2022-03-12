@@ -517,16 +517,23 @@ func AddTheoutnet() {
 			}
 
 			source := domain.CrawlSourceDAO{
-				BrandKeyname:      upsertedBrand.KeyName,
-				BrandIdentifier:   shopID,
-				MainCategoryKey:   updatedCat.KeyName,
-				Category:          *updatedCat,
-				CrawlUrl:          "https://www.theoutnet.com/api/yoox/ton/search/resources/store/theoutnet_DE/productview/byCategory",
-				CrawlModuleName:   modulename,
-				IsSalesProducts:   true,
-				IsForeignDelivery: true,
-				PriceMarginPolicy: "THEOUTNET",
-				DeliveryPrice:     0,
+				BrandKeyname:         upsertedBrand.KeyName,
+				BrandIdentifier:      shopID,
+				MainCategoryKey:      updatedCat.KeyName,
+				Category:             *updatedCat,
+				CrawlUrl:             "https://www.theoutnet.com/api/yoox/ton/search/resources/store/theoutnet_DE/productview/byCategory",
+				CrawlModuleName:      modulename,
+				IsSalesProducts:      true,
+				IsForeignDelivery:    true,
+				PriceMarginPolicy:    "THEOUTNET",
+				DeliveryPrice:        0,
+				EarliestDeliveryDays: 10,
+				LatestDeliveryDays:   14,
+				DeliveryDesc:         nil,
+				RefundAvailable:      true,
+				ChangeAvailable:      true,
+				RefundFee:            100000,
+				ChangeFee:            100000,
 			}
 
 			_, err = ioc.Repo.CrawlSources.Upsert(&source)
