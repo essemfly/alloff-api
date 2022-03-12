@@ -73,7 +73,7 @@ func HomeTabItemMapper(item *domain.HomeTabItemDAO) *grpcServer.HomeTabItemMessa
 	}
 
 	for _, exhibitionDao := range item.Exhibitions {
-		exhibitions = append(exhibitions, ExhibitionMapper(exhibitionDao))
+		exhibitions = append(exhibitions, ExhibitionMapper(exhibitionDao, true))
 	}
 
 	return &grpcServer.HomeTabItemMessage{

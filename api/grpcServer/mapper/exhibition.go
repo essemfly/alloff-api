@@ -5,11 +5,13 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
-func ExhibitionMapper(exDao *domain.ExhibitionDAO) *grpcServer.ExhibitionMessage {
+func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.ExhibitionMessage {
 	pgs := []*grpcServer.ProductGroupMessage{}
 
-	for _, pg := range exDao.ProductGroups {
-		pgs = append(pgs, ProductGroupMapper(pg))
+	if !brief {
+		for _, pg := range exDao.ProductGroups {
+			pgs = append(pgs, ProductGroupMapper(pg))
+		}
 	}
 
 	return &grpcServer.ExhibitionMessage{

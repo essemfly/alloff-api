@@ -24,7 +24,7 @@ func (s *ExhibitionService) GetExhibition(ctx context.Context, req *grpcServer.G
 	}
 
 	return &grpcServer.GetExhibitionResponse{
-		Exhibition: mapper.ExhibitionMapper(exhibitionDao),
+		Exhibition: mapper.ExhibitionMapper(exhibitionDao, false),
 	}, nil
 }
 
@@ -37,7 +37,7 @@ func (s *ExhibitionService) ListExhibitions(ctx context.Context, req *grpcServer
 
 	exs := []*grpcServer.ExhibitionMessage{}
 	for _, exDao := range exhibitionDaos {
-		exs = append(exs, mapper.ExhibitionMapper(exDao))
+		exs = append(exs, mapper.ExhibitionMapper(exDao, true))
 	}
 	return &grpcServer.ListExhibitionsResponse{
 		Exhibitions: exs,
@@ -106,7 +106,7 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	broker.ExhibitionSyncer(newExhibitionDao)
 
 	return &grpcServer.EditExhibitionResponse{
-		Exhibition: mapper.ExhibitionMapper(newExhibitionDao),
+		Exhibition: mapper.ExhibitionMapper(newExhibitionDao, false),
 	}, nil
 }
 
@@ -155,6 +155,6 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 	}
 
 	return &grpcServer.CreateExhibitionResponse{
-		Exhibition: mapper.ExhibitionMapper(newExDao),
+		Exhibition: mapper.ExhibitionMapper(newExDao, false),
 	}, nil
 }
