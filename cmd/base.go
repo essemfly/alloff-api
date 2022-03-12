@@ -5,7 +5,7 @@ import (
 
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
-	"github.com/lessbutter/alloff-api/internal/storage/postgres"
+	// "github.com/lessbutter/alloff-api/internal/storage/postgres"
 )
 
 func SetBaseConfig(Env string) config.Configuration {
@@ -13,13 +13,15 @@ func SetBaseConfig(Env string) config.Configuration {
 	log.Println(conf)
 
 	conn := mongo.NewMongoDB(conf)
+	log.Println(conf)
 	conn.RegisterRepos()
-	pgconn := postgres.NewPostgresDB(conf)
-	pgconn.RegisterRepos()
-	config.InitSlack(conf)
-	config.InitIamPort(conf)
-	config.InitNotification(conf)
-	config.InitSentry(conf)
+	log.Println(conf)
+	// pgconn := postgres.NewPostgresDB(conf)
+	// pgconn.RegisterRepos()
+	// config.InitSlack(conf)
+	// config.InitIamPort(conf)
+	// config.InitNotification(conf)
+	// config.InitSentry(conf)
 
 	return conf
 }
