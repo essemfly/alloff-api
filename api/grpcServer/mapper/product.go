@@ -21,6 +21,11 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 	}
 	totalScore := pd.Score.TotalScore
 
+	images := pd.ProductInfo.Images
+	if pd.IsImageCached {
+		images = pd.Images
+	}
+
 	return &grpcServer.ProductMessage{
 		AlloffProductId:      pd.ID.Hex(),
 		AlloffName:           pd.AlloffName,
@@ -36,7 +41,7 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 		LatestDeliveryDays:   int32(pd.SalesInstruction.DeliveryDescription.LatestDeliveryDays),
 		RefundFee:            int32(pd.SalesInstruction.CancelDescription.RefundFee),
 		IsRefundPossible:     pd.SalesInstruction.CancelDescription.RefundAvailable,
-		Images:               pd.Images,
+		Images:               images,
 		DescriptionImages:    pd.SalesInstruction.Description.Images,
 		CategoryName:         pd.ProductInfo.Category.Name,
 		AlloffCategoryName:   alloffCategoryName,
