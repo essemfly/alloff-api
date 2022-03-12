@@ -24,13 +24,13 @@ func GetProductPrice(pd *domain.ProductDAO) (int, int) {
 	if pd.ProductInfo.Source.PriceMarginPolicy == "INTREND" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateIntrendPrice(int(discPrice))
-		origPriceKRW := (100 + discountRate) * discPriceKRW / 10000
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW * 100
 		return origPriceKRW, discPriceKRW
 	} else if pd.ProductInfo.Source.PriceMarginPolicy == "THEOUTNET" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateTheoutnetPrice(int(discPrice))
-		origPriceKRW := (100 + discountRate) * discPriceKRW / 10000
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW * 100
 		return origPriceKRW, discPriceKRW
 	}
