@@ -209,6 +209,7 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 
 	if req.Images != nil {
 		pdDao.ProductInfo.Images = req.Images
+		pdDao.Images = req.Images
 	}
 
 	if req.DescriptionImages != nil {
