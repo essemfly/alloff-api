@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/lessbutter/alloff-api/cmd"
-	"github.com/lessbutter/alloff-api/config"
+	// "github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/pkg/brand"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
@@ -33,12 +33,12 @@ func main() {
 	crawlModules := []string{
 		// "lottefashion",
 		// "ssfmall",
-		// // "idlook",
+		// "idlook",
 		// "sivillage",
 		// "kolon",
 		// "babathe",
 		// "idfmall",
-		"daehyun",
+		// "daehyun",
 		// "niceclaup",
 		// "lacoste",
 		// "sisley",
@@ -46,8 +46,9 @@ func main() {
 		// "theamall",
 		// "loungeb",
 		// "bylynn",
-		"intrend",
-		"theoutnet",
+		// "intrend",
+		"sandro",
+		// "theoutnet",
 	}
 
 	StartCrawling(crawlModules)
@@ -69,7 +70,7 @@ func StartCrawling(crawlModules []string) {
 
 	msg := "======== \n " + "Crawling Started: " + time.Now().String() + " for " + strings.Join(crawlModules[:], ", ")
 	log.Println(msg)
-	config.WriteSlackMessage(msg)
+	// config.WriteSlackMessage(msg)
 
 	for _, module := range crawlModules {
 		filter := bson.M{
@@ -116,6 +117,8 @@ func StartCrawling(crawlModules []string) {
 				go malls.CrawlBylynn(workers, done, source)
 			case "intrend":
 				go malls.CrawlIntrend(workers, done, source)
+			case "sandro":
+				go malls.CrawlSandro(workers, done, source)
 			case "theoutnet":
 				go malls.CrawlTheoutnet(workers, done, source)
 			default:
