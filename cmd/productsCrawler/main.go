@@ -70,7 +70,7 @@ func StartCrawling(crawlModules []string) {
 
 	msg := "======== \n " + "Crawling Started: " + time.Now().String() + " for " + strings.Join(crawlModules[:], ", ")
 	log.Println(msg)
-	// config.WriteSlackMessage(msg)
+	config.WriteSlackMessage(msg)
 
 	for _, module := range crawlModules {
 		filter := bson.M{
@@ -119,6 +119,8 @@ func StartCrawling(crawlModules []string) {
 				go malls.CrawlIntrend(workers, done, source)
 			case "sandro":
 				go malls.CrawlSandro(workers, done, source)
+			case "maje":
+				go malls.CrawlMaje(workers, done, source)
 			case "theoutnet":
 				go malls.CrawlTheoutnet(workers, done, source)
 			default:
