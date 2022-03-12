@@ -12,11 +12,9 @@ import (
 	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/internal/pkg/translater"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/product"
-	"golang.org/x/text/language"
 )
 
 type TheOutnetResponseParser struct {
@@ -170,47 +168,17 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			}
 		}
 
-		titleInKorean, err := translater.TranslateText(language.Korean.String(), pd.Name)
-		informationKorean := map[string]string{}
-		for key, value := range description {
-			keyKorean, err := translater.TranslateText(language.Korean.String(), key)
-			if err != nil {
-				log.Println("info translate key err", err)
-			}
-			valueKorean, err := translater.TranslateText(language.Korean.String(), value)
-			if err != nil {
-				log.Println("info translate value err", err)
-			}
-			informationKorean[keyKorean] = valueKorean
-		}
-
-		inventoryKorean := []domain.InventoryDAO{}
-		for _, inv := range inventories {
-			sizeKorean, err := translater.TranslateText(language.Korean.String(), inv.Size)
-			if err != nil {
-				log.Println("inventory korean err", err)
-			}
-			inventoryKorean = append(inventoryKorean, domain.InventoryDAO{
-				Size:     sizeKorean,
-				Quantity: inv.Quantity,
-			})
-		}
-
-		if err != nil {
-			log.Println("err in translater", err)
-		}
-
 		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:               brand,
 			Source:              source,
 			ProductID:           pd.ProductID,
-			ProductName:         titleInKorean,
+			ProductName:         pd.Name,
 			ProductUrl:          urlPrefix + pd.Seo.SeoUrl,
 			Images:              images,
 			Sizes:               sizes,
-			Inventories:         inventoryKorean,
+			Inventories:         inventories,
 			Colors:              colors,
-			Description:         informationKorean,
+			Description:         description,
 			OriginalPrice:       float32(pd.Price.WasPrice.Amount) / float32(pd.Price.WasPrice.Divisor),
 			SalesPrice:          float32(pd.Price.SellingPrice.Amount) / float32(pd.Price.SellingPrice.Divisor),
 			CurrencyType:        domain.CurrencyEUR,

@@ -34,15 +34,18 @@ func AddSandro() {
 	brands := map[string]domain.BrandDAO{
 		"Sandro": {
 			KorName:       "산드로",
-			EngName:       "Sandro",
+			EngName:       "sandro",
 			KeyName:       "SANDRO",
-			Description:   "산드로입니다.",
-			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/MAXMARA.png",
-			Onpopular:     false,
+			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/SANDRO.png",
+			Onpopular:     true,
+			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        false,
-			InMaintenance: false,
-			SizeGuide:     []domain.SizeGuideDAO{},
+			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/sandro_TOP:BOTTOM.png"},
+				{Label: "데님/진", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/sandro_DENIM:JEAN.png"},
+				{Label: "슈즈", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/sandro_SHOES.png"},
+			},
 		},
 	}
 

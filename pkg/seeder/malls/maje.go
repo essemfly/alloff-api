@@ -37,13 +37,16 @@ func AddMaje() {
 			KorName:       "마쥬",
 			EngName:       "Maje",
 			KeyName:       "MAJE",
-			Description:   "마쥬입니다.",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/MAJE.png",
-			Onpopular:     false,
+			Onpopular:     true,
+			Description:   "컨템포러리",
 			Created:       time.Now(),
 			IsOpen:        false,
-			InMaintenance: false,
-			SizeGuide:     []domain.SizeGuideDAO{},
+			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Maje_TOP:BOTTOM.png"},
+				{Label: "데님/진", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Maje_DENIM:JEAN.png"},
+				{Label: "슈즈", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Maje_SHOES.png"},
+			},
 		},
 	}
 
