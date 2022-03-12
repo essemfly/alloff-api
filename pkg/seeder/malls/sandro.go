@@ -3,7 +3,6 @@ package malls
 import (
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -56,10 +55,11 @@ func AddSandro() {
 		for _categoryKey, categoryValue := range categories {
 			for _, exhibition := range sandroExhibitions {
 				categoryKey := fmt.Sprintf(_categoryKey, exhibition)
+				keyname := brand.KeyName + "-" + categoryKey
 				category := domain.CategoryDAO{
 					Name:          categoryKey,
-					KeyName:       brand.KeyName + "-" + categoryKey,
-					CatIdentifier: strings.Split(categoryKey, "@")[0],
+					KeyName:       keyname,
+					CatIdentifier: keyname,
 					BrandKeyname:  upsertedBrand.KeyName,
 				}
 
