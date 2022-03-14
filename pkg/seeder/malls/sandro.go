@@ -55,9 +55,8 @@ func AddSandro() {
 			log.Println(err)
 		}
 
-		for _categoryKey, categoryValue := range categories {
+		for categoryKey, categoryValue := range categories {
 			for _, exhibition := range sandroExhibitions {
-				categoryKey := fmt.Sprintf(_categoryKey, exhibition)
 				keyname := brand.KeyName + "-" + categoryKey
 				category := domain.CategoryDAO{
 					Name:          categoryKey,

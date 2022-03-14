@@ -46,18 +46,19 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 			productDetailUrl := getMajeDetailUrl(productId, colorId)
 			productName, images, sizes, inventories, description, originalPrice, salesPrice := getMajeDetail(productDetailUrl)
 			addRequest := &product.ProductCrawlingAddRequest{
-				Brand:         brand,
-				Images:        images,
-				Sizes:         sizes,
-				Inventories:   inventories,
-				Description:   description,
-				OriginalPrice: originalPrice,
-				SalesPrice:    salesPrice,
-				CurrencyType:  domain.CurrencyEUR,
-				Source:        source,
-				ProductID:     productId,
-				ProductName:   productName + " - " + colorName,
-				ProductUrl:    getMajeProductUrl(productId, colorId),
+				Brand:               brand,
+				Images:              images,
+				Sizes:               sizes,
+				Inventories:         inventories,
+				Description:         description,
+				OriginalPrice:       originalPrice,
+				SalesPrice:          salesPrice,
+				CurrencyType:        domain.CurrencyEUR,
+				Source:              source,
+				ProductID:           productId,
+				ProductName:         productName + " - " + colorName,
+				ProductUrl:          getMajeProductUrl(productId, colorId),
+				IsTranslateRequired: true,
 			}
 			totalProducts += 1
 			product.AddProductInCrawling(addRequest)

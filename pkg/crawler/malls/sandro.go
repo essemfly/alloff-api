@@ -46,18 +46,19 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			productDetailUrl := getSandroDetailUrl(productId, colorId)
 			productName, images, sizes, inventories, description, originalPrice, salesPrice := getSandroDetail(productDetailUrl)
 			addRequest := &product.ProductCrawlingAddRequest{
-				Brand:         brand,
-				Images:        images,
-				Sizes:         sizes,
-				Inventories:   inventories,
-				Description:   description,
-				OriginalPrice: originalPrice,
-				SalesPrice:    salesPrice,
-				CurrencyType:  domain.CurrencyEUR,
-				Source:        source,
-				ProductID:     productId,
-				ProductName:   productName + " - " + colorName,
-				ProductUrl:    getSandroProductUrl(productId, colorId),
+				Brand:               brand,
+				Images:              images,
+				Sizes:               sizes,
+				Inventories:         inventories,
+				Description:         description,
+				OriginalPrice:       originalPrice,
+				SalesPrice:          salesPrice,
+				CurrencyType:        domain.CurrencyEUR,
+				Source:              source,
+				ProductID:           productId,
+				ProductName:         productName + " - " + colorName,
+				ProductUrl:          getSandroProductUrl(productId, colorId),
+				IsTranslateRequired: true,
 			}
 			totalProducts += 1
 			product.AddProductInCrawling(addRequest)
