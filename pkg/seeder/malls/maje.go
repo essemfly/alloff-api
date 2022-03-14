@@ -19,17 +19,17 @@ func AddMaje() {
 
 	crawlUrl := "https://de.maje.com/de/%s/kategorien/alles-einsehen/?prefn1=smcp_subFamily&prefv1=%s&format=ajax&sz=1000000"
 	categories := map[string]string{
-		"SWEATERS_AND_CARDIGANS@%s": "Pullover%20%26%20Strickjacken",
-		"BLAZERS_AND_JACKETS@%s":    "Blazers%20%26%20Jacken",
-		"CLOTHES@%s":                "Kleider",
-		"TOPS_AND_SHIRTS@%s":        "Tops%20%26%20Hemden",
-		"BAGS@%s":                   "Taschen",
-		"SKIRTS_AND_SHORTS@%s":      "Röcke%20%26%20Shorts",
-		"JEWELRY@%s":                "Schmuck",
-		"TROUSERS_AND_JEANS@%s":     "Hosen%20%26%20Jeans",
-		"SHOES@%s":                  "Schuhe",
-		"BELT@%s":                   "Gürtel",
-		"JUMPSUIT@%s":               "Jumpsuit",
+		"니트":   "Pullover%20%26%20Strickjacken",
+		"자켓":   "Blazers%20%26%20Jacken",
+		"옷":    "Kleider",
+		"상의":   "Tops%20%26%20Hemden",
+		"가방":   "Taschen",
+		"스커트":  "Röcke%20%26%20Shorts",
+		"악세서리": "Schmuck",
+		"바지":   "Hosen%20%26%20Jeans",
+		"구두":   "Schuhe",
+		"벨트":   "Gürtel",
+		"점프슈트": "Jumpsuit",
 	}
 
 	brands := map[string]domain.BrandDAO{
@@ -78,7 +78,7 @@ func AddMaje() {
 					Category:             *updatedCat,
 					CrawlUrl:             fmt.Sprintf(crawlUrl, exhibition, categoryValue),
 					CrawlModuleName:      modulename,
-					IsSalesProducts:      true,
+					IsSalesProducts:      false,
 					IsForeignDelivery:    true,
 					PriceMarginPolicy:    "MAJE",
 					DeliveryPrice:        0,

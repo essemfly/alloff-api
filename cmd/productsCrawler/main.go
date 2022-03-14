@@ -7,12 +7,13 @@ import (
 	"time"
 
 	"github.com/lessbutter/alloff-api/cmd"
+	"github.com/lessbutter/alloff-api/config"
+
 	// "github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/pkg/brand"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/crawler/malls"
-	"github.com/lessbutter/alloff-api/pkg/product"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -47,15 +48,16 @@ func main() {
 		// "loungeb",
 		// "bylynn",
 		// "intrend",
-		"sandro",
 		// "theoutnet",
+		"sandro",
+		"maje",
 	}
 
 	StartCrawling(crawlModules)
 
 	brand.UpdateBrandCategory()
 	brand.UpdateBrandDiscountRate()
-	product.MakeSnapshot()
+	// product.MakeSnapshot()
 	crawler.WriteCrawlRecords(crawlModules)
 }
 

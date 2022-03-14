@@ -63,7 +63,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"burberry": {
@@ -74,7 +74,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"ganni": {
@@ -85,7 +85,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"isabel-marant": {
@@ -96,7 +96,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"isabel-marant-etoile": {
@@ -107,7 +107,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"vince": {
@@ -118,7 +118,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"tod-s": {
@@ -129,7 +129,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"stella-mccartney": {
@@ -140,7 +140,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"marni": {
@@ -151,7 +151,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"chloe": {
@@ -162,7 +162,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"apc": {
@@ -173,7 +173,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"acne-studios": {
@@ -184,7 +184,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"alexander-mcqueen": {
@@ -195,7 +195,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"bash": {
@@ -206,7 +206,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"balenciaga": {
@@ -217,7 +217,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"brunello-cucinelli": {
@@ -228,7 +228,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"balmain": {
@@ -239,7 +239,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"calvin-klein": {
@@ -250,7 +250,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"coach": {
@@ -261,7 +261,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"claudie-pierlot": {
@@ -272,7 +272,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"dkny": {
@@ -283,7 +283,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"dries-van-noten": {
@@ -294,7 +294,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"dolce-gabbana": {
@@ -305,7 +305,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"etro": {
@@ -316,7 +316,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"iro": {
@@ -327,7 +327,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"ienki-ienki": {
@@ -338,7 +338,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"jimmy-choo": {
@@ -349,7 +349,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"jil-sander": {
@@ -360,7 +360,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"joseph": {
@@ -371,7 +371,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"kenzo": {
@@ -382,7 +382,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"maison-margiela": {
@@ -393,7 +393,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"msgm": {
@@ -404,7 +404,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"mm6-maison-margiela": {
@@ -415,7 +415,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"paul-smith": {
@@ -426,7 +426,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"rick-owens": {
@@ -437,7 +437,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"rag-bone": {
@@ -448,7 +448,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"st-john": {
@@ -459,7 +459,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"toteme": {
@@ -470,7 +470,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"valentino": {
@@ -481,7 +481,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 		"vanessa-bruno": {
@@ -492,7 +492,7 @@ func AddTheoutnet() {
 			Onpopular:     false,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        true,
+			IsOpen:        false,
 			InMaintenance: false,
 		},
 	}
