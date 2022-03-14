@@ -52,7 +52,7 @@ func AddIntrend() {
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/MAXMARA.png",
 			Onpopular:     false,
 			Created:       time.Now(),
-			IsOpen:        false,
+			IsOpen:        true,
 			InMaintenance: false,
 			SizeGuide:     []domain.SizeGuideDAO{},
 		},

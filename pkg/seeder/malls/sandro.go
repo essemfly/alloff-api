@@ -40,7 +40,7 @@ func AddSandro() {
 			Onpopular:     true,
 			Description:   "컨템포러리",
 			Created:       time.Now(),
-			IsOpen:        false,
+			IsOpen:        true,
 			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
 				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/sandro_TOP:BOTTOM.png"},
 				{Label: "데님/진", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/sandro_DENIM:JEAN.png"},
