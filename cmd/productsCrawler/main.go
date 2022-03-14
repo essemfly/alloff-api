@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -82,6 +83,9 @@ func StartCrawling(crawlModules []string) {
 		if err != nil {
 			log.Println(err)
 		}
+
+		rand.Seed(time.Now().UnixNano())
+		rand.Shuffle(len(sources), func(i, j int) { sources[i], sources[j] = sources[j], sources[i] })
 
 		for _, source := range sources {
 			workers <- true
