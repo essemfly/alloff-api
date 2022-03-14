@@ -33,48 +33,81 @@ func GetProductPrice(pd *domain.ProductDAO) (int, int) {
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW * 100
 		return origPriceKRW, discPriceKRW
+	} else if pd.ProductInfo.Source.PriceMarginPolicy == "SANDRO" {
+		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
+		discPriceKRW := CalculateSandroPrice(int(discPrice))
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
+		origPriceKRW = origPriceKRW * 100
+		return origPriceKRW, discPriceKRW
+	} else if pd.ProductInfo.Source.PriceMarginPolicy == "MAJU" {
+		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
+		discPriceKRW := CalculateMajuPrice(int(discPrice))
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
+		origPriceKRW = origPriceKRW * 100
+		return origPriceKRW, discPriceKRW
 	}
 
 	return int(origPrice), int(discPrice)
 }
 
 func CalculateIntrendPrice(priceKRW int) int {
-	if (priceKRW / DOLLAR_EXCHANGE_RATE) >= 150 {
-		priceKRW += 16000
-		priceKRW = priceKRW * 11 / 10
-	} else {
-		priceKRW += 16000
-	}
-	priceKRW = priceKRW * 11 / 10 // 마진
-	priceKRW += 3000              // 국내 배송비
-	priceKRW += 13000             // 사업자 통관
-
-	remainder := priceKRW % 1000
-	priceKRW = priceKRW / 1000
-	if remainder >= 500 {
-		priceKRW += 1
-	}
-	priceKRW = priceKRW * 1000
+	priceKRW = priceKRW * 125 / 100 // 수수료
+	priceKRW += 40000               // 해외배송비
+	priceKRW = priceKRW * 11 / 10   // 마진
+	priceKRW = priceKRW + 3000
 
 	return priceKRW
 }
 
 func CalculateTheoutnetPrice(priceKRW int) int {
-	if (priceKRW / EURO_EXCHANGE_RATE) >= 150 {
-		priceKRW += 25000
-		priceKRW = priceKRW * 11 / 10
-	} else {
-		priceKRW += 25000
+	luxuryProduct := false
+	if (priceKRW / DOLLAR_EXCHANGE_RATE) >= 150 {
+		luxuryProduct = true
+		priceKRW = priceKRW * 113 / 100
+	}
+	priceKRW += 25000
+
+	if luxuryProduct {
+		priceKRW = priceKRW * 11 / 10 // 통관 부과세
 	}
 	priceKRW = priceKRW * 11 / 10 // 마진
-	priceKRW += 3000              // 국내 배송비
+	priceKRW = priceKRW + 3000
 
-	remainder := priceKRW % 1000
-	priceKRW = priceKRW / 1000
-	if remainder >= 500 {
-		priceKRW += 1
+	return priceKRW
+}
+
+func CalculateSandroPrice(priceKRW int) int {
+	priceKRW = priceKRW * 100 / 119 // 뉴 공급가
+	luxuryProduct := false
+	if (priceKRW / DOLLAR_EXCHANGE_RATE) >= 150 {
+		luxuryProduct = true
 	}
-	priceKRW = priceKRW * 1000
+	priceKRW = priceKRW * 109 / 100 // 수수료
+	priceKRW = priceKRW + 16000
+	if luxuryProduct {
+		priceKRW = priceKRW * 11 / 10
+	}
+
+	priceKRW = priceKRW * 11 / 10 // 마진
+	priceKRW = priceKRW + 3000
+
+	return priceKRW
+}
+
+func CalculateMajuPrice(priceKRW int) int {
+	priceKRW = priceKRW * 100 / 119 // 뉴 공급가
+	luxuryProduct := false
+	if (priceKRW / DOLLAR_EXCHANGE_RATE) >= 150 {
+		luxuryProduct = true
+	}
+	priceKRW = priceKRW * 109 / 100 // 수수료
+	priceKRW = priceKRW + 16000
+	if luxuryProduct {
+		priceKRW = priceKRW * 11 / 10
+	}
+
+	priceKRW = priceKRW * 11 / 10 // 마진
+	priceKRW = priceKRW + 3000
 
 	return priceKRW
 }
