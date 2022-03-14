@@ -25,25 +25,29 @@ func GetProductPrice(pd *domain.ProductDAO) (int, int) {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateIntrendPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
-		origPriceKRW = origPriceKRW * 100
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
 	} else if pd.ProductInfo.Source.PriceMarginPolicy == "THEOUTNET" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateTheoutnetPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
-		origPriceKRW = origPriceKRW * 100
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
 	} else if pd.ProductInfo.Source.PriceMarginPolicy == "SANDRO" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateSandroPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
-		origPriceKRW = origPriceKRW * 100
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
 	} else if pd.ProductInfo.Source.PriceMarginPolicy == "MAJU" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateMajuPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
-		origPriceKRW = origPriceKRW * 100
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
 	}
 
@@ -55,6 +59,9 @@ func CalculateIntrendPrice(priceKRW int) int {
 	priceKRW += 40000               // 해외배송비
 	priceKRW = priceKRW * 11 / 10   // 마진
 	priceKRW = priceKRW + 3000
+
+	priceKRW = priceKRW / 1000
+	priceKRW = priceKRW * 1000
 
 	return priceKRW
 }
@@ -72,6 +79,9 @@ func CalculateTheoutnetPrice(priceKRW int) int {
 	}
 	priceKRW = priceKRW * 11 / 10 // 마진
 	priceKRW = priceKRW + 3000
+
+	priceKRW = priceKRW / 1000
+	priceKRW = priceKRW * 1000
 
 	return priceKRW
 }
@@ -91,6 +101,9 @@ func CalculateSandroPrice(priceKRW int) int {
 	priceKRW = priceKRW * 11 / 10 // 마진
 	priceKRW = priceKRW + 3000
 
+	priceKRW = priceKRW / 1000
+	priceKRW = priceKRW * 1000
+
 	return priceKRW
 }
 
@@ -108,6 +121,9 @@ func CalculateMajuPrice(priceKRW int) int {
 
 	priceKRW = priceKRW * 11 / 10 // 마진
 	priceKRW = priceKRW + 3000
+
+	priceKRW = priceKRW / 1000
+	priceKRW = priceKRW * 1000
 
 	return priceKRW
 }
