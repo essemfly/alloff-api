@@ -137,19 +137,20 @@ func AddSiVillages() {
 		// 		{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/STELLA+McCARTNEY_BOTTOM.png"},
 		// 	},
 		// },
-		"12%3AST.JOHN": {
-			KorName:       "세인트존",
-			EngName:       "St.John",
-			KeyName:       "STJOHN",
-			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/STJOHN.png",
-			Onpopular:     false,
-			Description:   "컨템포러리 캐주얼",
-			Created:       time.Now(),
-			IsOpen:        false,
-			InMaintenance: false, SizeGuide: []domain.SizeGuideDAO{
-				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/St.John_TOP.png"},
-			},
-		},
+		// "12%3AST.JOHN": {
+		// 	KorName:       "세인트존",
+		// 	EngName:       "St.John",
+		// 	KeyName:       "STJOHN",
+		// 	LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/STJOHN.png",
+		// 	Onpopular:     false,
+		// 	Description:   "컨템포러리 캐주얼",
+		// 	Created:       time.Now(),
+		// 	IsOpen:        false,
+		// 	InMaintenance: false,
+		// 	SizeGuide: []domain.SizeGuideDAO{
+		// 		{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/St.John_TOP.png"},
+		// 	},
+		// },
 		"SD%3ASAVE+THE+DUCK": {
 			KorName:       "세이브 더 덕",
 			EngName:       "SAVE THE DUCK",

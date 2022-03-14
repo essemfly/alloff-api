@@ -98,6 +98,9 @@ func AddTheoutnet() {
 			Created:       time.Now(),
 			IsOpen:        true,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/ISABEL+MARANT_TOP:BOTTOM.png"},
+			},
 		},
 		"isabel-marant-etoile": {
 			KorName:       "이자벨마랑 에뚜왈",
@@ -120,6 +123,10 @@ func AddTheoutnet() {
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VINCE_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VINCE_BOTTOM.png"},
+			},
 		},
 		"tod-s": {
 			KorName:       "토즈",
@@ -138,10 +145,14 @@ func AddTheoutnet() {
 			KeyName:       "STELLAMCCARTNEY",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/STELLAMCCARTNEY.png",
 			Onpopular:     false,
-			Description:   "컨템포러리",
+			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/STELLA+McCARTNEY_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/STELLA+McCARTNEY_BOTTOM.png"},
+			},
 		},
 		"marni": {
 			KorName:       "마르니",
@@ -149,10 +160,14 @@ func AddTheoutnet() {
 			KeyName:       "MARNI",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/MARNI.png",
 			Onpopular:     false,
-			Description:   "컨템포러리",
+			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/MARNI_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/MARNI_BOTTOM.png"},
+			},
 		},
 		"chloe": {
 			KorName:       "끌로에",
@@ -164,6 +179,10 @@ func AddTheoutnet() {
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Chloe_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Chloe_BOTTOM.png"},
+			},
 		},
 		"apc": {
 			KorName:       "아페쎄",
@@ -175,6 +194,11 @@ func AddTheoutnet() {
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/A.P.C_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/A.P.C_BOTTOM.png"},
+				{Label: "슈즈", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/A.P.C_SHOES.png"},
+			},
 		},
 		"acne-studios": {
 			KorName:       "아크네 스튜디오",
@@ -182,10 +206,14 @@ func AddTheoutnet() {
 			KeyName:       "ACNESTUDIOS",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/ACNESTUDIOS.png",
 			Onpopular:     false,
-			Description:   "컨템포러리",
+			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Acne+Studios_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Acne+Studios_BOTTOM.png"},
+			},
 		},
 		"alexander-mcqueen": {
 			KorName:       "알렉산더 맥퀸",
@@ -230,6 +258,10 @@ func AddTheoutnet() {
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Brunello+Cucinelli_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Brunello+Cucinelli_BOTTOM.png"},
+			},
 		},
 		"balmain": {
 			KorName:       "발망",
@@ -270,10 +302,15 @@ func AddTheoutnet() {
 			KeyName:       "CLAUDIEPIERLOT",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/CLAUDIEPIERLOT.png",
 			Onpopular:     false,
-			Description:   "컨템포러리",
+			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의/하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/CLAUDIE+PIERLOT_TOP:BOTTOM.png"},
+				{Label: "데님/진", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/CLAUDIE+PIERLOT_DENIM:JEAN.png"},
+				{Label: "슈즈", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/CLAUDIE+PIERLOT_SHOES.png"},
+			},
 		},
 		"dkny": {
 			KorName:       "디케이앤와이",
@@ -285,6 +322,10 @@ func AddTheoutnet() {
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DKNY_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DKNY_BOTTOM.png"},
+			},
 		},
 		"dries-van-noten": {
 			KorName:       "드리스 반 노튼",
@@ -296,6 +337,10 @@ func AddTheoutnet() {
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DIRES+VAN+NOTEN_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/DIRES+VAN+NOTEN_BOTTOM.png"},
+			},
 		},
 		"dolce-gabbana": {
 			KorName:       "돌체&가바나",
@@ -329,6 +374,10 @@ func AddTheoutnet() {
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/IRO_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/IRO_BOTTOM.png"},
+			},
 		},
 		"ienki-ienki": {
 			KorName:       "옌키옌키",
@@ -373,6 +422,10 @@ func AddTheoutnet() {
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/JOSEPH_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/JOSEPH_BOTTOM.png"},
+			},
 		},
 		"kenzo": {
 			KorName:       "겐조",
@@ -391,10 +444,14 @@ func AddTheoutnet() {
 			KeyName:       "MAISONMARGIELA",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/MAISONMARGIELA.png",
 			Onpopular:     false,
-			Description:   "컨템포러리",
+			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Maison+Margiela_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Maison+Margiela_BOTTOM.png"},
+			},
 		},
 		"msgm": {
 			KorName:       "MSGM",
@@ -424,10 +481,14 @@ func AddTheoutnet() {
 			KeyName:       "PAULSMITH",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/PAULSMITH.png",
 			Onpopular:     false,
-			Description:   "컨템포러리",
+			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Paul+Smith_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Paul+Smith_BOTTOM.png"},
+			},
 		},
 		"rick-owens": {
 			KorName:       "릭 오웬스",
@@ -435,10 +496,14 @@ func AddTheoutnet() {
 			KeyName:       "RICKOWENS",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/RICKOWENS.png",
 			Onpopular:     false,
-			Description:   "컨템포러리",
+			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Rick+Owens_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/Rick+Owens_BOTTOM.png"},
+			},
 		},
 		"rag-bone": {
 			KorName:       "랙앤본",
@@ -446,10 +511,14 @@ func AddTheoutnet() {
 			KeyName:       "RAGANDBONE",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/RAGANDBONE.png",
 			Onpopular:     false,
-			Description:   "컨템포러리",
+			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/rag+%26+bone_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/rag+%26+bone_BOTTOM.png"},
+			},
 		},
 		"st-john": {
 			KorName:       "세인트 존",
@@ -457,10 +526,13 @@ func AddTheoutnet() {
 			KeyName:       "STJOHN",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/STJOHN.png",
 			Onpopular:     false,
-			Description:   "컨템포러리",
+			Description:   "컨템포러리 캐주얼",
 			Created:       time.Now(),
 			IsOpen:        false,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/St.John_TOP.png"},
+			},
 		},
 		"toteme": {
 			KorName:       "토템",
@@ -494,6 +566,10 @@ func AddTheoutnet() {
 			Created:       time.Now(),
 			IsOpen:        true,
 			InMaintenance: false,
+			SizeGuide: []domain.SizeGuideDAO{
+				{Label: "상의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VANESSABRUNO_TOP.png"},
+				{Label: "하의", ImgUrl: "https://alloff.s3.ap-northeast-2.amazonaws.com/sizeguides/VANESSABRUNO_BOTTOM.png"},
+			},
 		},
 	}
 
