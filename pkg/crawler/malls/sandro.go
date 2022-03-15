@@ -44,12 +44,15 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		productId := strings.Split(urlNodes[len(urlNodes)-1], ".html")[0]
 		colorMapIsEmpty := len(colorMap) == 1
 		for colorId, colorName := range colorMap {
+			if !colorMapIsEmpty && colorId == sandroDefaultcolor {
+				continue
+			}
 			totalProducts++
 			productDetailUrl := getSandroDetailUrl(productId, colorId)
 			productName, images, sizes, inventories, description, originalPrice, salesPrice := getSandroDetail(productDetailUrl)
-			if !colorMapIsEmpty {
+			if colorId != majeDeafultColor {
 				productId += "-" + colorName
-				productName += "-" + colorName
+				productName += " - " + colorName
 			}
 			addRequest := &product.ProductCrawlingAddRequest{
 				Brand:               brand,
@@ -87,7 +90,7 @@ func getSandroDetailUrl(productId string, colorId string) string {
 
 func getSandroProductUrl(productId string, colorId string) string {
 	if colorId == sandroDefaultcolor {
-		return fmt.Sprintf("https://de.sandro-paris.com/on/demandware.store/Sites-Sandro-DE-Site/de_DE/Product-Variation?pid=%s&Quantity=1", productId, productId)
+		return fmt.Sprintf("https://de.sandro-paris.com/on/demandware.store/Sites-Sandro-DE-Site/de_DE/Product-Variation?pid=%s&Quantity=1", productId)
 	}
 	return fmt.Sprintf("https://de.sandro-paris.com/on/demandware.store/Sites-Sandro-DE-Site/de_DE/Product-Variation?pid=%s&dwvar_%s_color=%s&Quantity=1", productId, productId, colorId)
 }

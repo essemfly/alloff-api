@@ -44,12 +44,15 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 		productId := strings.Split(urlNodes[len(urlNodes)-1], ".html")[0]
 		colorMapIsEmpty := len(colorMap) == 1
 		for colorId, colorName := range colorMap {
+			if !colorMapIsEmpty && colorId == majeDeafultColor {
+				continue
+			}
 			totalProducts++
 			productDetailUrl := getMajeDetailUrl(productId, colorId)
 			productName, images, sizes, inventories, description, originalPrice, salesPrice := getMajeDetail(productDetailUrl)
-			if !colorMapIsEmpty {
+			if colorId != majeDeafultColor {
 				productId += "-" + colorName
-				productName += "-" + colorName
+				productName += " - " + colorName
 			}
 			addRequest := &product.ProductCrawlingAddRequest{
 				Brand:               brand,
@@ -87,7 +90,7 @@ func getMajeDetailUrl(productId string, colorId string) string {
 
 func getMajeProductUrl(productId string, colorId string) string {
 	if colorId == majeDeafultColor {
-		return fmt.Sprintf("https://de.maje.com/on/demandware.store/Sites-Maje-DE-Site/de/Product-Variation?pid=%s&Quantity=1", productId, productId)
+		return fmt.Sprintf("https://de.maje.com/on/demandware.store/Sites-Maje-DE-Site/de/Product-Variation?pid=%s&Quantity=1", productId)
 	}
 	return fmt.Sprintf("https://de.maje.com/on/demandware.store/Sites-Maje-DE-Site/de/Product-Variation?pid=%s&dwvar_%s_color=%s&Quantity=1", productId, productId, colorId)
 }
