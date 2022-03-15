@@ -112,7 +112,7 @@ func (s *BrandService) EditBrand(ctx context.Context, req *grpcServer.EditBrandR
 		return nil, err
 	}
 
-	broker.BrandSyncer()
+	broker.BrandSyncer(newBrandDao.KeyName)
 
 	return &grpcServer.EditBrandResponse{
 		Brand: mapper.BrandMapper(newBrandDao),
