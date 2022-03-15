@@ -41,6 +41,7 @@ func TranslateProductInfo(worker chan bool, done chan bool, pd *domain.ProductDA
 
 	pd.AlloffName = titleInKorean
 	pd.ProductInfo.Information = informationKorean
+	pd.IsTranslateRequired = false
 	// pd.Inventory = inventoryKorean
 	newPd, err := ioc.Repo.Products.Upsert(pd)
 	if err != nil {

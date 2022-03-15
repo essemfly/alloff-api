@@ -5,6 +5,7 @@ import (
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Pg를 받으면, 안에 있는 PD들 Productgroupid 업데이트하고, 새 것들을 PG에 넣어주는 역할
@@ -97,4 +98,28 @@ func HomeTabSyncer() {
 			log.Println("HOIT", err)
 		}
 	}
+}
+
+func BrandSyncer(brandKeyname string) {
+	offset, limit := 0, 20000
+
+	newBrand, _ := ioc.Repo.Brands.GetByKeyname(brandKeyname)
+
+	filter := bson.M{
+		"productinfo.brand.keyname": brandKeyname,
+	}
+
+	pds, _, err := ioc.Repo.Products.List(offset, limit, filter, nil)
+	if err != nil {
+		log.Println("err", err)
+	}
+
+	for _, pd := range pds {
+		pd.ProductInfo.Brand = newBrand
+		_, err := ioc.Repo.Products.Upsert(pd)
+		if err != nil {
+			log.Println("err occured", err)
+		}
+	}
+
 }
