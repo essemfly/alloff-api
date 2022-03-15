@@ -5,7 +5,7 @@ package resolver
 
 import (
 	"context"
-	"errors"
+	"fmt"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
@@ -16,7 +16,7 @@ import (
 func (r *mutationResolver) LikeBrand(ctx context.Context, input *model.LikeBrandInput) (bool, error) {
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return false, errors.New("invalid token")
+		return false, fmt.Errorf("ERR000:invalid token")
 	}
 
 	return ioc.Repo.LikeBrands.Like(user.ID.Hex(), input.BrandID)
@@ -37,7 +37,7 @@ func (r *queryResolver) Brands(ctx context.Context, input *model.BrandsInput) ([
 		if *input.OnlyLikes {
 			user := middleware.ForContext(ctx)
 			if user == nil {
-				return nil, errors.New("invalid token")
+				return nil, fmt.Errorf("ERR000:invalid token")
 			}
 
 			likeDao, err := ioc.Repo.LikeBrands.List(user.ID.Hex())

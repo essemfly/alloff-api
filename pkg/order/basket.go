@@ -1,7 +1,7 @@
 package order
 
 import (
-	"errors"
+	"fmt"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -33,7 +33,7 @@ func (basket *Basket) IsValid() []error {
 
 		if item.ProductGroup != nil {
 			if !item.ProductGroup.IsLive() {
-				errs = append(errs, errors.New("productgroup time out"+item.Product.ID.Hex()))
+				errs = append(errs, fmt.Errorf("ERR200:productgroup timeout"+item.Product.ID.Hex()))
 			}
 		}
 
@@ -47,20 +47,20 @@ func (basket *Basket) IsValid() []error {
 			}
 		}
 		if !isValidSize {
-			errs = append(errs, errors.New("invalid product option "+item.Product.ID.Hex()))
+			errs = append(errs, fmt.Errorf("ERR104:invalid product option size"+item.Size))
 		}
 
 		if !isValidQuantity {
-			errs = append(errs, errors.New("invalid product option quantity "+item.Product.ID.Hex()))
+			errs = append(errs, fmt.Errorf("ERR103:invalid product option quantity"+item.Product.ID.Hex()))
 		}
 
 		if item.Product.Removed {
-			errs = append(errs, errors.New(""))
+			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is removed"))
 		}
 	}
 
 	if basket.ProductPrice != totalPrices {
-		errs = append(errs, errors.New("invalid total products price"))
+		errs = append(errs, fmt.Errorf("ERR101:invalid total products price order amount"))
 	}
 
 	return errs

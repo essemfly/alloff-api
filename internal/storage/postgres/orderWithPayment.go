@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"strconv"
 	"strings"
@@ -162,19 +163,19 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 	*/
 
 	if paymentDao.BuyerMobile == "" {
-		return errors.New("invalid mobile error")
+		return fmt.Errorf("ERR302:failed to find buyer mobile")
 	}
 	if paymentDao.BuyerAddress == "" || paymentDao.BuyerPostCode == "" {
-		return errors.New("invalid order address error")
+		return fmt.Errorf("ERR303:failed to find address")
 	}
 	if orderDao.TotalPrice != paymentDao.Amount {
-		return errors.New("order amount not matched")
+		return fmt.Errorf("ERR101:invalid total products price order amount")
 	}
 	if len(orderDao.OrderItems) == 0 {
-		return errors.New("empty orders")
+		return fmt.Errorf("ERR304:empty orders")
 	}
 	if orderDao.OrderStatus != domain.ORDER_CREATED && orderDao.OrderStatus != domain.ORDER_RECREATED {
-		return errors.New("already ongoing order exists")
+		return fmt.Errorf("ERR400:already ongoing order exists")
 	}
 
 	// 이제 Stock 옵션 줄이면 된다. + Order의 상태 및 timestamp찍으면 된다.
@@ -190,41 +191,43 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			item.OrderItemStatus = domain.ORDER_ITEM_PAYMENT_PENDING
 			pd, err := ioc.Repo.Products.Get(item.ProductID)
 			if err != nil {
-				return err
+				return fmt.Errorf("ERR100:alloffproduct not found")
 			}
 
-			if pd.Removed || pd.Soldout {
-				return errors.New("product sold out or removed")
+			if pd.Removed {
+				return fmt.Errorf("ERR102:alloffproduct is removed")
+			}
+			if pd.Soldout {
+				return fmt.Errorf("ERR105:product soldout")
 			}
 
 			err = pd.Release(item.Size, item.Quantity)
 			if err != nil {
-				return err
+				return fmt.Errorf("ERR106:product update failed" + err.Error())
 			}
 			totalProductPrices += item.Quantity * item.SalesPrice
 			pd.CheckSoldout()
 
 			_, err = ioc.Repo.Products.Upsert(pd)
 			if err != nil {
-				log.Println("productDao Update")
-				return err
+				return fmt.Errorf("ERR106:product update failed" + err.Error())
 			}
 
 			_, err = repo.db.Model(item).WherePK().Update()
 			if err != nil {
 				log.Println("orderitemDao Update")
-				return err
+				return fmt.Errorf("ERR305:order update failed" + err.Error())
 			}
 		}
 
 		if orderDao.TotalPrice != paymentDao.Amount {
-			return errors.New("total price not the same")
+			return fmt.Errorf("ERR101:invalid total products price order amount")
 		}
 
 		_, err := repo.db.Model(orderDao).WherePK().Update()
 		if err != nil {
 			log.Println("orderDao Update")
-			return err
+			return fmt.Errorf("ERR305:order update failed" + err.Error())
 		}
 
 		_, prevFailedErr := ioc.Repo.Payments.GetByOrderIDAndAmount(orderDao.AlloffOrderID, orderDao.TotalPrice)
@@ -233,7 +236,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			_, err = config.PaymentService.PreparePayment(orderDao.AlloffOrderID, float64(orderDao.TotalPrice))
 			if err != nil {
 				log.Println("iamport error", err)
-				return err
+				return fmt.Errorf("ERR401:iamport prepare payment error")
 			}
 
 			paymentDao.CreatedAt = time.Now()
@@ -242,7 +245,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			_, err = repo.db.Model(paymentDao).Insert()
 			if err != nil {
 				log.Println("paymentDao Insert", err)
-				return err
+				return fmt.Errorf("ERR403:payment create failed")
 			}
 			return nil
 		}
@@ -252,7 +255,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 		_, err = repo.db.Model(paymentDao).WherePK().Update()
 		if err != nil {
 			log.Println("paymentDao update", err)
-			return err
+			return fmt.Errorf("ERR402:payment update failed")
 		}
 
 		return nil

@@ -5,7 +5,7 @@ package resolver
 
 import (
 	"context"
-	"errors"
+	"fmt"
 	"strconv"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
@@ -25,7 +25,7 @@ func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInp
 
 	basketItems, err := BuildBasketItems(input)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR100:alloffproduct not found")
 	}
 
 	basket := &order.Basket{
@@ -68,7 +68,7 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return nil, errors.New("invalid token")
+		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
 	basketItems, err := BuildBasketItems(input)
@@ -86,14 +86,11 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 		return nil, errs[0]
 	}
 
-	orderDao, err := basket.BuildOrder(user)
-	if err != nil {
-		return nil, err
-	}
+	orderDao, _ := basket.BuildOrder(user)
 
 	newOrderDao, err := ioc.Repo.Orders.Insert(orderDao)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR300:failed to create order not found")
 	}
 
 	basePayment := newOrderDao.GetBasePayment()
@@ -116,13 +113,13 @@ func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.Paym
 
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return nil, errors.New("invalid token")
+		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
 	paymentDao := BuildPaymentDao(input)
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(paymentDao.MerchantUid)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
 	result := &model.PaymentStatus{
@@ -151,17 +148,17 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Payme
 
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return nil, errors.New("invalid token")
+		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(input.MerchantUID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
 	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(input.MerchantUID, input.Amount)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR404:failed to find payment order not found")
 	}
 
 	result := &model.PaymentStatus{
@@ -173,7 +170,7 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Payme
 
 	err = ioc.Service.OrderWithPaymentService.CancelPayment(orderDao, paymentDao)
 	if err != nil {
-		return result, err
+		return result, fmt.Errorf("ERR306:failed to cancel payment")
 	}
 
 	result.Success = true
@@ -194,7 +191,7 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return nil, errors.New("invalid token")
+		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
 	if !input.Success {
@@ -208,12 +205,12 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(input.MerchantUID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
 	err = ioc.Service.OrderWithPaymentService.VerifyPayment(orderDao, input.ImpUID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR405: failed to verify payment " + err.Error())
 	}
 
 	return &model.PaymentResult{
@@ -227,22 +224,22 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error) {
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return nil, errors.New("invalid token")
+		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
 	orderDao, paymentDao, err := ioc.Service.OrderWithPaymentService.Find(orderID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
 	intOrderItemID, err := strconv.Atoi(orderItemID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid orderitemId")
 	}
 
 	orderItemDao := orderDao.GetOrderItemByID(intOrderItemID)
 	if orderItemDao == nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR307:failed to find order item order not found")
 	}
 
 	result := &model.PaymentStatus{
@@ -255,7 +252,7 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 	err = ioc.Service.OrderWithPaymentService.CancelOrderRequest(orderDao, orderItemDao, paymentDao)
 
 	if err != nil {
-		return result, err
+		return result, fmt.Errorf("ERR308:failed to cancel order " + err.Error())
 	}
 
 	result.Success = true
@@ -265,37 +262,37 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 func (r *mutationResolver) ConfirmOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error) {
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return nil, errors.New("invalid token")
+		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
 	intOrderItemID, err := strconv.Atoi(orderItemID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid orderitemId")
 	}
 
 	orderItemDao := orderDao.GetOrderItemByID(intOrderItemID)
 	if orderItemDao == nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR307:failed to find order item order not found")
 	}
 
 	err = orderItemDao.ConfirmOrder()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR309:failed to confirm order " + err.Error())
 	}
 
 	_, err = ioc.Repo.OrderItems.Update(orderItemDao)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR305:order update failed")
 	}
 
 	newOrderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
 	return &model.PaymentStatus{
@@ -309,12 +306,12 @@ func (r *mutationResolver) ConfirmOrderItem(ctx context.Context, orderID string,
 func (r *queryResolver) Order(ctx context.Context, id string) (*model.OrderInfo, error) {
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return nil, errors.New("invalid token")
+		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
 	return mapper.MapOrder(orderDao), nil
@@ -323,13 +320,13 @@ func (r *queryResolver) Order(ctx context.Context, id string) (*model.OrderInfo,
 func (r *queryResolver) Orders(ctx context.Context) ([]*model.OrderInfo, error) {
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return nil, errors.New("invalid token")
+		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
 	onlyPaid := true
 	orderDaos, err := ioc.Repo.Orders.List(user.ID.Hex(), onlyPaid)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
 	orders := []*model.OrderInfo{}

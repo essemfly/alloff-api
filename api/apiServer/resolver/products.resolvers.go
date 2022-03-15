@@ -6,6 +6,7 @@ package resolver
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
@@ -19,7 +20,7 @@ import (
 func (r *mutationResolver) LikeProduct(ctx context.Context, input *model.LikeProductInput) (bool, error) {
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return false, errors.New("invalid token")
+		return false, fmt.Errorf("ERR000:invalid token")
 	}
 
 	return ioc.Repo.LikeProducts.Like(user.ID.Hex(), input.ProductID)
@@ -199,7 +200,7 @@ func (r *queryResolver) AlloffCategoryProducts(ctx context.Context, input model.
 func (r *queryResolver) Likeproducts(ctx context.Context) ([]*model.LikeProductOutput, error) {
 	user := middleware.ForContext(ctx)
 	if user == nil {
-		return nil, errors.New("invalid token")
+		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
 	likes, _ := ioc.Repo.LikeProducts.List(user.ID.Hex())
