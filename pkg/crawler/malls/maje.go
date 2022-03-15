@@ -20,6 +20,7 @@ const (
 	majeAllowedDomain    = "de.maje.com"
 	majeReferenceRegex   = `(?m)Ref\s?:\s?.*`
 	majeModelDescription = "trägt Größe"
+	majeDeafultColor     = "__default__"
 )
 
 func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -32,7 +33,7 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 	}
 
 	c.OnHTML(".infosProduct", func(e *colly.HTMLElement) {
-		colorMap := map[string]string{}
+		colorMap := map[string]string{majeDeafultColor: majeDeafultColor}
 		e.ForEach("ul.swatch-list li", func(_ int, li *colly.HTMLElement) {
 			colorId := li.ChildAttr("img", "data-colorid")
 			colorName := li.ChildAttr("img", "data-colorname")
@@ -41,10 +42,15 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 		nameUrl := e.ChildAttr(".name-link", "href")
 		urlNodes := strings.Split(nameUrl, "/")
 		productId := strings.Split(urlNodes[len(urlNodes)-1], ".html")[0]
+		colorMapIsEmpty := len(colorMap) == 1
 		for colorId, colorName := range colorMap {
 			totalProducts++
 			productDetailUrl := getMajeDetailUrl(productId, colorId)
 			productName, images, sizes, inventories, description, originalPrice, salesPrice := getMajeDetail(productDetailUrl)
+			if !colorMapIsEmpty {
+				productId += "-" + colorName
+				productName += "-" + colorName
+			}
 			addRequest := &product.ProductCrawlingAddRequest{
 				Brand:               brand,
 				Images:              images,
@@ -56,7 +62,7 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 				CurrencyType:        domain.CurrencyEUR,
 				Source:              source,
 				ProductID:           productId,
-				ProductName:         productName + " - " + colorName,
+				ProductName:         productName,
 				ProductUrl:          getMajeProductUrl(productId, colorId),
 				IsTranslateRequired: true,
 			}
@@ -80,6 +86,9 @@ func getMajeDetailUrl(productId string, colorId string) string {
 }
 
 func getMajeProductUrl(productId string, colorId string) string {
+	if colorId == majeDeafultColor {
+		return fmt.Sprintf("https://de.maje.com/on/demandware.store/Sites-Maje-DE-Site/de/Product-Variation?pid=%s&Quantity=1", productId, productId)
+	}
 	return fmt.Sprintf("https://de.maje.com/on/demandware.store/Sites-Maje-DE-Site/de/Product-Variation?pid=%s&dwvar_%s_color=%s&Quantity=1", productId, productId, colorId)
 }
 

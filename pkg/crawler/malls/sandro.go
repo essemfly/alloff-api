@@ -20,6 +20,7 @@ const (
 	sandroReferenceDescription    = "Référence"
 	sandroInlineSizeDescription   = "Größenentsprechung"
 	sandroModelDescription        = "Das Model"
+	sandroDefaultcolor            = "__default__"
 )
 
 func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -32,7 +33,7 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 	}
 
 	c.OnHTML(".product-info", func(e *colly.HTMLElement) {
-		colorMap := map[string]string{}
+		colorMap := map[string]string{sandroDefaultcolor: sandroDefaultcolor}
 		e.ForEach("ul.swatch-list li", func(_ int, li *colly.HTMLElement) {
 			colorId := li.ChildAttr("img", "data-colorid")
 			colorName := li.ChildAttr("img", "data-colorname")
@@ -41,10 +42,15 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		nameUrl := e.ChildAttr(".name-link", "href")
 		urlNodes := strings.Split(nameUrl, "/")
 		productId := strings.Split(urlNodes[len(urlNodes)-1], ".html")[0]
+		colorMapIsEmpty := len(colorMap) == 1
 		for colorId, colorName := range colorMap {
 			totalProducts++
 			productDetailUrl := getSandroDetailUrl(productId, colorId)
 			productName, images, sizes, inventories, description, originalPrice, salesPrice := getSandroDetail(productDetailUrl)
+			if !colorMapIsEmpty {
+				productId += "-" + colorName
+				productName += "-" + colorName
+			}
 			addRequest := &product.ProductCrawlingAddRequest{
 				Brand:               brand,
 				Images:              images,
@@ -56,7 +62,7 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 				CurrencyType:        domain.CurrencyEUR,
 				Source:              source,
 				ProductID:           productId,
-				ProductName:         productName + " - " + colorName,
+				ProductName:         productName,
 				ProductUrl:          getSandroProductUrl(productId, colorId),
 				IsTranslateRequired: true,
 			}
@@ -80,6 +86,9 @@ func getSandroDetailUrl(productId string, colorId string) string {
 }
 
 func getSandroProductUrl(productId string, colorId string) string {
+	if colorId == sandroDefaultcolor {
+		return fmt.Sprintf("https://de.sandro-paris.com/on/demandware.store/Sites-Sandro-DE-Site/de_DE/Product-Variation?pid=%s&Quantity=1", productId, productId)
+	}
 	return fmt.Sprintf("https://de.sandro-paris.com/on/demandware.store/Sites-Sandro-DE-Site/de_DE/Product-Variation?pid=%s&dwvar_%s_color=%s&Quantity=1", productId, productId, colorId)
 }
 
