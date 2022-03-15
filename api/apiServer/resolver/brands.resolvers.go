@@ -47,7 +47,9 @@ func (r *queryResolver) Brands(ctx context.Context, input *model.BrandsInput) ([
 
 			likeBrands := []*model.Brand{}
 			for _, likebrand := range likeDao.Brands {
-				likeBrands = append(likeBrands, mapper.MapBrandDaoToBrand(likebrand, false))
+				if likebrand != nil {
+					likeBrands = append(likeBrands, mapper.MapBrandDaoToBrand(likebrand, false))
+				}
 			}
 
 			return likeBrands, nil
