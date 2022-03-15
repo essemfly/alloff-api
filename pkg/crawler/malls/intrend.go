@@ -127,6 +127,7 @@ func getIntrendDetail(productUrl string) (title string, imageUrls []string, size
 	)
 
 	description = map[string]string{}
+	imageUrls = append(imageUrls, "https://alloff.s3.ap-northeast-2.amazonaws.com/description/Intrend_info.png")
 
 	c.OnHTML(".pp_mod-prod-desc-head", func(e *colly.HTMLElement) {
 		title = e.ChildText(".title")

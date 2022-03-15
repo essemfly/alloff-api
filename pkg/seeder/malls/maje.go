@@ -58,7 +58,7 @@ func AddMaje() {
 
 		for categoryKey, categoryValue := range categories {
 			for _, exhibition := range majeExhibitions {
-				keyname := brand.KeyName + "-" + categoryKey
+				keyname := brand.KeyName + "-" + categoryKey + "-" + exhibition
 				category := domain.CategoryDAO{
 					Name:          categoryKey,
 					KeyName:       keyname,
