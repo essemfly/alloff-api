@@ -17,19 +17,19 @@ func AddMaje() {
 		"sale",
 	}
 
-	crawlUrl := "https://de.maje.com/de/%s/kategorien/alles-einsehen/?prefn1=smcp_subFamily&prefv1=%s&format=ajax&sz=1000000"
+	crawlUrl := "https://de.maje.com/de/%s/kategorien/%s/?&sz=10000&format=ajax"
+
 	categories := map[string]string{
-		"니트":   "Pullover%20%26%20Strickjacken",
-		"자켓":   "Blazers%20%26%20Jacken",
-		"옷":    "Kleider",
-		"상의":   "Tops%20%26%20Hemden",
-		"가방":   "Taschen",
-		"스커트":  "Röcke%20%26%20Shorts",
-		"악세서리": "Schmuck",
-		"바지":   "Hosen%20%26%20Jeans",
-		"구두":   "Schuhe",
-		"벨트":   "Gürtel",
-		"점프슈트": "Jumpsuit",
+		"원피스":    "kleider",
+		"치마/반바지": "rocke-und-shorts",
+		"상의":     "tops-und-t-shirts",
+		"니트":     "pullover-und-strickjacken",
+		"코트":     "mantel",
+		"자켓":     "jacken-und-blazers",
+		"바지":     "hosen-und-jeans",
+		"점프수트":   "jumpshort-und-jumpsuit",
+		"가방":     "taschen",
+		"악세서리":   "accessoires",
 	}
 
 	brands := map[string]domain.BrandDAO{

@@ -16,19 +16,19 @@ func AddSandro() {
 		"last-chance",
 		"sale",
 	}
-	crawlUrl := "https://de.sandro-paris.com/de/damen/%s/jede-auswahl/?prefn1=smcp_subFamily&prefv1=%s&sz=1000000&format=ajax"
+
+	crawlUrl := "https://de.sandro-paris.com/de/damen/%s/%s/?sz=10000&format=ajax"
 
 	categories := map[string]string{
-		"옷":    "Kleider",
-		"코트":   "Mäntel",
-		"자켓":   "Jacken",
-		"상의":   "Tops%20%26%20Hemden",
-		"청바지":  "Jeans",
-		"바지":   "Hosen",
-		"티셔츠":  "T-shirts",
-		"스커트":  "Röcke%20%26%20Shorts",
-		"니트":   "Pullover%20%26%20Cardigans",
-		"악세서리": "Accessoires",
+		"원피스":    "kleider",
+		"코트/자켓":  "blousons-mantel",
+		"니트":     "pullovers-cardigans",
+		"상의":     "tops-hemden",
+		"바지":     "hosen-jeans",
+		"치마/반바지": "rocke-shorts",
+		"가방":     "lederwaren",
+		"신발":     "schuhe",
+		"악세서리":   "andere-accessoires",
 	}
 
 	brands := map[string]domain.BrandDAO{
