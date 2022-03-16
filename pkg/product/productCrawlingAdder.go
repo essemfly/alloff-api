@@ -21,12 +21,13 @@ func AddProductInCrawling(request *ProductCrawlingAddRequest) {
 	pd, err := ioc.Repo.Products.GetByMetaID(pdInfo.ID.Hex())
 	if err == mongo.ErrNoDocuments {
 		pd = &domain.ProductDAO{
-			AlloffName:    pdInfo.OriginalName,
-			ProductInfo:   pdInfo,
-			Removed:       false,
-			IsImageCached: false,
-			Created:       time.Now(),
-			Updated:       time.Now(),
+			AlloffName:          pdInfo.OriginalName,
+			ProductInfo:         pdInfo,
+			Removed:             false,
+			IsImageCached:       false,
+			IsTranslateRequired: request.IsTranslateRequired,
+			Created:             time.Now(),
+			Updated:             time.Now(),
 		}
 	} else if err != nil {
 		log.Println("IsThere?", err)
@@ -114,11 +115,6 @@ func ProcessCrawlingProductRequest(pd *domain.ProductDAO, request *ProductCrawli
 	lastPrice := pd.DiscountedPrice
 	newOrigPrice, newDiscPrice := GetProductPrice(pd)
 	isPriceUpdated := pd.UpdatePrice(newOrigPrice, newDiscPrice)
-
-	pd.IsTranslateRequired = false
-	if request.IsTranslateRequired {
-		pd.IsTranslateRequired = true
-	}
 
 	if isPriceUpdated {
 		err := InsertProductDiff(pd, lastPrice)

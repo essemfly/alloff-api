@@ -77,7 +77,7 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) {
 
 // HomeTab Syncer
 func HomeTabSyncer() {
-	items, cnt, err := ioc.Repo.HomeTabItems.List(0, 30, true)
+	items, cnt, err := ioc.Repo.HomeTabItems.List(0, 50, true)
 	if err != nil {
 		log.Println("listing hometab item error", err)
 	}
@@ -91,6 +91,7 @@ func HomeTabSyncer() {
 				log.Println("find ex error", err)
 			}
 			item.Exhibitions[idx] = newExhibition
+			item.Products = newExhibition.ListCheifProducts()
 		}
 
 		_, err = ioc.Repo.HomeTabItems.Update(item)
@@ -114,7 +115,10 @@ func BrandSyncer(brandKeyname string) {
 		log.Println("err", err)
 	}
 
-	for _, pd := range pds {
+	for idx, pd := range pds {
+		if idx%100 == 0 {
+			log.Println("IDX", idx)
+		}
 		pd.ProductInfo.Brand = newBrand
 		_, err := ioc.Repo.Products.Upsert(pd)
 		if err != nil {
