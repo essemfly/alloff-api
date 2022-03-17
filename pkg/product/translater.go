@@ -13,16 +13,19 @@ func TranslateProductInfo(worker chan bool, done chan bool, pd *domain.ProductDA
 	titleInKorean, err := translater.TranslateText(language.Korean.String(), pd.AlloffName)
 	if err != nil {
 		log.Println("err", err)
+		return nil, err
 	}
 	informationKorean := map[string]string{}
 	for key, value := range pd.ProductInfo.Information {
 		keyKorean, err := translater.TranslateText(language.Korean.String(), key)
 		if err != nil {
 			log.Println("info translate key err", err)
+			return nil, err
 		}
 		valueKorean, err := translater.TranslateText(language.Korean.String(), value)
 		if err != nil {
 			log.Println("info translate value err", err)
+			return nil, err
 		}
 		informationKorean[keyKorean] = valueKorean
 	}
@@ -46,6 +49,7 @@ func TranslateProductInfo(worker chan bool, done chan bool, pd *domain.ProductDA
 	newPd, err := ioc.Repo.Products.Upsert(pd)
 	if err != nil {
 		log.Println("err", err)
+		return nil, err
 	}
 
 	<-worker
