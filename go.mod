@@ -15,6 +15,7 @@ require (
 	github.com/go-pg/pg/v10 v10.10.6
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
+	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2 // indirect
 	github.com/iamport/interface v0.0.15
 	github.com/kennygrant/sanitize v1.2.4 // indirect

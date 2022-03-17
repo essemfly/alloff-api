@@ -7,6 +7,8 @@ import (
 	"os"
 	"strconv"
 
+	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	pb "github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/api/grpcServer/services"
 	"github.com/lessbutter/alloff-api/cmd"
@@ -35,7 +37,11 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
+			grpc_recovery.UnaryServerInterceptor(),
+		)),
+	)
 	pb.RegisterProductServer(grpcServer, &services.ProductService{})
 	pb.RegisterProductGroupServer(grpcServer, &services.ProductGroupService{})
 	pb.RegisterBrandServer(grpcServer, &services.BrandService{})
