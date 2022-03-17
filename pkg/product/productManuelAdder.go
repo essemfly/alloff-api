@@ -53,7 +53,7 @@ func AddManualProductInfo(request *ProductManualAddRequest) (*domain.ProductMeta
 	pdInfo.Images = request.Images
 	pdInfo.SetBrandAndCategory(brand, newSource)
 	pdInfo.SetGeneralInfo(request.AlloffName, request.ProductID, "", request.Images, sizes, nil, nil)
-	pdInfo.SetPrices(int(request.OriginalPrice), int(request.DiscountedPrice), domain.CurrencyKRW)
+	pdInfo.SetPrices(float32(request.OriginalPrice), float32(request.DiscountedPrice), domain.CurrencyKRW)
 
 	newPdInfo, err := ioc.Repo.ProductMetaInfos.Insert(pdInfo)
 	if err != nil {

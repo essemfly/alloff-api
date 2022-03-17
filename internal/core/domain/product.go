@@ -47,7 +47,7 @@ func (pdInfo *ProductMetaInfoDAO) SetBrandAndCategory(brand *BrandDAO, source *C
 	pdInfo.Source = source
 }
 
-func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyType CurrencyType) {
+func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice float32, currencyType CurrencyType) {
 	newHistory := []*PriceHistoryDAO{
 		{
 			Date:  time.Now(),
@@ -87,7 +87,7 @@ func (pdInfo *ProductMetaInfoDAO) SetGeneralInfo(productName, productID, product
 
 type PriceHistoryDAO struct {
 	Date  time.Time
-	Price int
+	Price float32
 }
 
 type InventoryDAO struct {
@@ -172,7 +172,7 @@ func (pd *ProductDAO) UpdatePrice(origPrice, discountedPrice int) bool {
 	newHistory := []PriceHistoryDAO{
 		{
 			Date:  time.Now(),
-			Price: discountedPrice,
+			Price: float32(discountedPrice),
 		},
 	}
 
