@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -50,10 +49,14 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 			totalProducts++
 			productDetailUrl := getMajeDetailUrl(productId, colorId)
 			productName, images, sizes, inventories, description, originalPrice, salesPrice := getMajeDetail(productDetailUrl)
-			if colorId != majeDeafultColor {
-				productId += "-" + colorName
-				productName += " - " + colorName
+
+			productIdForDb := productId
+			productNameForDb := productName
+			if colorId != majeDeafultColor && colorId != "" {
+				productIdForDb += "-" + colorName
+				productNameForDb += " - " + colorName
 			}
+
 			addRequest := &product.ProductCrawlingAddRequest{
 				Brand:               brand,
 				Images:              images,
@@ -64,8 +67,8 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 				SalesPrice:          salesPrice,
 				CurrencyType:        domain.CurrencyEUR,
 				Source:              source,
-				ProductID:           productId,
-				ProductName:         productName,
+				ProductID:           productIdForDb,
+				ProductName:         productNameForDb,
 				ProductUrl:          getMajeProductUrl(productId, colorId),
 				IsTranslateRequired: true,
 			}
@@ -89,7 +92,7 @@ func getMajeDetailUrl(productId string, colorId string) string {
 }
 
 func getMajeProductUrl(productId string, colorId string) string {
-	if colorId == majeDeafultColor {
+	if colorId == majeDeafultColor || colorId == "" {
 		return fmt.Sprintf("https://de.maje.com/on/demandware.store/Sites-Maje-DE-Site/de/Product-Variation?pid=%s&Quantity=1", productId)
 	}
 	return fmt.Sprintf("https://de.maje.com/on/demandware.store/Sites-Maje-DE-Site/de/Product-Variation?pid=%s&dwvar_%s_color=%s&Quantity=1", productId, productId, colorId)
@@ -209,17 +212,17 @@ func getMajeDetail(productUrl string) (
 	})
 
 	// 가격
-	c.OnHTML("span.price-sales", func(span *colly.HTMLElement) {
-		// 가격을 찾을 수 없으면 panic (MustCompile)
-		re := regexp.MustCompile("[0-9]+")
-		_salesPrice, _ := strconv.ParseFloat(re.FindAllString(span.Text, -1)[0], 32)
-		salesPrice = float32(_salesPrice)
-	})
-	c.OnHTML("span.price-standard", func(span *colly.HTMLElement) {
-		// 가격을 찾을 수 없으면 panic (MustCompile)
-		re := regexp.MustCompile("[0-9]+")
-		_originalPrice, _ := strconv.ParseFloat(re.FindAllString(span.Text, -1)[0], 32)
-		originalPrice = float32(_originalPrice)
+	priceParsed := false
+	c.OnHTML("div.product-price", func(div *colly.HTMLElement) {
+		if priceParsed {
+			// Only parse the first-appearing price information
+			return
+		}
+
+		salesPrice = parseEuro(div.ChildText("span.price-sales"))
+		originalPrice = parseEuro(div.ChildText("span.price-standard"))
+
+		priceParsed = true
 	})
 
 	// 이미지

@@ -1,6 +1,11 @@
 package malls
 
 import (
+	"math"
+	"regexp"
+	"strconv"
+	"strings"
+
 	"github.com/gocolly/colly"
 )
 
@@ -15,4 +20,25 @@ func getCollyCollector(allowedDomain string) *colly.Collector {
 		colly.UserAgent(collyUserAgent),
 	)
 	return c
+}
+
+func parseEuro(s string) float32 {
+	var p float64
+	p = 0.0
+
+	priceText := strings.ReplaceAll(s, "€", "")
+	trimRe := regexp.MustCompile(`\s*`)
+	priceText = trimRe.ReplaceAllString(priceText, "")
+
+	if strings.Contains(priceText, ",") {
+		decimals := strings.Split(priceText, ",")[1]
+		d, _ := strconv.ParseFloat(decimals, 32)
+		p += d * math.Pow(0.1, float64(len(decimals)))
+	}
+
+	integer_part := strings.Split(priceText, ",")[0]
+	integer_part = strings.ReplaceAll(integer_part, ".", "")
+	i, _ := strconv.ParseFloat(integer_part, 32)
+	p += i
+	return float32(p)
 }
