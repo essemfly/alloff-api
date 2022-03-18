@@ -47,7 +47,17 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 				continue
 			}
 			totalProducts++
-			productDetailUrl := getMajeDetailUrl(productId, colorId)
+			var productDetailUrl string
+			var productUrl string
+			if colorId == majeDeafultColor || colorId == "" {
+				// 색상이 없을 땐 원본 URL 그대로 사용
+				productDetailUrl = nameUrl
+				productUrl = nameUrl
+			} else {
+				// 색상이 있을 땐 파싱된 swatch 사용하여 URL 재구성
+				productDetailUrl = getMajeDetailUrl(productId, colorId)
+				productUrl = getMajeProductUrl(productId, colorId)
+			}
 			productName, images, sizes, inventories, description, originalPrice, salesPrice := getMajeDetail(productDetailUrl)
 
 			productIdForDb := productId
@@ -69,7 +79,7 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 				Source:              source,
 				ProductID:           productIdForDb,
 				ProductName:         productNameForDb,
-				ProductUrl:          getMajeProductUrl(productId, colorId),
+				ProductUrl:          productUrl,
 				IsTranslateRequired: true,
 			}
 			totalProducts += 1
@@ -114,8 +124,12 @@ func getMajeDetail(productUrl string) (
 		productName = strings.TrimSpace(h1.Text)
 	})
 
+	alreadyCrawledSize := false
 	// 사이즈 & 재고
-	c.OnHTML(".siz-list-container", func(e *colly.HTMLElement) {
+	c.OnHTML("ul.size", func(e *colly.HTMLElement) {
+		if alreadyCrawledSize {
+			return
+		}
 		e.ForEach("li.emptyswatch", func(_ int, li *colly.HTMLElement) {
 			outOfStock := strings.Contains(li.Attr("class"), "unselectable")
 			size := li.ChildText("div.defaultSize")
@@ -129,6 +143,7 @@ func getMajeDetail(productUrl string) (
 				Quantity: stock,
 			})
 		})
+		alreadyCrawledSize = true
 	})
 
 	description = map[string]string{}

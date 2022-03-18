@@ -46,7 +46,17 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 				continue
 			}
 			totalProducts++
-			productDetailUrl := getSandroDetailUrl(productId, colorId)
+			var productDetailUrl string
+			var productUrl string
+			if colorId == majeDeafultColor || colorId == "" {
+				// 색상이 없을 땐 원본 URL 그대로 사용
+				productDetailUrl = nameUrl
+				productUrl = nameUrl
+			} else {
+				// 색상이 있을 땐 파싱된 swatch 사용하여 URL 재구성
+				productDetailUrl = getSandroDetailUrl(productId, colorId)
+				productUrl = getSandroProductUrl(productId, colorId)
+			}
 			productName, images, sizes, inventories, description, originalPrice, salesPrice := getSandroDetail(productDetailUrl)
 
 			productIdForDb := productId
@@ -67,7 +77,7 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 				Source:              source,
 				ProductID:           productIdForDb,
 				ProductName:         productNameForDb,
-				ProductUrl:          getSandroProductUrl(productId, colorId),
+				ProductUrl:          productUrl,
 				IsTranslateRequired: true,
 			}
 			totalProducts += 1
@@ -112,8 +122,12 @@ func getSandroDetail(productUrl string) (
 		productName = h1.Text
 	})
 
+	alreadyCrawledSize := false
 	// 사이즈 & 재고
-	c.OnHTML(".siz-list-container", func(e *colly.HTMLElement) {
+	c.OnHTML("ul.size", func(e *colly.HTMLElement) {
+		if alreadyCrawledSize {
+			return
+		}
 		e.ForEach("li.emptyswatch", func(_ int, li *colly.HTMLElement) {
 			outOfStock := strings.Contains(li.Attr("class"), "notinstock")
 			size := li.ChildText("span.sizeDisplayValue")
@@ -127,6 +141,7 @@ func getSandroDetail(productUrl string) (
 				Quantity: stock,
 			})
 		})
+		alreadyCrawledSize = true
 	})
 
 	// 설명
