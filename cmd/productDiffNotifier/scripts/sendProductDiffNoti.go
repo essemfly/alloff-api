@@ -8,10 +8,11 @@ import (
 	"github.com/lessbutter/alloff-api/internal/pkg/notification"
 )
 
-func SendNotification() {
+func SendProductDiffNoti() {
 	offset, limit := 0, 500
+
 	notiType := []domain.NotificationType{
-		domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION,
+		domain.NOTIFICATION_PRODUCT_DIFF_NOTIFICATION,
 	}
 	notis, err := ioc.Repo.Notifications.List(offset, limit, notiType, true)
 	if err != nil {

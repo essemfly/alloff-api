@@ -55,12 +55,19 @@ func (repo *notificationRepo) Get(notiID string) ([]*domain.NotificationDAO, err
 	return notis, nil
 }
 
-func (repo *notificationRepo) List(offset, limit int, onlyReady bool) ([]*domain.NotificationDAO, error) {
+func (repo *notificationRepo) List(offset, limit int, notiTypes []domain.NotificationType, onlyReady bool) ([]*domain.NotificationDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	filter := bson.M{}
+	notiFilters := []bson.M{}
+	for _, notiType := range notiTypes {
+		notiFilters = append(notiFilters, bson.M{
+			"notificationtype": notiType,
+		})
+	}
 	if onlyReady {
+		filter["$or"] = notiFilters
 		filter["status"] = domain.NOTIFICATION_READY
 	}
 

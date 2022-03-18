@@ -82,7 +82,16 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 
 func (s *NotiService) ListNoti(ctx context.Context, req *grpcServer.ListNotiRequest) (*grpcServer.ListNotiResponse, error) {
 	onlyReady := false
-	notiDaos, err := ioc.Repo.Notifications.List(int(req.Offset), int(req.Limit), onlyReady)
+	notiTypes := []domain.NotificationType{
+		domain.NOTIFICATION_PRODUCT_DIFF_NOTIFICATION,
+		domain.NOTIFICATION_BRAND_NEW_PRODUCT_NOTIFICATION,
+		domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
+		domain.NOTIFICATION_BRAND_OPEN_NOTIFICATION,
+		domain.NOTIFICATION_EVENT_NOTIFICATION,
+		domain.NOTIFICATION_GENERAL_NOTIFICATION,
+		domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION,
+	}
+	notiDaos, err := ioc.Repo.Notifications.List(int(req.Offset), int(req.Limit), notiTypes, onlyReady)
 
 	notis := []*grpcServer.NotificationMessage{}
 	for _, noti := range notiDaos {

@@ -151,7 +151,7 @@ type RefundItemsRepository interface {
 type NotificationsRepository interface {
 	Insert(*domain.NotificationDAO) (*domain.NotificationDAO, error)
 	Get(notiID string) ([]*domain.NotificationDAO, error)
-	List(offset, limit int, onlyReady bool) ([]*domain.NotificationDAO, error)
+	List(offset, limit int, notiTypes []domain.NotificationType, onlyReady bool) ([]*domain.NotificationDAO, error)
 	Update(*domain.NotificationDAO) (*domain.NotificationDAO, error)
 }
 
