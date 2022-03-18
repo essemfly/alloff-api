@@ -7,6 +7,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/classifier"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -119,4 +120,28 @@ func ProcessManualProductRequest(pd *domain.ProductDAO, request *ProductManualAd
 		return nil, err
 	}
 	return newPd, nil
+}
+
+func UpdateManuelProducts() {
+	offset, limit := 0, 10000
+	filter := bson.M{
+		"productinfo.source.crawlmodulename": "manuel",
+		"removed":                            false,
+	}
+	twoDaysAgo := time.Now().Add(-48 * time.Hour)
+	pds, _, err := ioc.Repo.Products.List(offset, limit, filter, nil)
+	if err != nil {
+		log.Println("err on update manuel products", err)
+	}
+	for _, pd := range pds {
+		isNewProduct := true
+		if pd.Created.Before(twoDaysAgo) {
+			isNewProduct = false
+		}
+		pd.Score.IsNewlyCrawled = isNewProduct
+		_, err := ioc.Repo.Products.Upsert(pd)
+		if err != nil {
+			log.Println("err on update products", err)
+		}
+	}
 }
