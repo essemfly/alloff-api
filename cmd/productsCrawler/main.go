@@ -10,7 +10,6 @@ import (
 	"github.com/lessbutter/alloff-api/cmd"
 	"github.com/lessbutter/alloff-api/config"
 
-	// "github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/pkg/brand"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
@@ -24,7 +23,7 @@ const numWorkers = 20
 var (
 	GitInfo   = "no info"
 	BuildTime = "no datetime"
-	Env       = "local"
+	Env       = "prod"
 )
 
 func main() {
@@ -34,21 +33,20 @@ func main() {
 	cmd.SetBaseConfig(Env)
 
 	crawlModules := []string{
-		// "lottefashion",
-		// "ssfmall",
-		// "idlook",
-		// "sivillage",
-		// "kolon",
-		// "babathe",
-		// "idfmall",
-		// "daehyun",
-		// "niceclaup",
-		// "lacoste",
-		// "sisley",
-		// "benetton",
-		// "theamall",
-		// "loungeb",
-		// "bylynn",
+		"lottefashion",
+		"ssfmall",
+		"sivillage",
+		"kolon",
+		"babathe",
+		"idfmall",
+		//"daehyun",
+		"niceclaup",
+		"lacoste",
+		"sisley",
+		"benetton",
+		"theamall",
+		"loungeb",
+		"bylynn",
 		// "intrend",
 		// "theoutnet",
 		"sandro",
@@ -60,7 +58,7 @@ func main() {
 
 	brand.UpdateBrandCategory()
 	brand.UpdateBrandDiscountRate()
-	// product.MakeSnapshot()
+	product.MakeSnapshot()
 	crawler.WriteCrawlRecords(crawlModules)
 }
 
