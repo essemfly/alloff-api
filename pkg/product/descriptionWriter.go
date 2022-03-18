@@ -17,9 +17,19 @@ func GetProductDescription(pd *domain.ProductDAO, source *domain.CrawlSourceDAO)
 		}
 	}
 
+	descImages := pd.ProductInfo.Images
+	if source.CrawlModuleName == "intrend" {
+		descImages = append([]string{
+			"https://alloff.s3.ap-northeast-2.amazonaws.com/description/Intrend_info.png",
+		}, descImages...)
+	}
+	if source.CrawlModuleName == "theoutnet" || source.CrawlModuleName == "sandro" || source.CrawlModuleName == "maje" || source.CrawlModuleName == "intrend" {
+		descImages = append(descImages, "https://alloff.s3.ap-northeast-2.amazonaws.com/description/size_guide.png")
+	}
+
 	return &domain.AlloffInstructionDAO{
 		Description: &domain.ProductDescriptionDAO{
-			Images: pd.ProductInfo.Images,
+			Images: descImages,
 			Texts:  nil,
 		},
 		DeliveryDescription: &domain.DeliveryDescriptionDAO{
