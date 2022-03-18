@@ -55,9 +55,8 @@ func GetProductPrice(pd *domain.ProductDAO) (int, int) {
 }
 
 func CalculateIntrendPrice(priceKRW int) int {
-	priceKRW = priceKRW * 125 / 100 // 수수료
-	priceKRW += 40000               // 해외배송비
-	priceKRW = priceKRW * 11 / 10   // 마진
+	priceKRW = priceKRW + 35000
+	priceKRW = priceKRW * 130 / 100
 	priceKRW = priceKRW + 3000
 
 	priceKRW = priceKRW / 1000
