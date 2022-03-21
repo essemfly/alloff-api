@@ -135,4 +135,18 @@ func ProcessCrawlingProductRequest(pd *domain.ProductDAO, request *ProductCrawli
 			log.Println("product 2", err)
 		}
 	}
+
+	if pd.IsTranslateRequired {
+		_, err := TranslateProductInfo(pd)
+		if err != nil {
+			log.Println("Err on translate product info", err)
+		}
+	}
+
+	if !pd.IsImageCached {
+		err := CacheProductsImage(pd)
+		if err != nil {
+			log.Println("Err on cache products image", err)
+		}
+	}
 }

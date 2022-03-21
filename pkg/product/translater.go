@@ -9,7 +9,7 @@ import (
 	"golang.org/x/text/language"
 )
 
-func TranslateProductInfo(worker chan bool, done chan bool, pd *domain.ProductDAO) (*domain.ProductDAO, error) {
+func TranslateProductInfo(pd *domain.ProductDAO) (*domain.ProductDAO, error) {
 	titleInKorean, err := translater.TranslateText(language.Korean.String(), pd.AlloffName)
 	if err != nil {
 		log.Println("err", err)
@@ -51,9 +51,6 @@ func TranslateProductInfo(worker chan bool, done chan bool, pd *domain.ProductDA
 		log.Println("err", err)
 		return nil, err
 	}
-
-	<-worker
-	done <- true
 
 	return newPd, nil
 }
