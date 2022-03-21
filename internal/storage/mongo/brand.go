@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -158,7 +157,7 @@ func (repo *brandLikeRepo) List(userID string) (*domain.LikeBrandDAO, error) {
 
 	var likes *domain.LikeBrandDAO
 	if err := repo.col.FindOne(ctx, bson.M{"userid": userID}).Decode(&likes); err != nil {
-		return nil, errors.New("Like brand not found: " + userID + err.Error())
+		return nil, nil
 	}
 
 	return likes, nil
