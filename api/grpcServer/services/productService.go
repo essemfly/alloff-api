@@ -161,6 +161,7 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 
 	if req.OriginalPrice != nil {
 		pdDao.ProductInfo.Price.OriginalPrice = float32(*req.OriginalPrice)
+		pdDao.OriginalPrice = int(*req.OriginalPrice)
 	}
 
 	if req.DiscountedPrice != nil {
@@ -223,6 +224,15 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	if req.AlloffCategoryId != nil {
 		productCatDao := classifier.ClassifyProducts(*req.AlloffCategoryId)
 		pdDao.UpdateAlloffCategory(productCatDao)
+	}
+
+	if req.ProductId != nil {
+		pdDao.ProductInfo.ProductID = *req.ProductId
+	}
+
+	if req.RefundFee != nil {
+		pdDao.SalesInstruction.CancelDescription.ChangeFee = int(*req.RefundFee)
+		pdDao.SalesInstruction.CancelDescription.RefundFee = int(*req.RefundFee)
 	}
 
 	pdDao.CheckSoldout()
