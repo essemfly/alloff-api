@@ -10,6 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/broker"
+	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"github.com/lessbutter/alloff-api/pkg/product"
 )
@@ -236,6 +237,12 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	}
 
 	pdDao.CheckSoldout()
+
+	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.OriginalPrice, pdDao.DiscountedPrice)
+
+	if alloffPriceDiscountRate > pdDao.ProductInfo.Brand.MaxDiscountRate {
+		pdDao.ProductInfo.Brand.MaxDiscountRate = alloffPriceDiscountRate
+	}
 
 	newPdDao, err := ioc.Repo.Products.Upsert(pdDao)
 	if err != nil {
