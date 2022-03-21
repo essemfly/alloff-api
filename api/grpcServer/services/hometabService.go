@@ -90,7 +90,7 @@ func (s *HomeTabService) EditHomeTabItem(ctx context.Context, req *grpcServer.Ed
 		return nil, err
 	}
 
-	broker.HomeTabSyncer()
+	go broker.HomeTabSyncer()
 
 	return &grpcServer.EditHomeTabItemResponse{
 		Item: mapper.HomeTabItemMapper(newItemDao),

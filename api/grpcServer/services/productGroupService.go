@@ -199,7 +199,7 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 		if err != nil {
 			log.Println("exhibbition find error", err)
 		} else {
-			broker.ExhibitionSyncer(exDao)
+			go broker.ExhibitionSyncer(exDao)
 		}
 	}
 
@@ -249,7 +249,7 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		if err != nil {
 			log.Println("exhibbition find error", err)
 		} else {
-			broker.ExhibitionSyncer(exDao)
+			go broker.ExhibitionSyncer(exDao)
 		}
 	}
 
@@ -288,7 +288,7 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 		if err != nil {
 			log.Println("exhibbition find error", err)
 		} else {
-			broker.ExhibitionSyncer(exDao)
+			go broker.ExhibitionSyncer(exDao)
 		}
 	}
 

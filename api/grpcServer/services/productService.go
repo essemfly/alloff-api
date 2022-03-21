@@ -247,13 +247,13 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		if err != nil {
 			log.Println("err found in product group update", err)
 		} else {
-			broker.ProductGroupSyncer(pg)
+			go broker.ProductGroupSyncer(pg)
 			if pg.ExhibitionID != "" {
 				exDao, err := ioc.Repo.Exhibitions.Get(pg.ExhibitionID)
 				if err != nil {
 					log.Println("exhibbition find error", err)
 				} else {
-					broker.ExhibitionSyncer(exDao)
+					go broker.ExhibitionSyncer(exDao)
 				}
 			}
 		}

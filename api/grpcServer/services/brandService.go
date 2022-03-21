@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 )
 
 type BrandService struct {
@@ -111,7 +112,7 @@ func (s *BrandService) EditBrand(ctx context.Context, req *grpcServer.EditBrandR
 		return nil, err
 	}
 
-	// broker.BrandSyncer(newBrandDao.KeyName)
+	go broker.BrandSyncer(newBrandDao.KeyName)
 
 	return &grpcServer.EditBrandResponse{
 		Brand: mapper.BrandMapper(newBrandDao),

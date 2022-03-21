@@ -103,7 +103,7 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 		return nil, err
 	}
 
-	broker.ExhibitionSyncer(newExhibitionDao)
+	go broker.ExhibitionSyncer(newExhibitionDao)
 
 	return &grpcServer.EditExhibitionResponse{
 		Exhibition: mapper.ExhibitionMapper(newExhibitionDao, false),
