@@ -12,6 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/pkg/amplitude"
 	"github.com/lessbutter/alloff-api/pkg/order"
 )
 
@@ -208,10 +209,17 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
+	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(input.MerchantUID, orderDao.TotalPrice)
+	if err != nil {
+		return nil, fmt.Errorf("ERR404:failed to find payment order not found")
+	}
+
 	err = ioc.Service.OrderWithPaymentService.VerifyPayment(orderDao, input.ImpUID)
 	if err != nil {
 		return nil, fmt.Errorf("ERR405: failed to verify payment " + err.Error())
 	}
+
+	amplitude.LogOrderRecord(user, orderDao, paymentDao)
 
 	return &model.PaymentResult{
 		Success:     true,
@@ -255,6 +263,7 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 		return result, fmt.Errorf("ERR308:failed to cancel order " + err.Error())
 	}
 
+	amplitude.LogCancelOrderItemRecord(user, orderItemDao, paymentDao)
 	result.Success = true
 	return result, nil
 }
