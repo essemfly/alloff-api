@@ -97,7 +97,15 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	productID := ""
 	if req.ProductId != nil {
 		productID = *req.ProductId
+	} else {
+		productID = utils.CreateShortUUID()
 	}
+
+	productUrl := ""
+	if req.ProductUrl != nil {
+		productUrl = *req.ProductUrl
+	}
+
 	alloffCatID := ""
 	if req.AlloffCategoryId != nil {
 		alloffCatID = *req.AlloffCategoryId
@@ -107,6 +115,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		AlloffName:           req.AlloffName,
 		IsForeignDelivery:    req.IsForeignDelivery,
 		ProductID:            productID,
+		ProductUrl:           productUrl,
 		OriginalPrice:        originalPrice,
 		DiscountedPrice:      discountedPrice,
 		SpecialPrice:         specialPrice,
@@ -229,6 +238,10 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 
 	if req.ProductId != nil {
 		pdDao.ProductInfo.ProductID = *req.ProductId
+	}
+
+	if req.ProductUrl != nil {
+		pdDao.ProductInfo.ProductUrl = *req.ProductUrl
 	}
 
 	if req.RefundFee != nil {

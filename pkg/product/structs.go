@@ -25,6 +25,7 @@ type ProductManualAddRequest struct {
 	AlloffName           string
 	IsForeignDelivery    bool
 	ProductID            string
+	ProductUrl           string
 	OriginalPrice        int
 	DiscountedPrice      int
 	SpecialPrice         int

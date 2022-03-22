@@ -31,6 +31,7 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 		AlloffName:           pd.AlloffName,
 		IsForeignDelivery:    pd.ProductInfo.Source.IsForeignDelivery,
 		ProductId:            pd.ProductInfo.ProductID,
+		ProductUrl:           pd.ProductInfo.ProductUrl,
 		OriginalPrice:        int32(pd.OriginalPrice),
 		DiscountedPrice:      int32(pd.DiscountedPrice),
 		SpecialPrice:         int32(pd.SpecialPrice),

@@ -54,6 +54,7 @@ message CreateProductRequest {
     int32 refund_fee = 15;
     optional string module_name = 16;
     optional string alloff_category_id = 17;
+    optional string product_url = 18;
 }
 
 message CreateProductResponse {
@@ -81,6 +82,7 @@ message EditProductRequest {
     string module_name = 18;
     optional string alloff_category_id = 19;
     optional bool is_soldout = 20;
+    optional string product_url = 21;
 }
 
 message EditProductResponse {
@@ -115,6 +117,7 @@ message ProductMessage {
     string alloff_product_id = 21;
     string module_name = 22;
     string alloff_category_id = 23;
+    string product_url = 24;
 }
 
 message ProductInventoryMessage {
