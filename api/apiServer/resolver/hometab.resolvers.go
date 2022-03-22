@@ -15,8 +15,16 @@ import (
 )
 
 func (r *queryResolver) HomeTabItems(ctx context.Context, onlyLive bool, offset *int, limit *int) ([]*model.HomeTabItem, error) {
+	offsetParam, limitParam := 0, 100
+	if offset != nil {
+		offsetParam = *offset
+	}
+	if limit != nil {
+		limitParam = *limit
+	}
+
 	if onlyLive {
-		tabItems, _, err := ioc.Repo.HomeTabItems.List(0, 100, onlyLive)
+		tabItems, _, err := ioc.Repo.HomeTabItems.List(offsetParam, limitParam, onlyLive)
 		if err != nil {
 			return nil, err
 		}
@@ -28,14 +36,6 @@ func (r *queryResolver) HomeTabItems(ctx context.Context, onlyLive bool, offset 
 		return retItems, nil
 	}
 
-	offsetParam := 0
-	limitParam := 100
-	if offset != nil {
-		offsetParam = *offset
-	}
-	if limit != nil {
-		limitParam = *limit
-	}
 	tabItems, _, err := ioc.Repo.HomeTabItems.List(offsetParam, limitParam, onlyLive)
 	if err != nil {
 		return nil, err
