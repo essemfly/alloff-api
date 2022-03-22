@@ -53,13 +53,12 @@ func (repo *hometabitemRepo) List(offset, limit int, onlyLive bool) ([]*domain.H
 	now := primitive.NewDateTimeFromTime(time.Now())
 	filter := bson.M{}
 	options := options.Find()
+	options.SetLimit(int64(limit))
+	options.SetSkip(int64(offset))
 	if onlyLive {
 		filter["finishedat"] = bson.M{"$gte": now}
 		filter["islive"] = true
 		options.SetSort(bson.D{{Key: "weight", Value: -1}})
-	} else {
-		options.SetLimit(int64(limit))
-		options.SetSkip(int64(offset))
 	}
 
 	totalCount, _ := repo.col.CountDocuments(ctx, filter)
