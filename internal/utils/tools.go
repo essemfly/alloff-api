@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"math"
 	"reflect"
 	"strconv"
 	"strings"
@@ -23,7 +24,7 @@ func CalculateDiscountRate(originalPrice int, salesPrice int) int {
 		return 0
 	}
 
-	return int((float32(originalPrice-salesPrice) / float32(originalPrice)) * 100)
+	return int(math.Round((float64(originalPrice-salesPrice) / float64(originalPrice)) * 100))
 }
 
 func StandardizeSpaces(s string) []string {
