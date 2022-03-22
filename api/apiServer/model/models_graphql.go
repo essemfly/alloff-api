@@ -596,11 +596,12 @@ func (e HomeItemType) MarshalGQL(w io.Writer) {
 type HomeTabItemTypeEnum string
 
 const (
-	HomeTabItemTypeEnumHometabItemBrands          HomeTabItemTypeEnum = "HOMETAB_ITEM_BRANDS"
-	HomeTabItemTypeEnumHometabItemBrandExhibition HomeTabItemTypeEnum = "HOMETAB_ITEM_BRAND_EXHIBITION"
-	HomeTabItemTypeEnumHometabItemExhibitions     HomeTabItemTypeEnum = "HOMETAB_ITEM_EXHIBITIONS"
-	HomeTabItemTypeEnumHometabItemExhibition      HomeTabItemTypeEnum = "HOMETAB_ITEM_EXHIBITION"
-	HomeTabItemTypeEnumHometabItemProducts        HomeTabItemTypeEnum = "HOMETAB_ITEM_PRODUCTS"
+	HomeTabItemTypeEnumHometabItemBrands             HomeTabItemTypeEnum = "HOMETAB_ITEM_BRANDS"
+	HomeTabItemTypeEnumHometabItemBrandExhibition    HomeTabItemTypeEnum = "HOMETAB_ITEM_BRAND_EXHIBITION"
+	HomeTabItemTypeEnumHometabItemExhibitions        HomeTabItemTypeEnum = "HOMETAB_ITEM_EXHIBITIONS"
+	HomeTabItemTypeEnumHometabItemExhibition         HomeTabItemTypeEnum = "HOMETAB_ITEM_EXHIBITION"
+	HomeTabItemTypeEnumHometabItemProductsBrands     HomeTabItemTypeEnum = "HOMETAB_ITEM_PRODUCTS_BRANDS"
+	HomeTabItemTypeEnumHometabItemProductsCategories HomeTabItemTypeEnum = "HOMETAB_ITEM_PRODUCTS_CATEGORIES"
 )
 
 var AllHomeTabItemTypeEnum = []HomeTabItemTypeEnum{
@@ -608,12 +609,13 @@ var AllHomeTabItemTypeEnum = []HomeTabItemTypeEnum{
 	HomeTabItemTypeEnumHometabItemBrandExhibition,
 	HomeTabItemTypeEnumHometabItemExhibitions,
 	HomeTabItemTypeEnumHometabItemExhibition,
-	HomeTabItemTypeEnumHometabItemProducts,
+	HomeTabItemTypeEnumHometabItemProductsBrands,
+	HomeTabItemTypeEnumHometabItemProductsCategories,
 }
 
 func (e HomeTabItemTypeEnum) IsValid() bool {
 	switch e {
-	case HomeTabItemTypeEnumHometabItemBrands, HomeTabItemTypeEnumHometabItemBrandExhibition, HomeTabItemTypeEnumHometabItemExhibitions, HomeTabItemTypeEnumHometabItemExhibition, HomeTabItemTypeEnumHometabItemProducts:
+	case HomeTabItemTypeEnumHometabItemBrands, HomeTabItemTypeEnumHometabItemBrandExhibition, HomeTabItemTypeEnumHometabItemExhibitions, HomeTabItemTypeEnumHometabItemExhibition, HomeTabItemTypeEnumHometabItemProductsBrands, HomeTabItemTypeEnumHometabItemProductsCategories:
 		return true
 	}
 	return false
