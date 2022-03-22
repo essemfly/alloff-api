@@ -236,7 +236,13 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		pdDao.SalesInstruction.CancelDescription.RefundFee = int(*req.RefundFee)
 	}
 
-	pdDao.CheckSoldout()
+	if req.IsSoldout != nil {
+		pdDao.Soldout = *req.IsSoldout
+	}
+
+	if !pdDao.Soldout {
+		pdDao.CheckSoldout()
+	}
 
 	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.OriginalPrice, pdDao.DiscountedPrice)
 

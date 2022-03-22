@@ -80,6 +80,7 @@ message EditProductRequest {
     string alloff_product_id = 17;
     string module_name = 18;
     optional string alloff_category_id = 19;
+    optional bool is_soldout = 20;
 }
 
 message EditProductResponse {
