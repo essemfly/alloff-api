@@ -45,6 +45,10 @@ func (r *queryResolver) Brands(ctx context.Context, input *model.BrandsInput) ([
 				return nil, err
 			}
 
+			if likeDao == nil {
+				return nil, nil
+			}
+
 			likeBrands := []*model.Brand{}
 			for _, likebrand := range likeDao.Brands {
 				if likebrand != nil {
