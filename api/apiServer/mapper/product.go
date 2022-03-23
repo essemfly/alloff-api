@@ -43,6 +43,10 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 			isSoldout = false
 		}
 	}
+	if pdDao.Soldout {
+		isSoldout = true
+	}
+
 	images := pdDao.ProductInfo.Images
 	if pdDao.IsImageCached {
 		images = pdDao.Images
