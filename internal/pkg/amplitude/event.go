@@ -83,11 +83,11 @@ func LogCancelOrderItemRecord(user *domain.UserDAO, orderItem *domain.OrderItemD
 		city = addressSlice[0] + addressSlice[1]
 	}
 
-	orderItemEvent := LogOrderItem(user, orderItem)
-	orderItemEvent.Region = region
-	orderItemEvent.City = city
+	cancelOrderItemEvent := LogCancelOrderItem(user, orderItem)
+	cancelOrderItemEvent.Region = region
+	cancelOrderItemEvent.City = city
 	config.AmplitudeClient.LogEvent(
-		orderItemEvent,
+		cancelOrderItemEvent,
 	)
 
 	// gracefully shutdown, waiting pending events to be sent
