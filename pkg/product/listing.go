@@ -151,10 +151,10 @@ func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting
 }
 
 // TODO: 위의 함수와 합쳐질 필요가 있다.
-func AlloffCategoryProductsListing(offset, limit int, brandIDs []string, alloffCategoryID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
+func AlloffCategoryProductsListing(offset, limit int, brandKeynames []string, alloffCategoryID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
 	filter := bson.M{"removed": false, "alloffcategories.done": true}
-	if len(brandIDs) > 0 {
-		filter["brand._id"] = bson.M{"$in": brandIDs}
+	if len(brandKeynames) > 0 {
+		filter["productinfo.brand.keyname"] = bson.M{"$in": brandKeynames}
 	}
 
 	alloffCat, _ := ioc.Repo.AlloffCategories.Get(alloffCategoryID)

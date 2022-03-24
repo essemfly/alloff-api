@@ -8,8 +8,18 @@ import (
 func MapBrandDaoToBrand(brDao *domain.BrandDAO, includeCategory bool) *model.Brand {
 	var cats []*model.Category
 	if includeCategory {
-		for _, catDao := range brDao.Category {
-			cats = append(cats, MapCategoryDaoToCategory(catDao))
+		if !brDao.UseAlloffCategory {
+			for _, catDao := range brDao.Category {
+				cats = append(cats, MapCategoryDaoToCategory(catDao))
+			}
+		} else {
+			for _, alloffcatDao := range brDao.AlloffCategory {
+				cats = append(cats, MapCategoryDaoToCategory(&domain.CategoryDAO{
+					ID:      alloffcatDao.ID,
+					Name:    alloffcatDao.Name,
+					KeyName: alloffcatDao.KeyName,
+				}))
+			}
 		}
 	}
 

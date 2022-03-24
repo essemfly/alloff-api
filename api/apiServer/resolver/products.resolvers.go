@@ -117,10 +117,14 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 		}, err
 	}
 
-	if input.Category == nil {
-		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, "", priceSorting, priceRange)
+	if brandDao.UseAlloffCategory {
+		productDaos, totalCount, _ = product.AlloffCategoryProductsListing(input.Offset, input.Limit, []string{brandDao.KeyName}, *input.Category, priceSorting, priceRange)
 	} else {
-		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, *input.Category, priceSorting, priceRange)
+		if input.Category == nil {
+			productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, "", priceSorting, priceRange)
+		} else {
+			productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, *input.Category, priceSorting, priceRange)
+		}
 	}
 
 	var products []*model.Product
