@@ -51,6 +51,8 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 		IsSoldout:            pd.Soldout,
 		TotalScore:           int32(totalScore),
 		ModuleName:           pd.ProductInfo.Source.CrawlModuleName,
+		IsClassifiedDone:     pd.AlloffCategories.Done,
+		IsClassifiedTouched:  pd.AlloffCategories.Touched,
 	}
 }
 

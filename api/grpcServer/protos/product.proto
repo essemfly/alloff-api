@@ -118,6 +118,8 @@ message ProductMessage {
     string module_name = 22;
     string alloff_category_id = 23;
     string product_url = 24;
+    bool is_classified_done = 25;
+    bool is_classified_touched = 26;
 }
 
 message ProductInventoryMessage {
@@ -134,4 +136,17 @@ message ProductQuery {
     optional string brand_id = 2;
     optional string category_id = 3;
     optional string alloff_category_id = 4;
+    repeated SortingOptions options = 5;
+    optional bool is_classified_done = 6;
+}
+
+enum SortingOptions {
+    PRICE_ASCENDING = 0;
+    PRICE_DESCENDING = 1;
+    DISCOUNT_0_30 = 2;
+    DISCOUNT_30_50 = 3;
+    DISCOUNT_50_70 = 4;
+    DISCOUNT_70_100 = 5;
+    DISCOUNTRATE_ASCENDING = 6;
+    DISCOUNTRATE_DESCENDING = 7;
 }

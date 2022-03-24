@@ -7,9 +7,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func ProductsSearchListing(offset, limit int, moduleName, brandID, categoryID, alloffCategoryID, keyword string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
+func ProductsSearchListing(offset, limit int, onlyClassified bool, moduleName, brandID, categoryID, alloffCategoryID, keyword string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
 	filter := bson.M{"removed": false}
 
+	if onlyClassified {
+		filter["alloffcategories.done"] = true
+	}
 	if moduleName != "" {
 		filter["productinfo.source.crawlmodulename"] = moduleName
 	}

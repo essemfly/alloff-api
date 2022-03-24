@@ -32,6 +32,7 @@ func (s *ProductService) GetProduct(ctx context.Context, req *grpcServer.GetProd
 
 func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListProductsRequest) (*grpcServer.ListProductsResponse, error) {
 	moduleName := ""
+
 	if req.ModuleName != nil {
 		moduleName = *req.ModuleName
 	}
@@ -51,7 +52,39 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	if req.Query.SearchQuery != nil {
 		searchKeyword = *req.Query.SearchQuery
 	}
-	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), moduleName, brandID, categoryID, alloffCategoryID, searchKeyword, "", nil)
+	onlyClassified := false
+	if req.Query.IsClassifiedDone != nil {
+		onlyClassified = true
+	}
+
+	priceSorting := ""
+	priceRange := []string{}
+	if req.Query.Options != nil {
+		for _, sorting := range req.Query.Options {
+			if sorting == grpcServer.SortingOptions_PRICE_ASCENDING {
+				priceSorting = "ascending"
+			} else if sorting == grpcServer.SortingOptions_PRICE_DESCENDING {
+				priceSorting = "descending"
+			} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_ASCENDING {
+				priceSorting = "discountrateAescending"
+			} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_DESCENDING {
+				priceSorting = "discountrateDescending"
+			} else {
+				if sorting == grpcServer.SortingOptions_DISCOUNT_0_30 {
+					priceRange = append(priceRange, "30")
+				} else if sorting == grpcServer.SortingOptions_DISCOUNT_30_50 {
+					priceRange = append(priceRange, "50")
+				} else if sorting == grpcServer.SortingOptions_DISCOUNT_50_70 {
+					priceRange = append(priceRange, "70")
+				} else {
+					priceRange = append(priceRange, "100")
+				}
+			}
+		}
+	}
+
+	// IsClassifiedDone을 어떻게 넣을것인가가 문제군
+	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), onlyClassified, moduleName, brandID, categoryID, alloffCategoryID, searchKeyword, priceSorting, priceRange)
 	if err != nil {
 		return nil, err
 	}
@@ -234,6 +267,7 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	if req.AlloffCategoryId != nil {
 		productCatDao := classifier.ClassifyProducts(*req.AlloffCategoryId)
 		pdDao.UpdateAlloffCategory(productCatDao)
+		pdDao.AlloffCategories.Touched = true
 	}
 
 	if req.ProductId != nil {

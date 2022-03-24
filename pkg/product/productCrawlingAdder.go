@@ -104,10 +104,12 @@ func ProcessCrawlingProductRequest(pd *domain.ProductDAO, request *ProductCrawli
 		pd.UpdateAlloffCategory(alloffCat)
 	}
 
+	// Description의 Text들은 크롤링시 리셋 된다.
 	alloffInstruction := GetProductDescription(pd, request.Source)
 	pd.ProductInfo.Source = request.Source // Source가 업데이트될 시 Source 업데이트용이다.
 	pd.UpdateInstruction(alloffInstruction)
 
+	// Score도 크롤링시 리셋된다.
 	alloffScore := GetProductScore(pd)
 	pd.UpdateScore(alloffScore)
 	pd.UpdateInventory(request.Inventories)

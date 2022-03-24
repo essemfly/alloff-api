@@ -90,6 +90,7 @@ func ProcessManualProductRequest(pd *domain.ProductDAO, request *ProductManualAd
 	if request.AlloffCategoryID != "" {
 		productCatDao := classifier.ClassifyProducts(request.AlloffCategoryID)
 		pd.UpdateAlloffCategory(productCatDao)
+		pd.AlloffCategories.Touched = true
 	}
 
 	alloffInstruction := GetManualProductDescription(pd, request)
