@@ -15,6 +15,7 @@ type BrandDAO struct {
 	LogoImgUrl            string
 	BackImgUrl            string
 	Category              []*CategoryDAO
+	AlloffCategory        []*AlloffCategoryDAO
 	SizeGuide             []SizeGuideDAO
 	Created               time.Time
 	Onpopular             bool
@@ -23,6 +24,7 @@ type BrandDAO struct {
 	IsHide                bool
 	InMaintenance         bool
 	NumNewProductsIn3days int
+	UseAlloffCategory     bool
 }
 
 type SizeGuideDAO struct {

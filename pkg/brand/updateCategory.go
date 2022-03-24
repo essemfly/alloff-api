@@ -20,24 +20,48 @@ func UpdateBrandCategory() {
 	log.Println("Total # of brands : " + strconv.Itoa(totalCount))
 
 	for _, brandDao := range brandDaos {
-		brandCats := []*domain.CategoryDAO{}
-		catDaos, err := ioc.Repo.Categories.List(brandDao.KeyName)
+		brandDao.AlloffCategory = ListBrandAlloffCategories(brandDao)
+		brandDao.Category = ListBrandCategories(brandDao)
+		_, err := ioc.Repo.Brands.Upsert(brandDao)
 		if err != nil {
-			log.Println(err)
-		}
-
-		for _, catDao := range catDaos {
-			_, pdCount, _ := product.ProductsListing(0, 1, brandDao.ID.Hex(), catDao.ID.Hex(), "", nil)
-			if pdCount == 0 {
-				continue
-			}
-			brandCats = append(brandCats, catDao)
-		}
-
-		brandDao.Category = brandCats
-		_, err = ioc.Repo.Brands.Upsert(brandDao)
-		if err != nil {
-			log.Println(err)
+			log.Println("err occured on brand udpate", err)
 		}
 	}
+}
+
+func ListBrandCategories(brandDao *domain.BrandDAO) []*domain.CategoryDAO {
+	brandCats := []*domain.CategoryDAO{}
+	catDaos, err := ioc.Repo.Categories.List(brandDao.KeyName)
+	if err != nil {
+		log.Println(err)
+	}
+
+	for _, catDao := range catDaos {
+		_, pdCount, _ := product.ProductsListing(0, 1, brandDao.ID.Hex(), catDao.ID.Hex(), "", nil)
+		if pdCount == 0 {
+			continue
+		}
+		brandCats = append(brandCats, catDao)
+	}
+
+	return brandCats
+}
+
+func ListBrandAlloffCategories(brandDao *domain.BrandDAO) []*domain.AlloffCategoryDAO {
+	brandAlloffCats := []*domain.AlloffCategoryDAO{}
+	parentID := ""
+	alloffcatDaos, err := ioc.Repo.AlloffCategories.List(&parentID)
+	if err != nil {
+		log.Println(err)
+	}
+
+	for _, alloffcat := range alloffcatDaos {
+		_, pdCount, _ := product.AlloffCategoryProductsListing(0, 1, nil, alloffcat.ID.Hex(), "", nil)
+		if pdCount == 0 {
+			continue
+		}
+		brandAlloffCats = append(brandAlloffCats, alloffcat)
+	}
+
+	return brandAlloffCats
 }
