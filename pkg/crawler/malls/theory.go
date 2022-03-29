@@ -93,7 +93,6 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 	done <- true
 }
 
-// https://outlet.theory.com/on/demandware.store/Sites-theory_outlet-Site/default/Product-Variation?dwvar_L094505R__G8E_color=G8E&dwvar_L094505R__G8E_size=P&pid=L094505R_G8E&quantity=1
 func getTheoryDetail(productUrl, productCode string) (imageUrls, sizes, colors []string, inventories []domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("outlet.theory.com"),
