@@ -54,10 +54,10 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			originalPrice = discountedPrice
 		}
 
-		//		productID := e.ChildAttr(".info_area a", "href")
 		productId := e.ChildAttr(".link", "href")
 		productUrl := productBaseUrl + productId
-		productCode := productId[:len(productId)-9]
+		productCode := productId[:len(productId)-9]    // 뒤에 html 이랑 색상 코드 지우고
+		productCode = productCode[len(productCode)-8:] // 앞에 카테고리 분류 지우면 순수 상품코드 추출
 
 		productName := e.ChildText(".link")
 		images, sizes, colors, inventories, description := getTheoryDetail(productUrl, productCode)
@@ -73,11 +73,11 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			ProductID:           productId,
 			ProductName:         productName,
 			ProductUrl:          productUrl,
-			Images:              nil,
-			Sizes:               nil,
-			Inventories:         nil,
-			Colors:              nil,
-			Description:         nil,
+			Images:              images,
+			Sizes:               sizes,
+			Inventories:         inventories,
+			Colors:              colors,
+			Description:         description,
 			OriginalPrice:       float32(originalPrice),
 			SalesPrice:          float32(discountedPrice),
 			CurrencyType:        domain.CurrencyUSD,
@@ -137,14 +137,42 @@ func getTheoryDetail(productUrl, productCode string) (imageUrls, sizes, colors [
 
 	// descriptions
 	c.OnHTML(".description-and-detail", func(e *colly.HTMLElement) {
-		originalDesc := e.ChildText(".description")
-		originalDesc = strings.Replace(originalDesc, "Style #:", "", -1)
-		originalDesc = strings.Replace(originalDesc, productCode, "", -1)
-		originalDesc = strings.Replace(originalDesc, "-", "", -1)
-		originalDesc = strings.Replace(originalDesc, "\n\n", "\n", -1)
-		originalDesc = strings.Trim(originalDesc, "\n")
-		originalDesc = strings.TrimSpace(originalDesc)
-		description["설명"] = originalDesc
+		desc := e.ChildText(".description")
+		desc = strings.TrimSpace(desc)
+		desc = strings.Replace(desc, "Style #:", "", -1)
+		desc = strings.Replace(desc, productCode, "", -1)
+		desc = strings.Replace(desc, "-", "", -1)
+		desc = strings.Replace(desc, "\n\n", " ", -1)
+		desc = strings.Replace(desc, "  ", " ", -1)
+		desc = strings.Replace(desc, "  ", " ", -1)
+		desc = strings.Trim(desc, "\n")
+		desc = strings.TrimSpace(desc)
+		description["설명"] = desc
+	})
+
+	// fit
+	c.OnHTML(".pdp-fit", func(e *colly.HTMLElement) {
+		fit := e.ChildText("ul")
+		fit = strings.TrimSpace(fit)
+		fit = strings.Replace(fit, "  ", " ", -1)
+		description["핏"] = fit
+	})
+
+	// composition
+	c.OnHTML("div.pdp-composition", func(e *colly.HTMLElement) {
+		composition := ""
+		e.ForEach(".pdp-details-info", func(_ int, el *colly.HTMLElement) {
+			originalComposition := el.Text
+			originalComposition = strings.TrimSpace(originalComposition)
+			composition += originalComposition + " "
+		})
+		description["제품 주 소재"] = composition
+	})
+
+	c.OnHTML("div.pdp-care", func(e *colly.HTMLElement) {
+		care := e.Text
+		care = strings.TrimSpace(care)
+		description["취급시 주의사항"] = care
 	})
 
 	err := c.Visit(productUrl)

@@ -14,7 +14,7 @@ func AddTheory() {
 	categories := map[string]string{
 		"악세서리":     "womens-new",
 		"드레스&점프수트": "womens-dresses-and-jumpsuits",
-		"자캣":       "womens-jackets",
+		"자켓":       "womens-jackets",
 		"라운지웨어":    "womens-loungewear",
 		"아우터":      "womens-outerwear",
 		"팬츠":       "womens-pants",

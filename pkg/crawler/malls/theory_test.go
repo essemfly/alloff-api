@@ -6,9 +6,12 @@ import (
 )
 
 func TestGetTheoryDetail(t *testing.T) {
-	productUrl := "https://outlet.theory.com/power-jkt-r/L081103R_G0F.html"
-	imageUrls, sizes, colors, inventories, description := getTheoryDetail(productUrl, "L081103R")
-	fmt.Println(description)
+	productUrl := "https://outlet.theory.com/line-dtl-dress/L096715R_QWG.html"
+	imageUrls, sizes, colors, inventories, description := getTheoryDetail(productUrl, "L096715R")
+	fmt.Println(description["설명"])
+	fmt.Println(description["핏"])
+	fmt.Println(description["제품 주 소재"])
+	fmt.Println(description["취급시 주의사항"])
 	fmt.Println(imageUrls)
 	fmt.Println(sizes)
 	fmt.Println(colors)
