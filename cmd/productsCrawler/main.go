@@ -23,7 +23,7 @@ const numWorkers = 20
 var (
 	GitInfo   = "no info"
 	BuildTime = "no datetime"
-	Env       = "local"
+	Env       = "dev"
 )
 
 func main() {

@@ -61,11 +61,6 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 		productName := e.ChildText(".link")
 		images, sizes, colors, inventories, description := getTheoryDetail(productUrl, productCode)
-		log.Println(images)
-		log.Println(sizes)
-		log.Println(colors)
-		log.Println(inventories)
-		log.Println(description)
 
 		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:               brand,
@@ -143,6 +138,7 @@ func getTheoryDetail(productUrl, productCode string) (imageUrls, sizes, colors [
 		desc = strings.Replace(desc, productCode, "", -1)
 		desc = strings.Replace(desc, "-", "", -1)
 		desc = strings.Replace(desc, "\n\n", " ", -1)
+		desc = strings.Replace(desc, "\n", " ", -1)
 		desc = strings.Replace(desc, "  ", " ", -1)
 		desc = strings.Replace(desc, "  ", " ", -1)
 		desc = strings.Trim(desc, "\n")
