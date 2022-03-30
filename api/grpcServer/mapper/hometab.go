@@ -2,8 +2,8 @@ package mapper
 
 import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
-	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang"
 )
 
 func ReferenceMapper(ref *domain.ReferenceTarget) *grpcServer.HomeTabItemReferenceMessage {

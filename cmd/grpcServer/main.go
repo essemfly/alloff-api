@@ -9,16 +9,17 @@ import (
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
-	pb "github.com/lessbutter/alloff-api/api/grpcServer"
+
 	"github.com/lessbutter/alloff-api/api/grpcServer/services"
 	"github.com/lessbutter/alloff-api/cmd"
+	pb "github.com/lessbutter/alloff-grpc-protos/gen/golang"
 	"google.golang.org/grpc"
 )
 
 var (
 	GitInfo   = "no info"
 	BuildTime = "no datetime"
-	Env       = "local"
+	Env       = "prod"
 )
 
 func main() {

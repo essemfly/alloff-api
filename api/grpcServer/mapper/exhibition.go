@@ -1,8 +1,8 @@
 package mapper
 
 import (
-	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang"
 )
 
 func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.ExhibitionMessage {

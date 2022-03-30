@@ -5,11 +5,11 @@ import (
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
-	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 	"github.com/lessbutter/alloff-api/pkg/hometab"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang"
 )
 
 type HomeTabService struct {

@@ -3,9 +3,9 @@ package services
 import (
 	"context"
 
-	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang"
 )
 
 type AlloffCategoryService struct {

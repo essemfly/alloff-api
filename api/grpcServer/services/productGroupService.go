@@ -5,11 +5,11 @@ import (
 	"log"
 	"time"
 
-	"github.com/lessbutter/alloff-api/api/grpcServer"
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/broker"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
