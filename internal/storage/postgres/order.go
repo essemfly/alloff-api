@@ -67,6 +67,28 @@ func (repo *orderRepo) List(userID string, onlyPaid bool) ([]*domain.OrderDAO, e
 	return orders, nil
 }
 
+func (repo *orderRepo) ListAllPaid() ([]*domain.OrderDAO, error) {
+	notPaymentSatus := []string{
+		string(domain.ORDER_CREATED),
+		string(domain.ORDER_RECREATED),
+	}
+	orders := []*domain.OrderDAO{}
+	query := repo.db.Model(&orders).Where("ordered_at is not null").Where("order_status not in (?)", pg.In(notPaymentSatus))
+	if err := query.Order("created_at DESC").Select(); err != nil {
+		return nil, err
+	}
+
+	for _, order := range orders {
+		orderItems := []*domain.OrderItemDAO{}
+		if err := repo.db.Model(&orderItems).Where("order_id = ?", order.ID).Order("id ASC").Select(); err != nil {
+			return nil, err
+		}
+		order.OrderItems = orderItems
+	}
+
+	return orders, nil
+}
+
 func (repo *orderRepo) Insert(orderDao *domain.OrderDAO) (*domain.OrderDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

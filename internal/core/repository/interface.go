@@ -93,6 +93,7 @@ type ExhibitionsRepository interface {
 type OrdersRepository interface {
 	Get(ID int) (*domain.OrderDAO, error)
 	GetByAlloffID(ID string) (*domain.OrderDAO, error)
+	ListAllPaid() ([]*domain.OrderDAO, error)
 	List(userID string, onlyPaid bool) ([]*domain.OrderDAO, error)
 	Insert(*domain.OrderDAO) (*domain.OrderDAO, error)
 	Update(*domain.OrderDAO) (*domain.OrderDAO, error)
@@ -102,6 +103,7 @@ type OrderItemsRepository interface {
 	Get(ID int) (*domain.OrderItemDAO, error)
 	GetByCode(code string) (*domain.OrderItemDAO, error)
 	ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error)
+	ListAllCanceled() ([]*domain.OrderItemDAO, error)
 	Update(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
 }
 type PaymentsRepository interface {

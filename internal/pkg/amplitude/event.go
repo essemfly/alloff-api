@@ -1,6 +1,7 @@
 package amplitude
 
 import (
+	"log"
 	"strings"
 
 	"github.com/lessbutter/alloff-api/config"
@@ -9,7 +10,6 @@ import (
 )
 
 func LogOrderRecord(user *domain.UserDAO, order *domain.OrderDAO, payment *domain.PaymentDAO) {
-	config.AmplitudeClient.Start()
 
 	addressSlice := strings.Split(payment.BuyerAddress, " ")
 	region := payment.BuyerAddress
@@ -19,47 +19,53 @@ func LogOrderRecord(user *domain.UserDAO, order *domain.OrderDAO, payment *domai
 		city = addressSlice[0] + addressSlice[1]
 	}
 
-	orderEvent := LogOrder(user, order, payment)
+	orderEvent := logOrder(user, order, payment)
 	orderEvent.Region = region
 	orderEvent.City = city
-	config.AmplitudeClient.LogEvent(
+	err := config.AmplitudeClient.LogEvent(
 		orderEvent,
 	)
-
-	for _, item := range order.OrderItems {
-		orderItemEvent := LogOrderItem(user, item)
-		orderItemEvent.Region = region
-		orderItemEvent.City = city
-		config.AmplitudeClient.LogEvent(
-			orderItemEvent,
-		)
+	if err != nil {
+		log.Println("err occured on log order event", err, config.AmplitudeClient.State())
 	}
 
-	// gracefully shutdown, waiting pending events to be sent
-	config.AmplitudeClient.Shutdown()
+	for _, item := range order.OrderItems {
+		orderItemEvent := logOrderItem(user, item)
+		orderItemEvent.Region = region
+		orderItemEvent.City = city
+		err := config.AmplitudeClient.LogEvent(
+			orderItemEvent,
+		)
+		if err != nil {
+			log.Println("err occured on log order item event", err)
+		}
+	}
+
 }
 
-func LogOrder(user *domain.UserDAO, order *domain.OrderDAO, payment *domain.PaymentDAO) *data.Event {
+func logOrder(user *domain.UserDAO, order *domain.OrderDAO, payment *domain.PaymentDAO) *data.Event {
 	return &data.Event{
 		DeviceID:  user.Uuid,
-		EventType: "[Server]OrderCreation",
+		EventType: "[Server]CreateOrder220330",
 		EventProperties: map[string]interface{}{
 			"order":   order,
 			"payment": payment,
 		},
+		Time: order.OrderedAt.Unix(),
 		UserProperties: map[string]interface{}{
 			"mobile": user.Mobile,
 		},
 	}
 }
 
-func LogOrderItem(user *domain.UserDAO, item *domain.OrderItemDAO) *data.Event {
+func logOrderItem(user *domain.UserDAO, item *domain.OrderItemDAO) *data.Event {
 	return &data.Event{
 		DeviceID:  user.Uuid,
-		EventType: "[Server]OrderItemCreation",
+		EventType: "[Server]CreateOrderItem220330",
 		EventProperties: map[string]interface{}{
 			"orderitem": item,
 		},
+		Time:        item.OrderedAt.Unix(),
 		Price:       float64(item.SalesPrice),
 		Quantity:    int32(item.Quantity),
 		Revenue:     float64(item.SalesPrice) * float64(item.Quantity),
@@ -83,7 +89,7 @@ func LogCancelOrderItemRecord(user *domain.UserDAO, orderItem *domain.OrderItemD
 		city = addressSlice[0] + addressSlice[1]
 	}
 
-	cancelOrderItemEvent := LogCancelOrderItem(user, orderItem)
+	cancelOrderItemEvent := logCancelOrderItem(user, orderItem)
 	cancelOrderItemEvent.Region = region
 	cancelOrderItemEvent.City = city
 	config.AmplitudeClient.LogEvent(
@@ -94,13 +100,14 @@ func LogCancelOrderItemRecord(user *domain.UserDAO, orderItem *domain.OrderItemD
 	config.AmplitudeClient.Shutdown()
 }
 
-func LogCancelOrderItem(user *domain.UserDAO, item *domain.OrderItemDAO) *data.Event {
+func logCancelOrderItem(user *domain.UserDAO, item *domain.OrderItemDAO) *data.Event {
 	return &data.Event{
 		DeviceID:  user.Uuid,
 		EventType: "[Server]CancelOrderItem",
 		EventProperties: map[string]interface{}{
 			"orderitem": item,
 		},
+		Time:        item.CancelFinishedAt.Unix(),
 		Price:       float64(item.SalesPrice),
 		Quantity:    int32(item.Quantity),
 		Revenue:     -1 * float64(item.SalesPrice) * float64(item.Quantity),

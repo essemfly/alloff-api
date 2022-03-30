@@ -48,6 +48,15 @@ func (repo *orderItemRepo) Update(orderItemDao *domain.OrderItemDAO) (*domain.Or
 	return orderItemDao, nil
 }
 
+func (repo *orderItemRepo) ListAllCanceled() ([]*domain.OrderItemDAO, error) {
+	orderItems := []*domain.OrderItemDAO{}
+	if err := repo.db.Model(&orderItems).Where("order_item_status = ?", domain.ORDER_ITEM_CANCEL_FINISHED).Select(); err != nil {
+		return nil, err
+	}
+
+	return orderItems, nil
+}
+
 func PostgresOrderItemRepo(conn *PostgresDB) repository.OrderItemsRepository {
 	return &orderItemRepo{
 		db: conn.db,
