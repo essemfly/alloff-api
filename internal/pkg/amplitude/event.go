@@ -46,7 +46,7 @@ func LogOrderRecord(user *domain.UserDAO, order *domain.OrderDAO, payment *domai
 func logOrder(user *domain.UserDAO, order *domain.OrderDAO, payment *domain.PaymentDAO) *data.Event {
 	return &data.Event{
 		DeviceID:  user.Uuid,
-		EventType: "[Server]CreateOrder220330-2",
+		EventType: "[Server]CreateOrder_Ver220331",
 		EventProperties: map[string]interface{}{
 			"order":   order,
 			"payment": payment,
@@ -59,13 +59,19 @@ func logOrder(user *domain.UserDAO, order *domain.OrderDAO, payment *domain.Paym
 }
 
 func logOrderItem(user *domain.UserDAO, item *domain.OrderItemDAO) *data.Event {
+
+	orderedAt := item.OrderedAt.Unix()
+	if orderedAt < 0 {
+		orderedAt = item.CreatedAt.Unix()
+	}
+
 	return &data.Event{
 		DeviceID:  user.Uuid,
-		EventType: "[Server]CreateOrderItem220330-2",
+		EventType: "[Server]CreateOrderItem_Ver220331",
 		EventProperties: map[string]interface{}{
 			"orderitem": item,
 		},
-		Time:        item.OrderedAt.Unix(),
+		Time:        orderedAt,
 		Price:       float64(item.SalesPrice),
 		Quantity:    int32(item.Quantity),
 		Revenue:     float64(item.SalesPrice) * float64(item.Quantity),
@@ -103,7 +109,7 @@ func LogCancelOrderItemRecord(user *domain.UserDAO, orderItem *domain.OrderItemD
 func logCancelOrderItem(user *domain.UserDAO, item *domain.OrderItemDAO) *data.Event {
 	return &data.Event{
 		DeviceID:  user.Uuid,
-		EventType: "[Server]CancelOrderItem",
+		EventType: "[Server]CancelOrderItem_Ver220331",
 		EventProperties: map[string]interface{}{
 			"orderitem": item,
 		},
