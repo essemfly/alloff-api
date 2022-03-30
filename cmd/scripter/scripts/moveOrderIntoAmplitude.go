@@ -13,8 +13,7 @@ func MakeOrdersIntoAmplitude() {
 	if err != nil {
 		log.Println("order listing err", err)
 	}
-	for idx, order := range orders {
-		log.Println("Order Create count", idx, order.ID, order.OrderStatus)
+	for _, order := range orders {
 		orderDao, paymentDao, err := ioc.Service.OrderWithPaymentService.Find(order.AlloffOrderID)
 		if err != nil {
 			log.Println("order find error", err, order.ID)
@@ -36,8 +35,7 @@ func MakeCancelOrderItemsIntoAmplitude() {
 	if err != nil {
 		log.Println("order item listing err", err)
 	}
-	for idx, item := range orderItems {
-		log.Println("Order Cancel count", idx, item.ID, item.OrderItemStatus)
+	for _, item := range orderItems {
 		order, err := ioc.Repo.Orders.Get(item.OrderID)
 		if err != nil {
 			log.Println("order load failed", err)
