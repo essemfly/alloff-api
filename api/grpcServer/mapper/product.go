@@ -6,9 +6,10 @@ import (
 )
 
 func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
-	alloffCategoryName := ""
-	alloffCategoryID := ""
+	var alloffCategoryName, alloffCategoryID string
+	IsClassifiedDone, IsClassifiedTouched := false, false
 	if pd.AlloffCategories != nil {
+		IsClassifiedDone, IsClassifiedTouched = pd.AlloffCategories.Done, pd.AlloffCategories.Touched
 		if pd.AlloffCategories.Done {
 			if pd.AlloffCategories.Second != nil {
 				alloffCategoryName = pd.AlloffCategories.Second.Name
@@ -51,8 +52,8 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 		IsSoldout:            pd.Soldout,
 		TotalScore:           int32(totalScore),
 		ModuleName:           pd.ProductInfo.Source.CrawlModuleName,
-		IsClassifiedDone:     pd.AlloffCategories.Done,
-		IsClassifiedTouched:  pd.AlloffCategories.Touched,
+		IsClassifiedDone:     IsClassifiedDone,
+		IsClassifiedTouched:  IsClassifiedTouched,
 	}
 }
 
