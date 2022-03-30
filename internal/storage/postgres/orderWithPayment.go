@@ -390,11 +390,13 @@ func PostgresOrderPaymentService(conn *PostgresDB) service.OrderWithPaymentServi
 		db: conn.db,
 	}
 }
+
 func WritePaymentSuccessSlack(payment *domain.PaymentDAO) {
 	order, _ := ioc.Repo.Orders.GetByAlloffID(payment.MerchantUid)
 	orderProducts := []string{}
+	itemBackOfficeUrl := "https://office.alloff.co/items/"
 	for _, orderItem := range order.OrderItems {
-		orderProducts = append(orderProducts, orderItem.ProductUrl+": "+orderItem.Size+" "+strconv.Itoa(orderItem.Quantity)+"개")
+		orderProducts = append(orderProducts, orderItem.ProductUrl+": "+orderItem.Size+" "+strconv.Itoa(orderItem.Quantity)+"개 - "+itemBackOfficeUrl+orderItem.OrderItemCode)
 	}
 
 	orderMsg := "**결제 완료** \n" +
