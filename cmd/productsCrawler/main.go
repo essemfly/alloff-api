@@ -39,7 +39,7 @@ func main() {
 		"kolon",
 		"babathe",
 		"idfmall",
-		//"daehyun",
+		// "daehyun",
 		"niceclaup",
 		"lacoste",
 		"sisley",
@@ -51,6 +51,7 @@ func main() {
 		// "theoutnet",
 		"sandro",
 		"maje",
+		"theory",
 	}
 
 	StartCrawling(crawlModules)
@@ -129,6 +130,8 @@ func StartCrawling(crawlModules []string) {
 				go malls.CrawlMaje(workers, done, source)
 			case "theoutnet":
 				go malls.CrawlTheoutnet(workers, done, source)
+			case "theory":
+				go malls.CrawlTheory(workers, done, source)
 			default:
 				log.Println("Empty Source")
 				<-workers
@@ -140,3 +143,5 @@ func StartCrawling(crawlModules []string) {
 		<-done
 	}
 }
+
+//

@@ -49,6 +49,13 @@ func GetProductPrice(pd *domain.ProductDAO) (int, int) {
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
+	} else if pd.ProductInfo.Source.PriceMarginPolicy == "THEORY" {
+		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
+		discPriceKRW := CalculateTheoryPrice(int(discPrice))
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
+		return origPriceKRW, discPriceKRW
 	}
 
 	return int(origPrice), int(discPrice)
@@ -118,6 +125,28 @@ func CalculateMajuPrice(priceKRW int) int {
 		priceKRW = priceKRW * 11 / 10
 	}
 
+	priceKRW = priceKRW * 11 / 10 // 마진
+	priceKRW = priceKRW + 3000
+
+	priceKRW = priceKRW / 1000
+	priceKRW = priceKRW * 1000
+
+	return priceKRW
+}
+
+func CalculateTheoryPrice(priceKRW int) int {
+	// 원가 + (원가가 200불 넘을 때 관세 13%) + 15000 해외 배송비 + (원가가 200불 넘을 때 부가세 10%) + 총 가격의 10% + 3000원
+
+	luxuryProduct := false
+	if (priceKRW / DOLLAR_EXCHANGE_RATE) >= 200 {
+		luxuryProduct = true
+		priceKRW = priceKRW * 113 / 100
+	}
+	priceKRW = priceKRW + 15000
+
+	if luxuryProduct {
+		priceKRW = priceKRW * 11 / 10
+	}
 	priceKRW = priceKRW * 11 / 10 // 마진
 	priceKRW = priceKRW + 3000
 

@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-
 	"github.com/lessbutter/alloff-api/cmd"
+	"github.com/lessbutter/alloff-api/cmd/scripter/scripts"
+	"github.com/lessbutter/alloff-api/pkg/seeder"
 )
 
 var (
 	GitInfo   = "no info"
 	BuildTime = "no datetime"
-	Env       = "prod"
+	Env       = "dev"
 )
 
 func main() {
@@ -17,5 +18,7 @@ func main() {
 	fmt.Println("Build date, time: ", BuildTime)
 
 	cmd.SetBaseConfig(Env)
-
+	seeder.MakeClassifyRules()
+	scripts.AddBrandsSeeder()
+	scripts.AddClassifyRules()
 }
