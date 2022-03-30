@@ -2,10 +2,11 @@ package malls
 
 import (
 	"fmt"
-	"github.com/lessbutter/alloff-api/config/ioc"
-	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"log"
 	"time"
+
+	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
 func AddTheory() {
@@ -74,11 +75,11 @@ func AddTheory() {
 				CrawlUrl:             getCrawlSourceUrl(val),
 				CrawlModuleName:      modulename,
 				IsSalesProducts:      true,
-				IsForeignDelivery:    false,
-				PriceMarginPolicy:    "NORMAL",
+				IsForeignDelivery:    true,
+				PriceMarginPolicy:    "THEORY",
 				DeliveryPrice:        0,
-				EarliestDeliveryDays: 10,
-				LatestDeliveryDays:   14,
+				EarliestDeliveryDays: 7,
+				LatestDeliveryDays:   21,
 				DeliveryDesc:         nil,
 				RefundAvailable:      true,
 				ChangeAvailable:      true,
