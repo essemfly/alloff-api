@@ -78,10 +78,17 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 }
 
 func MapDescription(desc *domain.ProductDescriptionDAO) *model.ProductDescription {
+	var information []*model.KeyValueInfo
+	for k, v := range desc.Infos {
+		var newInfo model.KeyValueInfo
+		newInfo.Key = k
+		newInfo.Value = v
+		information = append(information, &newInfo)
+	}
 	return &model.ProductDescription{
 		Images: desc.Images,
 		Texts:  desc.Texts,
-		Infos:  desc.Infos,
+		Infos:  information,
 	}
 }
 
