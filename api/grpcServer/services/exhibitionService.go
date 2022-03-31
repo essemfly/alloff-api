@@ -30,7 +30,7 @@ func (s *ExhibitionService) GetExhibition(ctx context.Context, req *grpcServer.G
 
 func (s *ExhibitionService) ListExhibitions(ctx context.Context, req *grpcServer.ListExhibitionsRequest) (*grpcServer.ListExhibitionsResponse, error) {
 	onlyLive := false
-	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive)
+	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive, domain.ExhibitionNormalType)
 	if err != nil {
 		return nil, err
 	}
