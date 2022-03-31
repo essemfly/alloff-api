@@ -45,10 +45,10 @@ func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionTyp
 	if onlyLive {
 		filter = bson.M{"finishtime": bson.M{"$gte": now}, "islive": true}
 		onGoingOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
-		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 11}})
+		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 1}})
 	} else {
 		onGoingOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
-		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 11}})
+		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 1}})
 	}
 
 	totalCount, _ := repo.col.CountDocuments(ctx, filter)
