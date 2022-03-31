@@ -49,7 +49,7 @@ func getMockExhibition(idx int, pgIDs []string) *exhibition.ExhibitionRequest {
 
 func AddMockHomeTabs() {
 	log.Println("ADD MOCK HOME TABS START ********")
-	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 10, true)
+	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 10, true, domain.ExhibitionNormalType)
 	exhitibionIDs := []string{}
 	for _, ex := range exhibitions {
 		exhitibionIDs = append(exhitibionIDs, ex.ID.Hex())
@@ -160,7 +160,7 @@ func AddMockHomeTabs() {
 
 func AddMockTopBanners() {
 	log.Println("ADD MOCK TOP BANNERS START ********")
-	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 5, true)
+	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 5, true, domain.ExhibitionNormalType)
 	for id, ex := range exhibitions {
 		log.Println("IDX", id)
 		idString := strconv.Itoa(id * 77)
