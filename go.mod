@@ -19,7 +19,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2 // indirect
 	github.com/iamport/interface v0.0.15
 	github.com/kennygrant/sanitize v1.2.4 // indirect
-	github.com/lessbutter/alloff-grpc-protos v0.0.0-20220331054839-8cfb1acd8c30
+	github.com/lessbutter/alloff-grpc-protos v0.1.1
 	github.com/renatoaf/amplitude-go v1.0.0
 	github.com/rs/cors v1.6.0
 	github.com/rs/xid v1.3.0
