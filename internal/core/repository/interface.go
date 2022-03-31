@@ -86,7 +86,7 @@ type ProductGroupsRepository interface {
 
 type ExhibitionsRepository interface {
 	Get(ID string) (*domain.ExhibitionDAO, error)
-	List(offset, limit int, onlyLive bool) ([]*domain.ExhibitionDAO, int, error)
+	List(offset, limit int, onlyLive bool, exhibitionType domain.ExhibitionType) ([]*domain.ExhibitionDAO, int, error)
 	Upsert(*domain.ExhibitionDAO) (*domain.ExhibitionDAO, error)
 }
 

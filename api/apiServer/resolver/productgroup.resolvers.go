@@ -9,6 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
 func (r *queryResolver) ProductGroup(ctx context.Context, id string) (*model.ProductGroup, error) {
@@ -48,7 +49,7 @@ func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhib
 func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, error) {
 	offset, limit := 0, 100 // IGNORRED SINCE ONLY LIVE
 	onlyLive := true
-	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive)
+	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive, domain.ExhibitionNormalType)
 	if err != nil {
 		return nil, err
 	}
@@ -62,15 +63,16 @@ func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, e
 	return exs, nil
 }
 
-func (r *queryResolver) Timedeal(ctx context.Context) (*model.ProductGroup, error) {
-	// TO BE SPECIFIED WITH PRODUCTGROUP TYPES
-	livePgs, err := ioc.Repo.ProductGroups.ListTimedeals(0, 1, true)
+func (r *queryResolver) Timedeal(ctx context.Context) (*model.Exhibition, error) {
+	// For not force update users
+	offset, limit := 0, 100
+	onlyLive := true
+	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive, domain.ExhibitionTimedealType)
 	if err != nil {
 		return nil, err
 	}
-
-	if len(livePgs) > 0 {
-		return mapper.MapProductGroupDao(livePgs[0]), nil
+	if len(exhibitionDaos) > 0 {
+		return mapper.MapExhibition(exhibitionDaos[0], false), nil
 	}
 	return nil, nil
 }

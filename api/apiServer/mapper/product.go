@@ -81,6 +81,7 @@ func MapDescription(desc *domain.ProductDescriptionDAO) *model.ProductDescriptio
 	return &model.ProductDescription{
 		Images: desc.Images,
 		Texts:  desc.Texts,
+		Infos:  desc.Infos,
 	}
 }
 

@@ -119,6 +119,7 @@ type AlloffInstructionDAO struct {
 type ProductDescriptionDAO struct {
 	Images []string
 	Texts  []string
+	Infos  map[string]string
 }
 
 type DeliveryDescriptionDAO struct {

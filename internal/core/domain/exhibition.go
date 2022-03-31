@@ -6,11 +6,20 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+type ExhibitionType string
+
+const (
+	ExhibitionTimedealType  ExhibitionType = "TIMEDEAL"
+	ExhibitionNormalType    ExhibitionType = "NORMAL"
+	ExhibitionGroupdealType ExhibitionType = "GROUPDEAL"
+)
+
 type ExhibitionDAO struct {
 	ID             primitive.ObjectID `bson:"_id, omitempty"`
 	BannerImage    string
 	ThumbnailImage string
 	Title          string
+	ExhibitionType ExhibitionType
 	SubTitle       string
 	Description    string
 	StartTime      time.Time

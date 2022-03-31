@@ -373,8 +373,9 @@ type Product struct {
 }
 
 type ProductDescription struct {
-	Images []string `json:"images"`
-	Texts  []string `json:"texts"`
+	Images []string        `json:"images"`
+	Texts  []string        `json:"texts"`
+	Infos  []*KeyValueInfo `json:"Infos"`
 }
 
 type ProductGroup struct {

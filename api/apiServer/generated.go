@@ -339,6 +339,7 @@ type ComplexityRoot struct {
 
 	ProductDescription struct {
 		Images func(childComplexity int) int
+		Infos  func(childComplexity int) int
 		Texts  func(childComplexity int) int
 	}
 
@@ -463,7 +464,7 @@ type QueryResolver interface {
 	ProductGroups(ctx context.Context) ([]*model.ProductGroup, error)
 	Exhibition(ctx context.Context, id string) (*model.Exhibition, error)
 	Exhibitions(ctx context.Context) ([]*model.Exhibition, error)
-	Timedeal(ctx context.Context) (*model.ProductGroup, error)
+	Timedeal(ctx context.Context) (*model.Exhibition, error)
 	Find(ctx context.Context, input model.ProductQueryInput) (*model.ProductsOutput, error)
 	Product(ctx context.Context, id string) (*model.Product, error)
 	Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error)
@@ -1994,6 +1995,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProductDescription.Images(childComplexity), true
 
+	case "ProductDescription.Infos":
+		if e.complexity.ProductDescription.Infos == nil {
+			break
+		}
+
+		return e.complexity.ProductDescription.Infos(childComplexity), true
+
 	case "ProductDescription.texts":
 		if e.complexity.ProductDescription.Texts == nil {
 			break
@@ -3009,7 +3017,7 @@ extend type Query {
   productGroups: [ProductGroup!]!
   exhibition(id: String!): Exhibition!
   exhibitions: [Exhibition!]!
-  timedeal: ProductGroup!
+  timedeal: Exhibition!
 }
 `, BuiltIn: false},
 	{Name: "api/apiServer/graph/products.graphqls", Input: `enum SortingType {
@@ -3060,6 +3068,7 @@ type Inventory {
 type ProductDescription {
   images: [String!]
   texts: [String!]
+  Infos: [KeyValueInfo!]
 }
 
 type DeliveryDescription {
@@ -11065,6 +11074,38 @@ func (ec *executionContext) _ProductDescription_texts(ctx context.Context, field
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ProductDescription_Infos(ctx context.Context, field graphql.CollectedField, obj *model.ProductDescription) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProductDescription",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Infos, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.KeyValueInfo)
+	fc.Result = res
+	return ec.marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfoᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ProductGroup_id(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -12324,9 +12365,9 @@ func (ec *executionContext) _Query_timedeal(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.ProductGroup)
+	res := resTmp.(*model.Exhibition)
 	fc.Result = res
-	return ec.marshalNProductGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx, field.Selections, res)
+	return ec.marshalNExhibition2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibition(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_find(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -16930,6 +16971,8 @@ func (ec *executionContext) _ProductDescription(ctx context.Context, sel ast.Sel
 			out.Values[i] = ec._ProductDescription_images(ctx, field, obj)
 		case "texts":
 			out.Values[i] = ec._ProductDescription_texts(ctx, field, obj)
+		case "Infos":
+			out.Values[i] = ec._ProductDescription_Infos(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
