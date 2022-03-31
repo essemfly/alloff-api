@@ -214,7 +214,10 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 
 	for _, productPriority := range req.ProductPriority {
 		productObjId, _ := primitive.ObjectIDFromHex(productPriority.ProductId)
-		pdDao, _ := ioc.Repo.Products.Get(productPriority.ProductId)
+		pdDao, err := ioc.Repo.Products.Get(productPriority.ProductId)
+		if err != nil {
+			continue
+		}
 		isNewProduct := pgDao.AppendProduct(&domain.ProductPriorityDAO{
 			Priority:  int(productPriority.Priority),
 			ProductID: productObjId,
