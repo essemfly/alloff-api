@@ -2,7 +2,7 @@ package mapper
 
 import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
 func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
@@ -54,6 +54,8 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 		ModuleName:           pd.ProductInfo.Source.CrawlModuleName,
 		IsClassifiedDone:     IsClassifiedDone,
 		IsClassifiedTouched:  IsClassifiedTouched,
+		ProductInfos:         pd.ProductInfo.Information,
+		DescriptionInfos:     pd.SalesInstruction.Description.Infos,
 	}
 }
 

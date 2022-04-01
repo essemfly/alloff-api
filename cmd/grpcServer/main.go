@@ -12,7 +12,7 @@ import (
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/services"
 	"github.com/lessbutter/alloff-api/cmd"
-	pb "github.com/lessbutter/alloff-grpc-protos/gen/golang"
+	pb "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 	"google.golang.org/grpc"
 )
 

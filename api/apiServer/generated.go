@@ -1995,7 +1995,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProductDescription.Images(childComplexity), true
 
-	case "ProductDescription.Infos":
+	case "ProductDescription.infos":
 		if e.complexity.ProductDescription.Infos == nil {
 			break
 		}
@@ -3068,7 +3068,7 @@ type Inventory {
 type ProductDescription {
   images: [String!]
   texts: [String!]
-  Infos: [KeyValueInfo!]
+  infos: [KeyValueInfo!]
 }
 
 type DeliveryDescription {
@@ -11074,7 +11074,7 @@ func (ec *executionContext) _ProductDescription_texts(ctx context.Context, field
 	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ProductDescription_Infos(ctx context.Context, field graphql.CollectedField, obj *model.ProductDescription) (ret graphql.Marshaler) {
+func (ec *executionContext) _ProductDescription_infos(ctx context.Context, field graphql.CollectedField, obj *model.ProductDescription) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -16971,8 +16971,8 @@ func (ec *executionContext) _ProductDescription(ctx context.Context, sel ast.Sel
 			out.Values[i] = ec._ProductDescription_images(ctx, field, obj)
 		case "texts":
 			out.Values[i] = ec._ProductDescription_texts(ctx, field, obj)
-		case "Infos":
-			out.Values[i] = ec._ProductDescription_Infos(ctx, field, obj)
+		case "infos":
+			out.Values[i] = ec._ProductDescription_infos(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

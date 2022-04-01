@@ -68,6 +68,7 @@ func GetManualProductDescription(pd *domain.ProductDAO, request *ProductManualAd
 		Description: &domain.ProductDescriptionDAO{
 			Images: descImages,
 			Texts:  request.Description,
+			Infos:  request.DescriptionInfos,
 		},
 		DeliveryDescription: &domain.DeliveryDescriptionDAO{
 			DeliveryType:         deliveryType,

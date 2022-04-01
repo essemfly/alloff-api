@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"github.com/lessbutter/alloff-api/pkg/product"
-	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
 type ProductService struct {
@@ -144,6 +144,14 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		alloffCatID = *req.AlloffCategoryId
 	}
 
+	var descInfos, pdInfos map[string]string
+	if req.DescriptionInfos != nil {
+		descInfos = req.DescriptionInfos
+	}
+	if req.ProductInfos != nil {
+		pdInfos = req.ProductInfos
+	}
+
 	addRequest := &product.ProductManualAddRequest{
 		AlloffName:           req.AlloffName,
 		IsForeignDelivery:    req.IsForeignDelivery,
@@ -163,6 +171,8 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		DescriptionImages:    req.DescriptionImages,
 		ModuleName:           moduleName,
 		AlloffCategoryID:     alloffCatID,
+		DescriptionInfos:     descInfos,
+		ProductInfos:         pdInfos,
 	}
 
 	pdDao, err := product.AddProductManually(addRequest)
@@ -236,6 +246,14 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 
 	if req.Description != nil {
 		pdDao.SalesInstruction.Description.Texts = req.Description
+	}
+
+	if req.DescriptionInfos != nil {
+		pdDao.SalesInstruction.Description.Infos = req.DescriptionInfos
+	}
+
+	if req.ProductInfos != nil {
+		pdDao.ProductInfo.Information = req.ProductInfos
 	}
 
 	if req.EarliestDeliveryDays != nil {

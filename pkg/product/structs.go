@@ -40,4 +40,6 @@ type ProductManualAddRequest struct {
 	DescriptionImages    []string
 	ModuleName           string
 	AlloffCategoryID     string
+	DescriptionInfos     map[string]string
+	ProductInfos         map[string]string
 }

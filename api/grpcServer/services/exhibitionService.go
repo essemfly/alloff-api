@@ -9,7 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/broker"
-	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -30,7 +30,7 @@ func (s *ExhibitionService) GetExhibition(ctx context.Context, req *grpcServer.G
 
 func (s *ExhibitionService) ListExhibitions(ctx context.Context, req *grpcServer.ListExhibitionsRequest) (*grpcServer.ListExhibitionsResponse, error) {
 	onlyLive := false
-	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive, domain.ExhibitionNormalType)
+	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive, domain.EXHIBITION_NORMAL)
 	if err != nil {
 		return nil, err
 	}
@@ -116,6 +116,13 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
+	groupType := domain.EXHIBITION_NORMAL
+	if req.ExhibitionType == grpcServer.ExhibitionType_EXHIBITION_TIMEDEAL {
+		groupType = domain.EXHIBITION_TIMEDEAL
+	} else if req.ExhibitionType == grpcServer.ExhibitionType_EXHIBITION_GROUPDEAL {
+		groupType = domain.EXHIBITION_GROUPDEAL
+	}
+
 	exDao := &domain.ExhibitionDAO{
 		ID:             primitive.NewObjectID(),
 		BannerImage:    req.BannerImage,
@@ -126,6 +133,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		StartTime:      startTimeObj,
 		FinishTime:     finishTimeObj,
 		IsLive:         false,
+		ExhibitionType: domain.ExhibitionType(groupType),
 	}
 
 	pgs := []*domain.ProductGroupDAO{}

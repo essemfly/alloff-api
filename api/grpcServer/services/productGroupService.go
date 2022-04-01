@@ -9,7 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/broker"
-	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -17,17 +17,15 @@ type ProductGroupService struct {
 	grpcServer.ProductGroupServer
 }
 
-func (s *ProductGroupService) GetProductGroup(ctx context.Context, req *grpcServer.GetProductGroupRequest) (*grpcServer.GetProductGroupResponse, error) {
+func (s *ProductGroupService) GetProductGroup(ctx context.Context, req *grpcServer.GetProductGroupRequest) (*grpcServer.ProductGroupMessage, error) {
 	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
 	if err != nil {
 		return nil, err
 	}
-	return &grpcServer.GetProductGroupResponse{
-		Pg: mapper.ProductGroupMapper(pgDao),
-	}, nil
+	return mapper.ProductGroupMapper(pgDao), nil
 }
 
-func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcServer.CreateProductGroupRequest) (*grpcServer.CreateProductGroupResponse, error) {
+func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcServer.CreateProductGroupRequest) (*grpcServer.ProductGroupMessage, error) {
 	layout := "2006-01-02T15:04:05Z07:00"
 
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
@@ -65,9 +63,7 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 		return nil, err
 	}
 
-	return &grpcServer.CreateProductGroupResponse{
-		Pg: mapper.ProductGroupMapper(newPgDao),
-	}, nil
+	return mapper.ProductGroupMapper(newPgDao), nil
 }
 
 func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcServer.ListProductGroupsRequest) (*grpcServer.ListProductGroupsResponse, error) {
@@ -142,7 +138,7 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 	}
 }
 
-func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcServer.EditProductGroupRequest) (*grpcServer.EditProductGroupResponse, error) {
+func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcServer.EditProductGroupRequest) (*grpcServer.ProductGroupMessage, error) {
 	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
 	if err != nil {
 		return nil, err
@@ -203,39 +199,26 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 		}
 	}
 
-	return &grpcServer.EditProductGroupResponse{Pg: mapper.ProductGroupMapper(updatedPgDao)}, nil
+	return mapper.ProductGroupMapper(updatedPgDao), nil
 }
 
-func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, req *grpcServer.PushProductsInPgRequest) (*grpcServer.PushProductsInPgResponse, error) {
+func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, req *grpcServer.PushProductInPgRequest) (*grpcServer.ProductGroupMessage, error) {
 	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, productPriority := range req.ProductPriority {
-		productObjId, _ := primitive.ObjectIDFromHex(productPriority.ProductId)
-		pdDao, err := ioc.Repo.Products.Get(productPriority.ProductId)
-		if err != nil {
-			continue
-		}
-		isNewProduct := pgDao.AppendProduct(&domain.ProductPriorityDAO{
-			Priority:  int(productPriority.Priority),
-			ProductID: productObjId,
-			Product:   pdDao,
-		})
-
-		if isNewProduct {
-			pd, err := ioc.Repo.Products.Get(productPriority.ProductId)
-			if err != nil {
-				return nil, err
-			}
-			pd.ProductGroupId = pgDao.ID.Hex()
-			_, err = ioc.Repo.Products.Upsert(pd)
-			if err != nil {
-				return nil, err
-			}
-		}
+	productObjId, _ := primitive.ObjectIDFromHex(req.ProductPriority.ProductId)
+	pdDao, err := ioc.Repo.Products.Get(req.ProductPriority.ProductId)
+	if err != nil {
+		return nil, err
 	}
+
+	pgDao.Products = append(pgDao.Products, &domain.ProductPriorityDAO{
+		Priority:  int(req.ProductPriority.Priority),
+		ProductID: productObjId,
+		Product:   pdDao,
+	})
 
 	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
 	if err != nil {
@@ -256,10 +239,53 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		}
 	}
 
-	return &grpcServer.PushProductsInPgResponse{Pg: mapper.ProductGroupMapper(updatedPgDao)}, nil
+	return mapper.ProductGroupMapper(updatedPgDao), nil
 }
 
-func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, req *grpcServer.RemoveProductInPgRequest) (*grpcServer.RemoveProductInPgResponse, error) {
+func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, req *grpcServer.UpdateProductsInPgRequest) (*grpcServer.ProductGroupMessage, error) {
+	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
+	if err != nil {
+		return nil, err
+	}
+
+	pds := []*domain.ProductPriorityDAO{}
+	for _, pd := range req.ProductPriorities {
+		productObjId, _ := primitive.ObjectIDFromHex(pd.ProductId)
+		pdDao, _ := ioc.Repo.Products.Get(pd.ProductId)
+
+		newPd := &domain.ProductPriorityDAO{
+			Priority:  int(pd.Priority),
+			ProductID: productObjId,
+			Product:   pdDao,
+		}
+		pds = append(pds, newPd)
+	}
+
+	pgDao.Products = pds
+
+	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
+	if err != nil {
+		return nil, err
+	}
+
+	updatedPgDao, err := broker.ProductGroupSyncer(newPgDao)
+	if err != nil {
+		log.Println("product group syncing error", err)
+	}
+
+	if newPgDao.ExhibitionID != "" {
+		exDao, err := ioc.Repo.Exhibitions.Get(newPgDao.ExhibitionID)
+		if err != nil {
+			log.Println("exhibbition find error", err)
+		} else {
+			go broker.ExhibitionSyncer(exDao)
+		}
+	}
+
+	return mapper.ProductGroupMapper(updatedPgDao), nil
+}
+
+func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, req *grpcServer.RemoveProductInPgRequest) (*grpcServer.ProductGroupMessage, error) {
 	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
 	if err != nil {
 		return nil, err
@@ -295,5 +321,5 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 		}
 	}
 
-	return &grpcServer.RemoveProductInPgResponse{Pg: mapper.ProductGroupMapper(updatedPgDao)}, nil
+	return mapper.ProductGroupMapper(updatedPgDao), nil
 }

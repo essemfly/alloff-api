@@ -2,7 +2,7 @@ package mapper
 
 import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
 func ProductGroupMapper(pg *domain.ProductGroupDAO) *grpcServer.ProductGroupMessage {

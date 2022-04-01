@@ -49,7 +49,7 @@ func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhib
 func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, error) {
 	offset, limit := 0, 100 // IGNORRED SINCE ONLY LIVE
 	onlyLive := true
-	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive, domain.ExhibitionNormalType)
+	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive, domain.EXHIBITION_NORMAL)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +67,7 @@ func (r *queryResolver) Timedeal(ctx context.Context) (*model.Exhibition, error)
 	// For not force update users
 	offset, limit := 0, 100
 	onlyLive := true
-	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive, domain.ExhibitionTimedealType)
+	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive, domain.EXHIBITION_TIMEDEAL)
 	if err != nil {
 		return nil, err
 	}

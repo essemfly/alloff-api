@@ -9,9 +9,9 @@ import (
 type ExhibitionType string
 
 const (
-	ExhibitionTimedealType  ExhibitionType = "TIMEDEAL"
-	ExhibitionNormalType    ExhibitionType = "NORMAL"
-	ExhibitionGroupdealType ExhibitionType = "GROUPDEAL"
+	EXHIBITION_TIMEDEAL  ExhibitionType = "EXHIBITION_TIMEDEAL"
+	EXHIBITION_NORMAL    ExhibitionType = "EXHIBITION_NORMAL"
+	EXHIBITION_GROUPDEAL ExhibitionType = "EXHIBITION_GROUPDEAL"
 )
 
 type ExhibitionDAO struct {
@@ -19,7 +19,6 @@ type ExhibitionDAO struct {
 	BannerImage    string
 	ThumbnailImage string
 	Title          string
-	ExhibitionType ExhibitionType
 	SubTitle       string
 	Description    string
 	StartTime      time.Time
@@ -28,6 +27,7 @@ type ExhibitionDAO struct {
 	IsLive         bool
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
+	ExhibitionType ExhibitionType
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {
