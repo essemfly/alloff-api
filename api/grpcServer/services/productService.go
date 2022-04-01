@@ -52,9 +52,14 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	if req.Query.SearchQuery != nil {
 		searchKeyword = *req.Query.SearchQuery
 	}
-	onlyClassified := false
+
+	classifiedType := product.NO_MATTER_CLASSIFIED
 	if req.Query.IsClassifiedDone != nil {
-		onlyClassified = true
+		if *req.Query.IsClassifiedDone {
+			classifiedType = product.CLASSIFIED_DONE
+		} else {
+			classifiedType = product.NOT_CLASSIFIED
+		}
 	}
 
 	priceSorting := ""
@@ -84,7 +89,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	}
 
 	// IsClassifiedDone을 어떻게 넣을것인가가 문제군
-	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), onlyClassified, moduleName, brandID, categoryID, alloffCategoryID, searchKeyword, priceSorting, priceRange)
+	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), classifiedType, moduleName, brandID, categoryID, alloffCategoryID, searchKeyword, priceSorting, priceRange)
 	if err != nil {
 		return nil, err
 	}
