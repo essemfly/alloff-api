@@ -32,6 +32,7 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			originalPriceStr = strings.Replace(originalPriceStr, "Comparable Value:", "", -1)
 			originalPriceStr = strings.Replace(originalPriceStr, "Price reduced from", "", -1)
 			originalPriceStr = strings.Replace(originalPriceStr, "$", "", -1)
+			originalPriceStr = strings.Replace(originalPriceStr, ",", "", -1)
 			originalPriceStr = strings.Replace(originalPriceStr, "\n", "", -1)
 			originalPriceStr = strings.Trim(originalPriceStr, " ")
 			originalPrice, err = strconv.ParseFloat(originalPriceStr, 32)
