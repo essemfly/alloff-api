@@ -94,14 +94,14 @@ func (repo *orderRepo) Insert(orderDao *domain.OrderDAO) (*domain.OrderDAO, erro
 	defer cancel()
 
 	if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
-		_, err := repo.db.Model(orderDao).Insert()
+		_, err := tx.Model(orderDao).Insert()
 		if err != nil {
 			return err
 		}
 
 		for _, item := range orderDao.OrderItems {
 			item.OrderID = orderDao.ID
-			_, err := repo.db.Model(item).Insert()
+			_, err := tx.Model(item).Insert()
 			if err != nil {
 				return err
 			}
@@ -120,13 +120,13 @@ func (repo *orderRepo) Update(orderDao *domain.OrderDAO) (*domain.OrderDAO, erro
 	defer cancel()
 
 	if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
-		_, err := repo.db.Model(orderDao).WherePK().Update()
+		_, err := tx.Model(orderDao).WherePK().Update()
 		if err != nil {
 			return err
 		}
 
 		for _, item := range orderDao.OrderItems {
-			_, err := repo.db.Model(item).WherePK().Update()
+			_, err := tx.Model(item).WherePK().Update()
 			if err != nil {
 				return err
 			}

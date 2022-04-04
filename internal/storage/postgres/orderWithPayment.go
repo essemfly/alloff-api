@@ -71,7 +71,7 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 			orderItemDao.UpdatedAt = time.Now()
 			paymentDao.PaymentStatus = domain.PAYMENT_REFUND_FINISHED
 			paymentDao.UpdatedAt = time.Now()
-			_, err = ioc.Repo.OrderItems.Update(orderItemDao)
+			_, err = tx.OrderItems.Update(orderItemDao)
 			if err != nil {
 				return err
 			}
@@ -213,7 +213,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 				return fmt.Errorf("ERR106:product update failed" + err.Error())
 			}
 
-			_, err = repo.db.Model(item).WherePK().Update()
+			_, err = tx.Model(item).WherePK().Update()
 			if err != nil {
 				log.Println("orderitemDao Update")
 				return fmt.Errorf("ERR305:order update failed" + err.Error())
@@ -224,7 +224,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			return fmt.Errorf("ERR101:invalid total products price order amount")
 		}
 
-		_, err := repo.db.Model(orderDao).WherePK().Update()
+		_, err := tx.Model(orderDao).WherePK().Update()
 		if err != nil {
 			log.Println("orderDao Update")
 			return fmt.Errorf("ERR305:order update failed" + err.Error())
@@ -242,7 +242,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			paymentDao.CreatedAt = time.Now()
 			paymentDao.UpdatedAt = time.Now()
 			paymentDao.PaymentStatus = domain.PAYMENT_CREATED
-			_, err = repo.db.Model(paymentDao).Insert()
+			_, err = tx.Model(paymentDao).Insert()
 			if err != nil {
 				log.Println("paymentDao Insert", err)
 				return fmt.Errorf("ERR403:payment create failed")
@@ -252,7 +252,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 
 		paymentDao.PaymentStatus = domain.PAYMENT_CREATED
 		paymentDao.UpdatedAt = time.Now()
-		_, err = repo.db.Model(paymentDao).WherePK().Update()
+		_, err = tx.Model(paymentDao).WherePK().Update()
 		if err != nil {
 			log.Println("paymentDao update", err)
 			return fmt.Errorf("ERR402:payment update failed")
@@ -276,7 +276,7 @@ func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymen
 	if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
 		orderDao.UpdatedAt = time.Now()
 		orderDao.OrderStatus = domain.ORDER_RECREATED
-		_, err := repo.db.Model(orderDao).WherePK().Update()
+		_, err := tx.Model(orderDao).WherePK().Update()
 		if err != nil {
 			log.Println("err on orderDAO", err)
 			return err
@@ -285,7 +285,7 @@ func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymen
 		for _, item := range orderDao.OrderItems {
 			item.UpdatedAt = time.Now()
 			item.OrderItemStatus = domain.ORDER_ITEM_RECREATED
-			_, err := repo.db.Model(item).WherePK().Update()
+			_, err := tx.Model(item).WherePK().Update()
 			if err != nil {
 				log.Println("err on orderItemDAO", err)
 				return err
@@ -309,7 +309,7 @@ func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymen
 
 		paymentDao.UpdatedAt = time.Now()
 		paymentDao.PaymentStatus = domain.PAYMENT_CANCELED
-		_, err = repo.db.Model(paymentDao).WherePK().Update()
+		_, err = tx.Model(paymentDao).WherePK().Update()
 		if err != nil {
 			return err
 		}
@@ -345,7 +345,7 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 		orderDao.OrderStatus = domain.ORDER_PAYMENT_FINISHED
 		orderDao.UpdatedAt = time.Now()
 		orderDao.OrderedAt = time.Now()
-		_, err := repo.db.Model(orderDao).WherePK().Update()
+		_, err := tx.Model(orderDao).WherePK().Update()
 		if err != nil {
 			log.Println("err on orderDAO", err)
 			return err
@@ -354,7 +354,7 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 			orderItemDAO.OrderItemStatus = domain.ORDER_ITEM_PAYMENT_FINISHED
 			orderItemDAO.UpdatedAt = time.Now()
 			orderItemDAO.OrderedAt = time.Now()
-			_, err = repo.db.Model(orderItemDAO).WherePK().Update()
+			_, err = tx.Model(orderItemDAO).WherePK().Update()
 			if err != nil {
 				log.Println("err on orderItemDAO", err)
 				return err
@@ -368,7 +368,7 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 		paymentDao.PaymentStatus = domain.PAYMENT_CONFIRMED
 		paymentDao.ImpUID = impUID
 		paymentDao.UpdatedAt = time.Now()
-		_, err = repo.db.Model(paymentDao).WherePK().Update()
+		_, err = tx.Model(paymentDao).WherePK().Update()
 		if err != nil {
 			log.Println("err on paymentdao", err)
 			return err
