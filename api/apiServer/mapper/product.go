@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/product"
@@ -43,6 +44,12 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 			isSoldout = false
 		}
 	}
+
+	if isSoldout && !pdDao.Soldout {
+		pdDao.Soldout = true
+		go ioc.Repo.Products.Upsert(pdDao)
+	}
+
 	if pdDao.Soldout {
 		isSoldout = true
 	}
