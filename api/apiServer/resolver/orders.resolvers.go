@@ -34,12 +34,12 @@ func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInp
 		ProductPrice: input.ProductPrice,
 	}
 
+	errs := basket.IsValid()
+
 	orderDao, err := basket.BuildOrder(nil)
 	if err != nil {
 		return nil, err
 	}
-
-	errs := basket.IsValid()
 
 	if len(errs) > 0 {
 		var errString = []string{}

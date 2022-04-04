@@ -43,19 +43,24 @@ func (basket *Basket) IsValid() []error {
 				isValidSize = true
 				if inv.Quantity >= item.Quantity {
 					isValidQuantity = true
+				} else {
+					item.Quantity = inv.Quantity
 				}
 			}
 		}
 
 		if item.Product.Soldout {
+			item.Quantity = 0
 			errs = append(errs, fmt.Errorf("ERR105:product soldout"))
 		}
 
 		if item.Product.Removed {
+			item.Quantity = 0
 			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is removed"))
 		}
 
 		if !isValidSize {
+			item.Quantity = 0
 			errs = append(errs, fmt.Errorf("ERR104:invalid product option size"+item.Size))
 		}
 
