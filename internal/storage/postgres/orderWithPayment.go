@@ -71,7 +71,7 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 			orderItemDao.UpdatedAt = time.Now()
 			paymentDao.PaymentStatus = domain.PAYMENT_REFUND_FINISHED
 			paymentDao.UpdatedAt = time.Now()
-			_, err = tx.OrderItems.Update(orderItemDao)
+			_, err = ioc.Repo.OrderItems.Update(orderItemDao)
 			if err != nil {
 				return err
 			}
