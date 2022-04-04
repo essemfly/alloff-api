@@ -206,24 +206,21 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 	return mapper.ProductGroupMapper(updatedPgDao), nil
 }
 
-func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, req *grpcServer.PushProductInPgRequest) (*grpcServer.ProductGroupMessage, error) {
+func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, req *grpcServer.ProductsInPgRequest) (*grpcServer.ProductGroupMessage, error) {
 	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
 	if err != nil {
 		return nil, err
 	}
 
-	productObjId, _ := primitive.ObjectIDFromHex(req.ProductPriority.ProductId)
-	pdDao, err := ioc.Repo.Products.Get(req.ProductPriority.ProductId)
-	if err != nil {
-		return nil, err
+	for _, productPriority := range req.ProductPriorities {
+		productObjId, _ := primitive.ObjectIDFromHex(productPriority.ProductId)
+		pdDao, _ := ioc.Repo.Products.Get(productPriority.ProductId)
+		pgDao.Products = append(pgDao.Products, &domain.ProductPriorityDAO{
+			Priority:  int(productPriority.Priority),
+			ProductID: productObjId,
+			Product:   pdDao,
+		})
 	}
-
-	pgDao.Products = append(pgDao.Products, &domain.ProductPriorityDAO{
-		Priority:  int(req.ProductPriority.Priority),
-		ProductID: productObjId,
-		Product:   pdDao,
-	})
-
 	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
 	if err != nil {
 		return nil, err
@@ -246,7 +243,7 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 	return mapper.ProductGroupMapper(updatedPgDao), nil
 }
 
-func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, req *grpcServer.UpdateProductsInPgRequest) (*grpcServer.ProductGroupMessage, error) {
+func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, req *grpcServer.ProductsInPgRequest) (*grpcServer.ProductGroupMessage, error) {
 	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
 	if err != nil {
 		return nil, err
