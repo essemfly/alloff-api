@@ -10,9 +10,9 @@ import (
 type ExhibitionType string
 
 const (
-	EXHIBITION_TIMEDEAL  ExhibitionType = "EXHIBITION_TIMEDEAL"
-	EXHIBITION_NORMAL    ExhibitionType = "EXHIBITION_NORMAL"
-	EXHIBITION_GROUPDEAL ExhibitionType = "EXHIBITION_GROUPDEAL"
+	EXHIBITION_TIMEDEAL  ExhibitionType = "TIMEDEAL"
+	EXHIBITION_NORMAL    ExhibitionType = "NORMAL"
+	EXHIBITION_GROUPDEAL ExhibitionType = "GROUPDEAL"
 )
 
 type ExhibitionDAO struct {
