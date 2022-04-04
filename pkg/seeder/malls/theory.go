@@ -29,7 +29,7 @@ func AddTheory() {
 	brands := map[string]domain.BrandDAO{
 		"theory": {
 			KorName:       "띠어리",
-			EngName:       "theory",
+			EngName:       "Theory",
 			KeyName:       "THEORY",
 			Description:   "",
 			LogoImgUrl:    "",
