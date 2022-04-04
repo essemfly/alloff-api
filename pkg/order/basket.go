@@ -46,6 +46,15 @@ func (basket *Basket) IsValid() []error {
 				}
 			}
 		}
+
+		if item.Product.Soldout {
+			errs = append(errs, fmt.Errorf("ERR105:product soldout"))
+		}
+
+		if item.Product.Removed {
+			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is removed"))
+		}
+
 		if !isValidSize {
 			errs = append(errs, fmt.Errorf("ERR104:invalid product option size"+item.Size))
 		}
@@ -54,9 +63,6 @@ func (basket *Basket) IsValid() []error {
 			errs = append(errs, fmt.Errorf("ERR103:invalid product option quantity"+item.Product.ID.Hex()))
 		}
 
-		if item.Product.Removed {
-			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is removed"))
-		}
 	}
 
 	if basket.ProductPrice != totalPrices {
