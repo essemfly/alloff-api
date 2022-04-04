@@ -31,11 +31,13 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
-	groupType := domain.PRODUCT_GROUP_TIMEDEAL
+	groupType := domain.PRODUCT_GROUP_EXHIBITION
 	if req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
 		groupType = domain.PRODUCT_GROUP_EXHIBITION
 	} else if req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_GROUPDEAL {
 		groupType = domain.PRODUCT_GROUP_GROUPDEAL
+	} else if req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL {
+		groupType = domain.PRODUCT_GROUP_TIMEDEAL
 	}
 
 	shortTitle := ""

@@ -143,6 +143,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		FinishTime:     finishTimeObj,
 		IsLive:         false,
 		ExhibitionType: domain.ExhibitionType(groupType),
+		TargetSales:    int(req.TargetSales),
 	}
 
 	pgs := []*domain.ProductGroupDAO{}
