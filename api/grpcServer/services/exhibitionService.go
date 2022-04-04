@@ -73,6 +73,9 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	if req.Title != nil {
 		exDao.Title = *req.Title
 	}
+	if req.Subtitle != nil {
+		exDao.SubTitle = *req.Subtitle
+	}
 	if req.Description != nil {
 		exDao.Description = *req.Description
 	}
