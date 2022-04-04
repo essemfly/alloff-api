@@ -48,7 +48,7 @@ func AddTheory() {
 	}
 
 	for brandId, brand := range brands {
-		upsertdBrand, err := ioc.Repo.Brands.Upsert(&brand)
+		upsertedBrand, err := ioc.Repo.Brands.Upsert(&brand)
 		if err != nil {
 			log.Println(err)
 		}
@@ -58,7 +58,7 @@ func AddTheory() {
 				Name:          key,
 				KeyName:       brand.KeyName + "-" + key,
 				CatIdentifier: val,
-				BrandKeyname:  upsertdBrand.KeyName,
+				BrandKeyname:  upsertedBrand.KeyName,
 			}
 
 			updatedCat, err := ioc.Repo.Categories.Upsert(&category)
@@ -66,13 +66,12 @@ func AddTheory() {
 				log.Println(err)
 			}
 
-			// TODO : 값 현실에 맞게 수정
 			source := domain.CrawlSourceDAO{
-				BrandKeyname:         upsertdBrand.KeyName,
+				BrandKeyname:         upsertedBrand.KeyName,
 				BrandIdentifier:      brandId,
 				MainCategoryKey:      val,
 				Category:             *updatedCat,
-				CrawlUrl:             getCrawlSourceUrl(val),
+				CrawlUrl:             getTheoryCrawlSourceUrl(val),
 				CrawlModuleName:      modulename,
 				IsSalesProducts:      true,
 				IsForeignDelivery:    true,
@@ -96,6 +95,6 @@ func AddTheory() {
 	log.Println("Theory categories & sources are added")
 }
 
-func getCrawlSourceUrl(cate string) string {
+func getTheoryCrawlSourceUrl(cate string) string {
 	return fmt.Sprintf("https://outlet.theory.com/on/demandware.store/Sites-theory_outlet-Site/default/Search-UpdateGrid?cgid=%s&start=0&sz=10000", cate)
 }
