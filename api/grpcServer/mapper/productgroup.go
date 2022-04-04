@@ -33,6 +33,8 @@ func GroupTypeMapper(groupType domain.ProductGroupType) grpcServer.ProductGroupT
 		return grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL
 	case domain.PRODUCT_GROUP_EXHIBITION:
 		return grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION
+	case domain.PRODUCT_GROUP_GROUPDEAL:
+		return grpcServer.ProductGroupType_PRODUCT_GROUP_GROUPDEAL
 	}
-	return grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL
+	return grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION
 }

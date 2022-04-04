@@ -79,9 +79,9 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 				orderItemType = domain.EXHIBITION_ORDER
 			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_TIMEDEAL {
 				orderItemType = domain.TIMEDEAL_ORDER
-			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
-				orderItemType = domain.EXHIBITION_ORDER
-			} else if 
+			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_GROUPDEAL {
+				orderItemType = domain.GROUPDEAL_ORDER
+			}
 		}
 
 		itemCode := utils.CreateShortUUID()

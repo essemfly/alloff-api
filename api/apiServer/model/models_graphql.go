@@ -724,6 +724,7 @@ const (
 	OrderItemTypeEnumUnknown    OrderItemTypeEnum = "UNKNOWN"
 	OrderItemTypeEnumTimedeal   OrderItemTypeEnum = "TIMEDEAL"
 	OrderItemTypeEnumExhibition OrderItemTypeEnum = "EXHIBITION"
+	OrderItemTypeEnumGroupdeal  OrderItemTypeEnum = "GROUPDEAL"
 	OrderItemTypeEnumNormal     OrderItemTypeEnum = "NORMAL"
 )
 
@@ -731,12 +732,13 @@ var AllOrderItemTypeEnum = []OrderItemTypeEnum{
 	OrderItemTypeEnumUnknown,
 	OrderItemTypeEnumTimedeal,
 	OrderItemTypeEnumExhibition,
+	OrderItemTypeEnumGroupdeal,
 	OrderItemTypeEnumNormal,
 }
 
 func (e OrderItemTypeEnum) IsValid() bool {
 	switch e {
-	case OrderItemTypeEnumUnknown, OrderItemTypeEnumTimedeal, OrderItemTypeEnumExhibition, OrderItemTypeEnumNormal:
+	case OrderItemTypeEnumUnknown, OrderItemTypeEnumTimedeal, OrderItemTypeEnumExhibition, OrderItemTypeEnumGroupdeal, OrderItemTypeEnumNormal:
 		return true
 	}
 	return false

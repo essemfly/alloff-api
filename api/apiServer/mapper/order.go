@@ -112,6 +112,8 @@ func MapOrderItemType(enum domain.OrderItemTypeEnum) model.OrderItemTypeEnum {
 		return model.OrderItemTypeEnumTimedeal
 	case domain.EXHIBITION_ORDER:
 		return model.OrderItemTypeEnumExhibition
+	case domain.GROUPDEAL_ORDER:
+		return model.OrderItemTypeEnumGroupdeal
 	default:
 		return model.OrderItemTypeEnumUnknown
 	}

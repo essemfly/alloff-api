@@ -2789,6 +2789,7 @@ enum OrderItemTypeEnum {
   UNKNOWN
   TIMEDEAL
   EXHIBITION
+  GROUPDEAL
   NORMAL
 }
 

@@ -34,6 +34,8 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 	groupType := domain.PRODUCT_GROUP_TIMEDEAL
 	if req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
 		groupType = domain.PRODUCT_GROUP_EXHIBITION
+	} else if req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_GROUPDEAL {
+		groupType = domain.PRODUCT_GROUP_GROUPDEAL
 	}
 
 	shortTitle := ""
@@ -53,7 +55,7 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 		Products:    []*domain.ProductPriorityDAO{},
 		StartTime:   startTimeObj,
 		FinishTime:  finishTimeObj,
-		GroupType:   domain.ProductGroupType(groupType),
+		GroupType:   groupType,
 		Created:     time.Now(),
 		Updated:     time.Now(),
 	}
@@ -176,8 +178,10 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 		groupType := domain.PRODUCT_GROUP_TIMEDEAL
 		if *req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
 			groupType = domain.PRODUCT_GROUP_EXHIBITION
+		} else if *req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_GROUPDEAL {
+			groupType = domain.PRODUCT_GROUP_GROUPDEAL
 		}
-		pgDao.GroupType = domain.ProductGroupType(groupType)
+		pgDao.GroupType = groupType
 	}
 
 	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
