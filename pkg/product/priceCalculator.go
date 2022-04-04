@@ -56,6 +56,14 @@ func GetProductPrice(pd *domain.ProductDAO) (int, int) {
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
+	} else if pd.ProductInfo.Source.PriceMarginPolicy == "CLAUDIEPIERLOT" {
+		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
+		discPriceKRW := CalculateClaudiePierlotPrice(int(discPrice))
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
+		return origPriceKRW, discPriceKRW
+
 	}
 
 	return int(origPrice), int(discPrice)
@@ -149,6 +157,29 @@ func CalculateTheoryPrice(priceKRW int) int {
 	}
 	priceKRW = priceKRW * 11 / 10 // 마진
 	priceKRW = priceKRW + 3000
+
+	priceKRW = priceKRW / 1000
+	priceKRW = priceKRW * 1000
+
+	return priceKRW
+}
+
+func CalculateClaudiePierlotPrice(priceKRW int) int {
+	priceKRW = priceKRW * 100 / 119 // 뉴 공급가
+	luxuryProduct := false
+
+	if (priceKRW / DOLLAR_EXCHANGE_RATE) >= 150 {
+		luxuryProduct = true
+	}
+
+	priceKRW = priceKRW * 109 / 100 // 수수료
+	priceKRW = priceKRW + 15000     // 해외배송비
+
+	if luxuryProduct {
+		priceKRW = priceKRW * 11 / 10 // 관세
+	}
+
+	priceKRW = priceKRW * 105 / 100 // 마진
 
 	priceKRW = priceKRW / 1000
 	priceKRW = priceKRW * 1000
