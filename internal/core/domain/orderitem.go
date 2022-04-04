@@ -34,6 +34,7 @@ const (
 	NORMAL_ORDER     = OrderItemTypeEnum("NORMAL_ORDER")
 	TIMEDEAL_ORDER   = OrderItemTypeEnum("TIMEDEAL_ORDER")
 	EXHIBITION_ORDER = OrderItemTypeEnum("EXHIBITION_ORDER")
+	GROUPDEAL_ORDER  = OrderItemTypeEnum("GROUPDEAL_ORDER")
 	UNKNOWN_ORDER    = OrderItemTypeEnum("UNKNOWN_ORDER")
 )
 

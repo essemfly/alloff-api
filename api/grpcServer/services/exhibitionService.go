@@ -9,7 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/broker"
-	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang/protos"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -30,7 +30,16 @@ func (s *ExhibitionService) GetExhibition(ctx context.Context, req *grpcServer.G
 
 func (s *ExhibitionService) ListExhibitions(ctx context.Context, req *grpcServer.ListExhibitionsRequest) (*grpcServer.ListExhibitionsResponse, error) {
 	onlyLive := false
-	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive)
+
+	groupType := domain.EXHIBITION_NORMAL
+	if req.GroupType != nil {
+		if *req.GroupType == grpcServer.ExhibitionType_EXHIBITION_GROUPDEAL {
+			groupType = domain.EXHIBITION_GROUPDEAL
+		} else if *req.GroupType == grpcServer.ExhibitionType_EXHIBITION_TIMEDEAL {
+			groupType = domain.EXHIBITION_TIMEDEAL
+		}
+	}
+	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive, groupType)
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +72,9 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	}
 	if req.Title != nil {
 		exDao.Title = *req.Title
+	}
+	if req.Subtitle != nil {
+		exDao.SubTitle = *req.Subtitle
 	}
 	if req.Description != nil {
 		exDao.Description = *req.Description
@@ -116,6 +128,13 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
+	groupType := domain.EXHIBITION_NORMAL
+	if req.ExhibitionType == grpcServer.ExhibitionType_EXHIBITION_TIMEDEAL {
+		groupType = domain.EXHIBITION_TIMEDEAL
+	} else if req.ExhibitionType == grpcServer.ExhibitionType_EXHIBITION_GROUPDEAL {
+		groupType = domain.EXHIBITION_GROUPDEAL
+	}
+
 	exDao := &domain.ExhibitionDAO{
 		ID:             primitive.NewObjectID(),
 		BannerImage:    req.BannerImage,
@@ -126,6 +145,8 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		StartTime:      startTimeObj,
 		FinishTime:     finishTimeObj,
 		IsLive:         false,
+		ExhibitionType: domain.ExhibitionType(groupType),
+		TargetSales:    int(req.TargetSales),
 	}
 
 	pgs := []*domain.ProductGroupDAO{}

@@ -5,7 +5,7 @@ import (
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
-	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang/protos"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
 type AlloffCategoryService struct {

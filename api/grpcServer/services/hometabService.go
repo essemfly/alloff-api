@@ -9,7 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 	"github.com/lessbutter/alloff-api/pkg/hometab"
-	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang/protos"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
 type HomeTabService struct {

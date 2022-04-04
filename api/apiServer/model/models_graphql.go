@@ -131,6 +131,9 @@ type Exhibition struct {
 	ProductGroups  []*ProductGroup `json:"productGroups"`
 	StartTime      string          `json:"startTime"`
 	FinishTime     string          `json:"finishTime"`
+	TargetSales    int             `json:"targetSales"`
+	CurrentSales   int             `json:"currentSales"`
+	ExhibitionType ExhibitionType  `json:"ExhibitionType"`
 }
 
 type FeaturedItem struct {
@@ -373,8 +376,9 @@ type Product struct {
 }
 
 type ProductDescription struct {
-	Images []string `json:"images"`
-	Texts  []string `json:"texts"`
+	Images []string        `json:"images"`
+	Texts  []string        `json:"texts"`
+	Infos  []*KeyValueInfo `json:"infos"`
 }
 
 type ProductGroup struct {
@@ -543,6 +547,49 @@ func (e *DeliveryType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e DeliveryType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ExhibitionType string
+
+const (
+	ExhibitionTypeGroupdeal ExhibitionType = "GROUPDEAL"
+	ExhibitionTypeTimedeal  ExhibitionType = "TIMEDEAL"
+	ExhibitionTypeNormal    ExhibitionType = "NORMAL"
+)
+
+var AllExhibitionType = []ExhibitionType{
+	ExhibitionTypeGroupdeal,
+	ExhibitionTypeTimedeal,
+	ExhibitionTypeNormal,
+}
+
+func (e ExhibitionType) IsValid() bool {
+	switch e {
+	case ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal, ExhibitionTypeNormal:
+		return true
+	}
+	return false
+}
+
+func (e ExhibitionType) String() string {
+	return string(e)
+}
+
+func (e *ExhibitionType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ExhibitionType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ExhibitionType", str)
+	}
+	return nil
+}
+
+func (e ExhibitionType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -723,6 +770,7 @@ const (
 	OrderItemTypeEnumUnknown    OrderItemTypeEnum = "UNKNOWN"
 	OrderItemTypeEnumTimedeal   OrderItemTypeEnum = "TIMEDEAL"
 	OrderItemTypeEnumExhibition OrderItemTypeEnum = "EXHIBITION"
+	OrderItemTypeEnumGroupdeal  OrderItemTypeEnum = "GROUPDEAL"
 	OrderItemTypeEnumNormal     OrderItemTypeEnum = "NORMAL"
 )
 
@@ -730,12 +778,13 @@ var AllOrderItemTypeEnum = []OrderItemTypeEnum{
 	OrderItemTypeEnumUnknown,
 	OrderItemTypeEnumTimedeal,
 	OrderItemTypeEnumExhibition,
+	OrderItemTypeEnumGroupdeal,
 	OrderItemTypeEnumNormal,
 }
 
 func (e OrderItemTypeEnum) IsValid() bool {
 	switch e {
-	case OrderItemTypeEnumUnknown, OrderItemTypeEnumTimedeal, OrderItemTypeEnumExhibition, OrderItemTypeEnumNormal:
+	case OrderItemTypeEnumUnknown, OrderItemTypeEnumTimedeal, OrderItemTypeEnumExhibition, OrderItemTypeEnumGroupdeal, OrderItemTypeEnumNormal:
 		return true
 	}
 	return false

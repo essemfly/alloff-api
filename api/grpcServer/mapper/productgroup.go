@@ -1,17 +1,29 @@
 package mapper
 
 import (
+	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang/protos"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
 func ProductGroupMapper(pg *domain.ProductGroupDAO) *grpcServer.ProductGroupMessage {
 	products := []*grpcServer.ProductInGroupMessage{}
 	for _, pd := range pg.Products {
-		products = append(products, &grpcServer.ProductInGroupMessage{
-			Priority: int32(pd.Priority),
-			Product:  ProductMapper(pd.Product),
-		})
+		if pd.Product != nil {
+			products = append(products, &grpcServer.ProductInGroupMessage{
+				Priority: int32(pd.Priority),
+				Product:  ProductMapper(pd.Product),
+			})
+		} else {
+			pdDao, err := ioc.Repo.Products.Get(pd.ProductID.Hex())
+			if err != nil {
+				continue
+			}
+			products = append(products, &grpcServer.ProductInGroupMessage{
+				Priority: int32(pd.Priority),
+				Product:  ProductMapper(pdDao),
+			})
+		}
 	}
 
 	return &grpcServer.ProductGroupMessage{
@@ -33,6 +45,8 @@ func GroupTypeMapper(groupType domain.ProductGroupType) grpcServer.ProductGroupT
 		return grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL
 	case domain.PRODUCT_GROUP_EXHIBITION:
 		return grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION
+	case domain.PRODUCT_GROUP_GROUPDEAL:
+		return grpcServer.ProductGroupType_PRODUCT_GROUP_GROUPDEAL
 	}
-	return grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL
+	return grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION
 }

@@ -2,7 +2,7 @@ package mapper
 
 import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/golang/protos"
+	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
 func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.ExhibitionMessage {
@@ -25,5 +25,20 @@ func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.Exhib
 		FinishTime:     exDao.FinishTime.String(),
 		Pgs:            pgs,
 		IsLive:         exDao.IsLive,
+		ExhibitionType: ExhibitionGroupTypeMapper(exDao.ExhibitionType),
+		TargetSales:    int32(exDao.TargetSales),
+		CurrentSales:   int32(exDao.GetCurrentSales()),
 	}
+}
+
+func ExhibitionGroupTypeMapper(groupType domain.ExhibitionType) grpcServer.ExhibitionType {
+	switch groupType {
+	case domain.EXHIBITION_TIMEDEAL:
+		return grpcServer.ExhibitionType_EXHIBITION_TIMEDEAL
+	case domain.EXHIBITION_NORMAL:
+		return grpcServer.ExhibitionType_EXHIBITION_NORMAL
+	case domain.EXHIBITION_GROUPDEAL:
+		return grpcServer.ExhibitionType_EXHIBITION_GROUPDEAL
+	}
+	return grpcServer.ExhibitionType_EXHIBITION_NORMAL
 }

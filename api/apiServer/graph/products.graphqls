@@ -46,6 +46,7 @@ type Inventory {
 type ProductDescription {
   images: [String!]
   texts: [String!]
+  infos: [KeyValueInfo!]
 }
 
 type DeliveryDescription {

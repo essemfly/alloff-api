@@ -43,10 +43,24 @@ func (basket *Basket) IsValid() []error {
 				isValidSize = true
 				if inv.Quantity >= item.Quantity {
 					isValidQuantity = true
+				} else {
+					item.Quantity = inv.Quantity
 				}
 			}
 		}
+
+		if item.Product.Soldout {
+			item.Quantity = 0
+			errs = append(errs, fmt.Errorf("ERR105:product soldout"))
+		}
+
+		if item.Product.Removed {
+			item.Quantity = 0
+			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is removed"))
+		}
+
 		if !isValidSize {
+			item.Quantity = 0
 			errs = append(errs, fmt.Errorf("ERR104:invalid product option size"+item.Size))
 		}
 
@@ -54,9 +68,6 @@ func (basket *Basket) IsValid() []error {
 			errs = append(errs, fmt.Errorf("ERR103:invalid product option quantity"+item.Product.ID.Hex()))
 		}
 
-		if item.Product.Removed {
-			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is removed"))
-		}
 	}
 
 	if basket.ProductPrice != totalPrices {
@@ -79,6 +90,8 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 				orderItemType = domain.EXHIBITION_ORDER
 			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_TIMEDEAL {
 				orderItemType = domain.TIMEDEAL_ORDER
+			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_GROUPDEAL {
+				orderItemType = domain.GROUPDEAL_ORDER
 			}
 		}
 

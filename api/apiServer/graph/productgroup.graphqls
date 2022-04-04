@@ -13,6 +13,12 @@ type ProductGroup {
   setAlarm: Boolean!
 }
 
+enum ExhibitionType {
+  GROUPDEAL
+  TIMEDEAL
+  NORMAL
+}
+
 type Exhibition {
   id: ID!
   bannerImage: String!
@@ -23,6 +29,9 @@ type Exhibition {
   productGroups: [ProductGroup!]!
   startTime: Date!
   finishTime: Date!
+  targetSales: Int!
+  currentSales: Int!
+  ExhibitionType: ExhibitionType!
 }
 
 extend type Query {
@@ -30,5 +39,6 @@ extend type Query {
   productGroups: [ProductGroup!]!
   exhibition(id: String!): Exhibition!
   exhibitions: [Exhibition!]!
-  timedeal: ProductGroup!
+  timedeal: Exhibition!
+  groupdeal: Exhibition!
 }

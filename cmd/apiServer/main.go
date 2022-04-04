@@ -21,7 +21,7 @@ import (
 var (
 	GitInfo   = "no info"
 	BuildTime = "no datetime"
-	Env       = "dev"
+	Env       = "prod"
 )
 
 func main() {
