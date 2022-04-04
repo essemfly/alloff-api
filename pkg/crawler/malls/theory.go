@@ -132,30 +132,43 @@ func getTheoryDetail(productUrl, productCode string) (imageUrls, sizes, colors [
 
 	// descriptions
 	c.OnHTML(".description-and-detail", func(e *colly.HTMLElement) {
-		desc := e.ChildText(".description")
-		desc = strings.TrimSpace(desc)
-		desc = strings.Replace(desc, "Style #:", "", -1)
-		desc = strings.Replace(desc, productCode, "", -1)
-		desc = strings.Replace(desc, "-", "", -1)
-		desc = strings.Replace(desc, "\n\n", " ", -1)
-		desc = strings.Replace(desc, "\n", " ", -1)
-		desc = strings.Replace(desc, "  ", " ", -1)
-		desc = strings.Replace(desc, "  ", " ", -1)
-		desc = strings.Trim(desc, "\n")
-		desc = strings.TrimSpace(desc)
+		desc := ""
+		// 내용 파싱하여 \n 으로 나누기
+		originalDesc := e.ChildText(".description")
+		originalDesc = strings.TrimSpace(originalDesc)
+		originalDesc = strings.Replace(originalDesc, "Style #:", "", -1)
+		originalDesc = strings.Replace(originalDesc, productCode, "", -1)
+		originalDesc = strings.Replace(originalDesc, "\n\n", "\n", -1)
+		originalDesc = strings.Replace(originalDesc, "  ", " ", -1)
+		originalDesc = strings.Replace(originalDesc, "  ", " ", -1)
+		originalDesc = strings.Trim(originalDesc, "\n")
+		originalDesc = strings.TrimSpace(originalDesc)
+		// \n 으로 나눈것 split 하여 line by line 으로 가공
+		descSlice := strings.Split(originalDesc, "\n")
+		for _, str := range descSlice {
+			// https://outlet.theory.com/piazza-jkt-2/L091101R_Q1G.html 같이 description 에 공백 한글자가 포함되어 들어올 수 있음
+			if str != " " {
+				str = strings.TrimSpace(str)
+				str = strings.Trim(str, "\n")
+				str += "\n"
+				desc += str
+			}
+		}
+		desc = strings.TrimRight(desc, "\n")
 		description["설명"] = desc
 	})
 
 	// fit
 	c.OnHTML(".pdp-fit", func(e *colly.HTMLElement) {
-		fitText := ""
+		fit := ""
 		e.ForEach("li", func(_ int, el *colly.HTMLElement) {
 			lineText := el.Text
-			lineText = lineText + "\n"
-			fitText += lineText
+			lineText = "- " + lineText
+			lineText += "\n"
+			fit += lineText
 		})
-		fitText = strings.TrimRight(fitText, "\n")
-		description["핏"] = fitText
+		fit = strings.TrimRight(fit, "\n")
+		description["핏"] = fit
 	})
 
 	// composition
@@ -164,15 +177,32 @@ func getTheoryDetail(productUrl, productCode string) (imageUrls, sizes, colors [
 		e.ForEach(".pdp-details-info", func(_ int, el *colly.HTMLElement) {
 			originalComposition := el.Text
 			originalComposition = strings.TrimSpace(originalComposition)
-			composition += originalComposition + " "
+			originalComposition = "- " + originalComposition
+			composition += originalComposition + "\n"
 		})
-		description["제품 주 소재"] = composition
+		composition = strings.TrimRight(composition, "\n")
+		description["소재"] = composition
 	})
 
 	c.OnHTML("div.pdp-care", func(e *colly.HTMLElement) {
-		care := e.Text
-		care = strings.TrimSpace(care)
-		description["취급시 주의사항"] = care
+		care := ""
+
+		// 내용 파싱하여 마침표 기준으로 나누기
+		originalCare := e.Text
+		originalCare = strings.TrimSpace(originalCare)
+		// 마침표로 나눈것 split 하여 line by line 으로 가공
+		careSlice := strings.Split(originalCare, ".")
+		for id, str := range careSlice {
+			str = strings.TrimSpace(str)
+			// 마침표로 구분한 careSlice 의 마지막 요소가 불필요하게 인입되기 때문에, 마지막 요소를 지워주는 작업이 필요함
+			if str != "Imported" && id != len(careSlice)-1 {
+				str = "- " + str
+				care += str + "\n"
+			}
+		}
+
+		care = strings.TrimRight(care, "\n")
+		description["취급 시 주의사항"] = care
 	})
 
 	err := c.Visit(productUrl)
