@@ -148,10 +148,14 @@ func getTheoryDetail(productUrl, productCode string) (imageUrls, sizes, colors [
 
 	// fit
 	c.OnHTML(".pdp-fit", func(e *colly.HTMLElement) {
-		fit := e.ChildText("ul")
-		fit = strings.TrimSpace(fit)
-		fit = strings.Replace(fit, "  ", " ", -1)
-		description["핏"] = fit
+		fitText := ""
+		e.ForEach("li", func(_ int, el *colly.HTMLElement) {
+			lineText := el.Text
+			lineText = lineText + "\n"
+			fitText += lineText
+		})
+		fitText = strings.TrimRight(fitText, "\n")
+		description["핏"] = fitText
 	})
 
 	// composition
