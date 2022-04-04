@@ -131,6 +131,9 @@ type Exhibition struct {
 	ProductGroups  []*ProductGroup `json:"productGroups"`
 	StartTime      string          `json:"startTime"`
 	FinishTime     string          `json:"finishTime"`
+	TargetSales    int             `json:"targetSales"`
+	CurrentSales   int             `json:"currentSales"`
+	ExhibitionType ExhibitionType  `json:"ExhibitionType"`
 }
 
 type FeaturedItem struct {
@@ -544,6 +547,49 @@ func (e *DeliveryType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e DeliveryType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ExhibitionType string
+
+const (
+	ExhibitionTypeGroupdeal ExhibitionType = "GROUPDEAL"
+	ExhibitionTypeTimedeal  ExhibitionType = "TIMEDEAL"
+	ExhibitionTypeNormal    ExhibitionType = "NORMAL"
+)
+
+var AllExhibitionType = []ExhibitionType{
+	ExhibitionTypeGroupdeal,
+	ExhibitionTypeTimedeal,
+	ExhibitionTypeNormal,
+}
+
+func (e ExhibitionType) IsValid() bool {
+	switch e {
+	case ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal, ExhibitionTypeNormal:
+		return true
+	}
+	return false
+}
+
+func (e ExhibitionType) String() string {
+	return string(e)
+}
+
+func (e *ExhibitionType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ExhibitionType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ExhibitionType", str)
+	}
+	return nil
+}
+
+func (e ExhibitionType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

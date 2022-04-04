@@ -76,3 +76,17 @@ func (r *queryResolver) Timedeal(ctx context.Context) (*model.Exhibition, error)
 	}
 	return nil, nil
 }
+
+func (r *queryResolver) Groupdeal(ctx context.Context) (*model.Exhibition, error) {
+	// For not force update users
+	offset, limit := 0, 100
+	onlyLive := true
+	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive, domain.EXHIBITION_GROUPDEAL)
+	if err != nil {
+		return nil, err
+	}
+	if len(exhibitionDaos) > 0 {
+		return mapper.MapExhibition(exhibitionDaos[0], false), nil
+	}
+	return nil, nil
+}

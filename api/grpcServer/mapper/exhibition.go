@@ -26,6 +26,8 @@ func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.Exhib
 		Pgs:            pgs,
 		IsLive:         exDao.IsLive,
 		ExhibitionType: ExhibitionGroupTypeMapper(exDao.ExhibitionType),
+		TargetSales:    int32(exDao.TargetSales),
+		CurrentSales:   int32(exDao.GetCurrentSales()),
 	}
 }
 

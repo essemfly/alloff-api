@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"math/rand"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -28,6 +29,12 @@ type ExhibitionDAO struct {
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
 	ExhibitionType ExhibitionType
+	TargetSales    int
+}
+
+// TODO: To be specified with real number
+func (exDao *ExhibitionDAO) GetCurrentSales() int {
+	return rand.Intn(exDao.TargetSales)
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {

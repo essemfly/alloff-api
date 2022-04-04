@@ -65,5 +65,20 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		ProductGroups:  pgs,
 		StartTime:      exDao.StartTime.Add(9 * time.Hour).String(),
 		FinishTime:     exDao.FinishTime.Add(9 * time.Hour).String(),
+		ExhibitionType: MapExhibitionType(exDao.ExhibitionType),
+		TargetSales:    exDao.TargetSales,
+		CurrentSales:   exDao.GetCurrentSales(),
 	}
+}
+
+func MapExhibitionType(enum domain.ExhibitionType) model.ExhibitionType {
+	switch enum {
+	case domain.EXHIBITION_GROUPDEAL:
+		return model.ExhibitionTypeGroupdeal
+	case domain.EXHIBITION_NORMAL:
+		return model.ExhibitionTypeNormal
+	case domain.EXHIBITION_TIMEDEAL:
+		return model.ExhibitionTypeTimedeal
+	}
+	return model.ExhibitionTypeNormal
 }

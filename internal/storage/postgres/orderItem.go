@@ -57,6 +57,14 @@ func (repo *orderItemRepo) ListAllCanceled() ([]*domain.OrderItemDAO, error) {
 	return orderItems, nil
 }
 
+func (repo *orderItemRepo) ListByProductGroupID(pgID string) ([]*domain.OrderItemDAO, int, error) {
+	orderItems := []*domain.OrderItemDAO{}
+	if err := repo.db.Model(&orderItems).Where("order_item_status = ?", domain.ORDER_ITEM_PAYMENT_FINISHED).Select(); err != nil {
+		return nil, 0, err
+	}
+	return orderItems, len(orderItems), nil
+}
+
 func PostgresOrderItemRepo(conn *PostgresDB) repository.OrderItemsRepository {
 	return &orderItemRepo{
 		db: conn.db,
