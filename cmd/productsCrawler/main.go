@@ -23,7 +23,7 @@ const numWorkers = 20
 var (
 	GitInfo   = "no info"
 	BuildTime = "no datetime"
-	Env       = "prod"
+	Env       = "local"
 )
 
 func main() {
@@ -33,25 +33,26 @@ func main() {
 	cmd.SetBaseConfig(Env)
 
 	crawlModules := []string{
-		"lottefashion",
-		"ssfmall",
-		"sivillage",
-		"kolon",
-		"babathe",
-		"idfmall",
+		//"lottefashion",
+		//"ssfmall",
+		//"sivillage",
+		//"kolon",
+		//"babathe",
+		//"idfmall",
 		// "daehyun",
-		"niceclaup",
-		"lacoste",
-		"sisley",
-		"benetton",
-		"theamall",
-		"loungeb",
-		"bylynn",
+		//"niceclaup",
+		//"lacoste",
+		//"sisley",
+		//"benetton",
+		//"theamall",
+		//"loungeb",
+		//"bylynn",
 		// "intrend",
 		// "theoutnet",
-		"sandro",
-		"maje",
-		"theory",
+		//"sandro",
+		//"maje",
+		//"theory",
+		"claudiePierlot",
 	}
 
 	StartCrawling(crawlModules)
@@ -132,6 +133,8 @@ func StartCrawling(crawlModules []string) {
 				go malls.CrawlTheoutnet(workers, done, source)
 			case "theory":
 				go malls.CrawlTheory(workers, done, source)
+			case "claudiePierlot":
+				go malls.CrawlClaudiePierlot(workers, done, source)
 			default:
 				log.Println("Empty Source")
 				<-workers
