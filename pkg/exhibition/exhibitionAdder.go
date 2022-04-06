@@ -18,6 +18,7 @@ type ExhibitionRequest struct {
 	FinishTime      time.Time
 }
 
+// 현재 Mock에서만 쓰이고있네.
 func AddExhibition(req *ExhibitionRequest) (*domain.ExhibitionDAO, error) {
 	pgDaos := []*domain.ProductGroupDAO{}
 

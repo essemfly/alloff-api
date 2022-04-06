@@ -60,6 +60,9 @@ func (s *ExhibitionService) ListExhibitions(ctx context.Context, req *grpcServer
 		Offset:      req.Offset,
 		Limit:       req.Limit,
 		TotalCounts: int32(cnt),
+		IsLive:      onlyLive,
+		Query:       query,
+		GroupType:   mapper.ExhibitionGroupTypeMapper(groupType),
 	}, nil
 }
 
