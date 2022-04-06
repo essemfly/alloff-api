@@ -50,14 +50,6 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 
 		sizes, inventories, description := getClaudiePierlotDetail(productUrl)
 
-		log.Println(images)
-		log.Println(productId)
-		log.Println(originalPrice)
-		log.Println(discountedPrice)
-		log.Println(sizes)
-		log.Println(inventories)
-		log.Println(description)
-
 		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:               brand,
 			Images:              images,

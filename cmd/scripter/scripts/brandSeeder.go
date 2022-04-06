@@ -25,4 +25,5 @@ func AddBrandsSeeder() {
 	// malls.AddIntrend()
 	// malls.AddOthers()
 	// malls.AddTheoutnet()
+	malls.AddClaudiePierlot()
 }
