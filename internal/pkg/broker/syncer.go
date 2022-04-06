@@ -77,7 +77,7 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) {
 
 // HomeTab Syncer
 func HomeTabSyncer() {
-	items, cnt, err := ioc.Repo.HomeTabItems.List(0, 50, true)
+	items, cnt, err := ioc.Repo.HomeTabItems.List(0, 200, false)
 	if err != nil {
 		log.Println("listing hometab item error", err)
 	}

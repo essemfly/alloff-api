@@ -56,6 +56,7 @@ func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
 		IsClassifiedTouched:  IsClassifiedTouched,
 		ProductInfos:         pd.ProductInfo.Information,
 		DescriptionInfos:     pd.SalesInstruction.Description.Infos,
+		ThumbnailImage:       pd.ThumbnailImage,
 	}
 }
 

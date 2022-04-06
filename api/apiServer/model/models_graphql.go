@@ -373,6 +373,7 @@ type Product struct {
 	Description         *ProductDescription  `json:"description"`
 	CancelDescription   *CancelDescription   `json:"cancelDescription"`
 	DeliveryDescription *DeliveryDescription `json:"deliveryDescription"`
+	ThumbnailImage      string               `json:"ThumbnailImage"`
 }
 
 type ProductDescription struct {
