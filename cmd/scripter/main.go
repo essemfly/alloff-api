@@ -2,11 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/lessbutter/alloff-api/cmd"
-	"github.com/lessbutter/alloff-api/config/ioc"
-	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 )
 
 var (
@@ -21,18 +19,19 @@ func main() {
 
 	cmd.SetBaseConfig(Env)
 
-	notis, err := ioc.Repo.Notifications.List(0, 100, []domain.NotificationType{domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION}, true)
-	if err != nil {
-		log.Println("err on noti", err)
-	}
+	broker.HomeTabSyncer()
+	// notis, err := ioc.Repo.Notifications.List(0, 100, []domain.NotificationType{domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION}, true)
+	// if err != nil {
+	// 	log.Println("err on noti", err)
+	// }
 
-	for _, noti := range notis {
-		noti.Message = "(광고) 단 3일! 최대 72% SALE"
-		_, err := ioc.Repo.Notifications.Update(noti)
-		if err != nil {
-			log.Println("err", err)
-		}
-	}
+	// for _, noti := range notis {
+	// 	noti.Message = "(광고) 단 3일! 최대 72% SALE"
+	// 	_, err := ioc.Repo.Notifications.Update(noti)
+	// 	if err != nil {
+	// 		log.Println("err", err)
+	// 	}
+	// }
 	// ex, err := ioc.Repo.Exhibitions.Get("621f74eaac1cb3aaaeadbebf")
 	// if err != nil {
 	// 	log.Println("er", err)

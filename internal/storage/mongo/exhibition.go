@@ -31,7 +31,7 @@ func (repo *exhibitionRepo) Get(ID string) (*domain.ExhibitionDAO, error) {
 
 }
 
-func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionType domain.ExhibitionType) ([]*domain.ExhibitionDAO, int, error) {
+func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionType domain.ExhibitionType, query string) ([]*domain.ExhibitionDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -42,6 +42,7 @@ func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionTyp
 	onGoingOptions := options.Find()
 	onGoingOptions.SetSkip(int64(offset))
 	onGoingOptions.SetLimit(int64(limit))
+
 	if onlyLive {
 		filter["finishtime"] = bson.M{"$gte": now}
 		filter["islive"] = true
@@ -50,6 +51,13 @@ func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionTyp
 	} else {
 		onGoingOptions.SetSort(bson.D{{Key: "_id", Value: -1}})
 		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 1}})
+	}
+
+	if query != "" {
+		filter["$or"] = []bson.M{
+			{"title": primitive.Regex{Pattern: query, Options: "i"}},
+			{"subtitle": primitive.Regex{Pattern: query, Options: "i"}},
+		}
 	}
 
 	totalCount, _ := repo.col.CountDocuments(ctx, filter)

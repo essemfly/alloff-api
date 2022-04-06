@@ -59,6 +59,11 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		images = pdDao.Images
 	}
 
+	thumbnailImage := images[0]
+	if pdDao.ThumbnailImage != "" {
+		thumbnailImage = pdDao.ThumbnailImage
+	}
+
 	return &model.Product{
 		ID:                  pdDao.ID.Hex(),
 		Category:            MapCategoryDaoToCategory(pdDao.ProductInfo.Category),
@@ -81,6 +86,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		Description:         MapDescription(pdDao.SalesInstruction.Description),
 		CancelDescription:   MapCancelDescription(pdDao.SalesInstruction.CancelDescription),
 		DeliveryDescription: deliveryDesc,
+		ThumbnailImage:      thumbnailImage,
 	}
 }
 

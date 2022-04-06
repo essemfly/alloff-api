@@ -30,16 +30,23 @@ func (s *ExhibitionService) GetExhibition(ctx context.Context, req *grpcServer.G
 
 func (s *ExhibitionService) ListExhibitions(ctx context.Context, req *grpcServer.ListExhibitionsRequest) (*grpcServer.ListExhibitionsResponse, error) {
 	onlyLive := false
+	if req.IsLive {
+		onlyLive = true
+	}
 
 	groupType := domain.EXHIBITION_NORMAL
-	if req.GroupType != nil {
-		if *req.GroupType == grpcServer.ExhibitionType_EXHIBITION_GROUPDEAL {
-			groupType = domain.EXHIBITION_GROUPDEAL
-		} else if *req.GroupType == grpcServer.ExhibitionType_EXHIBITION_TIMEDEAL {
-			groupType = domain.EXHIBITION_TIMEDEAL
-		}
+	if req.GroupType == grpcServer.ExhibitionType_EXHIBITION_GROUPDEAL {
+		groupType = domain.EXHIBITION_GROUPDEAL
+	} else if req.GroupType == grpcServer.ExhibitionType_EXHIBITION_TIMEDEAL {
+		groupType = domain.EXHIBITION_TIMEDEAL
 	}
-	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive, groupType)
+
+	query := ""
+	if req.Query != nil {
+		query = *req.Query
+	}
+
+	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive, groupType, query)
 	if err != nil {
 		return nil, err
 	}

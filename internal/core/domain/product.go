@@ -157,6 +157,7 @@ type ProductDAO struct {
 	IsUpdated           bool
 	Created             time.Time
 	Updated             time.Time
+	ThumbnailImage      string
 	IsImageCached       bool
 	IsTranslateRequired bool
 }
