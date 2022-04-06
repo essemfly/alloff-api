@@ -15,7 +15,7 @@ type orderCountsRepo struct {
 }
 
 func (repo *orderCountsRepo) Get(exhibitionID string) (int, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
 	val, err := repo.client.Get(ctx, exhibitionID).Result()
@@ -38,7 +38,7 @@ func (repo *orderCountsRepo) Get(exhibitionID string) (int, error) {
 }
 
 func (repo *orderCountsRepo) Push(exhibitionID string) (int, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
 	val, err := repo.client.Get(ctx, exhibitionID).Result()
@@ -67,7 +67,7 @@ func (repo *orderCountsRepo) Push(exhibitionID string) (int, error) {
 }
 
 func (repo *orderCountsRepo) Cancel(exhibitionID string) (int, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 
 	val, err := repo.client.Get(ctx, exhibitionID).Result()
