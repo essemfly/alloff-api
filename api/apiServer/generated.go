@@ -909,7 +909,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Exhibition.Description(childComplexity), true
 
-	case "Exhibition.ExhibitionType":
+	case "Exhibition.exhibitionType":
 		if e.complexity.Exhibition.ExhibitionType == nil {
 			break
 		}
@@ -2015,7 +2015,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.SpecialPrice(childComplexity), true
 
-	case "Product.ThumbnailImage":
+	case "Product.thumbnailImage":
 		if e.complexity.Product.ThumbnailImage == nil {
 			break
 		}
@@ -3060,7 +3060,7 @@ type Exhibition {
   finishTime: Date!
   targetSales: Int!
   currentSales: Int!
-  ExhibitionType: ExhibitionType!
+  exhibitionType: ExhibitionType!
 }
 
 extend type Query {
@@ -3110,7 +3110,7 @@ type Product {
   description: ProductDescription
   cancelDescription: CancelDescription!
   deliveryDescription: DeliveryDescription!
-  ThumbnailImage: String!
+  thumbnailImage: String!
 }
 
 type Inventory {
@@ -6215,7 +6215,7 @@ func (ec *executionContext) _Exhibition_currentSales(ctx context.Context, field 
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Exhibition_ExhibitionType(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+func (ec *executionContext) _Exhibition_exhibitionType(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11168,7 +11168,7 @@ func (ec *executionContext) _Product_deliveryDescription(ctx context.Context, fi
 	return ec.marshalNDeliveryDescription2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐDeliveryDescription(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Product_ThumbnailImage(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+func (ec *executionContext) _Product_thumbnailImage(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -16133,8 +16133,8 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "ExhibitionType":
-			out.Values[i] = ec._Exhibition_ExhibitionType(ctx, field, obj)
+		case "exhibitionType":
+			out.Values[i] = ec._Exhibition_exhibitionType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -17188,8 +17188,8 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "ThumbnailImage":
-			out.Values[i] = ec._Product_ThumbnailImage(ctx, field, obj)
+		case "thumbnailImage":
+			out.Values[i] = ec._Product_thumbnailImage(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
