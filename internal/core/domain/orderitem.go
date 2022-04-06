@@ -31,11 +31,11 @@ const (
 type OrderItemTypeEnum string
 
 const (
-	NORMAL_ORDER     OrderItemTypeEnum = OrderItemTypeEnum("NORMAL_ORDER")
-	TIMEDEAL_ORDER   OrderItemTypeEnum = OrderItemTypeEnum("TIMEDEAL_ORDER")
-	EXHIBITION_ORDER OrderItemTypeEnum = OrderItemTypeEnum("EXHIBITION_ORDER")
-	GROUPDEAL_ORDER  OrderItemTypeEnum = OrderItemTypeEnum("GROUPDEAL_ORDER")
-	UNKNOWN_ORDER    OrderItemTypeEnum = OrderItemTypeEnum("UNKNOWN_ORDER")
+	NORMAL_ORDER     OrderItemTypeEnum = "NORMAL_ORDER"
+	TIMEDEAL_ORDER   OrderItemTypeEnum = "TIMEDEAL_ORDER"
+	EXHIBITION_ORDER OrderItemTypeEnum = "EXHIBITION_ORDER"
+	GROUPDEAL_ORDER  OrderItemTypeEnum = "GROUPDEAL_ORDER"
+	UNKNOWN_ORDER    OrderItemTypeEnum = "UNKNOWN_ORDER"
 )
 
 type OrderItemDAO struct {
