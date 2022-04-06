@@ -43,7 +43,7 @@ func GetProductPrice(pd *domain.ProductDAO) (int, int) {
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
-	} else if pd.ProductInfo.Source.PriceMarginPolicy == "MAJU" {
+	} else if pd.ProductInfo.Source.PriceMarginPolicy == "MAJE" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateMajuPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
