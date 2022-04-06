@@ -52,3 +52,11 @@ func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {
 	}
 	return products
 }
+
+func (exDao *ExhibitionDAO) IsSales() bool {
+	now := time.Now()
+	if now.After(exDao.StartTime) && now.Before(exDao.FinishTime) {
+		return true
+	}
+	return false
+}

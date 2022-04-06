@@ -54,10 +54,17 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) {
 			log.Println("product group syncing failed:" + pgDao.ID.Hex())
 		}
 
+		pgType := domain.PRODUCT_GROUP_EXHIBITION
+		if exDao.ExhibitionType == domain.EXHIBITION_TIMEDEAL {
+			pgType = domain.PRODUCT_GROUP_TIMEDEAL
+		} else if exDao.ExhibitionType == domain.EXHIBITION_GROUPDEAL {
+			pgType = domain.PRODUCT_GROUP_GROUPDEAL
+		}
+
 		newPgDao.StartTime = exDao.StartTime
 		newPgDao.FinishTime = exDao.FinishTime
 		newPgDao.ExhibitionID = exDao.ID.Hex()
-		newPgDao.GroupType = domain.PRODUCT_GROUP_EXHIBITION
+		newPgDao.GroupType = pgType
 		updatedPgDao, err := ioc.Repo.ProductGroups.Upsert(newPgDao)
 		if err != nil {
 			log.Println("product group update failed", newPgDao.ID.Hex())

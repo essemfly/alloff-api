@@ -68,6 +68,7 @@ type OrderItemDAO struct {
 	CancelRequestedAt      time.Time               `pg:"cancel_requested_at"`
 	CancelFinishedAt       time.Time               `pg:"cancel_finished_at"`
 	ConfirmedAt            time.Time               `pg:"confirmed_at"`
+	ExhibitionID           string                  `pg:"exhibition_id"`
 }
 
 func (orderItemDao *OrderItemDAO) ConfirmOrder() error {

@@ -97,6 +97,14 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	if req.IsLive != nil {
 		exDao.IsLive = *req.IsLive
 	}
+
+	pgType := domain.PRODUCT_GROUP_EXHIBITION
+	if exDao.ExhibitionType == domain.EXHIBITION_TIMEDEAL {
+		pgType = domain.PRODUCT_GROUP_TIMEDEAL
+	} else if exDao.ExhibitionType == domain.EXHIBITION_GROUPDEAL {
+		pgType = domain.PRODUCT_GROUP_GROUPDEAL
+	}
+
 	if req.PgIds != nil && len(req.PgIds) > 0 {
 		pgs := []*domain.ProductGroupDAO{}
 		for _, pgID := range req.PgIds {
@@ -107,6 +115,8 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 			}
 			pg.StartTime = exDao.StartTime
 			pg.FinishTime = exDao.FinishTime
+			pg.GroupType = pgType
+			pg.ExhibitionID = exDao.ID.Hex()
 			newPg, err := ioc.Repo.ProductGroups.Upsert(pg)
 			if err != nil {
 				log.Println("update product group failed: "+pgID, err)
@@ -135,11 +145,13 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
-	groupType := domain.EXHIBITION_NORMAL
+	exhibitionGroupType, productGroupType := domain.EXHIBITION_NORMAL, domain.PRODUCT_GROUP_EXHIBITION
 	if req.ExhibitionType == grpcServer.ExhibitionType_EXHIBITION_TIMEDEAL {
-		groupType = domain.EXHIBITION_TIMEDEAL
+		exhibitionGroupType = domain.EXHIBITION_TIMEDEAL
+		productGroupType = domain.PRODUCT_GROUP_TIMEDEAL
 	} else if req.ExhibitionType == grpcServer.ExhibitionType_EXHIBITION_GROUPDEAL {
-		groupType = domain.EXHIBITION_GROUPDEAL
+		exhibitionGroupType = domain.EXHIBITION_GROUPDEAL
+		productGroupType = domain.PRODUCT_GROUP_GROUPDEAL
 	}
 
 	exDao := &domain.ExhibitionDAO{
@@ -152,7 +164,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		StartTime:      startTimeObj,
 		FinishTime:     finishTimeObj,
 		IsLive:         false,
-		ExhibitionType: domain.ExhibitionType(groupType),
+		ExhibitionType: exhibitionGroupType,
 		TargetSales:    int(req.TargetSales),
 	}
 
@@ -165,7 +177,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		}
 		pg.StartTime = startTimeObj
 		pg.FinishTime = startTimeObj
-		pg.GroupType = domain.PRODUCT_GROUP_EXHIBITION
+		pg.GroupType = productGroupType
 		pg.ExhibitionID = exDao.ID.Hex()
 		newPg, err := ioc.Repo.ProductGroups.Upsert(pg)
 		if err != nil {

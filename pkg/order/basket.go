@@ -122,6 +122,7 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			Quantity:               item.Quantity,
 			CreatedAt:              time.Now(),
 			UpdatedAt:              time.Now(),
+			ExhibitionID:           item.ProductGroup.ExhibitionID,
 		})
 
 		totalProductPrice += productPrice * item.Quantity
