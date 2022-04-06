@@ -23,7 +23,7 @@ const numWorkers = 20
 var (
 	GitInfo   = "no info"
 	BuildTime = "no datetime"
-	Env       = "prod"
+	Env       = "local"
 )
 
 func main() {
@@ -33,25 +33,25 @@ func main() {
 	cmd.SetBaseConfig(Env)
 
 	crawlModules := []string{
-		"lottefashion",
-		"ssfmall",
-		"sivillage",
-		"kolon",
-		"babathe",
-		"idfmall",
+		//"lottefashion",
+		//"ssfmall",
+		//"sivillage",
+		//"kolon",
+		//"babathe",
+		//"idfmall",
 		// "daehyun",
-		"niceclaup",
-		"lacoste",
-		"sisley",
-		"benetton",
-		"theamall",
-		"loungeb",
-		"bylynn",
+		//"niceclaup",
+		//"lacoste",
+		//"sisley",
+		//"benetton",
+		//"theamall",
+		//"loungeb",
+		//"bylynn",
 		// "intrend",
 		// "theoutnet",
 		"sandro",
 		"maje",
-		"theory",
+		//"theory",
 		"claudiePierlot",
 	}
 
