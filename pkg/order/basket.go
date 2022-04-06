@@ -102,6 +102,11 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			itemCode = utils.CreateShortUUID()
 		}
 
+		exhibitionID := ""
+		if item.ProductGroup != nil {
+			exhibitionID = item.ProductGroup.ExhibitionID
+		}
+
 		orderItems = append(orderItems, &domain.OrderItemDAO{
 			OrderItemCode:          itemCode,
 			ProductID:              item.Product.ID.Hex(),
@@ -122,7 +127,7 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			Quantity:               item.Quantity,
 			CreatedAt:              time.Now(),
 			UpdatedAt:              time.Now(),
-			ExhibitionID:           item.ProductGroup.ExhibitionID,
+			ExhibitionID:           exhibitionID,
 		})
 
 		totalProductPrice += productPrice * item.Quantity
