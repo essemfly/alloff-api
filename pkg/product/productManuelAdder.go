@@ -104,6 +104,9 @@ func ProcessManualProductRequest(pd *domain.ProductDAO, request *ProductManualAd
 	pd.SpecialPrice = request.SpecialPrice
 
 	pd.Images = request.Images
+	if request.ThumbnailImage != "" {
+		pd.ThumbnailImage = request.ThumbnailImage
+	}
 	pd.IsTranslateRequired = false
 
 	if pd.ID == primitive.NilObjectID {

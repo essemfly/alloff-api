@@ -156,6 +156,10 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	if req.ProductInfos != nil {
 		pdInfos = req.ProductInfos
 	}
+	thumbnailImage := ""
+	if req.ThumbnailImage != nil && *req.ThumbnailImage != "" {
+		thumbnailImage = *req.ThumbnailImage
+	}
 
 	addRequest := &product.ProductManualAddRequest{
 		AlloffName:           req.AlloffName,
@@ -178,6 +182,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		AlloffCategoryID:     alloffCatID,
 		DescriptionInfos:     descInfos,
 		ProductInfos:         pdInfos,
+		ThumbnailImage:       thumbnailImage,
 	}
 
 	pdDao, err := product.AddProductManually(addRequest)
@@ -318,6 +323,10 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 
 	if alloffPriceDiscountRate > pdDao.ProductInfo.Brand.MaxDiscountRate {
 		pdDao.ProductInfo.Brand.MaxDiscountRate = alloffPriceDiscountRate
+	}
+
+	if req.ThumbnailImage != nil {
+		pdDao.ThumbnailImage = *req.ThumbnailImage
 	}
 
 	newPdDao, err := ioc.Repo.Products.Upsert(pdDao)
