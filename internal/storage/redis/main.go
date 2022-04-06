@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -23,7 +24,7 @@ func NewRedis(conf config.Configuration) *RedisDB {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 	if err := client.Ping(ctx); err != nil {
-		panic(err)
+		log.Println("err", err)
 	}
 
 	return &RedisDB{
