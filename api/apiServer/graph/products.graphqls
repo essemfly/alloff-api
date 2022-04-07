@@ -36,7 +36,7 @@ type Product {
   description: ProductDescription
   cancelDescription: CancelDescription!
   deliveryDescription: DeliveryDescription!
-  ThumbnailImage: String!
+  thumbnailImage: String!
 }
 
 type Inventory {

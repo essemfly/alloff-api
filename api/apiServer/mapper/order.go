@@ -113,9 +113,9 @@ func MapOrderItemType(enum domain.OrderItemTypeEnum) model.OrderItemTypeEnum {
 	case domain.EXHIBITION_ORDER:
 		return model.OrderItemTypeEnumExhibition
 	case domain.GROUPDEAL_ORDER:
-		return model.OrderItemTypeEnumGroupdeal
+		return model.OrderItemTypeEnumUnknown // 그룹딜은 나중에 강제업데이트시 넣어준다.
 	default:
-		return model.OrderItemTypeEnumUnknown
+		return model.OrderItemTypeEnumNormal
 	}
 }
 

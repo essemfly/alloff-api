@@ -31,6 +31,7 @@ type iocRepo struct {
 	HomeTabItems     repository.HomeTabItemsRepository
 	TopBanners       repository.TopBannersRepository
 	BestProducts     repository.BestProductsRepository
+	OrderCounts      repository.OrderCountsRepository
 }
 
 var Repo iocRepo

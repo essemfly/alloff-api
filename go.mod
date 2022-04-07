@@ -13,6 +13,7 @@ require (
 	github.com/getsentry/sentry-go v0.12.0
 	github.com/go-chi/chi v1.5.4
 	github.com/go-pg/pg/v10 v10.10.6
+	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0

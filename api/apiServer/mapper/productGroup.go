@@ -6,6 +6,7 @@ import (
 
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 )
 
 func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
@@ -54,6 +55,10 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 			pgs = append(pgs, MapProductGroupDao(pg))
 		}
 	}
+	sales := 0
+	if exDao.ExhibitionType == domain.EXHIBITION_GROUPDEAL {
+		sales = exhibition.GetCurrentSales(exDao)
+	}
 
 	return &model.Exhibition{
 		ID:             exDao.ID.Hex(),
@@ -67,7 +72,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		FinishTime:     exDao.FinishTime.Add(9 * time.Hour).String(),
 		ExhibitionType: MapExhibitionType(exDao.ExhibitionType),
 		TargetSales:    exDao.TargetSales,
-		CurrentSales:   exDao.GetCurrentSales(),
+		CurrentSales:   sales,
 	}
 }
 

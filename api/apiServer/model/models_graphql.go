@@ -133,7 +133,7 @@ type Exhibition struct {
 	FinishTime     string          `json:"finishTime"`
 	TargetSales    int             `json:"targetSales"`
 	CurrentSales   int             `json:"currentSales"`
-	ExhibitionType ExhibitionType  `json:"ExhibitionType"`
+	ExhibitionType ExhibitionType  `json:"exhibitionType"`
 }
 
 type FeaturedItem struct {
@@ -373,7 +373,7 @@ type Product struct {
 	Description         *ProductDescription  `json:"description"`
 	CancelDescription   *CancelDescription   `json:"cancelDescription"`
 	DeliveryDescription *DeliveryDescription `json:"deliveryDescription"`
-	ThumbnailImage      string               `json:"ThumbnailImage"`
+	ThumbnailImage      string               `json:"thumbnailImage"`
 }
 
 type ProductDescription struct {

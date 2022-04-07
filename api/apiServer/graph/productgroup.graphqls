@@ -31,7 +31,7 @@ type Exhibition {
   finishTime: Date!
   targetSales: Int!
   currentSales: Int!
-  ExhibitionType: ExhibitionType!
+  exhibitionType: ExhibitionType!
 }
 
 extend type Query {

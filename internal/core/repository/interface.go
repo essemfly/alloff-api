@@ -176,3 +176,9 @@ type BestProductsRepository interface {
 	Insert(*domain.BestProductDAO) (*domain.BestProductDAO, error)
 	GetLatest(alloffCategoryID string) (*domain.BestProductDAO, error)
 }
+
+type OrderCountsRepository interface {
+	Get(exhibitionID string) (int, error)
+	Push(exhibitionID string) (int, error)
+	Cancel(exhibitionID string) (int, error)
+}
