@@ -41,7 +41,7 @@ func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) (*domain.ProductGroupDAO,
 // Ex가 갖고 있는 ProductGROUPS가 우선임
 func ExhibitionSyncer(exDao *domain.ExhibitionDAO) {
 	newPgs := []*domain.ProductGroupDAO{}
-	for idx, pg := range exDao.ProductGroups {
+	for _, pg := range exDao.ProductGroups {
 		pgDao, err := ioc.Repo.ProductGroups.Get(pg.ID.Hex())
 		if err != nil {
 			log.Println("Update exhibition not found pgID: "+pg.ID.Hex(), err)
@@ -89,7 +89,7 @@ func HomeTabSyncer() {
 	}
 	log.Println("total cnt", cnt)
 
-	for idx, item := range items {
+	for _, item := range items {
 		for idx, exhibition := range item.Exhibitions {
 			newExhibition, err := ioc.Repo.Exhibitions.Get(exhibition.ID.Hex())
 			if err != nil {
