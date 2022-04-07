@@ -288,11 +288,27 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 	}
 
 	amplitude.LogCancelOrderItemRecord(user, orderItemDao, paymentDao)
+
+	exhibitionOrder := false
 	for _, item := range orderDao.OrderItems {
-		_, err := ioc.Repo.OrderCounts.Cancel(item.ExhibitionID)
-		if err != nil {
-			log.Println("update order counts failed on groupdeal", orderDao.ID)
+		if item.ExhibitionID != "" {
+			exhibitionOrder = true
+			_, err := ioc.Repo.OrderCounts.Cancel(item.ExhibitionID)
+			if err != nil {
+				log.Println("update order counts failed on groupdeal", orderDao.ID)
+			}
+
+			exDao, err := ioc.Repo.Exhibitions.Get(item.ExhibitionID)
+			if err != nil {
+				log.Println("exhibition update failed", err)
+				continue
+			}
+			go broker.ExhibitionSyncer(exDao)
 		}
+	}
+
+	if exhibitionOrder {
+		go broker.HomeTabSyncer()
 	}
 
 	result.Success = true
