@@ -6,7 +6,6 @@ package resolver
 import (
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
@@ -222,12 +221,12 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 
 	amplitude.LogOrderRecord(user, orderDao, paymentDao)
 
-	for _, item := range orderDao.OrderItems {
-		_, err := ioc.Repo.OrderCounts.Push(item.ExhibitionID)
-		if err != nil {
-			log.Println("update order counts failed on groupdeal", orderDao.ID)
-		}
-	}
+	// for _, item := range orderDao.OrderItems {
+	// 	_, err := ioc.Repo.OrderCounts.Push(item.ExhibitionID)
+	// 	if err != nil {
+	// 		log.Println("update order counts failed on groupdeal", orderDao.ID)
+	// 	}
+	// }
 
 	return &model.PaymentResult{
 		Success:     true,
@@ -272,12 +271,12 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 	}
 
 	amplitude.LogCancelOrderItemRecord(user, orderItemDao, paymentDao)
-	for _, item := range orderDao.OrderItems {
-		_, err := ioc.Repo.OrderCounts.Push(item.ExhibitionID)
-		if err != nil {
-			log.Println("update order counts failed on groupdeal", orderDao.ID)
-		}
-	}
+	// for _, item := range orderDao.OrderItems {
+	// 	_, err := ioc.Repo.OrderCounts.Push(item.ExhibitionID)
+	// 	if err != nil {
+	// 		log.Println("update order counts failed on groupdeal", orderDao.ID)
+	// 	}
+	// }
 
 	result.Success = true
 	return result, nil
