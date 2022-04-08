@@ -31,6 +31,7 @@ func AddProductInCrawling(request *ProductCrawlingAddRequest) {
 		}
 	} else if err != nil {
 		log.Println("IsThere?", err)
+		return
 	} else {
 		pd.ProductInfo = pdInfo
 		pd.Updated = time.Now()

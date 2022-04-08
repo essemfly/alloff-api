@@ -27,10 +27,18 @@ func GetProductDescription(pd *domain.ProductDAO, source *domain.CrawlSourceDAO)
 		descImages = append(descImages, "https://alloff.s3.ap-northeast-2.amazonaws.com/description/size_guide.png")
 	}
 
+	descriptionText := []string{}
+	descriptionInfo := map[string]string{}
+	if pd.SalesInstruction != nil {
+		descriptionText = pd.SalesInstruction.Description.Texts
+		descriptionInfo = pd.SalesInstruction.Description.Infos
+	}
+
 	return &domain.AlloffInstructionDAO{
 		Description: &domain.ProductDescriptionDAO{
 			Images: descImages,
-			Texts:  nil,
+			Texts:  descriptionText,
+			Infos:  descriptionInfo,
 		},
 		DeliveryDescription: &domain.DeliveryDescriptionDAO{
 			DeliveryType:         deliveryType,
