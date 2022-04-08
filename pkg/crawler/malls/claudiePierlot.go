@@ -109,23 +109,35 @@ func getClaudiePierlotDetail(productUrl string) (
 
 	// 사이즈
 	c.OnHTML(".siz-list-container .size", func(e *colly.HTMLElement) {
+		modelSize := e.ChildText(".modelSize")
+		modelSize = strings.TrimSpace(modelSize)
+		modelSize = strings.Trim(modelSize, "\n")
 		e.ForEach("li", func(_ int, el *colly.HTMLElement) {
+			isSize := true
 			stock := 10
 			outOfStock := e.ChildText(".unclickable .sizeDisplayValue")
 			size := el.Text
 			size = strings.TrimSpace(size)
 			size = strings.Trim(size, "\n")
+			size = strings.Replace(size, "\n\n\nNachricht sobald verfügbar", "", -1)
 
 			if strings.Contains(outOfStock, size) {
 				stock = 0
 			}
 
+			if modelSize == size {
+				isSize = false
+			}
+
+			// 파싱한 사이즈의 값이 "선택"이 아니고, "모델 스펙"이 아닐때에만 입력
 			if size != "Größe" {
-				sizes = append(sizes, size)
-				inventories = append(inventories, domain.InventoryDAO{
-					Size:     size,
-					Quantity: stock,
-				})
+				if isSize {
+					sizes = append(sizes, size)
+					inventories = append(inventories, domain.InventoryDAO{
+						Size:     size,
+						Quantity: stock,
+					})
+				}
 			}
 		})
 	})
