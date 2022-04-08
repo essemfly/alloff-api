@@ -21,7 +21,7 @@ func (repo *orderCountsRepo) Get(exhibitionID string) (int, error) {
 	val, err := repo.client.Get(ctx, exhibitionID).Result()
 	switch {
 	case err == redis.Nil:
-		err := repo.client.Set(ctx, exhibitionID, 1, 0).Err()
+		err := repo.client.Set(ctx, exhibitionID, 0, 0).Err()
 		if err != nil {
 			return 0, nil
 		}
