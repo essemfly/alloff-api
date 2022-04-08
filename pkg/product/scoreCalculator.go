@@ -14,11 +14,17 @@ func GetProductScore(pd *domain.ProductDAO) *domain.ProductScoreInfoDAO {
 	if pd.Created.Before(newlyCrawledCriterion) {
 		isNew = false
 	}
-	totalScore := rand.Intn(100)
+	totalScore := rand.Intn(150) // base 100 + average discount rate 50
+
+	newManuelScore := totalScore
+	if pd.Score != nil {
+		newManuelScore = pd.Score.TotalScore
+	}
+
 	return &domain.ProductScoreInfoDAO{
 		IsNewlyCrawled: isNew,
-		ManualScore:    10,
-		AutoScore:      10,
-		TotalScore:     totalScore,
+		ManualScore:    0, // To be developed
+		AutoScore:      0, // To be developed
+		TotalScore:     newManuelScore,
 	}
 }
