@@ -20,11 +20,11 @@ func SetBaseConfig(Env string) config.Configuration {
 	redisConn := redis.NewRedis(conf)
 	redisConn.RegisterRepos()
 
-	//config.InitSlack(conf)
-	//config.InitIamPort(conf)
-	//config.InitNotification(conf)
-	//config.InitSentry(conf)
-	//config.InitAmplitude(conf)
+	config.InitSlack(conf)
+	config.InitIamPort(conf)
+	config.InitNotification(conf)
+	config.InitSentry(conf)
+	config.InitAmplitude(conf)
 
 	return conf
 }

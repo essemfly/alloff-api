@@ -9,6 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/pkg/product"
 	"log"
 	"strings"
+	"time"
 )
 
 type ImagesURLs struct {
@@ -20,6 +21,7 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 		colly.AllowedDomains("de.claudiepierlot.com"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
 	)
+	c.SetRequestTimeout(45 * time.Second)
 	totalProducts := 0
 
 	//totalProducts := 0
@@ -48,7 +50,7 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 		}
 		images := strings.Split(imgUrlsStr.ImagesURLs, ",")
 
-		sizes, inventories, description := getClaudiePierlotDetail(productUrl)
+		sizes, inventories, description, colors := getClaudiePierlotDetail(productUrl)
 
 		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:               brand,
@@ -59,6 +61,7 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 			OriginalPrice:       originalPrice,
 			SalesPrice:          discountedPrice,
 			CurrencyType:        domain.CurrencyEUR,
+			Colors:              colors,
 			Source:              source,
 			ProductID:           productId,
 			ProductName:         productName,
@@ -80,7 +83,7 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 }
 
 func getClaudiePierlotDetail(productUrl string) (
-	sizes []string, inventories []domain.InventoryDAO, description map[string]string,
+	sizes []string, inventories []domain.InventoryDAO, description map[string]string, colors []string,
 ) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("de.claudiepierlot.com"),
@@ -89,6 +92,7 @@ func getClaudiePierlotDetail(productUrl string) (
 	sizes = []string{}
 	description = map[string]string{}
 	inventories = []domain.InventoryDAO{}
+	colors = []string{}
 
 	// 설명
 	c.OnHTML(".description", func(e *colly.HTMLElement) {
@@ -105,6 +109,41 @@ func getClaudiePierlotDetail(productUrl string) (
 		}
 		desc = strings.TrimRight(desc, "\n")
 		description["설명"] = desc
+	})
+
+	// 주의사항
+	c.OnHTML("div.activate-div-tab-3", func(e *colly.HTMLElement) {
+		e.ForEach("ul", func(i int, el *colly.HTMLElement) {
+			// i == 0 > 소재
+			// i == 1 > 취급 시 주의사항
+			if i == 0 {
+				desc := ""
+				composition := el.Text
+				composition = strings.Trim(composition, "\n")
+				lineComposition := strings.Split(composition, "\n")
+				for _, str := range lineComposition {
+					str = "- " + str
+					desc += str + "\n"
+				}
+				desc = strings.TrimRight(desc, "\n")
+				description["소재"] = desc
+			}
+
+			if i == 1 {
+				desc := ""
+				care := el.Text
+				care = strings.Trim(care, "\n")
+				lineCare := strings.Split(care, "\n")
+				for _, str := range lineCare {
+					if str != "" {
+						str = "- " + str
+						desc += str + "\n"
+					}
+				}
+				desc = strings.TrimRight(desc, "\n")
+				description["취급 시 주의사항"] = desc
+			}
+		})
 	})
 
 	// 사이즈
@@ -140,6 +179,14 @@ func getClaudiePierlotDetail(productUrl string) (
 				}
 			}
 		})
+	})
+
+	// 색상
+	c.OnHTML(".color button.current-attribute", func(e *colly.HTMLElement) {
+		color := e.Text
+		color = strings.Trim(color, "\n")
+		color = strings.TrimSpace(color)
+		colors = append(colors, color)
 	})
 
 	err := c.Visit(productUrl)
