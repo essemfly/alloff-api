@@ -146,7 +146,7 @@ func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting
 		filter["$or"] = priceQueryRanges
 	}
 
-	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "_id", Value: 1}, {Key: "score.totalscore", Value: -1}}
+	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "score.totalscore", Value: -1}}
 	if priceSorting == "ascending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "descending" {
