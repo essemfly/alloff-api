@@ -110,6 +110,7 @@ type OrderItemsRepository interface {
 type PaymentsRepository interface {
 	GetByOrderIDAndAmount(orderID string, amount int) (*domain.PaymentDAO, error)
 	GetByImpUID(impUID string) (*domain.PaymentDAO, error)
+	ListHolding() ([]*domain.PaymentDAO, error)
 	Insert(*domain.PaymentDAO) (*domain.PaymentDAO, error)
 	Update(*domain.PaymentDAO) (*domain.PaymentDAO, error)
 }

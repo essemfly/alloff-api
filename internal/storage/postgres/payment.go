@@ -48,6 +48,16 @@ func (repo *paymentRepo) Update(paymentDao *domain.PaymentDAO) (*domain.PaymentD
 	return paymentDao, nil
 }
 
+func (repo *paymentRepo) ListHolding() ([]*domain.PaymentDAO, error) {
+	payments := []*domain.PaymentDAO{}
+	query := repo.db.Model(&payments).Where("payment_status = ?", domain.PAYMENT_CREATED)
+	if err := query.Order("created_at DESC").Select(); err != nil {
+		return nil, err
+	}
+
+	return payments, nil
+}
+
 func PostgresPaymentRepo(conn *PostgresDB) repository.PaymentsRepository {
 	return &paymentRepo{
 		db: conn.db,
