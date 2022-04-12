@@ -59,9 +59,12 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		images = pdDao.Images
 	}
 
-	thumbnailImage := images[0]
-	if pdDao.ThumbnailImage != "" {
-		thumbnailImage = pdDao.ThumbnailImage
+	thumbnailImage := ""
+	if len(images) > 0 {
+		thumbnailImage = images[0]
+		if pdDao.ThumbnailImage != "" {
+			thumbnailImage = pdDao.ThumbnailImage
+		}
 	}
 
 	return &model.Product{
