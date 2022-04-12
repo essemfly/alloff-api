@@ -1,6 +1,7 @@
 package resolver
 
 import (
+	"context"
 	"fmt"
 	"github.com/99designs/gqlgen/client"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -9,6 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/stretchr/testify/require"
 	"math/rand"
@@ -25,14 +27,16 @@ func TestAuthResolvers(t *testing.T) {
 	testUserMobile := "01073881067"
 	testUserUUID := "aeb06898-5183-4fca-9e37-851999f26f5a"
 	testUserJwt, _ := middleware.GenerateToken(testUserMobile, testUserUUID)
+	testUser, _ := ioc.Repo.Users.GetByMobile(testUserMobile)
 
 	h := handler.NewDefaultServer(apiServer.NewExecutableSchema(apiServer.Config{Resolvers: &Resolver{}}))
 	c := client.New(h)
 
 	// Test CreateUser
 	t.Run("Create User", func(t *testing.T) {
-		var resp interface{}
-
+		var resp struct {
+			CreateUser string
+		}
 		rand.Seed(time.Now().UnixNano())
 		CODE_CHARSET := []rune("123467890")
 		b := make([]rune, 8)
@@ -62,8 +66,10 @@ func TestAuthResolvers(t *testing.T) {
 
 	// Test Login
 	t.Run("Login", func(t *testing.T) {
-		var resp map[string]interface{}
-
+		//var resp map[string]interface{}
+		var resp struct {
+			Login string
+		}
 		queryStr := fmt.Sprintf(`
 			mutation Login {
 				login(
@@ -75,25 +81,26 @@ func TestAuthResolvers(t *testing.T) {
 			}`, testUserMobile, testUserUUID)
 
 		c.MustPost(queryStr, &resp)
-		actualToken := resp["login"]
+		actualToken := resp.Login
 		require.Equal(t, testUserJwt, actualToken)
 	})
 
 	// Test UpdateUserInfo
 	t.Run("UpdateUserInfo", func(t *testing.T) {
 		var resp struct {
-			updateUserInfo struct {
-				id                    string
-				uuid                  string
-				mobile                string
-				name                  string
-				email                 string
-				baseAddress           string
-				detailAddress         string
-				postcode              string
-				personalCustomsNumber string
+			UpdateUserInfo struct {
+				Id                    string
+				Uuid                  string
+				Mobile                string
+				Name                  string
+				Email                 string
+				BaseAddress           string
+				DetailAddress         string
+				Postcode              string
+				PersonalCustomsNumber string
 			}
 		}
+		//var resp map[string]interface{}
 
 		name := "테스트"
 		email := "test@gqltest.com"
@@ -120,6 +127,24 @@ func TestAuthResolvers(t *testing.T) {
 					}
 				}
 			`, testUserUUID, testUserMobile, name, email, baseAddress, detailAddress, postcode, personalCustomsNumber)
-		c.MustPost(queryStr, &resp)
+
+		// https://github.com/99designs/gqlgen/issues/1330
+		// https://thacoon.com/posts/gqlgen/#the-problem
+		c.MustPost(queryStr, &resp, addContext(testUser))
+
+		require.Equal(t, resp.UpdateUserInfo.Name, name)
+		require.Equal(t, resp.UpdateUserInfo.Email, email)
+		require.Equal(t, resp.UpdateUserInfo.BaseAddress, baseAddress)
+		require.Equal(t, resp.UpdateUserInfo.DetailAddress, detailAddress)
+		require.Equal(t, resp.UpdateUserInfo.Postcode, postcode)
+		require.Equal(t, resp.UpdateUserInfo.PersonalCustomsNumber, personalCustomsNumber)
 	})
+}
+
+func addContext(user *domain.UserDAO) client.Option {
+	return func(bd *client.Request) {
+		ctx := bd.HTTP.Context()
+		ctx = context.WithValue(ctx, middleware.UserCtxKey, user)
+		bd.HTTP = bd.HTTP.WithContext(ctx)
+	}
 }
