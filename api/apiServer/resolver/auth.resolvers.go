@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/lessbutter/alloff-api/api/apiServer"
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
@@ -35,6 +36,8 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 	var user domain.UserDAO
 	user.Uuid = input.UUID
 	user.Mobile = input.Mobile
+	user.Created = time.Now()
+	user.Updated = time.Now()
 
 	if input.Email != nil {
 		user.Email = *input.Email
@@ -98,6 +101,8 @@ func (r *mutationResolver) UpdateUserInfo(ctx context.Context, input model.UserI
 		user.PersonalCustomsNumber = *input.PersonalCustomsNumber
 	}
 
+	user.Updated = time.Now()
+
 	newUser, err := ioc.Repo.Users.Update(user)
 	if err != nil {
 		return mapper.MapUserDaoToUser(user), err
@@ -115,12 +120,13 @@ func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string
 		return "", err
 	}
 
+	user.Updated = time.Now()
 	if user.Uuid != uuid {
 		user.Uuid = input.UUID
-		_, err := ioc.Repo.Users.Update(user)
-		if err != nil {
-			return "", err
-		}
+	}
+	_, err = ioc.Repo.Users.Update(user)
+	if err != nil {
+		return "", err
 	}
 
 	token, err := middleware.GenerateToken(mobile, uuid)

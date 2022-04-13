@@ -8,7 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
-var userCtxKey = &contextKey{"user"}
+var UserCtxKey = &contextKey{"user"}
 
 type contextKey struct {
 	name string
@@ -45,7 +45,7 @@ func Middleware() func(http.Handler) http.Handler {
 			}
 
 			// put it in context
-			ctx := context.WithValue(r.Context(), userCtxKey, user)
+			ctx := context.WithValue(r.Context(), UserCtxKey, user)
 
 			// and call the next with our new context
 			r = r.WithContext(ctx)
@@ -56,7 +56,7 @@ func Middleware() func(http.Handler) http.Handler {
 
 // ForContext finds the user from the context. REQUIRES Middleware to have run.
 func ForContext(ctx context.Context) *domain.UserDAO {
-	raw, _ := ctx.Value(userCtxKey).(*domain.UserDAO)
+	raw, _ := ctx.Value(UserCtxKey).(*domain.UserDAO)
 
 	return raw
 }

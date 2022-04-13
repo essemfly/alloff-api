@@ -16,6 +16,8 @@ type UserDAO struct {
 	DetailAddress         string             `json:"detailaddress"`
 	Postcode              string             `json:"postcode"`
 	PersonalCustomsNumber string
+	Created               time.Time
+	Updated               time.Time
 }
 
 func (userDao *UserDAO) GetUserAddress() string {
