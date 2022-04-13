@@ -105,14 +105,12 @@ func SendNotification(noti *domain.NotificationDAO) error {
 		return err
 	}
 
-	succeededCounts, failedCounts := 0, 0
+	failedCounts := 0
 	failedDeviceIds := []string{}
 	for _, logResult := range notiResult.Logs {
 		if logResult.Type == "failed-push" {
 			failedCounts += 1
 			failedDeviceIds = append(failedDeviceIds, logResult.Token)
-		} else {
-			succeededCounts += 1
 		}
 	}
 
@@ -127,7 +125,7 @@ func SendNotification(noti *domain.NotificationDAO) error {
 	noti.Updated = time.Now()
 	noti.Status = domain.NOTIFICATION_SUCCEEDED
 	noti.NumUsersFailed = failedCounts
-	noti.NumUsersPushed = succeededCounts
+	noti.NumUsersPushed = len(noti.DeviceIDs) - failedCounts
 
 	_, err = ioc.Repo.Notifications.Update(noti)
 	if err != nil {
