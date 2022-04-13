@@ -33,6 +33,7 @@ type DeviceDAO struct {
 	UserId            string
 	DeviceId          string
 	AllowNotification bool
+	IsRemoved         bool
 	Created           time.Time
 	Updated           time.Time
 }

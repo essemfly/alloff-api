@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"strings"
 	"time"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -110,7 +111,7 @@ func (repo *deviceRepo) ListAllowed() ([]*domain.DeviceDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	cursor, err := repo.col.Find(ctx, bson.M{"allownotification": true})
+	cursor, err := repo.col.Find(ctx, bson.M{"allownotification": true, "isremoved": false})
 	if err != nil {
 		return nil, err
 	}
@@ -136,6 +137,7 @@ func (repo *deviceRepo) UpdateDevices(deviceID string, allowNotification bool, u
 			ID:                primitive.NewObjectID(),
 			DeviceId:          deviceID,
 			AllowNotification: allowNotification,
+			IsRemoved:         false,
 			Created:           time.Now(),
 			Updated:           time.Now(),
 		}
@@ -159,6 +161,30 @@ func (repo *deviceRepo) UpdateDevices(deviceID string, allowNotification bool, u
 		if err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (repo *deviceRepo) MakeRemoved(deviceID string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	var device *domain.DeviceDAO
+
+	trimmedDeviceId := strings.Trim(deviceID, "*")
+	filter := bson.M{
+		"deviceid": primitive.Regex{Pattern: trimmedDeviceId, Options: "i"},
+	}
+	err := repo.col.FindOne(ctx, filter).Decode(&device)
+	if err != nil {
+		return err
+	}
+
+	device.IsRemoved = true
+	_, err = repo.col.UpdateOne(ctx, bson.M{"_id": device.ID}, bson.M{"$set": &device})
+	if err != nil {
+		return err
 	}
 
 	return nil

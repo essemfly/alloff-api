@@ -23,8 +23,8 @@ func NewRedis(conf config.Configuration) *RedisDB {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
-	if err := client.Ping(ctx); err != nil {
-		log.Println("err", err)
+	if _, err := client.Ping(ctx).Result(); err != nil {
+		log.Println("err in redis connection test", err)
 	}
 
 	return &RedisDB{

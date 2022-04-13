@@ -104,7 +104,28 @@ func SendNotification(noti *domain.NotificationDAO) error {
 		return err
 	}
 
+	succeededCounts, failedCounts := 0, 0
+	failedDeviceIds := []string{}
 	noti.Status = domain.NOTIFICATION_SUCCEEDED
+	for _, logResult := range notiResult.Logs {
+		if logResult.Type == "failed-push" {
+			failedCounts += 1
+			failedDeviceIds = append(failedDeviceIds, logResult.Token)
+		} else {
+			succeededCounts += 1
+		}
+	}
+
+	for _, failedDeviceID := range failedDeviceIds {
+		err := ioc.Repo.Devices.MakeRemoved(failedDeviceID)
+		if err != nil {
+			log.Println("err on failed make removed", err)
+		}
+	}
+
+	noti.NumUsersFailed = failedCounts
+	noti.NumUsersPushed = succeededCounts
+
 	_, err = ioc.Repo.Notifications.Update(noti)
 	if err != nil {
 		return err

@@ -127,6 +127,7 @@ type DevicesRepository interface {
 	ListAllowedByUser(userID string) ([]*domain.DeviceDAO, error)
 	ListAllowed() ([]*domain.DeviceDAO, error)
 	UpdateDevices(deviceID string, allowNotification bool, userID *string) error
+	MakeRemoved(deviceID string) error
 }
 
 type AlimtalksRepository interface {

@@ -14,5 +14,7 @@ func NotificationMapper(noti *domain.NotificationDAO) *grpcServer.NotificationMe
 		Title:          noti.Title,
 		Message:        noti.Message,
 		SendedAt:       noti.Sended.String(),
+		NumUsersPushed: int32(noti.NumUsersPushed),
+		NumUsersFailed: int32(noti.NumUsersFailed),
 	}
 }
