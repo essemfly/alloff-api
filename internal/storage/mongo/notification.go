@@ -93,7 +93,7 @@ func (repo *notificationRepo) Update(noti *domain.NotificationDAO) (*domain.Noti
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": noti.ID}, bson.M{"$set": bson.M{"status": domain.NOTIFICATION_SUCCEEDED, "updated": time.Now(), "sended": time.Now()}})
+	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": noti.ID}, bson.M{"$set": &noti})
 	if err != nil {
 		return nil, err
 	}
