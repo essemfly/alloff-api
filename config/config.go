@@ -30,6 +30,9 @@ type Configuration struct {
 	GRPC_PORT          int
 	AMPLITUDE_API_KEY  string
 	REDIS_URL          string
+	ELASTICSEARCH_URL  string
+	ELASTICSEARCH_ID   string
+	ELASTICSEARCH_PW   string
 }
 
 func GetConfiguration(env string) Configuration {
