@@ -168,6 +168,16 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			}
 		}
 
+		if len(images) == 8 {
+			newImages := []string{
+				images[3],
+				images[0],
+				images[2],
+				images[1],
+			}
+			images = newImages
+		}
+
 		addRequest := &product.ProductCrawlingAddRequest{
 			Brand:               brand,
 			Source:              source,
