@@ -25,6 +25,7 @@ func SetBaseConfig(Env string) config.Configuration {
 	config.InitNotification(conf)
 	config.InitSentry(conf)
 	config.InitAmplitude(conf)
+	config.InitElasticSearch(conf)
 
 	return conf
 }

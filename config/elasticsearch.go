@@ -11,7 +11,7 @@ import (
 var EsClient *elasticsearch.Client
 
 func InitElasticSearch(conf Configuration) {
-	defaultIndices := []string{"product_view", "product_order"}
+	defaultIndexName := []string{"access_log"}
 
 	cfg := elasticsearch.Config{
 		Addresses: []string{
@@ -25,13 +25,13 @@ func InitElasticSearch(conf Configuration) {
 	}
 	EsClient = es
 
-	alreadyExist, err := checkIndexExists(defaultIndices)
+	alreadyExist, err := checkIndexExists(defaultIndexName)
 	if err != nil {
 		log.Printf("Error on checking index exists %s \n", err)
 	}
 
 	if !alreadyExist {
-		err = createDefaultIndexMapping(defaultIndices)
+		err = createDefaultIndexMapping(defaultIndexName)
 		if err != nil {
 			log.Printf("Error on creating default index %s \n", err)
 		}
@@ -40,9 +40,9 @@ func InitElasticSearch(conf Configuration) {
 }
 
 // checkIndexExists : 입력된 이름의 인덱스가 있는지 확인
-func checkIndexExists(indices []string) (bool, error) {
+func checkIndexExists(index []string) (bool, error) {
 	req := esapi.IndicesExistsRequest{
-		Index: indices,
+		Index: index,
 	}
 	res, err := req.Do(context.Background(), EsClient)
 	defer res.Body.Close()
@@ -60,11 +60,11 @@ func checkIndexExists(indices []string) (bool, error) {
 
 // createDefaultIndexMapping : 기본 인덱스의 구조를 생성
 // 다른건 필드는 동적으로 생성하고 created_at 만 date 타입의 필드로 사전에 생성해둔다.
-func createDefaultIndexMapping(indices []string) error {
+func createDefaultIndexMapping(index []string) error {
 	bodyStr := `{
 		"mappings": {
 			"properties": {
-				"created_at": {
+				"ts": {
 	   			"type": "date",
 	   			"format": "yyyy-MM-dd HH:mm:ss"
 	 			}
@@ -72,7 +72,7 @@ func createDefaultIndexMapping(indices []string) error {
 		}
 	}`
 
-	for _, index := range indices {
+	for _, index := range index {
 		log.Printf("creating index mapping for %s\n", index)
 		req := esapi.IndicesCreateRequest{
 			Index: index,
