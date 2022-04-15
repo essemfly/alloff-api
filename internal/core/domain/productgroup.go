@@ -9,25 +9,34 @@ import (
 type ProductGroupType string
 
 const (
-	PRODUCT_GROUP_TIMEDEAL   ProductGroupType = "PRODUCT_GROUP_TIMEDEAL"
-	PRODUCT_GROUP_GROUPDEAL  ProductGroupType = "PRODUCT_GROUP_GROUPDEAL"
-	PRODUCT_GROUP_EXHIBITION ProductGroupType = "PRODUCT_GROUP_EXHIBITION"
+	PRODUCT_GROUP_TIMEDEAL       ProductGroupType = "PRODUCT_GROUP_TIMEDEAL"
+	PRODUCT_GROUP_GROUPDEAL      ProductGroupType = "PRODUCT_GROUP_GROUPDEAL"
+	PRODUCT_GROUP_EXHIBITION     ProductGroupType = "PRODUCT_GROUP_EXHIBITION"
+	PRODUCT_GROUP_BRAND_TIMEDEAL ProductGroupType = "PRODUCT_GROUP_BRAND_TIMEDEAL"
 )
 
+type ProductGroupMetaInfo struct {
+	LogoImgUrl     string
+	MktDescription string
+	BrandNameEng   string
+	BrandNameKor   string
+}
+
 type ProductGroupDAO struct {
-	ID           primitive.ObjectID `bson:"_id, omitempty"`
-	Title        string             `json:"title"`
-	ShortTitle   string             `json:"shorttitle"`
-	Instruction  []string           `json:"instruction"`
-	ImgUrl       string             `json:"imgurl"`
-	NumAlarms    int
-	Products     []*ProductPriorityDAO
-	GroupType    ProductGroupType
-	StartTime    time.Time
-	FinishTime   time.Time
-	Created      time.Time
-	Updated      time.Time
-	ExhibitionID string
+	ID                   primitive.ObjectID `bson:"_id, omitempty"`
+	Title                string             `json:"title"`
+	ShortTitle           string             `json:"shorttitle"`
+	Instruction          []string           `json:"instruction"`
+	ImgUrl               string             `json:"imgurl"`
+	NumAlarms            int
+	Products             []*ProductPriorityDAO
+	GroupType            ProductGroupType
+	StartTime            time.Time
+	FinishTime           time.Time
+	Created              time.Time
+	Updated              time.Time
+	ExhibitionID         string
+	ProductGroupMetaInfo ProductGroupMetaInfo
 }
 
 type ProductPriorityDAO struct {

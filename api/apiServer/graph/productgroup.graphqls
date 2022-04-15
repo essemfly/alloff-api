@@ -1,5 +1,12 @@
 scalar Upload
 
+type ProductGroupMetaInfo {
+  logoImgUrl: String!
+  MktDescription: String!
+  BrandNameEng: String!
+  BrandNameKor: String!
+}
+
 type ProductGroup {
   id: ID!
   title: String!
@@ -11,6 +18,7 @@ type ProductGroup {
   finishTime: Date!
   numAlarms: Int!
   setAlarm: Boolean!
+  productGroupMetaInfo: ProductGroupMetaInfo
 }
 
 enum ExhibitionType {
@@ -32,6 +40,14 @@ type Exhibition {
   targetSales: Int!
   currentSales: Int!
   exhibitionType: ExhibitionType!
+  banners: [ExhibitionBanner!]!
+}
+
+type ExhibitionBanner {
+  imgUrl: String!
+  tags: [String!]!
+  title: String!
+  subtitle: String!
 }
 
 extend type Query {

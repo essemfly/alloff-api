@@ -122,18 +122,26 @@ type Device struct {
 }
 
 type Exhibition struct {
-	ID             string          `json:"id"`
-	BannerImage    string          `json:"bannerImage"`
-	ThumbnailImage string          `json:"thumbnailImage"`
-	Title          string          `json:"title"`
-	SubTitle       string          `json:"subTitle"`
-	Description    string          `json:"description"`
-	ProductGroups  []*ProductGroup `json:"productGroups"`
-	StartTime      string          `json:"startTime"`
-	FinishTime     string          `json:"finishTime"`
-	TargetSales    int             `json:"targetSales"`
-	CurrentSales   int             `json:"currentSales"`
-	ExhibitionType ExhibitionType  `json:"exhibitionType"`
+	ID             string              `json:"id"`
+	BannerImage    string              `json:"bannerImage"`
+	ThumbnailImage string              `json:"thumbnailImage"`
+	Title          string              `json:"title"`
+	SubTitle       string              `json:"subTitle"`
+	Description    string              `json:"description"`
+	ProductGroups  []*ProductGroup     `json:"productGroups"`
+	StartTime      string              `json:"startTime"`
+	FinishTime     string              `json:"finishTime"`
+	TargetSales    int                 `json:"targetSales"`
+	CurrentSales   int                 `json:"currentSales"`
+	ExhibitionType ExhibitionType      `json:"exhibitionType"`
+	Banners        []*ExhibitionBanner `json:"banners"`
+}
+
+type ExhibitionBanner struct {
+	ImgURL   string   `json:"imgUrl"`
+	Tags     []string `json:"tags"`
+	Title    string   `json:"title"`
+	Subtitle string   `json:"subtitle"`
 }
 
 type FeaturedItem struct {
@@ -383,16 +391,24 @@ type ProductDescription struct {
 }
 
 type ProductGroup struct {
-	ID          string     `json:"id"`
-	Title       string     `json:"title"`
-	ShortTitle  string     `json:"shortTitle"`
-	Instruction []string   `json:"instruction"`
-	ImgURL      string     `json:"imgUrl"`
-	Products    []*Product `json:"products"`
-	StartTime   string     `json:"startTime"`
-	FinishTime  string     `json:"finishTime"`
-	NumAlarms   int        `json:"numAlarms"`
-	SetAlarm    bool       `json:"setAlarm"`
+	ID                   string                `json:"id"`
+	Title                string                `json:"title"`
+	ShortTitle           string                `json:"shortTitle"`
+	Instruction          []string              `json:"instruction"`
+	ImgURL               string                `json:"imgUrl"`
+	Products             []*Product            `json:"products"`
+	StartTime            string                `json:"startTime"`
+	FinishTime           string                `json:"finishTime"`
+	NumAlarms            int                   `json:"numAlarms"`
+	SetAlarm             bool                  `json:"setAlarm"`
+	ProductGroupMetaInfo *ProductGroupMetaInfo `json:"productGroupMetaInfo"`
+}
+
+type ProductGroupMetaInfo struct {
+	LogoImgURL     string `json:"logoImgUrl"`
+	MktDescription string `json:"MktDescription"`
+	BrandNameEng   string `json:"BrandNameEng"`
+	BrandNameKor   string `json:"BrandNameKor"`
 }
 
 type ProductQueryInput struct {
@@ -403,11 +419,12 @@ type ProductQueryInput struct {
 }
 
 type ProductsInput struct {
-	Offset   int           `json:"offset"`
-	Limit    int           `json:"limit"`
-	Brand    *string       `json:"brand"`
-	Category *string       `json:"category"`
-	Sorting  []SortingType `json:"sorting"`
+	Offset         int           `json:"offset"`
+	Limit          int           `json:"limit"`
+	Brand          *string       `json:"brand"`
+	Category       *string       `json:"category"`
+	Sorting        []SortingType `json:"sorting"`
+	ProductGroupID *string       `json:"ProductGroupId"`
 }
 
 type ProductsOutput struct {
