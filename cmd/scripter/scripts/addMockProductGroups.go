@@ -24,7 +24,7 @@ func addTiemdealProductGroups(exhibitionId string) []*domain.ProductGroupDAO {
 
 	log.Println("Timedeal ProductGroup seeding start!")
 
-	brands, _, err := ioc.Repo.Brands.List(0, 10, true, nil)
+	brands, _, err := ioc.Repo.Brands.List(0, 10, true, true, nil)
 	if err != nil {
 		log.Println("Error on listing brands")
 	}

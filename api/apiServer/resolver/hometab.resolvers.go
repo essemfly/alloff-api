@@ -62,7 +62,7 @@ func (r *queryResolver) BestProducts(ctx context.Context, offset int, limit int,
 }
 
 func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) (*model.BrandsResult, error) {
-	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, true, nil)
+	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, true, true, nil)
 	if err != nil {
 		return nil, err
 	}
