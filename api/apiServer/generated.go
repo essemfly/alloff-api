@@ -3130,7 +3130,7 @@ type Exhibition {
   targetSales: Int!
   currentSales: Int!
   exhibitionType: ExhibitionType!
-  banners: [ExhibitionBanner!]
+  banners: [ExhibitionBanner!]!
   totalProducts: Int!
   totalProductGroups: Int!
 }
@@ -6355,11 +6355,14 @@ func (ec *executionContext) _Exhibition_banners(ctx context.Context, field graph
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.([]*model.ExhibitionBanner)
 	fc.Result = res
-	return ec.marshalOExhibitionBanner2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionBannerᚄ(ctx, field.Selections, res)
+	return ec.marshalNExhibitionBanner2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionBannerᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Exhibition_totalProducts(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
@@ -16505,6 +16508,9 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			}
 		case "banners":
 			out.Values[i] = ec._Exhibition_banners(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "totalProducts":
 			out.Values[i] = ec._Exhibition_totalProducts(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -19094,6 +19100,50 @@ func (ec *executionContext) marshalNExhibition2ᚖgithubᚗcomᚋlessbutterᚋal
 	return ec._Exhibition(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNExhibitionBanner2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionBannerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ExhibitionBanner) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNExhibitionBanner2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionBanner(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNExhibitionBanner2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionBanner(ctx context.Context, sel ast.SelectionSet, v *model.ExhibitionBanner) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -20547,53 +20597,6 @@ func (ec *executionContext) marshalOCategory2ᚖgithubᚗcomᚋlessbutterᚋallo
 		return graphql.Null
 	}
 	return ec._Category(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOExhibitionBanner2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionBannerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ExhibitionBanner) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNExhibitionBanner2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionBanner(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

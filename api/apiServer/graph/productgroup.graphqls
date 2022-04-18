@@ -34,7 +34,7 @@ type Exhibition {
   targetSales: Int!
   currentSales: Int!
   exhibitionType: ExhibitionType!
-  banners: [ExhibitionBanner!]
+  banners: [ExhibitionBanner!]!
   totalProducts: Int!
   totalProductGroups: Int!
 }
