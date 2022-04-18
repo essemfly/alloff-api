@@ -1,12 +1,5 @@
 scalar Upload
 
-type ProductGroupMetaInfo {
-  logoImgUrl: String!
-  mktDescription: String!
-  brandNameEng: String!
-  brandNameKor: String!
-}
-
 type ProductGroup {
   id: ID!
   title: String!
@@ -18,7 +11,7 @@ type ProductGroup {
   finishTime: Date!
   numAlarms: Int!
   setAlarm: Boolean!
-  productGroupMetaInfo: ProductGroupMetaInfo
+  brand: Brand!
 }
 
 enum ExhibitionType {
@@ -60,5 +53,4 @@ extend type Query {
   exhibitions: [Exhibition!]!
   timedeal: Exhibition!
   groupdeal: Exhibition!
-  brandTimedeal: Exhibition!
 }

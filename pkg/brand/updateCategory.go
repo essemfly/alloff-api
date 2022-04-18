@@ -38,7 +38,7 @@ func ListBrandCategories(brandDao *domain.BrandDAO) []*domain.CategoryDAO {
 	}
 
 	for _, catDao := range catDaos {
-		_, pdCount, _ := product.ProductsListing(0, 1, brandDao.ID.Hex(), catDao.ID.Hex(), "", nil)
+		_, pdCount, _ := product.ProductsListing(0, 1, brandDao.ID.Hex(), catDao.ID.Hex(), "", "", nil)
 		if pdCount == 0 {
 			continue
 		}

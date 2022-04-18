@@ -1,12 +1,10 @@
 package product
 
 import (
-	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"log"
 )
 
 type Classified string
@@ -89,7 +87,7 @@ func ProductsSearchListing(offset, limit int, classifiedType Classified, moduleN
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "descending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateAescending" {
+	} else if priceSorting == "discountrateAscending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "discountrateDescending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "_id", Value: 1}}
@@ -104,7 +102,7 @@ func ProductsSearchListing(offset, limit int, classifiedType Classified, moduleN
 }
 
 // (Future) Mongodb에 종속적인 함수: bson이 사용되었다.
-func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
+func ProductsListing(offset, limit int, brandID, categoryID, productGroupID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
 	filter := bson.M{"removed": false}
 
 	brandObjID, _ := primitive.ObjectIDFromHex(brandID)
@@ -115,6 +113,9 @@ func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting
 		if categoryID != "" {
 			filter["productinfo.category._id"] = categoryObjID
 		}
+	}
+	if productGroupID != "" {
+		filter["productgroupid"] = productGroupID
 	}
 
 	priceQueryRanges := []bson.M{}
@@ -153,7 +154,7 @@ func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "descending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateAescending" {
+	} else if priceSorting == "discountrateAscending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "discountrateDescending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "_id", Value: 1}}
@@ -217,7 +218,7 @@ func AlloffCategoryProductsListing(offset, limit int, brandKeynames []string, al
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "descending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateAescending" {
+	} else if priceSorting == "discountrateAscending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "discountrateDescending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "_id", Value: 1}}
@@ -229,27 +230,4 @@ func AlloffCategoryProductsListing(offset, limit int, brandKeynames []string, al
 	}
 
 	return products, cnt, nil
-}
-
-func ProductGroupProductsListing(offset, limit int, productGroupId string, sorting model.BrandTimedealSortingType) ([]*domain.ProductDAO, int, error) {
-	filter := bson.M{
-		"productgroupid": productGroupId,
-	}
-	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "score.totalscore", Value: -1}}
-	switch sorting {
-	case model.BrandTimedealSortingTypeDiscountDescending:
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "score.totalscore", Value: -1}}
-	case model.BrandTimedealSortingTypePriceAscending:
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "specialprice", Value: 1}, {Key: "score.totalscore", Value: -1}}
-	case model.BrandTimedealSortingTypePriceDescending:
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "specialprice", Value: 1}, {Key: "score.totalscore", Value: -1}}
-	}
-
-	products, cnt, err := ioc.Repo.Products.List(offset, limit, filter, sortingOptions)
-	if err != nil {
-		log.Println("Error on listing productGroups products : ", err)
-		return nil, 0, err
-	}
-	return products, cnt, nil
-
 }

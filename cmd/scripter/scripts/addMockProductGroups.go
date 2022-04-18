@@ -1,11 +1,12 @@
 package scripts
 
 import (
-	"github.com/lessbutter/alloff-api/internal/utils"
-	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"math/rand"
 	"time"
+
+	"github.com/lessbutter/alloff-api/internal/utils"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -37,25 +38,19 @@ func addTiemdealProductGroups(exhibitionId string) []*domain.ProductGroupDAO {
 		} else {
 			backImgUrl = "https://picsum.photos/seed/" + utils.CreateShortUUID() + "/375/215"
 		}
-		meta := domain.ProductGroupMetaInfo{
-			LogoImgUrl:     brand.LogoImgUrl,
-			MktDescription: brand.KorName + "의 타임딜2.0 마케팅 문구 가나다라마바사아자차카타파하",
-			BrandNameEng:   brand.EngName,
-			BrandNameKor:   brand.KorName,
-		}
 
 		pg := domain.ProductGroupDAO{
-			ID:                   pgid,
-			Title:                brand.KorName + " 타임딜 2.0 테스트 타이틀 타이틀",
-			ShortTitle:           brand.KorName + " 타임딜 2.0 숏타이틀",
-			Instruction:          timedealInstrctuion,
-			ImgUrl:               backImgUrl,
-			GroupType:            domain.PRODUCT_GROUP_BRAND_TIMEDEAL,
-			StartTime:            timedealStartTime,
-			FinishTime:           timedealStartTime.Add(365 * 24 * time.Hour),
-			Created:              time.Now(),
-			NumAlarms:            rand.Intn(50) + 10,
-			ProductGroupMetaInfo: meta,
+			ID:          pgid,
+			Title:       brand.KorName + " 타임딜 2.0 테스트 타이틀 타이틀",
+			ShortTitle:  brand.KorName + " 타임딜 2.0 숏타이틀",
+			Instruction: timedealInstrctuion,
+			ImgUrl:      backImgUrl,
+			GroupType:   domain.PRODUCT_GROUP_BRAND_TIMEDEAL,
+			StartTime:   timedealStartTime,
+			FinishTime:  timedealStartTime.Add(365 * 24 * time.Hour),
+			Created:     time.Now(),
+			NumAlarms:   rand.Intn(50) + 10,
+			Brand:       brand,
 		}
 
 		filter := bson.M{

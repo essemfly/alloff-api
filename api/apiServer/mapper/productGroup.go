@@ -32,18 +32,23 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 
 	pds = append(pds, soldouts...)
 
+	brand := &model.Brand{}
+	if pgDao.Brand != nil {
+		brand = MapBrandDaoToBrand(pgDao.Brand, false)
+	}
+
 	pg := &model.ProductGroup{
-		ID:                   pgDao.ID.Hex(),
-		Title:                pgDao.Title,
-		ShortTitle:           pgDao.ShortTitle,
-		Instruction:          pgDao.Instruction,
-		ImgURL:               pgDao.ImgUrl,
-		NumAlarms:            pgDao.NumAlarms,
-		Products:             pds,
-		StartTime:            pgDao.StartTime.Add(9 * time.Hour).String(),
-		FinishTime:           pgDao.FinishTime.Add(9 * time.Hour).String(),
-		SetAlarm:             false,
-		ProductGroupMetaInfo: mapProductGroupMetaInfo(pgDao.ProductGroupMetaInfo),
+		ID:          pgDao.ID.Hex(),
+		Title:       pgDao.Title,
+		ShortTitle:  pgDao.ShortTitle,
+		Instruction: pgDao.Instruction,
+		ImgURL:      pgDao.ImgUrl,
+		NumAlarms:   pgDao.NumAlarms,
+		Products:    pds,
+		StartTime:   pgDao.StartTime.Add(9 * time.Hour).String(),
+		FinishTime:  pgDao.FinishTime.Add(9 * time.Hour).String(),
+		SetAlarm:    false,
+		Brand:       brand,
 	}
 	return pg
 }
@@ -61,6 +66,12 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		sales = exhibition.GetCurrentSales(exDao)
 	}
 
+	numPgs := len(exDao.ProductGroups)
+	numProducts := 0
+	for _, pg := range exDao.ProductGroups {
+		numProducts += len(pg.Products)
+	}
+
 	return &model.Exhibition{
 		ID:                 exDao.ID.Hex(),
 		BannerImage:        exDao.BannerImage,
@@ -75,8 +86,8 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		TargetSales:        exDao.TargetSales,
 		CurrentSales:       sales,
 		Banners:            mapBanners(exDao.Banners),
-		TotalProducts:      exDao.TotalProducts,
-		TotalProductGroups: exDao.TotalProductGroups,
+		TotalProducts:      numProducts,
+		TotalProductGroups: numPgs,
 	}
 }
 
@@ -106,14 +117,4 @@ func mapBanners(bannersDaos []domain.ExhibitionBanner) []*model.ExhibitionBanner
 		res = append(res, &bannerDto)
 	}
 	return res
-}
-
-// mapProductGroups : TODO 이거 ExhibitionDAO 에 메서드로 넣고싶다..
-func mapProductGroupMetaInfo(pgMetaDao domain.ProductGroupMetaInfo) *model.ProductGroupMetaInfo {
-	var res model.ProductGroupMetaInfo
-	res.MktDescription = pgMetaDao.MktDescription
-	res.BrandNameEng = pgMetaDao.BrandNameEng
-	res.BrandNameKor = pgMetaDao.BrandNameKor
-	res.LogoImgURL = pgMetaDao.LogoImgUrl
-	return &res
 }

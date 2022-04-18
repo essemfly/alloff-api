@@ -77,13 +77,6 @@ type BrandItem struct {
 	Brand  *Brand `json:"brand"`
 }
 
-type BrandTimedealProductsInput struct {
-	Offset         int                      `json:"offset"`
-	Limit          int                      `json:"limit"`
-	ProductGroupID string                   `json:"productGroupId"`
-	Sorting        BrandTimedealSortingType `json:"sorting"`
-}
-
 type BrandsInput struct {
 	OnlyLikes *bool `json:"onlyLikes"`
 }
@@ -400,24 +393,17 @@ type ProductDescription struct {
 }
 
 type ProductGroup struct {
-	ID                   string                `json:"id"`
-	Title                string                `json:"title"`
-	ShortTitle           string                `json:"shortTitle"`
-	Instruction          []string              `json:"instruction"`
-	ImgURL               string                `json:"imgUrl"`
-	Products             []*Product            `json:"products"`
-	StartTime            string                `json:"startTime"`
-	FinishTime           string                `json:"finishTime"`
-	NumAlarms            int                   `json:"numAlarms"`
-	SetAlarm             bool                  `json:"setAlarm"`
-	ProductGroupMetaInfo *ProductGroupMetaInfo `json:"productGroupMetaInfo"`
-}
-
-type ProductGroupMetaInfo struct {
-	LogoImgURL     string `json:"logoImgUrl"`
-	MktDescription string `json:"mktDescription"`
-	BrandNameEng   string `json:"brandNameEng"`
-	BrandNameKor   string `json:"brandNameKor"`
+	ID          string     `json:"id"`
+	Title       string     `json:"title"`
+	ShortTitle  string     `json:"shortTitle"`
+	Instruction []string   `json:"instruction"`
+	ImgURL      string     `json:"imgUrl"`
+	Products    []*Product `json:"products"`
+	StartTime   string     `json:"startTime"`
+	FinishTime  string     `json:"finishTime"`
+	NumAlarms   int        `json:"numAlarms"`
+	SetAlarm    bool       `json:"setAlarm"`
+	Brand       *Brand     `json:"brand"`
 }
 
 type ProductQueryInput struct {
@@ -428,11 +414,12 @@ type ProductQueryInput struct {
 }
 
 type ProductsInput struct {
-	Offset   int           `json:"offset"`
-	Limit    int           `json:"limit"`
-	Brand    *string       `json:"brand"`
-	Category *string       `json:"category"`
-	Sorting  []SortingType `json:"sorting"`
+	Offset         int           `json:"offset"`
+	Limit          int           `json:"limit"`
+	Brand          *string       `json:"brand"`
+	Category       *string       `json:"category"`
+	Sorting        []SortingType `json:"sorting"`
+	ProductGroupID *string       `json:"productGroupId"`
 }
 
 type ProductsOutput struct {
@@ -492,49 +479,6 @@ type UserInfoInput struct {
 	DetailAddress         *string `json:"detailAddress"`
 	Postcode              *string `json:"postcode"`
 	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
-}
-
-type BrandTimedealSortingType string
-
-const (
-	BrandTimedealSortingTypePriceAscending     BrandTimedealSortingType = "PRICE_ASCENDING"
-	BrandTimedealSortingTypePriceDescending    BrandTimedealSortingType = "PRICE_DESCENDING"
-	BrandTimedealSortingTypeDiscountDescending BrandTimedealSortingType = "DISCOUNT_DESCENDING"
-)
-
-var AllBrandTimedealSortingType = []BrandTimedealSortingType{
-	BrandTimedealSortingTypePriceAscending,
-	BrandTimedealSortingTypePriceDescending,
-	BrandTimedealSortingTypeDiscountDescending,
-}
-
-func (e BrandTimedealSortingType) IsValid() bool {
-	switch e {
-	case BrandTimedealSortingTypePriceAscending, BrandTimedealSortingTypePriceDescending, BrandTimedealSortingTypeDiscountDescending:
-		return true
-	}
-	return false
-}
-
-func (e BrandTimedealSortingType) String() string {
-	return string(e)
-}
-
-func (e *BrandTimedealSortingType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = BrandTimedealSortingType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid BrandTimedealSortingType", str)
-	}
-	return nil
-}
-
-func (e BrandTimedealSortingType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type CommunityItemType string

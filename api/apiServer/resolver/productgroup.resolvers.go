@@ -93,17 +93,3 @@ func (r *queryResolver) Groupdeal(ctx context.Context) (*model.Exhibition, error
 	}
 	return nil, nil
 }
-
-func (r *queryResolver) BrandTimedeal(ctx context.Context) (*model.Exhibition, error) {
-	offset, limit := 0, 100
-	onlyLive := true
-	query := ""
-	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive, domain.EXHIBITION_BRAND_TIMEDEAL, query)
-	if err != nil {
-		return nil, err
-	}
-	if len(exhibitionDaos) > 0 {
-		return mapper.MapExhibition(exhibitionDaos[0], false), nil
-	}
-	return nil, nil
-}

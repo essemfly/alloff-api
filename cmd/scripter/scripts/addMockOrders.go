@@ -37,7 +37,7 @@ func AddMockOrders() {
 
 	for brandIdx < 1 {
 		log.Println("mock order created # " + strconv.Itoa(brandIdx))
-		products, _, _ := product.ProductsListing(0, len(allstatus), "61d699ec74b2b71fe80ff58a", "", "", nil)
+		products, _, _ := product.ProductsListing(0, len(allstatus), "61d699ec74b2b71fe80ff58a", "", "", "", nil)
 
 		basket := BuildBasket(products)
 

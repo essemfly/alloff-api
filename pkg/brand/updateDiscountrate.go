@@ -30,7 +30,7 @@ func UpdateBrandDiscountRate() {
 		maxDiscountRate := 0
 
 		for {
-			products, totalCount, err := product.ProductsListing(offset, limit, brand.ID.Hex(), "", "", nil)
+			products, totalCount, err := product.ProductsListing(offset, limit, brand.ID.Hex(), "", "", "", nil)
 			if err != nil {
 				log.Println(err)
 			}

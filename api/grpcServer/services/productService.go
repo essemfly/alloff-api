@@ -71,7 +71,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 			} else if sorting == grpcServer.SortingOptions_PRICE_DESCENDING {
 				priceSorting = "descending"
 			} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_ASCENDING {
-				priceSorting = "discountrateAescending"
+				priceSorting = "discountrateAscending"
 			} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_DESCENDING {
 				priceSorting = "discountrateDescending"
 			} else {

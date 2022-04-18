@@ -1,7 +1,6 @@
 package scripts
 
 import (
-	"github.com/lessbutter/alloff-api/internal/utils"
 	"log"
 	"strconv"
 	"time"
@@ -46,49 +45,6 @@ func getMockExhibition(idx int, pgIDs []string) *exhibition.ExhibitionRequest {
 		StartTime:       time.Now(),
 		FinishTime:      time.Now().Add(1200 * time.Hour),
 	}
-}
-
-func AddMockTimedeal() {
-	log.Println("ADD MOCK TIMEDEAL2.0 START ********")
-	exId := primitive.NewObjectID()
-	pgs := addTiemdealProductGroups(exId.Hex())
-
-	totalPgs := len(pgs)
-	totalProducts := 0
-
-	var banners []domain.ExhibitionBanner
-	for _, pg := range pgs {
-		bn := domain.ExhibitionBanner{
-			ImgUrl:         "https://picsum.photos/seed/" + utils.CreateShortUUID() + "/400/200",
-			Title:          "타임딜 2.0 배너 타이틀 " + pg.Title,
-			Subtitle:       "타임딜 2.0 배너 타이틀 " + pg.Title,
-			ProductGroupId: pg.ID.Hex(),
-		}
-		banners = append(banners, bn)
-		totalProducts += len(pg.Products)
-	}
-
-	startTime := time.Now()
-	exDao := domain.ExhibitionDAO{
-		ID:                 exId,
-		Title:              "타임딜 2.0 테스트 타임딜 아마 백오피스에서 쓸듯",
-		SubTitle:           "타임딜 2.0 테스트 타임딜 서브타이틀 아마 백오피스에서 쓸듯",
-		Description:        "타임딜 2.0 테스트 타임딜 문구 아마 백오피스에서 쓸듯",
-		StartTime:          startTime,
-		FinishTime:         startTime.Add(365 * 24 * time.Hour),
-		ProductGroups:      pgs,
-		IsLive:             true,
-		CreatedAt:          time.Now(),
-		ExhibitionType:     domain.EXHIBITION_BRAND_TIMEDEAL,
-		Banners:            banners,
-		TotalProducts:      totalProducts,
-		TotalProductGroups: totalPgs,
-	}
-	_, err := ioc.Repo.Exhibitions.Upsert(&exDao)
-	if err != nil {
-		log.Println("Error on Upsert exhibition : ", err)
-	}
-	log.Println("ADD MOCK TIMEDEAL2.0 END ********")
 }
 
 func AddMockHomeTabs() {

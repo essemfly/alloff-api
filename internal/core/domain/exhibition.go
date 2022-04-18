@@ -9,10 +9,9 @@ import (
 type ExhibitionType string
 
 const (
-	EXHIBITION_TIMEDEAL       ExhibitionType = "TIMEDEAL"
-	EXHIBITION_BRAND_TIMEDEAL ExhibitionType = "BRAND_TIMEDEAL"
-	EXHIBITION_NORMAL         ExhibitionType = "NORMAL"
-	EXHIBITION_GROUPDEAL      ExhibitionType = "GROUPDEAL"
+	EXHIBITION_TIMEDEAL  ExhibitionType = "TIMEDEAL"
+	EXHIBITION_NORMAL    ExhibitionType = "NORMAL"
+	EXHIBITION_GROUPDEAL ExhibitionType = "GROUPDEAL"
 )
 
 type ExhibitionBanner struct {
@@ -23,23 +22,21 @@ type ExhibitionBanner struct {
 }
 
 type ExhibitionDAO struct {
-	ID                 primitive.ObjectID `bson:"_id, omitempty"`
-	BannerImage        string
-	ThumbnailImage     string
-	Title              string
-	SubTitle           string
-	Description        string
-	StartTime          time.Time
-	FinishTime         time.Time
-	ProductGroups      []*ProductGroupDAO
-	IsLive             bool
-	CreatedAt          time.Time
-	UpdatedAt          time.Time
-	ExhibitionType     ExhibitionType
-	TargetSales        int
-	Banners            []ExhibitionBanner
-	TotalProducts      int
-	TotalProductGroups int
+	ID             primitive.ObjectID `bson:"_id, omitempty"`
+	BannerImage    string
+	ThumbnailImage string
+	Title          string
+	SubTitle       string
+	Description    string
+	StartTime      time.Time
+	FinishTime     time.Time
+	ProductGroups  []*ProductGroupDAO
+	IsLive         bool
+	CreatedAt      time.Time
+	UpdatedAt      time.Time
+	ExhibitionType ExhibitionType
+	TargetSales    int
+	Banners        []ExhibitionBanner
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {

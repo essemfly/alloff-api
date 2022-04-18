@@ -15,28 +15,21 @@ const (
 	PRODUCT_GROUP_BRAND_TIMEDEAL ProductGroupType = "PRODUCT_GROUP_BRAND_TIMEDEAL"
 )
 
-type ProductGroupMetaInfo struct {
-	LogoImgUrl     string
-	MktDescription string
-	BrandNameEng   string
-	BrandNameKor   string
-}
-
 type ProductGroupDAO struct {
-	ID                   primitive.ObjectID `bson:"_id, omitempty"`
-	Title                string             `json:"title"`
-	ShortTitle           string             `json:"shorttitle"`
-	Instruction          []string           `json:"instruction"`
-	ImgUrl               string             `json:"imgurl"`
-	NumAlarms            int
-	Products             []*ProductPriorityDAO
-	GroupType            ProductGroupType
-	StartTime            time.Time
-	FinishTime           time.Time
-	Created              time.Time
-	Updated              time.Time
-	ExhibitionID         string
-	ProductGroupMetaInfo ProductGroupMetaInfo
+	ID           primitive.ObjectID `bson:"_id, omitempty"`
+	Title        string             `json:"title"`
+	ShortTitle   string             `json:"shorttitle"`
+	Instruction  []string           `json:"instruction"`
+	ImgUrl       string             `json:"imgurl"`
+	NumAlarms    int
+	Products     []*ProductPriorityDAO
+	GroupType    ProductGroupType
+	StartTime    time.Time
+	FinishTime   time.Time
+	Created      time.Time
+	Updated      time.Time
+	ExhibitionID string
+	Brand        *BrandDAO
 }
 
 type ProductPriorityDAO struct {

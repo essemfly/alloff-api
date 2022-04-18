@@ -48,7 +48,7 @@ func GetAlloffCategoryProducts(alloffCatID string) []*domain.ProductDAO {
 }
 
 func GetBestProductsFromAll() []*domain.ProductDAO {
-	productDaos, _, err := ProductsListing(0, 100, "", "", "", []string{"70", "100"})
+	productDaos, _, err := ProductsListing(0, 100, "", "", "", "", []string{"70", "100"})
 	if err != nil {
 		log.Println("err occured in products listing")
 	}
