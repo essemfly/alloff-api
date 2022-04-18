@@ -232,3 +232,22 @@ func (r *queryResolver) Likeproducts(ctx context.Context) ([]*model.LikeProductO
 
 	return products, nil
 }
+
+func (r *queryResolver) BrandTimedealProducts(ctx context.Context, input model.BrandTimedealProductsInput) (*model.ProductsOutput, error) {
+	var products []*model.Product
+
+	productDaos, totalCount, err := product.ProductGroupProductsListing(input.Offset, input.Limit, input.ProductGroupID, input.Sorting)
+	if err != nil {
+		return nil, err
+	}
+	for _, productDao := range productDaos {
+		newProd := mapper.MapProductDaoToProduct(productDao)
+		products = append(products, newProd)
+	}
+	return &model.ProductsOutput{
+		Products:   products,
+		Offset:     input.Offset,
+		Limit:      input.Limit,
+		TotalCount: totalCount,
+	}, nil
+}

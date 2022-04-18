@@ -2,9 +2,9 @@ scalar Upload
 
 type ProductGroupMetaInfo {
   logoImgUrl: String!
-  MktDescription: String!
-  BrandNameEng: String!
-  BrandNameKor: String!
+  mktDescription: String!
+  brandNameEng: String!
+  brandNameKor: String!
 }
 
 type ProductGroup {
@@ -25,6 +25,7 @@ enum ExhibitionType {
   GROUPDEAL
   TIMEDEAL
   NORMAL
+  BRAND_TIMEDEAL
 }
 
 type Exhibition {
@@ -40,12 +41,14 @@ type Exhibition {
   targetSales: Int!
   currentSales: Int!
   exhibitionType: ExhibitionType!
-  banners: [ExhibitionBanner!]!
+  banners: [ExhibitionBanner!]
+  totalProducts: Int!
+  totalProductGroups: Int!
 }
 
 type ExhibitionBanner {
   imgUrl: String!
-  tags: [String!]!
+  productGroupId: String!
   title: String!
   subtitle: String!
 }
@@ -57,4 +60,5 @@ extend type Query {
   exhibitions: [Exhibition!]!
   timedeal: Exhibition!
   groupdeal: Exhibition!
+  brandTimedeal: Exhibition!
 }

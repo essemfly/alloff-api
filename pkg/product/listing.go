@@ -1,10 +1,12 @@
 package product
 
 import (
+	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"log"
 )
 
 type Classified string
@@ -227,4 +229,27 @@ func AlloffCategoryProductsListing(offset, limit int, brandKeynames []string, al
 	}
 
 	return products, cnt, nil
+}
+
+func ProductGroupProductsListing(offset, limit int, productGroupId string, sorting model.BrandTimedealSortingType) ([]*domain.ProductDAO, int, error) {
+	filter := bson.M{
+		"productgroupid": productGroupId,
+	}
+	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "score.totalscore", Value: -1}}
+	switch sorting {
+	case model.BrandTimedealSortingTypeDiscountDescending:
+		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "score.totalscore", Value: -1}}
+	case model.BrandTimedealSortingTypePriceAscending:
+		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "specialprice", Value: 1}, {Key: "score.totalscore", Value: -1}}
+	case model.BrandTimedealSortingTypePriceDescending:
+		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "specialprice", Value: 1}, {Key: "score.totalscore", Value: -1}}
+	}
+
+	products, cnt, err := ioc.Repo.Products.List(offset, limit, filter, sortingOptions)
+	if err != nil {
+		log.Println("Error on listing productGroups products : ", err)
+		return nil, 0, err
+	}
+	return products, cnt, nil
+
 }

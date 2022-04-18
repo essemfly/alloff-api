@@ -77,6 +77,13 @@ type BrandItem struct {
 	Brand  *Brand `json:"brand"`
 }
 
+type BrandTimedealProductsInput struct {
+	Offset         int                      `json:"offset"`
+	Limit          int                      `json:"limit"`
+	ProductGroupID string                   `json:"productGroupId"`
+	Sorting        BrandTimedealSortingType `json:"sorting"`
+}
+
 type BrandsInput struct {
 	OnlyLikes *bool `json:"onlyLikes"`
 }
@@ -122,26 +129,28 @@ type Device struct {
 }
 
 type Exhibition struct {
-	ID             string              `json:"id"`
-	BannerImage    string              `json:"bannerImage"`
-	ThumbnailImage string              `json:"thumbnailImage"`
-	Title          string              `json:"title"`
-	SubTitle       string              `json:"subTitle"`
-	Description    string              `json:"description"`
-	ProductGroups  []*ProductGroup     `json:"productGroups"`
-	StartTime      string              `json:"startTime"`
-	FinishTime     string              `json:"finishTime"`
-	TargetSales    int                 `json:"targetSales"`
-	CurrentSales   int                 `json:"currentSales"`
-	ExhibitionType ExhibitionType      `json:"exhibitionType"`
-	Banners        []*ExhibitionBanner `json:"banners"`
+	ID                 string              `json:"id"`
+	BannerImage        string              `json:"bannerImage"`
+	ThumbnailImage     string              `json:"thumbnailImage"`
+	Title              string              `json:"title"`
+	SubTitle           string              `json:"subTitle"`
+	Description        string              `json:"description"`
+	ProductGroups      []*ProductGroup     `json:"productGroups"`
+	StartTime          string              `json:"startTime"`
+	FinishTime         string              `json:"finishTime"`
+	TargetSales        int                 `json:"targetSales"`
+	CurrentSales       int                 `json:"currentSales"`
+	ExhibitionType     ExhibitionType      `json:"exhibitionType"`
+	Banners            []*ExhibitionBanner `json:"banners"`
+	TotalProducts      int                 `json:"totalProducts"`
+	TotalProductGroups int                 `json:"totalProductGroups"`
 }
 
 type ExhibitionBanner struct {
-	ImgURL   string   `json:"imgUrl"`
-	Tags     []string `json:"tags"`
-	Title    string   `json:"title"`
-	Subtitle string   `json:"subtitle"`
+	ImgURL         string `json:"imgUrl"`
+	ProductGroupID string `json:"productGroupId"`
+	Title          string `json:"title"`
+	Subtitle       string `json:"subtitle"`
 }
 
 type FeaturedItem struct {
@@ -406,9 +415,9 @@ type ProductGroup struct {
 
 type ProductGroupMetaInfo struct {
 	LogoImgURL     string `json:"logoImgUrl"`
-	MktDescription string `json:"MktDescription"`
-	BrandNameEng   string `json:"BrandNameEng"`
-	BrandNameKor   string `json:"BrandNameKor"`
+	MktDescription string `json:"mktDescription"`
+	BrandNameEng   string `json:"brandNameEng"`
+	BrandNameKor   string `json:"brandNameKor"`
 }
 
 type ProductQueryInput struct {
@@ -419,12 +428,11 @@ type ProductQueryInput struct {
 }
 
 type ProductsInput struct {
-	Offset         int           `json:"offset"`
-	Limit          int           `json:"limit"`
-	Brand          *string       `json:"brand"`
-	Category       *string       `json:"category"`
-	Sorting        []SortingType `json:"sorting"`
-	ProductGroupID *string       `json:"ProductGroupId"`
+	Offset   int           `json:"offset"`
+	Limit    int           `json:"limit"`
+	Brand    *string       `json:"brand"`
+	Category *string       `json:"category"`
+	Sorting  []SortingType `json:"sorting"`
 }
 
 type ProductsOutput struct {
@@ -484,6 +492,49 @@ type UserInfoInput struct {
 	DetailAddress         *string `json:"detailAddress"`
 	Postcode              *string `json:"postcode"`
 	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
+}
+
+type BrandTimedealSortingType string
+
+const (
+	BrandTimedealSortingTypePriceAscending     BrandTimedealSortingType = "PRICE_ASCENDING"
+	BrandTimedealSortingTypePriceDescending    BrandTimedealSortingType = "PRICE_DESCENDING"
+	BrandTimedealSortingTypeDiscountDescending BrandTimedealSortingType = "DISCOUNT_DESCENDING"
+)
+
+var AllBrandTimedealSortingType = []BrandTimedealSortingType{
+	BrandTimedealSortingTypePriceAscending,
+	BrandTimedealSortingTypePriceDescending,
+	BrandTimedealSortingTypeDiscountDescending,
+}
+
+func (e BrandTimedealSortingType) IsValid() bool {
+	switch e {
+	case BrandTimedealSortingTypePriceAscending, BrandTimedealSortingTypePriceDescending, BrandTimedealSortingTypeDiscountDescending:
+		return true
+	}
+	return false
+}
+
+func (e BrandTimedealSortingType) String() string {
+	return string(e)
+}
+
+func (e *BrandTimedealSortingType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = BrandTimedealSortingType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid BrandTimedealSortingType", str)
+	}
+	return nil
+}
+
+func (e BrandTimedealSortingType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type CommunityItemType string
@@ -571,20 +622,22 @@ func (e DeliveryType) MarshalGQL(w io.Writer) {
 type ExhibitionType string
 
 const (
-	ExhibitionTypeGroupdeal ExhibitionType = "GROUPDEAL"
-	ExhibitionTypeTimedeal  ExhibitionType = "TIMEDEAL"
-	ExhibitionTypeNormal    ExhibitionType = "NORMAL"
+	ExhibitionTypeGroupdeal     ExhibitionType = "GROUPDEAL"
+	ExhibitionTypeTimedeal      ExhibitionType = "TIMEDEAL"
+	ExhibitionTypeNormal        ExhibitionType = "NORMAL"
+	ExhibitionTypeBrandTimedeal ExhibitionType = "BRAND_TIMEDEAL"
 )
 
 var AllExhibitionType = []ExhibitionType{
 	ExhibitionTypeGroupdeal,
 	ExhibitionTypeTimedeal,
 	ExhibitionTypeNormal,
+	ExhibitionTypeBrandTimedeal,
 }
 
 func (e ExhibitionType) IsValid() bool {
 	switch e {
-	case ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal, ExhibitionTypeNormal:
+	case ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal, ExhibitionTypeNormal, ExhibitionTypeBrandTimedeal:
 		return true
 	}
 	return false
