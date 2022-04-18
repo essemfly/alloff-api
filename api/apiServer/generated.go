@@ -3181,7 +3181,7 @@ type Product {
   specialPrice: Int
   specialDiscountRate: Int
   productUrl: String!
-  inventory: [Inventory]!
+  inventory: [Inventory!]!
   isUpdated: Boolean!
   isNewProduct: Boolean!
   removed: Boolean!
@@ -11251,7 +11251,7 @@ func (ec *executionContext) _Product_inventory(ctx context.Context, field graphq
 	}
 	res := resTmp.([]*model.Inventory)
 	fc.Result = res
-	return ec.marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventory(ctx, field.Selections, res)
+	return ec.marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventoryᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Product_isUpdated(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
@@ -19376,7 +19376,7 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventory(ctx context.Context, sel ast.SelectionSet, v []*model.Inventory) graphql.Marshaler {
+func (ec *executionContext) marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Inventory) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -19400,7 +19400,7 @@ func (ec *executionContext) marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOInventory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventory(ctx, sel, v[i])
+			ret[i] = ec.marshalNInventory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventory(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -19411,7 +19411,23 @@ func (ec *executionContext) marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋ
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
+}
+
+func (ec *executionContext) marshalNInventory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventory(ctx context.Context, sel ast.SelectionSet, v *model.Inventory) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Inventory(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNItemReference2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐItemReference(ctx context.Context, sel ast.SelectionSet, v *model.ItemReference) graphql.Marshaler {
@@ -20612,13 +20628,6 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 		return graphql.Null
 	}
 	return graphql.MarshalInt(*v)
-}
-
-func (ec *executionContext) marshalOInventory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventory(ctx context.Context, sel ast.SelectionSet, v *model.Inventory) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Inventory(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfoᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.KeyValueInfo) graphql.Marshaler {
