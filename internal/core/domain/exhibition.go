@@ -9,16 +9,17 @@ import (
 type ExhibitionType string
 
 const (
-	EXHIBITION_TIMEDEAL  ExhibitionType = "TIMEDEAL"
-	EXHIBITION_NORMAL    ExhibitionType = "NORMAL"
-	EXHIBITION_GROUPDEAL ExhibitionType = "GROUPDEAL"
+	EXHIBITION_TIMEDEAL       ExhibitionType = "TIMEDEAL"
+	EXHIBITION_BRAND_TIMEDEAL ExhibitionType = "BRAND_TIMEDEAL"
+	EXHIBITION_NORMAL         ExhibitionType = "NORMAL"
+	EXHIBITION_GROUPDEAL      ExhibitionType = "GROUPDEAL"
 )
 
 type ExhibitionBanner struct {
-	imgUrl   string
-	tags     []string
-	title    string
-	subtitle string
+	ImgUrl         string
+	Title          string
+	Subtitle       string
+	ProductGroupId string
 }
 
 type ExhibitionDAO struct {

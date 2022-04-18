@@ -1,6 +1,8 @@
 package scripts
 
 import (
+	"github.com/lessbutter/alloff-api/internal/utils"
+	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"math/rand"
 	"time"
@@ -10,6 +12,86 @@ import (
 	"github.com/lessbutter/alloff-api/pkg/product"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
+func addTiemdealProductGroups(exhibitionId string) []*domain.ProductGroupDAO {
+	loc, _ := time.LoadLocation("Asia/Seoul")
+	timedealInstrctuion := []string{
+		"타임딜 상품은 올오프 MD가 팩토리 아울렛 및 현대/롯데/신세계 프리미엄 아울렛에서 직소싱한 상품입니다.",
+		"타임딜 상품은 오프라인 매장에서 동시에 판매되고 있습니다. 재고가 제한적이라 결제 완료 후 오프라인 매장에서 판매가 완료되어 품절될 수 있습니다.",
+		"한섬 팩토리 아울렛 타임딜의 경우, 매장에서는 불가능했던 교환/반품이 올오프에서는 가능합니다."}
+	timedealStartTime := time.Now().In(loc)
+
+	log.Println("Timedeal ProductGroup seeding start!")
+
+	brands, _, err := ioc.Repo.Brands.List(0, 10, true, nil)
+	if err != nil {
+		log.Println("Error on listing brands")
+	}
+
+	var pgs []*domain.ProductGroupDAO
+	for _, brand := range brands {
+		pgid := primitive.NewObjectID()
+		var backImgUrl string
+		if brand.BackImgUrl != "" {
+			backImgUrl = brand.BackImgUrl
+		} else {
+			backImgUrl = "https://picsum.photos/seed/" + utils.CreateShortUUID() + "/375/215"
+		}
+		meta := domain.ProductGroupMetaInfo{
+			LogoImgUrl:     brand.LogoImgUrl,
+			MktDescription: brand.KorName + "의 타임딜2.0 마케팅 문구 가나다라마바사아자차카타파하",
+			BrandNameEng:   brand.EngName,
+			BrandNameKor:   brand.KorName,
+		}
+
+		pg := domain.ProductGroupDAO{
+			ID:                   pgid,
+			Title:                brand.KorName + " 타임딜 2.0 테스트 타이틀 타이틀",
+			ShortTitle:           brand.KorName + " 타임딜 2.0 숏타이틀",
+			Instruction:          timedealInstrctuion,
+			ImgUrl:               backImgUrl,
+			GroupType:            domain.PRODUCT_GROUP_BRAND_TIMEDEAL,
+			StartTime:            timedealStartTime,
+			FinishTime:           timedealStartTime.Add(365 * 24 * time.Hour),
+			Created:              time.Now(),
+			NumAlarms:            rand.Intn(50) + 10,
+			ProductGroupMetaInfo: meta,
+		}
+
+		filter := bson.M{
+			"productinfo.brand.keyname": brand.KeyName,
+		}
+		products, _, err := ioc.Repo.Products.List(0, 10, filter, nil)
+		if err != nil {
+			log.Println("Error on listing products : ", err)
+		}
+
+		var pdPriorities []*domain.ProductPriorityDAO
+		for i, pd := range products {
+			pd.SpecialPrice = pd.DiscountedPrice // Mocking Data 에서만 이렇게 사용
+			pdPriorities = append(pdPriorities, &domain.ProductPriorityDAO{
+				Priority:  i,
+				Product:   pd,
+				ProductID: pd.ID,
+			})
+			pd.ProductGroupId = pg.ID.Hex()
+			_, err = ioc.Repo.Products.Upsert(pd)
+			if err != nil {
+				log.Println("Error on upsert product : ", err)
+			}
+		}
+
+		pg.Products = pdPriorities
+		pg.ExhibitionID = exhibitionId
+		_, err = ioc.Repo.ProductGroups.Upsert(&pg)
+		if err != nil {
+			log.Println("Error on upsert productGroups : ", err)
+		}
+		pgs = append(pgs, &pg)
+	}
+	log.Println("Timedeal2.0 ProductGroup seeding end!")
+	return pgs
+}
 
 func AddProductGroups() {
 	loc, _ := time.LoadLocation("Asia/Seoul")
