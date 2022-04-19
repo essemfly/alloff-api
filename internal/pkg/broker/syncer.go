@@ -60,6 +60,9 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) {
 			pgType = domain.PRODUCT_GROUP_GROUPDEAL
 		}
 
+		if pg.Brand != nil {
+			pgType = domain.PRODUCT_GROUP_BRAND_TIMEDEAL
+		}
 		newPgDao.StartTime = exDao.StartTime
 		newPgDao.FinishTime = exDao.FinishTime
 		newPgDao.ExhibitionID = exDao.ID.Hex()

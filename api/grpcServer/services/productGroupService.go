@@ -38,6 +38,8 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 		groupType = domain.PRODUCT_GROUP_GROUPDEAL
 	} else if req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL {
 		groupType = domain.PRODUCT_GROUP_TIMEDEAL
+	} else if req.GroupType == grpcServer.ProductGroupType_PRODUCT_GROUP_BRAND_TIMEDEAL {
+		groupType = domain.PRODUCT_GROUP_BRAND_TIMEDEAL
 	}
 
 	shortTitle := ""
@@ -49,10 +51,16 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 		imageUrl = *req.ImageUrl
 	}
 
-	brand, err := ioc.Repo.Brands.Get(*req.BrandId)
-	if err != nil {
-		log.Println("Error on get brand for create product group : ", err)
-		return nil, err
+	brand := &domain.BrandDAO{}
+	if req.BrandId != nil {
+		brandDao, err := ioc.Repo.Brands.Get(*req.BrandId)
+		brand = brandDao
+		if err != nil {
+			log.Println("Error on get brand for create product group : ", err)
+			return nil, err
+		}
+	} else {
+		brand = nil
 	}
 
 	pgDao := &domain.ProductGroupDAO{
