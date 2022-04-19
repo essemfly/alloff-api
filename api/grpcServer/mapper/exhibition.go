@@ -33,6 +33,7 @@ func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.Exhib
 		ExhibitionType: ExhibitionGroupTypeMapper(exDao.ExhibitionType),
 		TargetSales:    int32(exDao.TargetSales),
 		CurrentSales:   int32(sales),
+		Banners:        bannersMapper(exDao.Banners),
 	}
 }
 
@@ -46,4 +47,18 @@ func ExhibitionGroupTypeMapper(groupType domain.ExhibitionType) grpcServer.Exhib
 		return grpcServer.ExhibitionType_EXHIBITION_GROUPDEAL
 	}
 	return grpcServer.ExhibitionType_EXHIBITION_NORMAL
+}
+
+func bannersMapper(banners []domain.ExhibitionBanner) []*grpcServer.ExhibitionBannerMessage {
+	bannerMsgs := []*grpcServer.ExhibitionBannerMessage{}
+	for _, banner := range banners {
+		bannerMsg := &grpcServer.ExhibitionBannerMessage{
+			ImgUrl:         banner.ImgUrl,
+			Title:          banner.Title,
+			Subtitle:       banner.Subtitle,
+			ProductGroupId: banner.ProductGroupId,
+		}
+		bannerMsgs = append(bannerMsgs, bannerMsg)
+	}
+	return bannerMsgs
 }

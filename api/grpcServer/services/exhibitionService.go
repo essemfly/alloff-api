@@ -100,6 +100,19 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	if req.IsLive != nil {
 		exDao.IsLive = *req.IsLive
 	}
+	banners := []domain.ExhibitionBanner{}
+	if req.Banners != nil {
+		for _, banner := range req.Banners {
+			bannerDao := domain.ExhibitionBanner{
+				ImgUrl:         banner.ImgUrl,
+				Title:          banner.Title,
+				Subtitle:       banner.Subtitle,
+				ProductGroupId: banner.ProductGroupId,
+			}
+			banners = append(banners, bannerDao)
+		}
+		exDao.Banners = banners
+	}
 
 	pgType := domain.PRODUCT_GROUP_EXHIBITION
 	if exDao.ExhibitionType == domain.EXHIBITION_TIMEDEAL {
@@ -157,6 +170,18 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		productGroupType = domain.PRODUCT_GROUP_GROUPDEAL
 	}
 
+	banners := []domain.ExhibitionBanner{}
+	if req.Banners != nil {
+		for _, banner := range req.Banners {
+			bannerDao := domain.ExhibitionBanner{
+				ImgUrl:         banner.ImgUrl,
+				Title:          banner.Title,
+				Subtitle:       banner.Subtitle,
+				ProductGroupId: banner.ProductGroupId,
+			}
+			banners = append(banners, bannerDao)
+		}
+	}
 	exDao := &domain.ExhibitionDAO{
 		ID:             primitive.NewObjectID(),
 		BannerImage:    req.BannerImage,
@@ -169,6 +194,8 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		IsLive:         false,
 		ExhibitionType: exhibitionGroupType,
 		TargetSales:    int(req.TargetSales),
+		Banners:        banners,
+		CreatedAt:      time.Now(),
 	}
 
 	pgs := []*domain.ProductGroupDAO{}
