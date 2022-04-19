@@ -26,6 +26,11 @@ func ProductGroupMapper(pg *domain.ProductGroupDAO) *grpcServer.ProductGroupMess
 		}
 	}
 
+	brand := &grpcServer.BrandMessage{}
+	if pg.Brand != nil {
+		brand = BrandMapper(pg.Brand)
+	}
+
 	return &grpcServer.ProductGroupMessage{
 		Title:          pg.Title,
 		ShortTitle:     pg.ShortTitle,
@@ -36,6 +41,7 @@ func ProductGroupMapper(pg *domain.ProductGroupDAO) *grpcServer.ProductGroupMess
 		FinishTime:     pg.FinishTime.String(),
 		ProductGroupId: pg.ID.Hex(),
 		GroupType:      GroupTypeMapper(pg.GroupType),
+		Brand:          brand,
 	}
 }
 
