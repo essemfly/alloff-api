@@ -23,7 +23,13 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 		}
 
 		pd := MapProductDaoToProduct(productInPg.Product)
-		if pd.Soldout {
+		isSoldOut := true
+		for _, inv := range productInPg.Product.Inventory {
+			if inv.Quantity > 0 {
+				isSoldOut = false
+			}
+		}
+		if isSoldOut || pd.Soldout {
 			soldouts = append(soldouts, pd)
 		} else {
 			pds = append(pds, pd)
