@@ -44,3 +44,8 @@ type NotificationDAO struct {
 	Updated          time.Time
 	Sended           time.Time
 }
+
+type DistinctNotiResult struct {
+	NotificationID string `bson:"_id, omitempty"`
+	NotiDAO        NotificationDAO
+}
