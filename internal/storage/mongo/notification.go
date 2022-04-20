@@ -85,7 +85,7 @@ func (repo *notificationRepo) List(offset, limit int, notiTypes []domain.Notific
 			},
 		},
 		{
-			"$sort": bson.M{"_id": -1},
+			"$sort": bson.M{"notidao._id": -1},
 		},
 		{
 			"$limit": offset + limit,
