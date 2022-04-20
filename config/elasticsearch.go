@@ -13,7 +13,7 @@ var EsClient *elasticsearch.Client
 var EsAPIKEY string
 
 func InitElasticSearch(conf Configuration) {
-	defaultIndexName := []string{"access_log"}
+	defaultIndexName := []string{"access_log", "product_log"}
 
 	cfg := elasticsearch.Config{
 		Addresses: []string{

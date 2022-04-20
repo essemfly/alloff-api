@@ -7,6 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/lessbutter/alloff-api/internal/pkg/elasticsearch"
 	"log"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
@@ -74,6 +75,8 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product,
 	if err != nil {
 		return nil, err
 	}
+	st, _ := elasticsearch.ProductLogRequest(pdDao)
+	log.Println(st)
 
 	return mapper.MapProductDaoToProduct(pdDao), nil
 }
