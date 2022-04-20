@@ -78,8 +78,10 @@ func (repo *notificationRepo) List(offset, limit int, notiTypes []domain.Notific
 		},
 		{
 			"$group": bson.M{
-				"_id":     "$notificationid",
-				"notidao": bson.M{"$first": "$$ROOT"},
+				"_id":         "$notificationid",
+				"notidao":     bson.M{"$first": "$$ROOT"},
+				"totalpushed": bson.M{"$sum": "$numuserspushed"},
+				"totalfailed": bson.M{"$sum": "$numusersfailed"},
 			},
 		},
 		{
@@ -107,6 +109,8 @@ func (repo *notificationRepo) List(offset, limit int, notiTypes []domain.Notific
 
 	notiDaos := []*domain.NotificationDAO{}
 	for _, noti := range notis {
+		noti.NotiDAO.NumUsersFailed = noti.TotalFailed
+		noti.NotiDAO.NumUsersPushed = noti.TotalPushed
 		notiDaos = append(notiDaos, &noti.NotiDAO)
 	}
 	return notiDaos, nil
