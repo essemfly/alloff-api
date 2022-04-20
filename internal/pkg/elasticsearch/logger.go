@@ -47,12 +47,22 @@ func (l *StructuredLogger) NewLogEntry(r *http.Request) middleware.LogEntry {
 	// 이미 읽은 r.Body에 다시 body 넣어줌
 	r.Body = io.NopCloser(bytes.NewReader(b))
 
+	query, ok := body["query"].(string)
+	if !ok {
+		query = ""
+	}
+
+	variables, ok := body["variables"].(map[string]interface{})
+	if !ok {
+		variables = nil
+	}
+
 	// gql 서버에 오는 request body를 저장
-	queryPrettier := strings.Replace(body["query"].(string), "\n", "", -1)
+	queryPrettier := strings.Replace(query, "\n", "", -1)
 	gqlBody := GqlReq{
 		OperationName: body["operationName"],
 		Query:         queryPrettier,
-		Variables:     body["variables"].(map[string]interface{}),
+		Variables:     variables,
 	}
 	l.Fields.Body = gqlBody
 

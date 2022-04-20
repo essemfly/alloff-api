@@ -5,10 +5,12 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"log"
+	"net/http"
 	"strings"
 )
 
 var EsClient *elasticsearch.Client
+var EsAPIKEY string
 
 func InitElasticSearch(conf Configuration) {
 	defaultIndexName := []string{"access_log"}
@@ -23,7 +25,9 @@ func InitElasticSearch(conf Configuration) {
 	if err != nil {
 		log.Printf("Error creating the client: %s \n", err)
 	}
+
 	EsClient = es
+	EsAPIKEY = conf.ELASTICSEARCH_APIKEY
 
 	alreadyExist, err := checkIndexExists(defaultIndexName)
 	if err != nil {
@@ -41,8 +45,11 @@ func InitElasticSearch(conf Configuration) {
 
 // checkIndexExists : 입력된 이름의 인덱스가 있는지 확인
 func checkIndexExists(index []string) (bool, error) {
+	header := http.Header{}
+	header.Add("Authorization", "Basic "+EsAPIKEY)
 	req := esapi.IndicesExistsRequest{
-		Index: index,
+		Index:  index,
+		Header: header,
 	}
 	res, err := req.Do(context.Background(), EsClient)
 	defer res.Body.Close()
@@ -71,12 +78,15 @@ func createDefaultIndexMapping(index []string) error {
 			}
 		}
 	}`
+	header := http.Header{}
+	header.Add("Authorization", "Basic "+EsAPIKEY)
 
 	for _, index := range index {
 		log.Printf("creating index mapping for %s\n", index)
 		req := esapi.IndicesCreateRequest{
-			Index: index,
-			Body:  strings.NewReader(bodyStr),
+			Index:  index,
+			Body:   strings.NewReader(bodyStr),
+			Header: header,
 		}
 		res, err := req.Do(context.Background(), EsClient)
 		if err != nil {
