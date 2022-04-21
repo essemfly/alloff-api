@@ -77,9 +77,12 @@ func (repo *notificationRepo) List(offset, limit int, notiTypes []domain.Notific
 			"$match": filter,
 		},
 		{
+			"$sort": bson.M{"_id": 1},
+		},
+		{
 			"$group": bson.M{
 				"_id":         "$notificationid",
-				"notidao":     bson.M{"$first": "$$ROOT"},
+				"notidao":     bson.M{"$last": "$$ROOT"},
 				"totalpushed": bson.M{"$sum": "$numuserspushed"},
 				"totalfailed": bson.M{"$sum": "$numusersfailed"},
 			},
