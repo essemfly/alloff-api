@@ -26,11 +26,11 @@ func logRequest(request *LogFields) (int, error) {
 		Header:  header,
 	}
 	res, err := req.Do(context.Background(), config.EsClient)
-	defer res.Body.Close()
 	if err != nil {
 		log.Println("Error getting response : ", err)
 		return 400, err
 	}
+	defer res.Body.Close()
 
 	_, err = ioutil.ReadAll(res.Body)
 	if err != nil {
@@ -56,8 +56,6 @@ func ProductLogRequest(request *domain.ProductDAO) (int, error) {
 	encoder.Encode(&bd)
 	bodyStr := bodyBuffer.String()
 
-	log.Println(bodyStr)
-
 	req := esapi.IndexRequest{
 		Index:   index,
 		Body:    strings.NewReader(bodyStr),
@@ -65,11 +63,11 @@ func ProductLogRequest(request *domain.ProductDAO) (int, error) {
 		Refresh: "true",
 	}
 	res, err := req.Do(context.Background(), config.EsClient)
-	defer res.Body.Close()
 	if err != nil {
 		log.Println("Error getting response : ", err)
 		return 400, err
 	}
+	defer res.Body.Close()
 
 	_, err = ioutil.ReadAll(res.Body)
 	if err != nil {

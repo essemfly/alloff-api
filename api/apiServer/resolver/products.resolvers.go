@@ -75,8 +75,8 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product,
 	if err != nil {
 		return nil, err
 	}
-	st, _ := elasticsearch.ProductLogRequest(pdDao)
-	log.Println(st)
+
+	go elasticsearch.ProductLogRequest(pdDao)
 
 	return mapper.MapProductDaoToProduct(pdDao), nil
 }

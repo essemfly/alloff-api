@@ -38,8 +38,9 @@ func InitElasticSearch(conf Configuration) {
 		err = createDefaultIndexMapping(defaultIndexName)
 		if err != nil {
 			log.Printf("Error on creating default index %s \n", err)
+		} else {
+			log.Println("default index created")
 		}
-		log.Println("default index created")
 	}
 }
 
@@ -52,11 +53,11 @@ func checkIndexExists(index []string) (bool, error) {
 		Header: header,
 	}
 	res, err := req.Do(context.Background(), EsClient)
-	defer res.Body.Close()
 	if err != nil {
 		log.Printf("Error getting response: %s\n", err)
 		return false, err
 	}
+	defer res.Body.Close()
 
 	if res.StatusCode == 404 {
 		return false, nil
@@ -82,7 +83,6 @@ func createDefaultIndexMapping(index []string) error {
 	header.Add("Authorization", "Basic "+EsAPIKEY)
 
 	for _, index := range index {
-		log.Printf("creating index mapping for %s\n", index)
 		req := esapi.IndicesCreateRequest{
 			Index:  index,
 			Body:   strings.NewReader(bodyStr),
@@ -90,9 +90,10 @@ func createDefaultIndexMapping(index []string) error {
 		}
 		res, err := req.Do(context.Background(), EsClient)
 		if err != nil {
-			log.Printf("Error getting response: %s\n", err)
-			res.Body.Close()
+			log.Printf("Error getting response on creating default index mapping: %s\n", err)
 			return err
+		} else {
+			log.Printf("creating index mapping for %s\n", index)
 		}
 		res.Body.Close()
 	}
