@@ -46,7 +46,7 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 	} else if req.NotiType == string(domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION) {
 		notiDao = &domain.NotificationDAO{
 			Status:           domain.NOTIFICATION_READY,
-			NotificationType: domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION,
+			NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
 			Title:            req.Title,
 			Message:          req.Message,
 			Notificationid:   "/product_group" + req.ReferenceId,
