@@ -23,7 +23,13 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 		}
 
 		pd := MapProductDaoToProduct(productInPg.Product)
-		if pd.Soldout {
+		isSoldOut := true
+		for _, inv := range productInPg.Product.Inventory {
+			if inv.Quantity > 0 {
+				isSoldOut = false
+			}
+		}
+		if isSoldOut || pd.Soldout {
 			soldouts = append(soldouts, pd)
 		} else {
 			pds = append(pds, pd)
@@ -31,6 +37,11 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 	}
 
 	pds = append(pds, soldouts...)
+
+	brand := &model.Brand{}
+	if pgDao.Brand != nil {
+		brand = MapBrandDaoToBrand(pgDao.Brand, false)
+	}
 
 	pg := &model.ProductGroup{
 		ID:          pgDao.ID.Hex(),
@@ -43,6 +54,7 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 		StartTime:   pgDao.StartTime.Add(9 * time.Hour).String(),
 		FinishTime:  pgDao.FinishTime.Add(9 * time.Hour).String(),
 		SetAlarm:    false,
+		Brand:       brand,
 	}
 	return pg
 }
@@ -60,22 +72,32 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		sales = exhibition.GetCurrentSales(exDao)
 	}
 
+	numPgs := len(exDao.ProductGroups)
+	numProducts := 0
+	for _, pg := range exDao.ProductGroups {
+		numProducts += len(pg.Products)
+	}
+
 	return &model.Exhibition{
-		ID:             exDao.ID.Hex(),
-		BannerImage:    exDao.BannerImage,
-		ThumbnailImage: exDao.ThumbnailImage,
-		Title:          exDao.Title,
-		SubTitle:       exDao.SubTitle,
-		Description:    exDao.Description,
-		ProductGroups:  pgs,
-		StartTime:      exDao.StartTime.Add(9 * time.Hour).String(),
-		FinishTime:     exDao.FinishTime.Add(9 * time.Hour).String(),
-		ExhibitionType: MapExhibitionType(exDao.ExhibitionType),
-		TargetSales:    exDao.TargetSales,
-		CurrentSales:   sales,
+		ID:                 exDao.ID.Hex(),
+		BannerImage:        exDao.BannerImage,
+		ThumbnailImage:     exDao.ThumbnailImage,
+		Title:              exDao.Title,
+		SubTitle:           exDao.SubTitle,
+		Description:        exDao.Description,
+		ProductGroups:      pgs,
+		StartTime:          exDao.StartTime.Add(9 * time.Hour).String(),
+		FinishTime:         exDao.FinishTime.Add(9 * time.Hour).String(),
+		ExhibitionType:     MapExhibitionType(exDao.ExhibitionType),
+		TargetSales:        exDao.TargetSales,
+		CurrentSales:       sales,
+		Banners:            mapBanners(exDao.Banners),
+		TotalProducts:      numProducts,
+		TotalProductGroups: numPgs,
 	}
 }
 
+// MapExhibitionType : TODO 이거 ExhibitionDAO 에 메서드로 넣고싶다..
 func MapExhibitionType(enum domain.ExhibitionType) model.ExhibitionType {
 	switch enum {
 	case domain.EXHIBITION_GROUPDEAL:
@@ -86,4 +108,19 @@ func MapExhibitionType(enum domain.ExhibitionType) model.ExhibitionType {
 		return model.ExhibitionTypeTimedeal
 	}
 	return model.ExhibitionTypeNormal
+}
+
+// mapBanners : TODO 이거 ExhibitionDAO 에 메서드로 넣고싶다..
+func mapBanners(bannersDaos []domain.ExhibitionBanner) []*model.ExhibitionBanner {
+	var res []*model.ExhibitionBanner
+	for _, banner := range bannersDaos {
+		bannerDto := model.ExhibitionBanner{
+			ImgURL:         banner.ImgUrl,
+			ProductGroupID: banner.ProductGroupId,
+			Title:          banner.Title,
+			Subtitle:       banner.Subtitle,
+		}
+		res = append(res, &bannerDto)
+	}
+	return res
 }

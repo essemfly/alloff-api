@@ -36,6 +36,7 @@ func (s *BrandService) CreateBrand(ctx context.Context, req *grpcServer.CreateBr
 		Created:       time.Now(),
 		IsOpen:        false,
 		InMaintenance: false,
+		IsHide:        false,
 		SizeGuide:     sizeGuideDaos,
 	}
 	newBrand, err := ioc.Repo.Brands.Upsert(brandDao)
@@ -50,7 +51,7 @@ func (s *BrandService) CreateBrand(ctx context.Context, req *grpcServer.CreateBr
 
 func (s *BrandService) ListBrand(ctx context.Context, req *grpcServer.ListBrandRequest) (*grpcServer.ListBrandResponse, error) {
 	offset, limit := 0, 1000
-	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, false, nil)
+	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, false, false, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -94,6 +95,10 @@ func (s *BrandService) EditBrand(ctx context.Context, req *grpcServer.EditBrandR
 	if req.InMaintenance != nil {
 		brandDao.InMaintenance = *req.InMaintenance
 	}
+	if req.IsHide != nil {
+		brandDao.IsHide = *req.IsHide
+	}
+
 	if req.SizeGuide != nil {
 		guides := []domain.SizeGuideDAO{}
 

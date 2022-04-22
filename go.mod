@@ -17,16 +17,17 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly v1.2.0
+	github.com/google/uuid v1.1.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2 // indirect
 	github.com/iamport/interface v0.0.15
 	github.com/kennygrant/sanitize v1.2.4 // indirect
-	github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220406025608-3c6f7ba3e782
+	github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220419083032-3239b8810419
 	github.com/renatoaf/amplitude-go v1.0.0
 	github.com/rs/cors v1.6.0
 	github.com/rs/xid v1.3.0
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
-	github.com/stretchr/testify v1.7.1 // indirect
+	github.com/stretchr/testify v1.7.0
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/tkanos/gonfig v0.0.0-20210106201359-53e13348de2f
 	github.com/vektah/gqlparser/v2 v2.2.0

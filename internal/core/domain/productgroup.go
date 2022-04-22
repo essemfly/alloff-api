@@ -9,9 +9,10 @@ import (
 type ProductGroupType string
 
 const (
-	PRODUCT_GROUP_TIMEDEAL   ProductGroupType = "PRODUCT_GROUP_TIMEDEAL"
-	PRODUCT_GROUP_GROUPDEAL  ProductGroupType = "PRODUCT_GROUP_GROUPDEAL"
-	PRODUCT_GROUP_EXHIBITION ProductGroupType = "PRODUCT_GROUP_EXHIBITION"
+	PRODUCT_GROUP_TIMEDEAL       ProductGroupType = "PRODUCT_GROUP_TIMEDEAL"
+	PRODUCT_GROUP_GROUPDEAL      ProductGroupType = "PRODUCT_GROUP_GROUPDEAL"
+	PRODUCT_GROUP_EXHIBITION     ProductGroupType = "PRODUCT_GROUP_EXHIBITION"
+	PRODUCT_GROUP_BRAND_TIMEDEAL ProductGroupType = "PRODUCT_GROUP_BRAND_TIMEDEAL"
 )
 
 type ProductGroupDAO struct {
@@ -28,6 +29,7 @@ type ProductGroupDAO struct {
 	Created      time.Time
 	Updated      time.Time
 	ExhibitionID string
+	Brand        *BrandDAO
 }
 
 type ProductPriorityDAO struct {

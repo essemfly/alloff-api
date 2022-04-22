@@ -16,6 +16,8 @@ type UserDAO struct {
 	DetailAddress         string             `json:"detailaddress"`
 	Postcode              string             `json:"postcode"`
 	PersonalCustomsNumber string
+	Created               time.Time
+	Updated               time.Time
 }
 
 func (userDao *UserDAO) GetUserAddress() string {
@@ -31,6 +33,7 @@ type DeviceDAO struct {
 	UserId            string
 	DeviceId          string
 	AllowNotification bool
+	IsRemoved         bool
 	Created           time.Time
 	Updated           time.Time
 }

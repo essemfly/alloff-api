@@ -43,6 +43,16 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 			ReferenceID:      "/" + req.ReferenceId,
 			NavigateTo:       "/exhibition",
 		}
+	} else if req.NotiType == string(domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION) {
+		notiDao = &domain.NotificationDAO{
+			Status:           domain.NOTIFICATION_READY,
+			NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
+			Title:            req.Title,
+			Message:          req.Message,
+			Notificationid:   "/product_group" + req.ReferenceId,
+			ReferenceID:      "/" + req.ReferenceId,
+			NavigateTo:       "/product_group",
+		}
 	} else {
 		return nil, errors.New("invalid notification type")
 	}

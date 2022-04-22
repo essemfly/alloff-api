@@ -62,7 +62,7 @@ func (r *queryResolver) Brands(ctx context.Context, input *model.BrandsInput) ([
 
 	// Temp code for limits
 	offset, limit := 0, 1000
-	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, false, nil)
+	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, false, true, nil)
 	if err != nil {
 		return nil, err
 	}

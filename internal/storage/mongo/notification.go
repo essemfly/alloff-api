@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -9,7 +10,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type notificationRepo struct {
@@ -59,41 +59,71 @@ func (repo *notificationRepo) List(offset, limit int, notiTypes []domain.Notific
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	filter := bson.M{}
 	notiFilters := []bson.M{}
 	for _, notiType := range notiTypes {
 		notiFilters = append(notiFilters, bson.M{
 			"notificationtype": notiType,
 		})
 	}
+	filter := bson.M{
+		"$or": notiFilters,
+	}
 	if onlyReady {
-		filter["$or"] = notiFilters
 		filter["status"] = domain.NOTIFICATION_READY
 	}
 
-	options := options.Find()
-	options.SetSkip(int64(offset))
-	options.SetLimit(int64(limit))
-	options.SetSort(bson.M{"_id": -1})
+	pipelines := []bson.M{
+		{
+			"$match": filter,
+		},
+		{
+			"$sort": bson.M{"_id": 1},
+		},
+		{
+			"$group": bson.M{
+				"_id":         "$notificationid",
+				"notidao":     bson.M{"$last": "$$ROOT"},
+				"totalpushed": bson.M{"$sum": "$numuserspushed"},
+				"totalfailed": bson.M{"$sum": "$numusersfailed"},
+			},
+		},
+		{
+			"$sort": bson.M{"notidao._id": -1},
+		},
+		{
+			"$limit": offset + limit,
+		},
+		{
+			"$skip": offset,
+		},
+	}
+	cursor, err := repo.col.Aggregate(ctx, pipelines, nil)
 
-	cursor, err := repo.col.Find(ctx, filter, options)
 	if err != nil {
+		log.Println("err on notification ", err)
 		return nil, err
 	}
 
-	var notis []*domain.NotificationDAO
+	var notis []*domain.DistinctNotiResult
 	err = cursor.All(ctx, &notis)
 	if err != nil {
 		return nil, err
 	}
 
-	return notis, nil
+	notiDaos := []*domain.NotificationDAO{}
+	for _, noti := range notis {
+		noti.NotiDAO.NumUsersFailed = noti.TotalFailed
+		noti.NotiDAO.NumUsersPushed = noti.TotalPushed
+		notiDaos = append(notiDaos, &noti.NotiDAO)
+	}
+	return notiDaos, nil
 }
+
 func (repo *notificationRepo) Update(noti *domain.NotificationDAO) (*domain.NotificationDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": noti.ID}, bson.M{"$set": bson.M{"status": domain.NOTIFICATION_SUCCEEDED, "updated": time.Now(), "sended": time.Now()}})
+	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": noti.ID}, bson.M{"$set": &noti})
 	if err != nil {
 		return nil, err
 	}

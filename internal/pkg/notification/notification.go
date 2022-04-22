@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -104,7 +105,28 @@ func SendNotification(noti *domain.NotificationDAO) error {
 		return err
 	}
 
+	failedCounts := 0
+	failedDeviceIds := []string{}
+	for _, logResult := range notiResult.Logs {
+		if logResult.Type == "failed-push" {
+			failedCounts += 1
+			failedDeviceIds = append(failedDeviceIds, logResult.Token)
+		}
+	}
+
+	for _, failedDeviceID := range failedDeviceIds {
+		err := ioc.Repo.Devices.MakeRemoved(failedDeviceID)
+		if err != nil {
+			log.Println("err on failed make removed", err)
+		}
+	}
+
+	noti.Sended = time.Now()
+	noti.Updated = time.Now()
 	noti.Status = domain.NOTIFICATION_SUCCEEDED
+	noti.NumUsersFailed = failedCounts
+	noti.NumUsersPushed = len(noti.DeviceIDs) - failedCounts
+
 	_, err = ioc.Repo.Notifications.Update(noti)
 	if err != nil {
 		return err

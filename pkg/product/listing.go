@@ -87,7 +87,7 @@ func ProductsSearchListing(offset, limit int, classifiedType Classified, moduleN
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "descending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateAescending" {
+	} else if priceSorting == "discountrateAscending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "discountrateDescending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "_id", Value: 1}}
@@ -102,7 +102,7 @@ func ProductsSearchListing(offset, limit int, classifiedType Classified, moduleN
 }
 
 // (Future) Mongodb에 종속적인 함수: bson이 사용되었다.
-func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
+func ProductsListing(offset, limit int, brandID, categoryID, productGroupID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
 	filter := bson.M{"removed": false}
 
 	brandObjID, _ := primitive.ObjectIDFromHex(brandID)
@@ -113,6 +113,9 @@ func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting
 		if categoryID != "" {
 			filter["productinfo.category._id"] = categoryObjID
 		}
+	}
+	if productGroupID != "" {
+		filter["productgroupid"] = productGroupID
 	}
 
 	priceQueryRanges := []bson.M{}
@@ -151,7 +154,7 @@ func ProductsListing(offset, limit int, brandID, categoryID string, priceSorting
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "descending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateAescending" {
+	} else if priceSorting == "discountrateAscending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "discountrateDescending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "_id", Value: 1}}
@@ -215,7 +218,7 @@ func AlloffCategoryProductsListing(offset, limit int, brandKeynames []string, al
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "descending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateAescending" {
+	} else if priceSorting == "discountrateAscending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: 1}, {Key: "_id", Value: 1}}
 	} else if priceSorting == "discountrateDescending" {
 		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "_id", Value: 1}}

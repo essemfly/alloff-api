@@ -100,6 +100,19 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	if req.IsLive != nil {
 		exDao.IsLive = *req.IsLive
 	}
+	banners := []domain.ExhibitionBanner{}
+	if req.Banners != nil {
+		for _, banner := range req.Banners {
+			bannerDao := domain.ExhibitionBanner{
+				ImgUrl:         banner.ImgUrl,
+				Title:          banner.Title,
+				Subtitle:       banner.Subtitle,
+				ProductGroupId: banner.ProductGroupId,
+			}
+			banners = append(banners, bannerDao)
+		}
+		exDao.Banners = banners
+	}
 
 	pgType := domain.PRODUCT_GROUP_EXHIBITION
 	if exDao.ExhibitionType == domain.EXHIBITION_TIMEDEAL {
@@ -118,6 +131,9 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 			}
 			pg.StartTime = exDao.StartTime
 			pg.FinishTime = exDao.FinishTime
+			if pg.Brand != nil {
+				pgType = domain.PRODUCT_GROUP_BRAND_TIMEDEAL
+			}
 			pg.GroupType = pgType
 			pg.ExhibitionID = exDao.ID.Hex()
 			newPg, err := ioc.Repo.ProductGroups.Upsert(pg)
@@ -148,15 +164,25 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
-	exhibitionGroupType, productGroupType := domain.EXHIBITION_NORMAL, domain.PRODUCT_GROUP_EXHIBITION
+	exhibitionGroupType := domain.EXHIBITION_NORMAL
 	if req.ExhibitionType == grpcServer.ExhibitionType_EXHIBITION_TIMEDEAL {
 		exhibitionGroupType = domain.EXHIBITION_TIMEDEAL
-		productGroupType = domain.PRODUCT_GROUP_TIMEDEAL
 	} else if req.ExhibitionType == grpcServer.ExhibitionType_EXHIBITION_GROUPDEAL {
 		exhibitionGroupType = domain.EXHIBITION_GROUPDEAL
-		productGroupType = domain.PRODUCT_GROUP_GROUPDEAL
 	}
 
+	banners := []domain.ExhibitionBanner{}
+	if req.Banners != nil {
+		for _, banner := range req.Banners {
+			bannerDao := domain.ExhibitionBanner{
+				ImgUrl:         banner.ImgUrl,
+				Title:          banner.Title,
+				Subtitle:       banner.Subtitle,
+				ProductGroupId: banner.ProductGroupId,
+			}
+			banners = append(banners, bannerDao)
+		}
+	}
 	exDao := &domain.ExhibitionDAO{
 		ID:             primitive.NewObjectID(),
 		BannerImage:    req.BannerImage,
@@ -169,6 +195,8 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		IsLive:         false,
 		ExhibitionType: exhibitionGroupType,
 		TargetSales:    int(req.TargetSales),
+		Banners:        banners,
+		CreatedAt:      time.Now(),
 	}
 
 	pgs := []*domain.ProductGroupDAO{}
@@ -178,8 +206,12 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 			log.Println("get product group failed: "+pgID, err)
 			continue
 		}
+		productGroupType := pg.GroupType
 		pg.StartTime = startTimeObj
 		pg.FinishTime = startTimeObj
+		if pg.Brand != nil {
+			productGroupType = domain.PRODUCT_GROUP_BRAND_TIMEDEAL
+		}
 		pg.GroupType = productGroupType
 		pg.ExhibitionID = exDao.ID.Hex()
 		newPg, err := ioc.Repo.ProductGroups.Upsert(pg)

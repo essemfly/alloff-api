@@ -50,19 +50,22 @@ func (repo *brandsRepo) GetByKeyname(keyname string) (*domain.BrandDAO, error) {
 	return brand, nil
 }
 
-func (repo *brandsRepo) List(offset, limit int, onlyPopular bool, sortingOptions interface{}) ([]*domain.BrandDAO, int, error) {
+func (repo *brandsRepo) List(offset, limit int, onlyPopular, excludeHide bool, sortingOptions interface{}) ([]*domain.BrandDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
+	// 현재 sortingOPtions는 안쓰이고 있음
 	options := options.Find()
-	// (TODO) 현재 Sorting options는, filetr는 무시되고 있음
 	options.SetSort(bson.D{{Key: "korname", Value: 1}})
 	options.SetLimit(int64(limit))
 	options.SetSkip(int64(offset))
 
-	newFilter := bson.M{"ishide": false}
+	newFilter := bson.M{}
 	if onlyPopular {
 		newFilter["onpopular"] = true
+	}
+	if excludeHide {
+		newFilter["ishide"] = false
 	}
 
 	totalCount, _ := repo.col.CountDocuments(ctx, newFilter)

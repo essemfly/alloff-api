@@ -9,7 +9,7 @@ import (
 type BrandsRepository interface {
 	Get(ID string) (*domain.BrandDAO, error)
 	GetByKeyname(keyname string) (*domain.BrandDAO, error)
-	List(offset, limit int, onlyPopular bool, sortingOptions interface{}) ([]*domain.BrandDAO, int, error)
+	List(offset, limit int, onlyPopular, excludeHide bool, sortingOptions interface{}) ([]*domain.BrandDAO, int, error)
 	Upsert(*domain.BrandDAO) (*domain.BrandDAO, error)
 }
 
@@ -127,6 +127,7 @@ type DevicesRepository interface {
 	ListAllowedByUser(userID string) ([]*domain.DeviceDAO, error)
 	ListAllowed() ([]*domain.DeviceDAO, error)
 	UpdateDevices(deviceID string, allowNotification bool, userID *string) error
+	MakeRemoved(deviceID string) error
 }
 
 type AlimtalksRepository interface {

@@ -38,7 +38,16 @@ type NotificationDAO struct {
 	DeviceIDs        []string
 	NavigateTo       string
 	ReferenceID      string
+	NumUsersPushed   int
+	NumUsersFailed   int
 	Created          time.Time
 	Updated          time.Time
 	Sended           time.Time
+}
+
+type DistinctNotiResult struct {
+	NotificationID string `bson:"_id, omitempty"`
+	NotiDAO        NotificationDAO
+	TotalPushed    int
+	TotalFailed    int
 }

@@ -28,7 +28,7 @@ type Product {
   specialPrice: Int
   specialDiscountRate: Int
   productUrl: String!
-  inventory: [Inventory]!
+  inventory: [Inventory!]!
   isUpdated: Boolean!
   isNewProduct: Boolean!
   removed: Boolean!
@@ -81,6 +81,7 @@ input ProductsInput {
   brand: String
   category: String
   sorting: [SortingType!]
+  productGroupId: String
 }
 
 input AlloffCategoryProductsInput {
