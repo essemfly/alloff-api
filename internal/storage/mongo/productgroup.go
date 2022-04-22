@@ -81,7 +81,7 @@ func (repo *productGroupRepo) ListTimedeals(offset, limit int, isLive bool) ([]*
 
 	if isLive {
 		now := primitive.NewDateTimeFromTime(time.Now())
-		filter := bson.M{"finishtime": bson.M{"$gte": now}, "grouptype": domain.PRODUCT_GROUP_TIMEDEAL}
+		filter := bson.M{"finishtime": bson.M{"$gte": now}, "grouptype": domain.PRODUCT_GROUP_BRAND_TIMEDEAL}
 		onGoingOptions := options.Find()
 		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: 1}})
 		cur, err := repo.col.Find(ctx, filter, onGoingOptions)
@@ -100,7 +100,7 @@ func (repo *productGroupRepo) ListTimedeals(offset, limit int, isLive bool) ([]*
 		return productGroups, nil
 	}
 
-	outDateFilter := bson.M{"grouptype": domain.PRODUCT_GROUP_TIMEDEAL}
+	outDateFilter := bson.M{"grouptype": domain.PRODUCT_GROUP_BRAND_TIMEDEAL}
 	outDateOptions := options.Find()
 	outDateOptions.SetSort(bson.D{{Key: "finishtime", Value: -1}})
 	outDateOptions.SetSkip(int64(offset))
