@@ -33,7 +33,7 @@ type TestResponse struct {
 }
 
 func TestElasticSearchLogger(t *testing.T) {
-	cmd.SetBaseConfig("dev")
+	cmd.SetBaseConfig("local")
 	sv := chi.NewRouter()
 	sv.Use(chimiddleware.RequestID)
 	sv.Use(ElasticSearchLogger(log.New(os.Stdout, "", 0)))
