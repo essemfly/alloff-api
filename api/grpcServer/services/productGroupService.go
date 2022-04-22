@@ -104,7 +104,7 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 		}, nil
 	}
 
-	if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_BRAND_TIMEDEAL {
+	if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL {
 		pgDaos, err := ioc.Repo.ProductGroups.ListTimedeals(int(req.Offset), int(req.Limit), false)
 		if err != nil {
 			return nil, err
