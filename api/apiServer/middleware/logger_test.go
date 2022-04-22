@@ -54,10 +54,6 @@ func TestElasticSearchLogger(t *testing.T) {
 		// waiting for elastic search indexing on outside of main goroutine
 		time.Sleep(time.Second * 1)
 
-		// esapi header
-		header := http.Header{}
-		header.Add("Authorization", "Basic "+config.EsAPIKEY)
-
 		// esapi body
 		var buf bytes.Buffer
 		query := fmt.Sprintf(`
@@ -74,9 +70,8 @@ func TestElasticSearchLogger(t *testing.T) {
 
 		// esapi req
 		searchReq := esapi.SearchRequest{
-			Header: header,
-			Index:  []string{"access_log"},
-			Body:   body,
+			Index: []string{"access_log"},
+			Body:  body,
 		}
 		res, err := searchReq.Do(context.Background(), config.EsClient)
 		if err != nil {
