@@ -231,7 +231,7 @@ func (req *BrandProductsItemRequest) fillItemContents(item *domain.HomeTabItemDA
 			}
 		}
 	}
-	products, _, err := product.ProductsListing(0, numProductsToShow, brand.ID.Hex(), "", priceSorting, priceRange)
+	products, _, err := product.ProductsListing(0, numProductsToShow, brand.ID.Hex(), "", "", priceSorting, priceRange)
 	if err != nil {
 		log.Println("brand id not found: " + brand.ID.Hex())
 	}

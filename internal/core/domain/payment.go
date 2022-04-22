@@ -54,6 +54,10 @@ func (paymentDao *PaymentDAO) GetPaymentMethods() []*model.PaymentMethod {
 			Label: "카카오페이",
 			Code:  "kakaopay",
 		},
+		{
+			Label: "네이버페이",
+			Code:  "naverpay",
+		},
 	}
 	return paymentMethods
 }

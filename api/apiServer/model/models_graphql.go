@@ -122,18 +122,28 @@ type Device struct {
 }
 
 type Exhibition struct {
-	ID             string          `json:"id"`
-	BannerImage    string          `json:"bannerImage"`
-	ThumbnailImage string          `json:"thumbnailImage"`
-	Title          string          `json:"title"`
-	SubTitle       string          `json:"subTitle"`
-	Description    string          `json:"description"`
-	ProductGroups  []*ProductGroup `json:"productGroups"`
-	StartTime      string          `json:"startTime"`
-	FinishTime     string          `json:"finishTime"`
-	TargetSales    int             `json:"targetSales"`
-	CurrentSales   int             `json:"currentSales"`
-	ExhibitionType ExhibitionType  `json:"exhibitionType"`
+	ID                 string              `json:"id"`
+	BannerImage        string              `json:"bannerImage"`
+	ThumbnailImage     string              `json:"thumbnailImage"`
+	Title              string              `json:"title"`
+	SubTitle           string              `json:"subTitle"`
+	Description        string              `json:"description"`
+	ProductGroups      []*ProductGroup     `json:"productGroups"`
+	StartTime          string              `json:"startTime"`
+	FinishTime         string              `json:"finishTime"`
+	TargetSales        int                 `json:"targetSales"`
+	CurrentSales       int                 `json:"currentSales"`
+	ExhibitionType     ExhibitionType      `json:"exhibitionType"`
+	Banners            []*ExhibitionBanner `json:"banners"`
+	TotalProducts      int                 `json:"totalProducts"`
+	TotalProductGroups int                 `json:"totalProductGroups"`
+}
+
+type ExhibitionBanner struct {
+	ImgURL         string `json:"imgUrl"`
+	ProductGroupID string `json:"productGroupId"`
+	Title          string `json:"title"`
+	Subtitle       string `json:"subtitle"`
 }
 
 type FeaturedItem struct {
@@ -393,6 +403,7 @@ type ProductGroup struct {
 	FinishTime  string     `json:"finishTime"`
 	NumAlarms   int        `json:"numAlarms"`
 	SetAlarm    bool       `json:"setAlarm"`
+	Brand       *Brand     `json:"brand"`
 }
 
 type ProductQueryInput struct {
@@ -403,11 +414,12 @@ type ProductQueryInput struct {
 }
 
 type ProductsInput struct {
-	Offset   int           `json:"offset"`
-	Limit    int           `json:"limit"`
-	Brand    *string       `json:"brand"`
-	Category *string       `json:"category"`
-	Sorting  []SortingType `json:"sorting"`
+	Offset         int           `json:"offset"`
+	Limit          int           `json:"limit"`
+	Brand          *string       `json:"brand"`
+	Category       *string       `json:"category"`
+	Sorting        []SortingType `json:"sorting"`
+	ProductGroupID *string       `json:"productGroupId"`
 }
 
 type ProductsOutput struct {
@@ -554,20 +566,22 @@ func (e DeliveryType) MarshalGQL(w io.Writer) {
 type ExhibitionType string
 
 const (
-	ExhibitionTypeGroupdeal ExhibitionType = "GROUPDEAL"
-	ExhibitionTypeTimedeal  ExhibitionType = "TIMEDEAL"
-	ExhibitionTypeNormal    ExhibitionType = "NORMAL"
+	ExhibitionTypeGroupdeal     ExhibitionType = "GROUPDEAL"
+	ExhibitionTypeTimedeal      ExhibitionType = "TIMEDEAL"
+	ExhibitionTypeNormal        ExhibitionType = "NORMAL"
+	ExhibitionTypeBrandTimedeal ExhibitionType = "BRAND_TIMEDEAL"
 )
 
 var AllExhibitionType = []ExhibitionType{
 	ExhibitionTypeGroupdeal,
 	ExhibitionTypeTimedeal,
 	ExhibitionTypeNormal,
+	ExhibitionTypeBrandTimedeal,
 }
 
 func (e ExhibitionType) IsValid() bool {
 	switch e {
-	case ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal, ExhibitionTypeNormal:
+	case ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal, ExhibitionTypeNormal, ExhibitionTypeBrandTimedeal:
 		return true
 	}
 	return false

@@ -12,7 +12,7 @@ import (
 func UpdateBrandDiscountRate() {
 	log.Println("Running Script: Update Brand Discount Rate")
 	offset, limit := 0, 1000
-	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, false, nil)
+	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, false, false, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -30,7 +30,7 @@ func UpdateBrandDiscountRate() {
 		maxDiscountRate := 0
 
 		for {
-			products, totalCount, err := product.ProductsListing(offset, limit, brand.ID.Hex(), "", "", nil)
+			products, totalCount, err := product.ProductsListing(offset, limit, brand.ID.Hex(), "", "", "", nil)
 			if err != nil {
 				log.Println(err)
 			}

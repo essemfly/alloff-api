@@ -35,7 +35,7 @@ func (r *queryResolver) Find(ctx context.Context, input model.ProductQueryInput)
 		} else if sorting == model.SortingTypePriceDescending {
 			priceSorting = "descending"
 		} else if sorting == model.SortingTypeDiscountrateAscending {
-			priceSorting = "discountrateAescending"
+			priceSorting = "discountrateAscending"
 		} else if sorting == model.SortingTypeDiscountrateDescending {
 			priceSorting = "discountrateDescending"
 		} else {
@@ -89,7 +89,7 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 		} else if sorting == model.SortingTypePriceDescending {
 			priceSorting = "descending"
 		} else if sorting == model.SortingTypeDiscountrateAscending {
-			priceSorting = "discountrateAescending"
+			priceSorting = "discountrateAscending"
 		} else if sorting == model.SortingTypeDiscountrateDescending {
 			priceSorting = "discountrateDescending"
 		} else {
@@ -107,24 +107,29 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 
 	totalCount := 0
 
-	brandDao, err := ioc.Repo.Brands.Get(*input.Brand)
-	if err != nil || !brandDao.IsOpenBrand() {
-		return &model.ProductsOutput{
-			Products:   nil,
-			Offset:     input.Offset,
-			Limit:      input.Limit,
-			TotalCount: totalCount,
-		}, err
-	}
-
-	if input.Category == nil {
-		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, "", priceSorting, priceRange)
-	} else {
-		if brandDao.UseAlloffCategory {
-			productDaos, totalCount, _ = product.AlloffCategoryProductsListing(input.Offset, input.Limit, []string{brandDao.KeyName}, *input.Category, priceSorting, priceRange)
-		} else {
-			productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, *input.Category, priceSorting, priceRange)
+	if input.Brand != nil {
+		brandDao, err := ioc.Repo.Brands.Get(*input.Brand)
+		if err != nil || !brandDao.IsOpenBrand() {
+			return &model.ProductsOutput{
+				Products:   nil,
+				Offset:     input.Offset,
+				Limit:      input.Limit,
+				TotalCount: totalCount,
+			}, err
 		}
+		if input.Category == nil {
+			productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, "", "", priceSorting, priceRange)
+		} else {
+			if brandDao.UseAlloffCategory {
+				productDaos, totalCount, _ = product.AlloffCategoryProductsListing(input.Offset, input.Limit, []string{brandDao.KeyName}, *input.Category, priceSorting, priceRange)
+			} else {
+				productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, "", *input.Category, priceSorting, priceRange)
+			}
+		}
+	} else if input.ProductGroupID != nil {
+		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, "", "", *input.ProductGroupID, priceSorting, priceRange)
+	} else {
+		return nil, errors.New("no parameters given")
 	}
 
 	var products []*model.Product

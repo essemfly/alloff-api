@@ -12,7 +12,7 @@ import (
 func UpdateBrandCategory() {
 	log.Println("Running Script: Update Brand Category")
 	offset, limit := 0, 1000
-	brandDaos, totalCount, err := ioc.Repo.Brands.List(offset, limit, false, nil)
+	brandDaos, totalCount, err := ioc.Repo.Brands.List(offset, limit, false, false, nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -38,7 +38,7 @@ func ListBrandCategories(brandDao *domain.BrandDAO) []*domain.CategoryDAO {
 	}
 
 	for _, catDao := range catDaos {
-		_, pdCount, _ := product.ProductsListing(0, 1, brandDao.ID.Hex(), catDao.ID.Hex(), "", nil)
+		_, pdCount, _ := product.ProductsListing(0, 1, brandDao.ID.Hex(), catDao.ID.Hex(), "", "", nil)
 		if pdCount == 0 {
 			continue
 		}

@@ -17,6 +17,7 @@ func BrandMapper(brand *domain.BrandDAO) *grpcServer.BrandMessage {
 		IsPopular:     brand.Onpopular,
 		IsOpen:        brand.IsOpen,
 		InMaintenance: brand.InMaintenance,
+		IsHide:        brand.IsHide,
 		SizeGuide:     SizeGuideMapper(brand.SizeGuide),
 	}
 }
