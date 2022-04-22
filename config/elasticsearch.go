@@ -10,15 +10,18 @@ import (
 )
 
 var EsClient *elasticsearch.Client
-var EsAPIKEY string
 
 func InitElasticSearch(conf Configuration) {
-	defaultIndexName := []string{"access_log", "product_log"}
+	defaultIndexName := []string{"access_log", "product_log", "search_log"}
+
+	header := http.Header{}
+	header.Add("Authorization", "Basic "+conf.ELASTICSEARCH_APIKEY)
 
 	cfg := elasticsearch.Config{
 		Addresses: []string{
 			conf.ELASTICSEARCH_URL,
 		},
+		Header: header,
 	}
 
 	es, err := elasticsearch.NewClient(cfg)
@@ -27,7 +30,6 @@ func InitElasticSearch(conf Configuration) {
 	}
 
 	EsClient = es
-	EsAPIKEY = conf.ELASTICSEARCH_APIKEY
 
 	alreadyExist, err := checkIndexExists(defaultIndexName)
 	if err != nil {
@@ -46,11 +48,8 @@ func InitElasticSearch(conf Configuration) {
 
 // checkIndexExists : 입력된 이름의 인덱스가 있는지 확인
 func checkIndexExists(index []string) (bool, error) {
-	header := http.Header{}
-	header.Add("Authorization", "Basic "+EsAPIKEY)
 	req := esapi.IndicesExistsRequest{
-		Index:  index,
-		Header: header,
+		Index: index,
 	}
 	res, err := req.Do(context.Background(), EsClient)
 	if err != nil {
@@ -73,20 +72,20 @@ func createDefaultIndexMapping(index []string) error {
 		"mappings": {
 			"properties": {
 				"ts": {
-	   			"type": "date",
-	   			"format": "yyyy-MM-dd HH:mm:ss"
-	 			}
+	   				"type": "date",
+	   				"format": "yyyy-MM-dd HH:mm:ss"
+	 			},
+				"uri": {
+					"type": "keyword"
+				}
 			}
 		}
 	}`
-	header := http.Header{}
-	header.Add("Authorization", "Basic "+EsAPIKEY)
 
 	for _, index := range index {
 		req := esapi.IndicesCreateRequest{
-			Index:  index,
-			Body:   strings.NewReader(bodyStr),
-			Header: header,
+			Index: index,
+			Body:  strings.NewReader(bodyStr),
 		}
 		res, err := req.Do(context.Background(), EsClient)
 		if err != nil {

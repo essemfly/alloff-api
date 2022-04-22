@@ -62,6 +62,8 @@ func (r *queryResolver) Find(ctx context.Context, input model.ProductQueryInput)
 		products = append(products, mapper.MapProductDaoToProduct(pd))
 	}
 
+	go elasticsearch.SearchLogRequest(input.Keyword)
+	
 	return &model.ProductsOutput{
 		Products:   products,
 		Offset:     input.Offset,
@@ -76,7 +78,7 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product,
 		return nil, err
 	}
 
-	go elasticsearch.ProductLogRequest(pdDao)
+	go elasticsearch.ProductLogRequest(pdDao, elasticsearch.PRODUCT_VIEW)
 
 	return mapper.MapProductDaoToProduct(pdDao), nil
 }
