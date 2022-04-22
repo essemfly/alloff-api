@@ -49,9 +49,9 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 			NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
 			Title:            req.Title,
 			Message:          req.Message,
-			Notificationid:   "/product_group" + req.ReferenceId,
+			Notificationid:   "/products_group" + req.ReferenceId,
 			ReferenceID:      "/" + req.ReferenceId,
-			NavigateTo:       "/product_group",
+			NavigateTo:       "/products_group",
 		}
 	} else {
 		return nil, errors.New("invalid notification type")
