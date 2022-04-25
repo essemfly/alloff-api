@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/lessbutter/alloff-api/internal/storage/elasticsearch"
 	"log"
 
 	"github.com/lessbutter/alloff-api/config"
@@ -19,6 +20,8 @@ func SetBaseConfig(Env string) config.Configuration {
 	pgconn.RegisterRepos()
 	redisConn := redis.NewRedis(conf)
 	redisConn.RegisterRepos()
+	esConn := elasticsearch.NewElasticSearch(conf)
+	esConn.RegisterRepos()
 
 	config.InitSlack(conf)
 	config.InitIamPort(conf)

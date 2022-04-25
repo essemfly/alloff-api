@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	chimiddleware "github.com/go-chi/chi/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -36,6 +37,8 @@ func main() {
 	}
 
 	router := chi.NewRouter()
+	router.Use(chimiddleware.RequestID)
+	router.Use(middleware.ElasticSearchLogger(log.New(os.Stdout, "", 0)))
 	router.Use(middleware.Middleware())
 	router.Use(cors.AllowAll().Handler)
 

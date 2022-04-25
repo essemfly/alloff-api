@@ -12,24 +12,26 @@ import (
 )
 
 type Configuration struct {
-	ENVIRONMENT        string
-	MONGO_DB_NAME      string
-	MONGO_USERNAME     string
-	MONGO_PASSWORD     string
-	MONGO_URL          string
-	PORT               int
-	IAMPORT_API_KEY    string
-	IAMPORT_SECRET_KEY string
-	IAMPORT_IMP_CODE   string
-	PUSH_SERVER_URL    string
-	PUSH_NAVIGATE_URL  string
-	POSTGRES_URL       string
-	POSTGRES_USER      string
-	POSTGRES_PASSWORD  string
-	POSTGRES_DB_NAME   string
-	GRPC_PORT          int
-	AMPLITUDE_API_KEY  string
-	REDIS_URL          string
+	ENVIRONMENT          string
+	MONGO_DB_NAME        string
+	MONGO_USERNAME       string
+	MONGO_PASSWORD       string
+	MONGO_URL            string
+	PORT                 int
+	IAMPORT_API_KEY      string
+	IAMPORT_SECRET_KEY   string
+	IAMPORT_IMP_CODE     string
+	PUSH_SERVER_URL      string
+	PUSH_NAVIGATE_URL    string
+	POSTGRES_URL         string
+	POSTGRES_USER        string
+	POSTGRES_PASSWORD    string
+	POSTGRES_DB_NAME     string
+	GRPC_PORT            int
+	AMPLITUDE_API_KEY    string
+	REDIS_URL            string
+	ELASTICSEARCH_URL    string
+	ELASTICSEARCH_APIKEY string
 }
 
 func GetConfiguration(env string) Configuration {

@@ -184,3 +184,15 @@ type OrderCountsRepository interface {
 	Push(exhibitionID string) (int, error)
 	Cancel(exhibitionID string) (int, error)
 }
+
+type AccessLogRepository interface {
+	Index(*domain.AccessLogDAO) (int, error)
+}
+
+type ProductLogRepository interface {
+	Index(*domain.ProductDAO, domain.LogType) (int, error)
+}
+
+type SearchLogRepository interface {
+	Index(string) (int, error)
+}
