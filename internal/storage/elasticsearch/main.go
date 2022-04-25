@@ -25,7 +25,8 @@ func NewElasticSearch(conf config.Configuration) *ESClient {
 		Addresses: []string{
 			conf.ELASTICSEARCH_URL,
 		},
-		Header: header,
+		Header:       header,
+		DisableRetry: true,
 	}
 
 	esClient, err := es8.NewClient(cfg)
