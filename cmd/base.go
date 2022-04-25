@@ -27,7 +27,7 @@ func SetBaseConfig(Env string) config.Configuration {
 	config.InitIamPort(conf)
 	config.InitNotification(conf)
 	config.InitSentry(conf)
-	//config.InitAmplitude(conf)
+	config.InitAmplitude(conf)
 
 	return conf
 }
