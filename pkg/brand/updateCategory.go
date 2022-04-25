@@ -20,7 +20,6 @@ func UpdateBrandCategory() {
 	log.Println("Total # of brands : " + strconv.Itoa(totalCount))
 
 	for _, brandDao := range brandDaos {
-		brandDao.UseAlloffCategory = false
 		brandDao.AlloffCategory = ListBrandAlloffCategories(brandDao)
 		brandDao.Category = ListBrandCategories(brandDao)
 		_, err := ioc.Repo.Brands.Upsert(brandDao)
