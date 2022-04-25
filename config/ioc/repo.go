@@ -32,6 +32,9 @@ type iocRepo struct {
 	TopBanners       repository.TopBannersRepository
 	BestProducts     repository.BestProductsRepository
 	OrderCounts      repository.OrderCountsRepository
+	AccessLog        repository.AccessLogRepository
+	ProductLog       repository.ProductLogRepository
+	SearchLog        repository.SearchLogRepository
 }
 
 var Repo iocRepo

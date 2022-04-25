@@ -4,38 +4,22 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/go-chi/chi/middleware"
+	"github.com/lessbutter/alloff-api/config/ioc"
 	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/go-chi/chi/middleware"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
-
-type LogFields struct {
-	Body          GqlReq  `json:"body,omitempty"`
-	Type          string  `json:"type,omitempty"`
-	Timestamp     string  `json:"ts,omitempty"`
-	RemoteAddr    string  `json:"remote_addr,omitempty"`
-	UserAgent     string  `json:"user_agent,omitempty"`
-	Uri           string  `json:"uri,omitempty"`
-	RespStatus    int     `json:"resp_status,omitempty"`
-	RespElapsedMs float64 `json:"resp_elapsed_ms,omitempty"`
-	HttpMethod    string  `json:"http_method"`
-	HttpProto     string  `json:"http_proto"`
-}
-
-type GqlReq struct {
-	OperationName interface{}            `json:"operation_name"`
-	Query         interface{}            `json:"query"`
-	Variables     map[string]interface{} `json:"variables"`
-}
 
 // StructuredLogger : RequestLogger 미들웨어를 등록하기 위한 인자
 type StructuredLogger struct {
 	Logger *log.Logger
-	Fields LogFields
+	Fields domain.AccessLogDAO
 }
 
 // NewLogEntry : LogFormatter 인터페이스를 구현하는 메서드로, 커스터마이징한 StructuredLogger 를 이용해 리퀘스트에 대한 로깅을 할 수 있도록 한다.
@@ -59,7 +43,7 @@ func (l *StructuredLogger) NewLogEntry(r *http.Request) middleware.LogEntry {
 
 	// gql 서버에 오는 request body를 저장
 	queryPrettier := strings.Replace(query, "\n", "", -1)
-	gqlBody := GqlReq{
+	gqlBody := domain.GraphQLRequest{
 		OperationName: body["operationName"],
 		Query:         queryPrettier,
 		Variables:     variables,
@@ -89,7 +73,7 @@ func (l *StructuredLogger) Write(status, bytes int, header http.Header, elapsed 
 	l.Fields.Type = "request completed"
 	l.Fields.RespElapsedMs = float64(elapsed.Nanoseconds()) / 1000000.0
 	go func() {
-		_, err := logRequest(&l.Fields)
+		_, err := ioc.Repo.AccessLog.Index(&l.Fields)
 		if err != nil {
 			log.Println("Error on request to elastic search : ", err)
 		}
@@ -102,14 +86,4 @@ func (l *StructuredLogger) Panic(v interface{}, stack []byte) {
 		"stack": "%s",
 		"panic": "%+v",
 	`, stack, v)
-}
-
-func (f *LogFields) jsonEncoder() string {
-	bytesBuffer := new(bytes.Buffer)
-	encoder := json.NewEncoder(bytesBuffer)
-	encoder.SetEscapeHTML(false)
-	encoder.SetIndent("", " ")
-	encoder.Encode(f)
-	res := bytesBuffer.String()
-	return res
 }

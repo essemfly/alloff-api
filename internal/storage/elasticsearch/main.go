@@ -1,57 +1,69 @@
-package config
+package elasticsearch
 
 import (
 	"context"
-	"github.com/elastic/go-elasticsearch/v8"
+	es8 "github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/lessbutter/alloff-api/config"
+	"github.com/lessbutter/alloff-api/config/ioc"
 	"log"
 	"net/http"
 	"strings"
 )
 
-var EsClient *elasticsearch.Client
+type ESClient struct {
+	Client *es8.Client
+}
 
-func InitElasticSearch(conf Configuration) {
+func NewElasticSearch(conf config.Configuration) *ESClient {
 	defaultIndexName := []string{"access_log", "product_log", "search_log"}
 
 	header := http.Header{}
 	header.Add("Authorization", "Basic "+conf.ELASTICSEARCH_APIKEY)
 
-	cfg := elasticsearch.Config{
+	cfg := es8.Config{
 		Addresses: []string{
 			conf.ELASTICSEARCH_URL,
 		},
 		Header: header,
 	}
 
-	es, err := elasticsearch.NewClient(cfg)
+	esClient, err := es8.NewClient(cfg)
 	if err != nil {
-		log.Printf("Error creating the client: %s \n", err)
+		log.Println("Error creating Client : ", err)
 	}
 
-	EsClient = es
-
-	alreadyExist, err := checkIndexExists(defaultIndexName)
+	alreadyExist, err := checkIndexExists(defaultIndexName, esClient)
 	if err != nil {
 		log.Printf("Error on checking index exists %s \n", err)
 	}
 
 	if !alreadyExist {
-		err = createDefaultIndexMapping(defaultIndexName)
+		err = createDefaultIndexMapping(defaultIndexName, esClient)
 		if err != nil {
 			log.Printf("Error on creating default index %s \n", err)
 		} else {
 			log.Println("default index created")
 		}
 	}
+
+	return &ESClient{
+		Client: esClient,
+	}
+}
+
+func (conn *ESClient) RegisterRepos() {
+	ioc.Repo.AccessLog = EsAccessLogRepo(conn)
+	ioc.Repo.ProductLog = EsProductLogRepo(conn)
+	ioc.Repo.SearchLog = EsSearchLogRepo(conn)
 }
 
 // checkIndexExists : 입력된 이름의 인덱스가 있는지 확인
-func checkIndexExists(index []string) (bool, error) {
+func checkIndexExists(index []string, esClient *es8.Client) (bool, error) {
 	req := esapi.IndicesExistsRequest{
 		Index: index,
 	}
-	res, err := req.Do(context.Background(), EsClient)
+	res, err := req.Do(context.Background(), esClient)
 	if err != nil {
 		log.Printf("Error getting response: %s\n", err)
 		return false, err
@@ -67,7 +79,7 @@ func checkIndexExists(index []string) (bool, error) {
 
 // createDefaultIndexMapping : 기본 인덱스의 구조를 생성
 // 다른건 필드는 동적으로 생성하고 created_at 만 date 타입의 필드로 사전에 생성해둔다.
-func createDefaultIndexMapping(index []string) error {
+func createDefaultIndexMapping(index []string, esClient *es8.Client) error {
 	bodyStr := `{
 		"mappings": {
 			"properties": {
@@ -87,7 +99,7 @@ func createDefaultIndexMapping(index []string) error {
 			Index: index,
 			Body:  strings.NewReader(bodyStr),
 		}
-		res, err := req.Do(context.Background(), EsClient)
+		res, err := req.Do(context.Background(), esClient)
 		if err != nil {
 			log.Printf("Error getting response on creating default index mapping: %s\n", err)
 			return err

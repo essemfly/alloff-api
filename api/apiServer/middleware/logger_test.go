@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/lessbutter/alloff-api/cmd"
 	"github.com/lessbutter/alloff-api/config"
+	"github.com/lessbutter/alloff-api/internal/storage/elasticsearch"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/stretchr/testify/require"
 	"log"
@@ -33,7 +33,11 @@ type TestResponse struct {
 }
 
 func TestElasticSearchLogger(t *testing.T) {
-	cmd.SetBaseConfig("local")
+	testConf := config.GetConfiguration("dev")
+
+	esConn := elasticsearch.NewElasticSearch(testConf)
+	esConn.RegisterRepos()
+
 	sv := chi.NewRouter()
 	sv.Use(chimiddleware.RequestID)
 	sv.Use(ElasticSearchLogger(log.New(os.Stdout, "", 0)))
@@ -73,7 +77,7 @@ func TestElasticSearchLogger(t *testing.T) {
 			Index: []string{"access_log"},
 			Body:  body,
 		}
-		res, err := searchReq.Do(context.Background(), config.EsClient)
+		res, err := searchReq.Do(context.Background(), esConn.Client)
 		if err != nil {
 			log.Println("err getting response : ", err)
 		}

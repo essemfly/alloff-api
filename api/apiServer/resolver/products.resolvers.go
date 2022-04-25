@@ -7,7 +7,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/lessbutter/alloff-api/internal/pkg/elasticsearch"
 	"log"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
@@ -62,8 +61,8 @@ func (r *queryResolver) Find(ctx context.Context, input model.ProductQueryInput)
 		products = append(products, mapper.MapProductDaoToProduct(pd))
 	}
 
-	go elasticsearch.SearchLogRequest(input.Keyword)
-	
+	go ioc.Repo.SearchLog.Index(input.Keyword)
+
 	return &model.ProductsOutput{
 		Products:   products,
 		Offset:     input.Offset,
@@ -78,7 +77,8 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product,
 		return nil, err
 	}
 
-	go elasticsearch.ProductLogRequest(pdDao, elasticsearch.PRODUCT_VIEW)
+	//go elasticsearch.ProductLogRequest(pdDao, domain.PRODUCT_VIEW)
+	go ioc.Repo.ProductLog.Index(pdDao, domain.PRODUCT_VIEW)
 
 	return mapper.MapProductDaoToProduct(pdDao), nil
 }
