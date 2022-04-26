@@ -3,6 +3,7 @@ package domain
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 )
 
 type LogType string
@@ -37,6 +38,12 @@ type ProductLogDAO struct {
 	Type    LogType     `json:"type"`
 }
 
+type BrandLogDAO struct {
+	Brand *BrandDAO `json:"brand"`
+	Ts    string    `json:"ts"`
+	Type  LogType   `json:"type"`
+}
+
 type SearchLogDAO struct {
 	Keyword string `json:"keyword"`
 	Ts      string `json:"ts"`
@@ -44,10 +51,15 @@ type SearchLogDAO struct {
 
 func (f *AccessLogDAO) JsonEncoder() string {
 	bytesBuffer := new(bytes.Buffer)
-	encoder := json.NewEncoder(bytesBuffer)
-	encoder.SetEscapeHTML(false)
-	encoder.SetIndent("", " ")
-	encoder.Encode(f)
-	res := bytesBuffer.String()
+	res := "{}"
+	if f != nil {
+		encoder := json.NewEncoder(bytesBuffer)
+		encoder.SetEscapeHTML(false)
+		encoder.SetIndent("", " ")
+		encoder.Encode(f)
+		res = bytesBuffer.String()
+	} else {
+		log.Println("nil pointer of AccessDAO passed")
+	}
 	return res
 }
