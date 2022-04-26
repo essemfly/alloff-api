@@ -29,6 +29,8 @@ func (r *queryResolver) Brand(ctx context.Context, input *model.BrandInput) (*mo
 		return nil, err
 	}
 
+	go ioc.Repo.BrandLog.Index(brandDao)
+
 	return mapper.MapBrandDaoToBrand(brandDao, includeCategory), nil
 }
 

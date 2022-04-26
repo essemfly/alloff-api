@@ -193,6 +193,10 @@ type ProductLogRepository interface {
 	Index(*domain.ProductDAO, domain.LogType) (int, error)
 }
 
+type BrandLogRepository interface {
+	Index(*domain.BrandDAO) (int, error)
+}
+
 type SearchLogRepository interface {
 	Index(string) (int, error)
 }

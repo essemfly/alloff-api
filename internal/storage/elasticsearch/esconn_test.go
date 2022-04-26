@@ -18,5 +18,4 @@ func TestConnElasticSearch(t *testing.T) {
 
 		require.Equal(t, 200, res.StatusCode)
 	})
-
 }

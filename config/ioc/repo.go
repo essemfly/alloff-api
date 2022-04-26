@@ -34,6 +34,7 @@ type iocRepo struct {
 	OrderCounts      repository.OrderCountsRepository
 	AccessLog        repository.AccessLogRepository
 	ProductLog       repository.ProductLogRepository
+	BrandLog         repository.BrandLogRepository
 	SearchLog        repository.SearchLogRepository
 }
 

@@ -16,7 +16,7 @@ type ESClient struct {
 }
 
 func NewElasticSearch(conf config.Configuration) *ESClient {
-	defaultIndexName := []string{"access_log", "product_log", "search_log"}
+	defaultIndexName := []string{"access_log", "product_log", "search_log", "brand_log"}
 
 	header := http.Header{}
 	header.Add("Authorization", "Basic "+conf.ELASTICSEARCH_APIKEY)
@@ -57,6 +57,7 @@ func (conn *ESClient) RegisterRepos() {
 	ioc.Repo.AccessLog = EsAccessLogRepo(conn)
 	ioc.Repo.ProductLog = EsProductLogRepo(conn)
 	ioc.Repo.SearchLog = EsSearchLogRepo(conn)
+	ioc.Repo.BrandLog = EsBrandLogRepo(conn)
 }
 
 // checkIndexExists : 입력된 이름의 인덱스가 있는지 확인
@@ -105,7 +106,7 @@ func createDefaultIndexMapping(index []string, esClient *es8.Client) error {
 			log.Printf("Error getting response on creating default index mapping: %s\n", err)
 			return err
 		} else {
-			log.Printf("creating index mapping for %s\n", index)
+			log.Printf("creating index mapping for %s\n if not exists", index)
 		}
 		res.Body.Close()
 	}
