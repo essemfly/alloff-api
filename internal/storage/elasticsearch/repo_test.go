@@ -36,4 +36,12 @@ func TestEvent(t *testing.T) {
 		require.Nil(t, err)
 		require.Equal(t, 201, statusCode)
 	})
+
+	t.Run("Test Indexing Brand Log", func(t *testing.T) {
+		brand, _ := ioc.Repo.Brands.Get("61d699eb74b2b71fe80ff4b6")
+		statusCode, err := ioc.Repo.BrandLog.Index(brand)
+		require.Nil(t, err)
+		require.Equal(t, 201, statusCode)
+	})
+
 }
