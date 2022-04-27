@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"time"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -195,6 +196,7 @@ type ProductLogRepository interface {
 
 type BrandLogRepository interface {
 	Index(*domain.BrandDAO) (int, error)
+	GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error)
 }
 
 type SearchLogRepository interface {

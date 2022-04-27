@@ -1,14 +1,10 @@
 package elasticsearch
 
 import (
-	"context"
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/core/repository"
-	"io/ioutil"
-	"log"
-	"strings"
+	alloffEs "github.com/lessbutter/alloff-api/internal/pkg/elasticsearch"
 )
 
 type accessLogRepo struct {
@@ -17,24 +13,13 @@ type accessLogRepo struct {
 
 func (repo *accessLogRepo) Index(request *domain.AccessLogDAO) (int, error) {
 	index := "access_log"
-	bodyStr := request.JsonEncoder()
-	req := esapi.IndexRequest{
-		Index:   index,
-		Body:    strings.NewReader(bodyStr),
-		Refresh: "true",
-	}
-	res, err := req.Do(context.Background(), repo.client)
-	if err != nil {
-		log.Println("Error getting response : ", err)
-		return 400, err
-	}
-	defer res.Body.Close()
 
-	_, err = ioutil.ReadAll(res.Body)
+	bodyStr := alloffEs.JsonEncoder(request)
+	statusCode, err := alloffEs.RequestIndex(index, bodyStr, repo.client)
 	if err != nil {
 		return 400, err
 	}
-	return res.StatusCode, nil
+	return statusCode, nil
 }
 
 func EsAccessLogRepo(conn *ESClient) repository.AccessLogRepository {

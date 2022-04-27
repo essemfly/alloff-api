@@ -6,7 +6,9 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/stretchr/testify/require"
+	"log"
 	"testing"
+	"time"
 )
 
 func TestEvent(t *testing.T) {
@@ -44,4 +46,12 @@ func TestEvent(t *testing.T) {
 		require.Equal(t, 201, statusCode)
 	})
 
+	t.Run("Test Query Brand Count", func(t *testing.T) {
+		from := time.Now().Add(-24 * time.Hour)
+		log.Println(from.String())
+		to := time.Now()
+		limit := 100
+		res, _ := ioc.Repo.BrandLog.GetRank(limit, from, to)
+		log.Println(res)
+	})
 }
