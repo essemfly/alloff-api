@@ -133,6 +133,7 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 	if orderItemDao.CanCancelOrder() {
 		orderItemDao.CancelRequestedAt = time.Now()
 		orderItemDao.UpdatedAt = time.Now()
+		orderItemDao.OrderItemStatus = domain.ORDER_ITEM_RETURN_REQUESTED
 
 		_, err := ioc.Repo.OrderItems.Update(orderItemDao)
 		if err != nil {
