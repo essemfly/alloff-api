@@ -13,7 +13,7 @@ import (
 func AddMockTimedeal() {
 	log.Println("ADD MOCK TIMEDEAL2.0 START ********")
 	exId := primitive.NewObjectID()
-	pgs := addTiemdealProductGroups(exId.Hex())
+	pgs := addTimedealProductGroups(exId.Hex())
 
 	totalProducts := 0
 
@@ -32,9 +32,9 @@ func AddMockTimedeal() {
 	startTime := time.Now()
 	exDao := domain.ExhibitionDAO{
 		ID:             exId,
-		Title:          "타임딜 2.0 테스트 타임딜 아마 백오피스에서 쓸듯",
-		SubTitle:       "타임딜 2.0 테스트 타임딜 서브타이틀 아마 백오피스에서 쓸듯",
-		Description:    "타임딜 2.0 테스트 타임딜 문구 아마 백오피스에서 쓸듯",
+		Title:          "타임딜 2.0 석민테스트_19:55",
+		SubTitle:       "타임딜 2.0 석민테스트_19:55 서브타이틀",
+		Description:    "타임딜 2.0 석민테스트_19:55 디스크립션!!",
 		StartTime:      startTime,
 		FinishTime:     startTime.Add(365 * 24 * time.Hour),
 		ProductGroups:  pgs,

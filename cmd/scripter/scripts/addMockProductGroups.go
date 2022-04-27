@@ -14,7 +14,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func addTiemdealProductGroups(exhibitionId string) []*domain.ProductGroupDAO {
+func addTimedealProductGroups(exhibitionId string) []*domain.ProductGroupDAO {
 	loc, _ := time.LoadLocation("Asia/Seoul")
 	timedealInstrctuion := []string{
 		"타임딜 상품은 올오프 MD가 팩토리 아울렛 및 현대/롯데/신세계 프리미엄 아울렛에서 직소싱한 상품입니다.",
@@ -55,6 +55,7 @@ func addTiemdealProductGroups(exhibitionId string) []*domain.ProductGroupDAO {
 
 		filter := bson.M{
 			"productinfo.brand.keyname": brand.KeyName,
+			"removed":                   false,
 		}
 		products, _, err := ioc.Repo.Products.List(0, 10, filter, nil)
 		if err != nil {
