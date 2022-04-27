@@ -358,17 +358,18 @@ type ComplexityRoot struct {
 	}
 
 	ProductGroup struct {
-		Brand       func(childComplexity int) int
-		FinishTime  func(childComplexity int) int
-		ID          func(childComplexity int) int
-		ImgURL      func(childComplexity int) int
-		Instruction func(childComplexity int) int
-		NumAlarms   func(childComplexity int) int
-		Products    func(childComplexity int) int
-		SetAlarm    func(childComplexity int) int
-		ShortTitle  func(childComplexity int) int
-		StartTime   func(childComplexity int) int
-		Title       func(childComplexity int) int
+		Brand         func(childComplexity int) int
+		FinishTime    func(childComplexity int) int
+		ID            func(childComplexity int) int
+		ImgURL        func(childComplexity int) int
+		Instruction   func(childComplexity int) int
+		NumAlarms     func(childComplexity int) int
+		Products      func(childComplexity int) int
+		SetAlarm      func(childComplexity int) int
+		ShortTitle    func(childComplexity int) int
+		StartTime     func(childComplexity int) int
+		Title         func(childComplexity int) int
+		TotalProducts func(childComplexity int) int
 	}
 
 	ProductsOutput struct {
@@ -2180,6 +2181,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ProductGroup.Title(childComplexity), true
 
+	case "ProductGroup.totalProducts":
+		if e.complexity.ProductGroup.TotalProducts == nil {
+			break
+		}
+
+		return e.complexity.ProductGroup.TotalProducts(childComplexity), true
+
 	case "ProductsOutput.limit":
 		if e.complexity.ProductsOutput.Limit == nil {
 			break
@@ -3108,6 +3116,7 @@ type ProductGroup {
   numAlarms: Int!
   setAlarm: Boolean!
   brand: Brand!
+  totalProducts: Int!
 }
 
 enum ExhibitionType {
@@ -12009,6 +12018,41 @@ func (ec *executionContext) _ProductGroup_brand(ctx context.Context, field graph
 	return ec.marshalNBrand2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrand(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _ProductGroup_totalProducts(ctx context.Context, field graphql.CollectedField, obj *model.ProductGroup) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProductGroup",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalProducts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ProductsOutput_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.ProductsOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17720,6 +17764,11 @@ func (ec *executionContext) _ProductGroup(ctx context.Context, sel ast.Selection
 			}
 		case "brand":
 			out.Values[i] = ec._ProductGroup_brand(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "totalProducts":
+			out.Values[i] = ec._ProductGroup_totalProducts(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

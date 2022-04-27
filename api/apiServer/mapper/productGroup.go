@@ -44,17 +44,18 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 	}
 
 	pg := &model.ProductGroup{
-		ID:          pgDao.ID.Hex(),
-		Title:       pgDao.Title,
-		ShortTitle:  pgDao.ShortTitle,
-		Instruction: pgDao.Instruction,
-		ImgURL:      pgDao.ImgUrl,
-		NumAlarms:   pgDao.NumAlarms,
-		Products:    pds,
-		StartTime:   pgDao.StartTime.Add(9 * time.Hour).String(),
-		FinishTime:  pgDao.FinishTime.Add(9 * time.Hour).String(),
-		SetAlarm:    false,
-		Brand:       brand,
+		ID:            pgDao.ID.Hex(),
+		Title:         pgDao.Title,
+		ShortTitle:    pgDao.ShortTitle,
+		Instruction:   pgDao.Instruction,
+		ImgURL:        pgDao.ImgUrl,
+		NumAlarms:     pgDao.NumAlarms,
+		Products:      pds,
+		StartTime:     pgDao.StartTime.Add(9 * time.Hour).String(),
+		FinishTime:    pgDao.FinishTime.Add(9 * time.Hour).String(),
+		SetAlarm:      false,
+		Brand:         brand,
+		TotalProducts: len(pgDao.Products),
 	}
 	return pg
 }

@@ -393,17 +393,18 @@ type ProductDescription struct {
 }
 
 type ProductGroup struct {
-	ID          string     `json:"id"`
-	Title       string     `json:"title"`
-	ShortTitle  string     `json:"shortTitle"`
-	Instruction []string   `json:"instruction"`
-	ImgURL      string     `json:"imgUrl"`
-	Products    []*Product `json:"products"`
-	StartTime   string     `json:"startTime"`
-	FinishTime  string     `json:"finishTime"`
-	NumAlarms   int        `json:"numAlarms"`
-	SetAlarm    bool       `json:"setAlarm"`
-	Brand       *Brand     `json:"brand"`
+	ID            string     `json:"id"`
+	Title         string     `json:"title"`
+	ShortTitle    string     `json:"shortTitle"`
+	Instruction   []string   `json:"instruction"`
+	ImgURL        string     `json:"imgUrl"`
+	Products      []*Product `json:"products"`
+	StartTime     string     `json:"startTime"`
+	FinishTime    string     `json:"finishTime"`
+	NumAlarms     int        `json:"numAlarms"`
+	SetAlarm      bool       `json:"setAlarm"`
+	Brand         *Brand     `json:"brand"`
+	TotalProducts int        `json:"totalProducts"`
 }
 
 type ProductQueryInput struct {

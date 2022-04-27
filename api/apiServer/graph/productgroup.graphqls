@@ -12,6 +12,7 @@ type ProductGroup {
   numAlarms: Int!
   setAlarm: Boolean!
   brand: Brand!
+  totalProducts: Int!
 }
 
 enum ExhibitionType {
