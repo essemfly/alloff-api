@@ -105,7 +105,7 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 	}
 
 	if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL {
-		pgDaos, err := ioc.Repo.ProductGroups.ListTimedeals(int(req.Offset), int(req.Limit), false)
+		pgDaos, cnt, err := ioc.Repo.ProductGroups.ListTimedeals(int(req.Offset), int(req.Limit), false)
 		if err != nil {
 			return nil, err
 		}
@@ -117,7 +117,7 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 			Pgs:         pgs,
 			Offset:      req.Offset,
 			Limit:       req.Limit,
-			TotalCounts: 0,
+			TotalCounts: int32(cnt),
 		}, nil
 	} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
 		keyword := ""

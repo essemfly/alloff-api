@@ -78,7 +78,7 @@ type HomeItemsRepository interface {
 type ProductGroupsRepository interface {
 	Get(ID string) (*domain.ProductGroupDAO, error)
 	List(numPassedItem int) ([]*domain.ProductGroupDAO, error)
-	ListTimedeals(offset, limit int, isLive bool) ([]*domain.ProductGroupDAO, error)
+	ListTimedeals(offset, limit int, isLive bool) ([]*domain.ProductGroupDAO, int, error)
 	ListExhibitionPg(offset, limit int, keyword string) ([]*domain.ProductGroupDAO, int, error)
 	ListPgInExhibition(exhibitionID string) ([]*domain.ProductGroupDAO, error)
 	Upsert(*domain.ProductGroupDAO) (*domain.ProductGroupDAO, error)

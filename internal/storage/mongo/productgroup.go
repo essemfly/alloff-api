@@ -75,7 +75,7 @@ func (repo *productGroupRepo) List(numPassedItem int) ([]*domain.ProductGroupDAO
 	return productGroups, nil
 }
 
-func (repo *productGroupRepo) ListTimedeals(offset, limit int, isLive bool) ([]*domain.ProductGroupDAO, error) {
+func (repo *productGroupRepo) ListTimedeals(offset, limit int, isLive bool) ([]*domain.ProductGroupDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -87,17 +87,18 @@ func (repo *productGroupRepo) ListTimedeals(offset, limit int, isLive bool) ([]*
 		cur, err := repo.col.Find(ctx, filter, onGoingOptions)
 		if err != nil {
 			log.Println(err)
-			return nil, err
+			return nil, 0, err
 		}
 
+		totalCount, _ := repo.col.CountDocuments(ctx, filter)
 		var productGroups []*domain.ProductGroupDAO
 		err = cur.All(ctx, &productGroups)
 		if err != nil {
 			log.Println(err)
-			return nil, err
+			return nil, 0, err
 		}
 
-		return productGroups, nil
+		return productGroups, int(totalCount), nil
 	}
 
 	outDateFilter := bson.M{"grouptype": domain.PRODUCT_GROUP_BRAND_TIMEDEAL}
@@ -109,17 +110,18 @@ func (repo *productGroupRepo) ListTimedeals(offset, limit int, isLive bool) ([]*
 	cur, err := repo.col.Find(ctx, outDateFilter, outDateOptions)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, 0, err
 	}
 
+	totalCount, _ := repo.col.CountDocuments(ctx, outDateFilter)
 	var productGroups []*domain.ProductGroupDAO
 	err = cur.All(ctx, &productGroups)
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, 0, err
 	}
 
-	return productGroups, nil
+	return productGroups, int(totalCount), nil
 }
 
 func (repo *productGroupRepo) ListExhibitionPg(offset, limit int, keyword string) ([]*domain.ProductGroupDAO, int, error) {
