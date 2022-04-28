@@ -8,7 +8,6 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"github.com/lessbutter/alloff-api/internal/core/repository"
 	alloffEs "github.com/lessbutter/alloff-api/internal/pkg/elasticsearch"
-	"log"
 	"time"
 )
 
@@ -16,9 +15,8 @@ type brandLogRepo struct {
 	client *elasticsearch.Client
 }
 
-const index = "brand_log"
-
 func (repo *brandLogRepo) Index(request *domain.BrandDAO) (int, error) {
+	index := "brand_log"
 	now := time.Now().Format("2006-01-02 15:04:05")
 	bd := &domain.BrandLogDAO{
 		Brand: request,
@@ -36,6 +34,7 @@ func (repo *brandLogRepo) Index(request *domain.BrandDAO) (int, error) {
 func (repo *brandLogRepo) GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error) {
 	var documentCountDTO dto.DocumentCountDTO
 
+	index := "brand_log"
 	fromStr := from.Format("2006-01-02 15:04:05")
 	toStr := to.Format("2006-01-02 15:04:05")
 
@@ -64,7 +63,6 @@ func (repo *brandLogRepo) GetRank(limit int, from time.Time, to time.Time) (*dto
 	if err != nil {
 		return nil, err
 	}
-	log.Println(string(resBody))
 	json.Unmarshal(resBody, &documentCountDTO)
 	return &documentCountDTO, nil
 }

@@ -64,5 +64,4 @@ func RequestQuery(index, reqBody string, client *elasticsearch.Client) ([]byte, 
 		return nil, err
 	}
 	return resBody, nil
-
 }

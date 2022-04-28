@@ -47,11 +47,34 @@ func TestEvent(t *testing.T) {
 	})
 
 	t.Run("Test Query Brand Count", func(t *testing.T) {
-		from := time.Now().Add(-24 * time.Hour)
+		from := time.Now().Add(-24 * 365 * time.Hour)
 		log.Println(from.String())
 		to := time.Now()
 		limit := 100
 		res, _ := ioc.Repo.BrandLog.GetRank(limit, from, to)
+		log.Println(res)
+	})
+
+	t.Run("Test Query Product Count", func(t *testing.T) {
+		from := time.Now().Add(-24 * 365 * time.Hour)
+		to := time.Now()
+		limit := 100
+		res, _ := ioc.Repo.ProductLog.GetRank(limit, from, to)
+		log.Println(res)
+	})
+
+	t.Run("Test Query AccessLog", func(t *testing.T) {
+		from := time.Now().Add(-24 * 365 * time.Hour)
+		to := time.Now()
+		limit := 100
+		order := "desc"
+
+		res, _ := ioc.Repo.AccessLog.List(limit, from, to, order)
+		log.Println(res)
+	})
+
+	t.Run("Test Get Latest Log", func(t *testing.T) {
+		res, _ := ioc.Repo.AccessLog.GetLatest(100)
 		log.Println(res)
 	})
 }

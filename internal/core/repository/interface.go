@@ -188,10 +188,13 @@ type OrderCountsRepository interface {
 
 type AccessLogRepository interface {
 	Index(*domain.AccessLogDAO) (int, error)
+	List(limit int, from, to time.Time, order string) (*dto.AccessLogDTO, error)
+	GetLatest(limit int) (*dto.AccessLogDTO, error)
 }
 
 type ProductLogRepository interface {
 	Index(*domain.ProductDAO, domain.LogType) (int, error)
+	GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error)
 }
 
 type BrandLogRepository interface {
