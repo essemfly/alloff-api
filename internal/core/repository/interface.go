@@ -18,6 +18,7 @@ type ProductsRepository interface {
 	Get(ID string) (*domain.ProductDAO, error)
 	GetByMetaID(MetaID string) (*domain.ProductDAO, error)
 	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
+	ListByIds(ids []string) ([]*domain.ProductDAO, error)
 	ListDistinctBrands(alloffCategoryID string) ([]*domain.BrandDAO, error)
 	Insert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	Upsert(*domain.ProductDAO) (*domain.ProductDAO, error)
