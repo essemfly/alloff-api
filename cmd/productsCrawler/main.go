@@ -60,6 +60,7 @@ func main() {
 
 	brand.UpdateBrandCategory()
 	brand.UpdateBrandDiscountRate()
+	brand.MakeSnapshot()
 	product.MakeSnapshot()
 	crawler.WriteCrawlRecords(crawlModules)
 }
