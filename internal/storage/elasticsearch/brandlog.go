@@ -1,16 +1,13 @@
 package elasticsearch
 
 import (
-	"bytes"
-	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
-	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"github.com/lessbutter/alloff-api/internal/core/repository"
-	"io/ioutil"
-	"log"
-	"strings"
+	alloffEs "github.com/lessbutter/alloff-api/internal/pkg/elasticsearch"
 	"time"
 )
 
@@ -20,37 +17,54 @@ type brandLogRepo struct {
 
 func (repo *brandLogRepo) Index(request *domain.BrandDAO) (int, error) {
 	index := "brand_log"
-
 	now := time.Now().Format("2006-01-02 15:04:05")
 	bd := &domain.BrandLogDAO{
 		Brand: request,
 		Ts:    now,
 	}
 
-	bodyBuffer := new(bytes.Buffer)
-	encoder := json.NewEncoder(bodyBuffer)
-	encoder.SetEscapeHTML(false)
-	encoder.Encode(&bd)
-	bodyStr := bodyBuffer.String()
-
-	req := esapi.IndexRequest{
-		Index:   index,
-		Body:    strings.NewReader(bodyStr),
-		Refresh: "true",
-	}
-	res, err := req.Do(context.Background(), repo.client)
+	bodyStr := alloffEs.JsonEncoder(bd)
+	statusCode, err := alloffEs.RequestIndex(index, bodyStr, repo.client)
 	if err != nil {
-		log.Println("err getting response : ", err)
 		return 400, err
 	}
-	defer res.Body.Close()
+	return statusCode, nil
+}
 
-	_, err = ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Println("err reading response : ", err)
-		return 400, err
+func (repo *brandLogRepo) GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error) {
+	var documentCountDTO dto.DocumentCountDTO
+
+	index := "brand_log"
+	fromStr := from.Format("2006-01-02 15:04:05")
+	toStr := to.Format("2006-01-02 15:04:05")
+
+	bodyStr := fmt.Sprintf(`{
+		"size": 0,
+		"query": {
+			"range": {
+				"ts": {
+					"gt": "%s",
+					"lt": "%s"
+				}
+			}
+		},
+		"aggs": {
+			"group_by_state": {
+				"terms": {
+					"field": "brand.ID.keyword",
+					"size": %v
+				}
+			}
+		}
 	}
-	return res.StatusCode, nil
+	`, fromStr, toStr, limit)
+
+	resBody, err := alloffEs.RequestQuery(index, bodyStr, repo.client)
+	if err != nil {
+		return nil, err
+	}
+	json.Unmarshal(resBody, &documentCountDTO)
+	return &documentCountDTO, nil
 }
 
 func EsBrandLogRepo(conn *ESClient) repository.BrandLogRepository {

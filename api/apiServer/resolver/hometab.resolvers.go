@@ -55,26 +55,33 @@ func (r *queryResolver) BestProducts(ctx context.Context, offset int, limit int,
 		return nil, err
 	}
 
+	lastUpdatedKST := bestproductDao.CreatedAt.Add(9 * time.Hour).Format("2006-01-02 15:04:05")
+	flooredLastUpdated := lastUpdatedKST[0:len(lastUpdatedKST)-5] + "00:00"
+
 	return &model.ProductsResult{
 		Products:    mapper.MapBestProducts(bestproductDao, brief, offset, limit),
-		LastUpdated: bestproductDao.CreatedAt.String(),
+		LastUpdated: flooredLastUpdated,
 	}, nil
 }
 
 func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) (*model.BrandsResult, error) {
-	brandDaos, _, err := ioc.Repo.Brands.List(offset, limit, true, true, nil)
+	bestBrandsDao, err := ioc.Repo.BestBrands.GetLatest()
 	if err != nil {
+		log.Println("Err occurred in get latest best products : ", err)
 		return nil, err
 	}
 
 	brands := []*model.Brand{}
-	for _, brandDao := range brandDaos {
+	for _, brandDao := range bestBrandsDao.Brands {
 		brands = append(brands, mapper.MapBrandDaoToBrand(brandDao, false))
 	}
 
+	lastUpdatedKST := bestBrandsDao.CreatedAt.Add(9 * time.Hour).Format("2006-01-02 15:04:05")
+	flooredLastUpdated := lastUpdatedKST[0:len(lastUpdatedKST)-5] + "00:00"
+
 	return &model.BrandsResult{
 		Brands:      brands,
-		LastUpdated: time.Now().String(),
+		LastUpdated: flooredLastUpdated,
 	}, nil
 }
 
