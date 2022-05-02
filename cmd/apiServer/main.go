@@ -1,12 +1,12 @@
 package main
 
 import (
-	"fmt"
-	chimiddleware "github.com/go-chi/chi/middleware"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
+
+	chimiddleware "github.com/go-chi/chi/middleware"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -19,17 +19,12 @@ import (
 	"github.com/rs/cors"
 )
 
-var (
-	GitInfo   = "no info"
-	BuildTime = "no datetime"
-	Env       = "prod"
-)
-
 func main() {
-	fmt.Println("Git commit information: ", GitInfo)
-	fmt.Println("Build date, time: ", BuildTime)
-
-	conf := cmd.SetBaseConfig(Env)
+	env := os.Getenv("ENV")
+	if env == "" {
+		env = "dev"
+	}
+	conf := cmd.SetBaseConfig(env)
 
 	port := os.Getenv("PORT")
 	if port == "" {

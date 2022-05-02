@@ -6,6 +6,7 @@ on:
       - feature/cd
 
 env:
+  ENV: dev
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: alloff-api-dev
   ECS_SERVICE: alloff-api-dev
