@@ -31,6 +31,7 @@ type iocRepo struct {
 	HomeTabItems     repository.HomeTabItemsRepository
 	TopBanners       repository.TopBannersRepository
 	BestProducts     repository.BestProductsRepository
+	BestBrands       repository.BestBrandRepository
 	OrderCounts      repository.OrderCountsRepository
 	AccessLog        repository.AccessLogRepository
 	ProductLog       repository.ProductLogRepository

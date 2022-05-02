@@ -6,7 +6,9 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/stretchr/testify/require"
+	"log"
 	"testing"
+	"time"
 )
 
 func TestEvent(t *testing.T) {
@@ -44,4 +46,48 @@ func TestEvent(t *testing.T) {
 		require.Equal(t, 201, statusCode)
 	})
 
+	t.Run("Test Query Brand Count", func(t *testing.T) {
+		from := time.Now().Add(-24 * 365 * time.Hour)
+		log.Println(from.String())
+		to := time.Now()
+		limit := 100
+		res, _ := ioc.Repo.BrandLog.GetRank(limit, from, to)
+		log.Println(res)
+	})
+
+	t.Run("Test Query Product Count", func(t *testing.T) {
+		from := time.Now().Add(-24 * 365 * time.Hour)
+		to := time.Now()
+		limit := 100
+		res, _ := ioc.Repo.ProductLog.GetRank(limit, from, to)
+		log.Println(res)
+	})
+
+	t.Run("Test Query AccessLog", func(t *testing.T) {
+		from := time.Now().Add(-24 * 365 * time.Hour)
+		to := time.Now()
+		limit := 100
+		order := "desc"
+
+		res, _ := ioc.Repo.AccessLog.List(limit, from, to, order)
+		log.Println(res)
+	})
+
+	t.Run("Test Get Latest Log", func(t *testing.T) {
+		res, _ := ioc.Repo.AccessLog.GetLatest(100)
+		log.Println(res)
+	})
+
+	t.Run("Test Get rank by cat id", func(t *testing.T) {
+		from := time.Now().Add(-24 * 365 * time.Hour)
+		to := time.Now()
+		alloffCatIds := []string{""}
+		alloffLev1Cats, _ := ioc.Repo.AlloffCategories.List(&alloffCatIds[0])
+
+		res, _ := ioc.Repo.ProductLog.GetRankByCatId(100, from, to, alloffLev1Cats[0].ID.Hex())
+		for _, pd := range res.Aggregations.GroupByState.Buckets {
+			pd, _ := ioc.Repo.Products.Get(pd.Key)
+			require.Equal(t, pd.AlloffCategories.First.ID.Hex(), alloffLev1Cats[0].ID.Hex())
+		}
+	})
 }

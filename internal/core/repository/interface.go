@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"time"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -176,6 +177,11 @@ type BestProductsRepository interface {
 	GetLatest(alloffCategoryID string) (*domain.BestProductDAO, error)
 }
 
+type BestBrandRepository interface {
+	Insert(dao *domain.BestBrandDAO) (*domain.BestBrandDAO, error)
+	GetLatest() (*domain.BestBrandDAO, error)
+}
+
 type OrderCountsRepository interface {
 	Get(exhibitionID string) (int, error)
 	Push(exhibitionID string) (int, error)
@@ -184,14 +190,19 @@ type OrderCountsRepository interface {
 
 type AccessLogRepository interface {
 	Index(*domain.AccessLogDAO) (int, error)
+	List(limit int, from, to time.Time, order string) (*dto.AccessLogDTO, error)
+	GetLatest(limit int) (*dto.AccessLogDTO, error)
 }
 
 type ProductLogRepository interface {
 	Index(*domain.ProductDAO, domain.LogType) (int, error)
+	GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error)
+	GetRankByCatId(limit int, from time.Time, to time.Time, catId string) (*dto.DocumentCountDTO, error)
 }
 
 type BrandLogRepository interface {
 	Index(*domain.BrandDAO) (int, error)
+	GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error)
 }
 
 type SearchLogRepository interface {
