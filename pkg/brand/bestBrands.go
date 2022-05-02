@@ -3,6 +3,7 @@ package brand
 import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"time"
 )
@@ -15,7 +16,6 @@ func MakeSnapshot() {
 
 	rankDoc, _ := ioc.Repo.BrandLog.GetRank(limit, from, to)
 	ids := rankDoc.GetIds()
-
 	for _, brandId := range ids {
 		brand, err := ioc.Repo.Brands.Get(brandId)
 		if err != nil {
@@ -31,6 +31,7 @@ func MakeSnapshot() {
 	}
 
 	bestBrands := &domain.BestBrandDAO{
+		ID:     primitive.NewObjectID(),
 		Brands: res,
 	}
 
