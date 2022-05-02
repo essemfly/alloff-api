@@ -3,7 +3,7 @@ name: Deploy to Amazon ECS - DEV
 on:
   push:
     branches:
-      - dev
+      - feature/cd
 
 env:
   AWS_REGION: ap-northeast-2
@@ -48,7 +48,7 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -f .docker/Dockerfile.dev -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 

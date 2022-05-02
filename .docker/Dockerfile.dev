@@ -1,0 +1,8 @@
+FROM golang:1.16.4-buster AS builder
+
+WORKDIR /go/src/app
+COPY . .
+RUN go build -o apiServer ./cmd/apiServer/main.go
+RUN go build -o grpcServer ./cmd/grpcServer/main.go
+
+EXPOSE 80
