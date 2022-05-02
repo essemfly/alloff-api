@@ -18,6 +18,7 @@ func (repo *bestBrandsRepo) Insert(bestBrandDao *domain.BestBrandDAO) (*domain.B
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
+	bestBrandDao.CreatedAt = time.Now()
 	_, err := repo.col.InsertOne(ctx, bestBrandDao)
 
 	if err != nil {
