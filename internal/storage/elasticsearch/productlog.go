@@ -68,6 +68,54 @@ func (repo *productLogRepo) GetRank(limit int, from time.Time, to time.Time) (*d
 	return &documentCountDTO, nil
 }
 
+func (repo *productLogRepo) GetRankByCatId(limit int, from time.Time, to time.Time, catId string) (*dto.DocumentCountDTO, error) {
+	var documentCountDTO dto.DocumentCountDTO
+
+	index := "product_log"
+	fromStr := from.Format("2006-01-02 15:04:05")
+	toStr := to.Format("2006-01-02 15:04:05")
+
+	bodyStr := fmt.Sprintf(`
+	{
+	   "size": 0,
+	   "query": {
+		   "bool": {
+			   "must": [
+				   {
+					   "range": {
+						   "ts": {
+							   "gt": "%s",
+							   "lt": "%s"
+							   }
+					   }
+				   },
+				   {
+					   "match": {
+						   "product.AlloffCategories.First.ID": "%s"
+					   }
+				   }
+			   ]
+		   }
+		},
+	   "aggs": {
+		  "group_by_state": {
+			 "terms": {
+				"field": "product.ID.keyword",
+				"size": %v
+			 }
+		  }
+	   }
+	}
+	`, fromStr, toStr, catId, limit)
+
+	resBody, err := alloffEs.RequestQuery(index, bodyStr, repo.client)
+	if err != nil {
+		return nil, err
+	}
+	json.Unmarshal(resBody, &documentCountDTO)
+	return &documentCountDTO, nil
+}
+
 func EsProductLogRepo(conn *ESClient) repository.ProductLogRepository {
 	return &productLogRepo{
 		client: conn.Client,

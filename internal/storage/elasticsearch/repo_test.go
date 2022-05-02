@@ -77,4 +77,17 @@ func TestEvent(t *testing.T) {
 		res, _ := ioc.Repo.AccessLog.GetLatest(100)
 		log.Println(res)
 	})
+
+	t.Run("Test Get rank by cat id", func(t *testing.T) {
+		from := time.Now().Add(-24 * 365 * time.Hour)
+		to := time.Now()
+		alloffCatIds := []string{""}
+		alloffLev1Cats, _ := ioc.Repo.AlloffCategories.List(&alloffCatIds[0])
+
+		res, _ := ioc.Repo.ProductLog.GetRankByCatId(100, from, to, alloffLev1Cats[0].ID.Hex())
+		for _, pd := range res.Aggregations.GroupByState.Buckets {
+			pd, _ := ioc.Repo.Products.Get(pd.Key)
+			require.Equal(t, pd.AlloffCategories.First.ID.Hex(), alloffLev1Cats[0].ID.Hex())
+		}
+	})
 }

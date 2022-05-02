@@ -35,3 +35,12 @@ type AccessLogDTO struct {
 		} `json:"hits"`
 	} `json:"hits"`
 }
+
+func (d *DocumentCountDTO) GetIds() (ids []string) {
+	// buckets : Elasticsearch의 Aggregation Query의 결과가 담기는 리스트
+	buckets := d.Aggregations.GroupByState.Buckets
+	for _, bucket := range buckets {
+		ids = append(ids, bucket.Key)
+	}
+	return
+}
