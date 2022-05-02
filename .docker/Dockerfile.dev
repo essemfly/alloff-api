@@ -2,8 +2,6 @@ FROM golang:1.16.4-buster AS builder
 
 WORKDIR /go/src/app
 COPY . .
-RUN git config --global credential.helper \
-    '!f() { echo username=essemfly@gmail.com; echo "password=$GIT_TOKEN"; };f'
 RUN go build -o apiServer ./cmd/apiServer/main.go
 RUN go build -o grpcServer ./cmd/grpcServer/main.go
 
