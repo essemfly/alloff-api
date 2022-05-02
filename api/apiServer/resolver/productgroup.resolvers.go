@@ -21,9 +21,11 @@ func (r *queryResolver) ProductGroup(ctx context.Context, id string) (*model.Pro
 	return mapper.MapProductGroupDao(pgDao), nil
 }
 
+// (2022/05/02)이 함수가 현재 Graphql API에서 쓰이는지 궁금함 + 특히 OnlyLive가 필요없지 않나 생각됨
 func (r *queryResolver) ProductGroups(ctx context.Context) ([]*model.ProductGroup, error) {
-	numPassedPgsToShow := 10
-	pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
+	offset, limit := 0, 100
+	keyword := ""
+	pgDaos, _, err := ioc.Repo.ProductGroups.List(offset, limit, nil, keyword)
 	if err != nil {
 		return nil, err
 	}
@@ -46,6 +48,7 @@ func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhib
 	return mapper.MapExhibition(exhibitionDao, false), nil
 }
 
+// 기획전 API
 func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, error) {
 	offset, limit := 0, 100 // IGNORRED SINCE ONLY LIVE
 	onlyLive := true

@@ -76,8 +76,8 @@ func AddHomeItems() {
 	knitCategory, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_KNITWARE")
 	knitProducts, _, _ := product.AlloffCategoryProductsListing(0, 10, nil, knitCategory.ID.Hex(), "", []string{"70", "100"})
 
-	numPassedPgsToShow := 5
-	pgs, _ := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
+	timedeal := domain.PRODUCT_GROUP_TIMEDEAL
+	pgs, _, _ := ioc.Repo.ProductGroups.List(0, 10, &timedeal, "")
 
 	homeItems := []*domain.HomeItemDAO{
 		{

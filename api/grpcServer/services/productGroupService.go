@@ -86,75 +86,36 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 }
 
 func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcServer.ListProductGroupsRequest) (*grpcServer.ListProductGroupsResponse, error) {
-	if req.Query == nil || req.Query.GroupType == nil {
-		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
-		pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
-		if err != nil {
-			return nil, err
+	keyword := ""
+	if *req.Query.SearchQuery != "" {
+		keyword = *req.Query.SearchQuery
+	}
+	var groupType domain.ProductGroupType
+	if req.Query.GroupType != nil {
+		if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL {
+			groupType = domain.PRODUCT_GROUP_TIMEDEAL
+		} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_GROUPDEAL {
+			groupType = domain.PRODUCT_GROUP_GROUPDEAL
+		} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
+			groupType = domain.PRODUCT_GROUP_EXHIBITION
 		}
-		pgs := []*grpcServer.ProductGroupMessage{}
-		for _, pgDao := range pgDaos {
-			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
-		}
-		return &grpcServer.ListProductGroupsResponse{
-			Pgs:         pgs,
-			Offset:      req.Offset,
-			Limit:       req.Limit,
-			TotalCounts: 0,
-		}, nil
 	}
 
-	if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL {
-		pgDaos, cnt, err := ioc.Repo.ProductGroups.ListTimedeals(int(req.Offset), int(req.Limit), false)
-		if err != nil {
-			return nil, err
-		}
-		pgs := []*grpcServer.ProductGroupMessage{}
-		for _, pgDao := range pgDaos {
-			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
-		}
-		return &grpcServer.ListProductGroupsResponse{
-			Pgs:         pgs,
-			Offset:      req.Offset,
-			Limit:       req.Limit,
-			TotalCounts: int32(cnt),
-		}, nil
-	} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
-		keyword := ""
-		if *req.Query.SearchQuery != "" {
-			keyword = *req.Query.SearchQuery
-		}
-		pgDaos, cnt, err := ioc.Repo.ProductGroups.ListExhibitionPg(int(req.Offset), int(req.Limit), keyword)
-		if err != nil {
-			return nil, err
-		}
-		pgs := []*grpcServer.ProductGroupMessage{}
-		for _, pgDao := range pgDaos {
-			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
-		}
-		return &grpcServer.ListProductGroupsResponse{
-			Pgs:         pgs,
-			Offset:      req.Offset,
-			Limit:       req.Limit,
-			TotalCounts: int32(cnt),
-		}, nil
-	} else {
-		numPassedPgsToShow := 10000 // Dev code 임의로 10000개 잡아둠
-		pgDaos, err := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
-		if err != nil {
-			return nil, err
-		}
-		pgs := []*grpcServer.ProductGroupMessage{}
-		for _, pgDao := range pgDaos {
-			pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
-		}
-		return &grpcServer.ListProductGroupsResponse{
-			Pgs:         pgs,
-			Offset:      req.Offset,
-			Limit:       req.Limit,
-			TotalCounts: 0,
-		}, nil
+	pgDaos, cnt, err := ioc.Repo.ProductGroups.List(int(req.Offset), int(req.Limit), &groupType, keyword)
+	if err != nil {
+		return nil, err
 	}
+	pgs := []*grpcServer.ProductGroupMessage{}
+	for _, pgDao := range pgDaos {
+		pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+	}
+	return &grpcServer.ListProductGroupsResponse{
+		Pgs:         pgs,
+		Offset:      req.Offset,
+		Limit:       req.Limit,
+		TotalCounts: int32(cnt),
+	}, nil
+
 }
 
 func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcServer.EditProductGroupRequest) (*grpcServer.ProductGroupMessage, error) {

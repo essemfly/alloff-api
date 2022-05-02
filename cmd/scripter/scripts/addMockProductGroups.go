@@ -194,8 +194,8 @@ func AddProductGroups() {
 }
 
 func AddProductInPg() {
-	numPassedPgsToShow := 10000
-	pgs, _ := ioc.Repo.ProductGroups.List(numPassedPgsToShow)
+	timedeal := domain.PRODUCT_GROUP_TIMEDEAL
+	pgs, _, _ := ioc.Repo.ProductGroups.List(0, 10, &timedeal, "")
 	for _, pg := range pgs {
 		for _, productPriority := range pg.Products {
 			product, err := ioc.Repo.Products.Get(productPriority.ProductID.Hex())

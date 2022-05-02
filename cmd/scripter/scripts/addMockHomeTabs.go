@@ -15,7 +15,8 @@ import (
 
 func AddMockExhibitions() {
 	log.Println("ADD MOCK EXHIBITIONS START ********")
-	pgs, _ := ioc.Repo.ProductGroups.List(5)
+	exhibitionType := domain.PRODUCT_GROUP_EXHIBITION
+	pgs, _, _ := ioc.Repo.ProductGroups.List(0, 5, &exhibitionType, "")
 	pgIDs := []string{}
 	for idx, pg := range pgs {
 		log.Println("IDX", idx)
