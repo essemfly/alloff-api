@@ -92,8 +92,8 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 	}
 	var groupType domain.ProductGroupType
 	if req.Query.GroupType != nil {
-		if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_TIMEDEAL {
-			groupType = domain.PRODUCT_GROUP_TIMEDEAL
+		if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_BRAND_TIMEDEAL {
+			groupType = domain.PRODUCT_GROUP_BRAND_TIMEDEAL
 		} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_GROUPDEAL {
 			groupType = domain.PRODUCT_GROUP_GROUPDEAL
 		} else if *req.Query.GroupType.Enum() == grpcServer.ProductGroupType_PRODUCT_GROUP_EXHIBITION {
