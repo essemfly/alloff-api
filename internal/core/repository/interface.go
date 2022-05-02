@@ -18,7 +18,6 @@ type ProductsRepository interface {
 	Get(ID string) (*domain.ProductDAO, error)
 	GetByMetaID(MetaID string) (*domain.ProductDAO, error)
 	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
-	ListByIds(ids []string) ([]*domain.ProductDAO, error)
 	ListDistinctBrands(alloffCategoryID string) ([]*domain.BrandDAO, error)
 	Insert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	Upsert(*domain.ProductDAO) (*domain.ProductDAO, error)
@@ -181,6 +180,11 @@ type BestProductsRepository interface {
 	GetLatest(alloffCategoryID string) (*domain.BestProductDAO, error)
 }
 
+type BestBrandRepository interface {
+	Insert(dao *domain.BestBrandDAO) (*domain.BestBrandDAO, error)
+	GetLatest() (*domain.BestBrandDAO, error)
+}
+
 type OrderCountsRepository interface {
 	Get(exhibitionID string) (int, error)
 	Push(exhibitionID string) (int, error)
@@ -196,6 +200,7 @@ type AccessLogRepository interface {
 type ProductLogRepository interface {
 	Index(*domain.ProductDAO, domain.LogType) (int, error)
 	GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error)
+	GetRankByCatId(limit int, from time.Time, to time.Time, catId string) (*dto.DocumentCountDTO, error)
 }
 
 type BrandLogRepository interface {

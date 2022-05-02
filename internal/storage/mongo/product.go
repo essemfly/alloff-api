@@ -83,37 +83,6 @@ func (repo *productRepo) List(offset, limit int, filter, sortingOptions interfac
 	return products, int(totalCount), nil
 }
 
-func (repo *productRepo) ListByIds(ids []string) ([]*domain.ProductDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	var products []*domain.ProductDAO
-
-	objectIds := make([]primitive.ObjectID, len(ids))
-	for i, id := range ids {
-		oid, err := primitive.ObjectIDFromHex(id)
-		if err != nil {
-			log.Println("Error on parsing objectId : ", err)
-		}
-		objectIds[i] = oid
-	}
-
-	filter := bson.M{"_id": bson.M{"$in": objectIds}}
-
-	cursor, err := repo.col.Find(ctx, filter)
-	if err != nil {
-		log.Println("Error on finding objects : ", err)
-		return nil, err
-	}
-	err = cursor.All(ctx, &products)
-	if err != nil {
-		log.Println("Error on decoding objects : ", err)
-		return nil, err
-	}
-
-	return products, nil
-}
-
 func (repo *productRepo) Insert(product *domain.ProductDAO) (*domain.ProductDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
