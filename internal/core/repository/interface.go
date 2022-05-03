@@ -188,12 +188,14 @@ type GroupRepository interface {
 	Insert(*domain.GroupDAO) (*domain.GroupDAO, error)
 	Get(ID string) (*domain.GroupDAO, error)
 	List(exhibitionID string) ([]*domain.GroupDAO, error)
+	Update(dao *domain.GroupDAO) (*domain.GroupDAO, error)
 }
 
 type GroupRequestRepository interface {
 	Insert(*domain.GroupRequestDAO) (*domain.GroupRequestDAO, error)
 	Update(*domain.GroupRequestDAO) (*domain.GroupRequestDAO, error)
-	List(userID, exhibitionID string, status domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error)
+	List(userID, exhibitionID string, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error)
+	ListByGroupID(groupID string, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error)
 }
 
 type OrderCountsRepository interface {
