@@ -105,7 +105,7 @@ func (repo *exhibitionRepo) Upsert(exhibition *domain.ExhibitionDAO) (*domain.Ex
 	return newPg, nil
 }
 
-func (repo *exhibitionRepo) ListGroupDeals(offset, limit int, onlyLive bool, exhibitionStatus domain.GroupdealStatus, query string) ([]*domain.ExhibitionDAO, int, error) {
+func (repo *exhibitionRepo) ListGroupDeals(offset, limit int, onlyLive bool, exhibitionStatus domain.GroupdealStatus) ([]*domain.ExhibitionDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 

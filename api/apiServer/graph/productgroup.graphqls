@@ -62,12 +62,20 @@ type ExhibitionBanner {
   subtitle: String!
 }
 
+type MyGroupDeal {
+  user: User!
+  numParticipates: Int!
+  numLiveGroupdeals: Int!
+}
+
 extend type Query {
   productGroup(id: String!): ProductGroup!
   productGroups: [ProductGroup!]!
   exhibition(id: String!): Exhibition!
   exhibitions: [Exhibition!]!
   timedeal: Exhibition!
+  mygroupdeal: MyGroupDeal!
+  mygroupdeals(status: GroupdealStatus!): [Exhibition!]!
   groupdeal(id: String!): Exhibition!
   groupdeals(offset: Int!, limit: Int!, status: GroupdealStatus!): [Exhibition!]!
 }

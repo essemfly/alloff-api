@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
@@ -82,6 +83,65 @@ func (r *queryResolver) Timedeal(ctx context.Context) (*model.Exhibition, error)
 	return nil, nil
 }
 
+func (r *queryResolver) Mygroupdeal(ctx context.Context) (*model.MyGroupDeal, error) {
+	user := middleware.ForContext(ctx)
+	if user == nil {
+		return nil, fmt.Errorf("ERR000:invalid token")
+	}
+
+	offset, limit := 0, 1000
+	onlyLive := true
+	_, cnt, err := ioc.Repo.Exhibitions.ListGroupDeals(offset, limit, onlyLive, domain.GROUPDEAL_OPEN)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.MyGroupDeal{
+		User:              mapper.MapUserDaoToUser(user),
+		NumParticipates:   99,
+		NumLiveGroupdeals: cnt,
+	}, nil
+}
+
+func (r *queryResolver) Mygroupdeals(ctx context.Context, status model.GroupdealStatus) ([]*model.Exhibition, error) {
+	userDao := middleware.ForContext(ctx)
+	if userDao == nil {
+		return nil, fmt.Errorf("ERR000:invalid token")
+	}
+
+	offset, limit := 0, 1000
+	onlyLive := true
+
+	groupDealStatus := domain.GROUPDEAL_CLOSED
+	if status == model.GroupdealStatusOpen {
+		groupDealStatus = domain.GROUPDEAL_OPEN
+	} else if status == model.GroupdealStatusPending {
+		groupDealStatus = domain.GROUPDEAL_PENDING
+	}
+
+	exhibitionDaos, _, err := ioc.Repo.Exhibitions.ListGroupDeals(offset, limit, onlyLive, groupDealStatus)
+	if err != nil {
+		return nil, err
+	}
+
+	exhibitions := []*model.Exhibition{}
+	for _, exhibitionDao := range exhibitionDaos {
+		exhibitions = append(exhibitions, mapper.MapExhibition(exhibitionDao, true))
+	}
+
+	// TODO: dev code for giving group users
+	user := mapper.MapUserDaoToUser(userDao)
+	userGroup := model.UserGroup{
+		GroupID: primitive.NewObjectID().Hex(),
+		Users:   []*model.User{user},
+	}
+	for _, exhibition := range exhibitions {
+		exhibition.UserGroup = &userGroup
+	}
+
+	return exhibitions, nil
+}
+
 func (r *queryResolver) Groupdeal(ctx context.Context, id string) (*model.Exhibition, error) {
 	exhibitionDao, err := ioc.Repo.Exhibitions.Get(id)
 	if err != nil {
@@ -107,7 +167,14 @@ func (r *queryResolver) Groupdeal(ctx context.Context, id string) (*model.Exhibi
 
 func (r *queryResolver) Groupdeals(ctx context.Context, offset int, limit int, status model.GroupdealStatus) ([]*model.Exhibition, error) {
 	onlyLive := true
-	exhibitionDaos, _, err := ioc.Repo.Exhibitions.ListGroupDeals(offset, limit, onlyLive, domain.GROUPDEAL_CLOSED)
+
+	groupDealStatus := domain.GROUPDEAL_CLOSED
+	if status == model.GroupdealStatusOpen {
+		groupDealStatus = domain.GROUPDEAL_OPEN
+	} else if status == model.GroupdealStatusPending {
+		groupDealStatus = domain.GROUPDEAL_PENDING
+	}
+	exhibitionDaos, _, err := ioc.Repo.Exhibitions.ListGroupDeals(offset, limit, onlyLive, groupDealStatus)
 	if err != nil {
 		return nil, err
 	}

@@ -224,6 +224,12 @@ type Login struct {
 	Mobile string `json:"mobile"`
 }
 
+type MyGroupDeal struct {
+	User              *User `json:"user"`
+	NumParticipates   int   `json:"numParticipates"`
+	NumLiveGroupdeals int   `json:"numLiveGroupdeals"`
+}
+
 type NewUser struct {
 	UUID                  string  `json:"uuid"`
 	Mobile                string  `json:"mobile"`
