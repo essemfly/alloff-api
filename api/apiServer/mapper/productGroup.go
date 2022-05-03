@@ -99,7 +99,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		NumUsersRequired:  5,
 		TotalParticipants: 30,
 		TotalUserGroups:   6,
-		UserGroup:         nil,
+		UserGroup:         &model.UserGroup{},
 	}
 }
 
