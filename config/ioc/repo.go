@@ -33,6 +33,8 @@ type iocRepo struct {
 	BestProducts     repository.BestProductsRepository
 	BestBrands       repository.BestBrandRepository
 	OrderCounts      repository.OrderCountsRepository
+	Groups           repository.GroupRepository
+	GroupRequest     repository.GroupRequestRepository
 	AccessLog        repository.AccessLogRepository
 	ProductLog       repository.ProductLogRepository
 	BrandLog         repository.BrandLogRepository
