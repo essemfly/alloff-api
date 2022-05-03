@@ -7,9 +7,11 @@ import (
 	"context"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
+	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (r *queryResolver) ProductGroup(ctx context.Context, id string) (*model.ProductGroup, error) {
@@ -21,7 +23,6 @@ func (r *queryResolver) ProductGroup(ctx context.Context, id string) (*model.Pro
 	return mapper.MapProductGroupDao(pgDao), nil
 }
 
-// (2022/05/02)이 함수가 현재 Graphql API에서 쓰이는지 궁금함 + 특히 OnlyLive가 필요없지 않나 생각됨
 func (r *queryResolver) ProductGroups(ctx context.Context) ([]*model.ProductGroup, error) {
 	offset, limit := 0, 100
 	keyword := ""
@@ -48,7 +49,6 @@ func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhib
 	return mapper.MapExhibition(exhibitionDao, false), nil
 }
 
-// 기획전 API
 func (r *queryResolver) Exhibitions(ctx context.Context) ([]*model.Exhibition, error) {
 	offset, limit := 0, 100 // IGNORRED SINCE ONLY LIVE
 	onlyLive := true
@@ -82,17 +82,55 @@ func (r *queryResolver) Timedeal(ctx context.Context) (*model.Exhibition, error)
 	return nil, nil
 }
 
-func (r *queryResolver) Groupdeal(ctx context.Context) (*model.Exhibition, error) {
-	// For not force update users
-	offset, limit := 0, 100
-	onlyLive := true
-	query := ""
-	exhibitionDaos, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive, domain.EXHIBITION_GROUPDEAL, query)
+func (r *queryResolver) Groupdeal(ctx context.Context, id string) (*model.Exhibition, error) {
+	exhibitionDao, err := ioc.Repo.Exhibitions.Get(id)
 	if err != nil {
 		return nil, err
 	}
-	if len(exhibitionDaos) > 0 {
-		return mapper.MapExhibition(exhibitionDaos[0], false), nil
+
+	exhibition := mapper.MapExhibition(exhibitionDao, false)
+
+	userDao := middleware.ForContext(ctx)
+	if userDao == nil {
+		return exhibition, nil
 	}
-	return nil, nil
+
+	// TODO: dev code for giving group users
+	user := mapper.MapUserDaoToUser(userDao)
+	userGroup := model.UserGroup{
+		GroupID: primitive.NewObjectID().Hex(),
+		Users:   []*model.User{user},
+	}
+	exhibition.UserGroup = &userGroup
+	return exhibition, nil
+}
+
+func (r *queryResolver) Groupdeals(ctx context.Context, offset int, limit int, status model.GroupdealStatus) ([]*model.Exhibition, error) {
+	onlyLive := true
+	exhibitionDaos, _, err := ioc.Repo.Exhibitions.ListGroupDeals(offset, limit, onlyLive, domain.GROUPDEAL_CLOSED)
+	if err != nil {
+		return nil, err
+	}
+
+	exhibitions := []*model.Exhibition{}
+	for _, exhibitionDao := range exhibitionDaos {
+		exhibitions = append(exhibitions, mapper.MapExhibition(exhibitionDao, true))
+	}
+
+	userDao := middleware.ForContext(ctx)
+	if userDao == nil {
+		return exhibitions, nil
+	}
+
+	// TODO: dev code for giving group users
+	user := mapper.MapUserDaoToUser(userDao)
+	userGroup := model.UserGroup{
+		GroupID: primitive.NewObjectID().Hex(),
+		Users:   []*model.User{user},
+	}
+	for _, exhibition := range exhibitions {
+		exhibition.UserGroup = &userGroup
+	}
+
+	return exhibitions, nil
 }

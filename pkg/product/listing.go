@@ -16,7 +16,7 @@ const (
 )
 
 func ProductsSearchListing(offset, limit int, classifiedType Classified, moduleName, brandID, categoryID, alloffCategoryID, keyword string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
-	filter := bson.M{"removed": false}
+	filter := bson.M{"removed": false, "ishide": false}
 
 	if classifiedType != NO_MATTER_CLASSIFIED {
 		if classifiedType == CLASSIFIED_DONE {
@@ -102,8 +102,8 @@ func ProductsSearchListing(offset, limit int, classifiedType Classified, moduleN
 }
 
 // (Future) Mongodb에 종속적인 함수: bson이 사용되었다.
-func ProductsListing(offset, limit int, brandID, categoryID, productGroupID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
-	filter := bson.M{"removed": false}
+func ProductsListing(offset, limit int, brandID, categoryID, productGroupID, exhibitionID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
+	filter := bson.M{"removed": false, "ishide": false}
 
 	brandObjID, _ := primitive.ObjectIDFromHex(brandID)
 	categoryObjID, _ := primitive.ObjectIDFromHex(categoryID)
@@ -113,6 +113,12 @@ func ProductsListing(offset, limit int, brandID, categoryID, productGroupID stri
 		if categoryID != "" {
 			filter["productinfo.category._id"] = categoryObjID
 		}
+	}
+
+	if exhibitionID != "" {
+		filter["ishide"] = true
+		filter["exhibitionid"] = exhibitionID
+
 	}
 	if productGroupID != "" {
 		filter["productgroupid"] = productGroupID
@@ -170,7 +176,7 @@ func ProductsListing(offset, limit int, brandID, categoryID, productGroupID stri
 
 // TODO: 위의 함수와 합쳐질 필요가 있다.
 func AlloffCategoryProductsListing(offset, limit int, brandKeynames []string, alloffCategoryID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
-	filter := bson.M{"removed": false, "alloffcategories.done": true}
+	filter := bson.M{"removed": false, "alloffcategories.done": true, "ishide": false}
 	if len(brandKeynames) > 0 {
 		filter["productinfo.brand.keyname"] = bson.M{"$in": brandKeynames}
 	}

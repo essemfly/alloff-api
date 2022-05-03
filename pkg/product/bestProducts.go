@@ -1,10 +1,11 @@
 package product
 
 import (
-	"github.com/lessbutter/alloff-api/internal/core/dto"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 	"time"
+
+	"github.com/lessbutter/alloff-api/internal/core/dto"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -141,7 +142,7 @@ func GetAlloffCategoryProducts(alloffCatID string, limit int) []*domain.ProductD
 }
 
 func GetBestProductsFromAll(limit int) []*domain.ProductDAO {
-	productDaos, _, err := ProductsListing(0, limit, "", "", "", "", []string{"70", "100"})
+	productDaos, _, err := ProductsListing(0, limit, "", "", "", "", "", []string{"70", "100"})
 	if err != nil {
 		log.Println("err occured in products listing")
 	}

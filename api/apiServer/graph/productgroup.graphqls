@@ -1,5 +1,11 @@
 scalar Upload
 
+enum GroupdealStatus {
+  PENDING
+  OPEN
+  CLOSED
+}
+
 type ProductGroup {
   id: ID!
   title: String!
@@ -38,6 +44,15 @@ type Exhibition {
   banners: [ExhibitionBanner!]!
   totalProducts: Int!
   totalProductGroups: Int!
+  totalParticipants: Int!
+  numUsersRequired: Int!
+  totalUserGroups: Int!
+  userGroup: UserGroup!
+}
+
+type UserGroup {
+  groupId: ID!
+  users: [User!]!
 }
 
 type ExhibitionBanner {
@@ -53,5 +68,6 @@ extend type Query {
   exhibition(id: String!): Exhibition!
   exhibitions: [Exhibition!]!
   timedeal: Exhibition!
-  groupdeal: Exhibition!
+  groupdeal(id: String!): Exhibition!
+  groupdeals(offset: Int!, limit: Int!, status: GroupdealStatus!): [Exhibition!]!
 }

@@ -112,7 +112,12 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 
 	totalCount := 0
 
-	if input.Brand != nil {
+	if input.ExhibitionID != nil {
+		if input.ProductGroupID != nil {
+			productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, "", "", *input.ProductGroupID, *input.ExhibitionID, priceSorting, priceRange)
+		}
+		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, "", "", "", *input.ExhibitionID, priceSorting, priceRange)
+	} else if input.Brand != nil {
 		brandDao, err := ioc.Repo.Brands.Get(*input.Brand)
 		if err != nil || !brandDao.IsOpenBrand() {
 			return &model.ProductsOutput{
@@ -123,16 +128,16 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 			}, err
 		}
 		if input.Category == nil {
-			productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, "", "", priceSorting, priceRange)
+			productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, "", "", "", priceSorting, priceRange)
 		} else {
 			if brandDao.UseAlloffCategory {
 				productDaos, totalCount, _ = product.AlloffCategoryProductsListing(input.Offset, input.Limit, []string{brandDao.KeyName}, *input.Category, priceSorting, priceRange)
 			} else {
-				productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, *input.Category, "", priceSorting, priceRange)
+				productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, *input.Category, "", "", priceSorting, priceRange)
 			}
 		}
 	} else if input.ProductGroupID != nil {
-		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, "", "", *input.ProductGroupID, priceSorting, priceRange)
+		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, "", "", *input.ProductGroupID, "", priceSorting, priceRange)
 	} else {
 		return nil, errors.New("no parameters given")
 	}

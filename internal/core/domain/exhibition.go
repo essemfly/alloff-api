@@ -14,6 +14,14 @@ const (
 	EXHIBITION_GROUPDEAL ExhibitionType = "GROUPDEAL"
 )
 
+type GroupdealStatus string
+
+const (
+	GROUPDEAL_PENDING GroupdealStatus = "PENDING"
+	GROUPDEAL_OPEN    GroupdealStatus = "OPEN"
+	GROUPDEAL_CLOSED  GroupdealStatus = "CLOSED"
+)
+
 type ExhibitionBanner struct {
 	ImgUrl         string
 	Title          string

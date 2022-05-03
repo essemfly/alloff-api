@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"time"
+
+	"github.com/lessbutter/alloff-api/internal/core/dto"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
@@ -85,6 +86,7 @@ type ProductGroupsRepository interface {
 type ExhibitionsRepository interface {
 	Get(ID string) (*domain.ExhibitionDAO, error)
 	List(offset, limit int, onlyLive bool, exhibitionType domain.ExhibitionType, query string) ([]*domain.ExhibitionDAO, int, error)
+	ListGroupDeals(offset, limit int, onlyLive bool, exhibitionStatus domain.GroupdealStatus) ([]*domain.ExhibitionDAO, int, error)
 	Upsert(*domain.ExhibitionDAO) (*domain.ExhibitionDAO, error)
 }
 

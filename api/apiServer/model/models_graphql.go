@@ -137,6 +137,10 @@ type Exhibition struct {
 	Banners            []*ExhibitionBanner `json:"banners"`
 	TotalProducts      int                 `json:"totalProducts"`
 	TotalProductGroups int                 `json:"totalProductGroups"`
+	TotalParticipants  int                 `json:"totalParticipants"`
+	NumUsersRequired   int                 `json:"numUsersRequired"`
+	TotalUserGroups    int                 `json:"totalUserGroups"`
+	UserGroup          *UserGroup          `json:"userGroup"`
 }
 
 type ExhibitionBanner struct {
@@ -421,6 +425,7 @@ type ProductsInput struct {
 	Category       *string       `json:"category"`
 	Sorting        []SortingType `json:"sorting"`
 	ProductGroupID *string       `json:"productGroupId"`
+	ExhibitionID   *string       `json:"exhibitionId"`
 }
 
 type ProductsOutput struct {
@@ -469,6 +474,11 @@ type User struct {
 	DetailAddress         *string `json:"detailAddress"`
 	Postcode              *string `json:"postcode"`
 	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
+}
+
+type UserGroup struct {
+	GroupID string  `json:"groupId"`
+	Users   []*User `json:"users"`
 }
 
 type UserInfoInput struct {
@@ -606,6 +616,49 @@ func (e *ExhibitionType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ExhibitionType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GroupdealStatus string
+
+const (
+	GroupdealStatusPending GroupdealStatus = "PENDING"
+	GroupdealStatusOpen    GroupdealStatus = "OPEN"
+	GroupdealStatusClosed  GroupdealStatus = "CLOSED"
+)
+
+var AllGroupdealStatus = []GroupdealStatus{
+	GroupdealStatusPending,
+	GroupdealStatusOpen,
+	GroupdealStatusClosed,
+}
+
+func (e GroupdealStatus) IsValid() bool {
+	switch e {
+	case GroupdealStatusPending, GroupdealStatusOpen, GroupdealStatusClosed:
+		return true
+	}
+	return false
+}
+
+func (e GroupdealStatus) String() string {
+	return string(e)
+}
+
+func (e *GroupdealStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GroupdealStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid GroupdealStatus", str)
+	}
+	return nil
+}
+
+func (e GroupdealStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
