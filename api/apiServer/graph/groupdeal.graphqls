@@ -1,0 +1,28 @@
+
+enum GroupdealStatus {
+  PENDING
+  OPEN
+  CLOSED
+}
+
+type MyGroupDeal {
+  user: User!
+  numParticipates: Int!
+  numLiveGroupdeals: Int!
+}
+
+type Group {
+    id: ID!
+    exhibitionId: String!
+    numUsersRequired: Int!
+    users: [User!]!
+}
+
+extend type Query {
+  mygroupdeal: MyGroupDeal!
+  mygroupdeals(status: GroupdealStatus!): [Exhibition!]!
+  groupdeal(id: String!): Exhibition!
+  groupdeals(offset: Int!, limit: Int!, status: GroupdealStatus!): [Exhibition!]!
+  createGroup(exhibitionId: String!): Group!
+  joinGroup(groupId: String!): Group!
+}

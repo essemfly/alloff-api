@@ -158,6 +158,13 @@ type FeaturedItem struct {
 	Category *Category `json:"category"`
 }
 
+type Group struct {
+	ID               string  `json:"id"`
+	ExhibitionID     string  `json:"exhibitionId"`
+	NumUsersRequired int     `json:"numUsersRequired"`
+	Users            []*User `json:"users"`
+}
+
 type HomeItem struct {
 	ID             string           `json:"id"`
 	Priority       int              `json:"priority"`
