@@ -20,20 +20,23 @@ func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.Exhib
 	}
 
 	return &grpcServer.ExhibitionMessage{
-		ExhibitionId:   exDao.ID.Hex(),
-		BannerImage:    exDao.BannerImage,
-		ThumbnailImage: exDao.ThumbnailImage,
-		Title:          exDao.Title,
-		Subtitle:       exDao.SubTitle,
-		Description:    exDao.Description,
-		StartTime:      exDao.StartTime.String(),
-		FinishTime:     exDao.FinishTime.String(),
-		Pgs:            pgs,
-		IsLive:         exDao.IsLive,
-		ExhibitionType: ExhibitionGroupTypeMapper(exDao.ExhibitionType),
-		TargetSales:    int32(exDao.TargetSales),
-		CurrentSales:   int32(sales),
-		Banners:        bannersMapper(exDao.Banners),
+		ExhibitionId:      exDao.ID.Hex(),
+		BannerImage:       exDao.BannerImage,
+		ThumbnailImage:    exDao.ThumbnailImage,
+		Title:             exDao.Title,
+		Subtitle:          exDao.SubTitle,
+		Description:       exDao.Description,
+		StartTime:         exDao.StartTime.String(),
+		FinishTime:        exDao.FinishTime.String(),
+		Pgs:               pgs,
+		IsLive:            exDao.IsLive,
+		ExhibitionType:    ExhibitionGroupTypeMapper(exDao.ExhibitionType),
+		TargetSales:       int32(exDao.TargetSales),
+		CurrentSales:      int32(sales),
+		Banners:           bannersMapper(exDao.Banners),
+		TotalParticipants: int32(exDao.TotalParticipants),
+		NumUsersRequired:  int32(exDao.NumUsersRequired),
+		TotalGroups:       int32(exDao.TotalGroups),
 	}
 }
 

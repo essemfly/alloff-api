@@ -88,8 +88,8 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		}
 	}
 
-	// IsClassifiedDone을 어떻게 넣을것인가가 문제군
-	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), classifiedType, moduleName, brandID, categoryID, alloffCategoryID, searchKeyword, priceSorting, priceRange)
+	includeSpecial := true
+	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), includeSpecial, classifiedType, moduleName, brandID, categoryID, alloffCategoryID, searchKeyword, priceSorting, priceRange)
 	if err != nil {
 		return nil, err
 	}
@@ -161,6 +161,11 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		thumbnailImage = *req.ThumbnailImage
 	}
 
+	isSpecial := false
+	if req.IsSpecial != nil {
+		isSpecial = *req.IsSpecial
+	}
+
 	addRequest := &product.ProductManualAddRequest{
 		AlloffName:           req.AlloffName,
 		IsForeignDelivery:    req.IsForeignDelivery,
@@ -183,6 +188,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		DescriptionInfos:     descInfos,
 		ProductInfos:         pdInfos,
 		ThumbnailImage:       thumbnailImage,
+		IsSpecial:            isSpecial,
 	}
 
 	pdDao, err := product.AddProductManually(addRequest)
@@ -290,6 +296,10 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 
 	if req.IsRemoved != nil {
 		pdDao.Removed = *req.IsRemoved
+	}
+
+	if req.IsSpecial != nil {
+		pdDao.IsSpecial = *req.IsSpecial
 	}
 
 	if req.AlloffCategoryId != nil {

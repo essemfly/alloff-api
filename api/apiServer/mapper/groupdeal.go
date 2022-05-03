@@ -14,7 +14,7 @@ func MapGroupDaoToGroup(groupDao *domain.GroupDAO) *model.Group {
 	return &model.Group{
 		ID:               groupDao.ID.Hex(),
 		ExhibitionID:     groupDao.ExhibitionID,
-		NumUsersRequired: groupDao.NumUserRequired,
+		NumUsersRequired: groupDao.NumUsersRequired,
 		Users:            users,
 	}
 }

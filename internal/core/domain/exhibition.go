@@ -30,25 +30,24 @@ type ExhibitionBanner struct {
 }
 
 type ExhibitionDAO struct {
-	ID                 primitive.ObjectID `bson:"_id, omitempty"`
-	BannerImage        string
-	ThumbnailImage     string
-	Title              string
-	SubTitle           string
-	Description        string
-	StartTime          time.Time
-	FinishTime         time.Time
-	ProductGroups      []*ProductGroupDAO
-	IsLive             bool
-	CreatedAt          time.Time
-	UpdatedAt          time.Time
-	ExhibitionType     ExhibitionType
-	TargetSales        int
-	Banners            []ExhibitionBanner
-	TotalParticipants  int
-	NumUserRequired    int
-	TotalGroups        int
-	PossibleCategories []string
+	ID                primitive.ObjectID `bson:"_id, omitempty"`
+	BannerImage       string
+	ThumbnailImage    string
+	Title             string
+	SubTitle          string
+	Description       string
+	StartTime         time.Time
+	FinishTime        time.Time
+	ProductGroups     []*ProductGroupDAO
+	IsLive            bool
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
+	ExhibitionType    ExhibitionType
+	TargetSales       int
+	Banners           []ExhibitionBanner
+	TotalParticipants int
+	NumUsersRequired  int
+	TotalGroups       int
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {

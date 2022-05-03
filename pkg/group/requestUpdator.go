@@ -1,9 +1,10 @@
 package group
 
 import (
+	"log"
+
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"log"
 )
 
 func CheckRequestPossible(request *domain.GroupRequestDAO) (bool, error) {
@@ -19,11 +20,11 @@ func CheckRequestPossible(request *domain.GroupRequestDAO) (bool, error) {
 		return false, err
 	}
 
-	if len(groupRequests) <= group.NumUserRequired {
+	if len(groupRequests) <= group.NumUsersRequired {
 		return true, nil
 	} else {
 		rank := getRankOfRequest(request, groupRequests)
-		if rank <= group.NumUserRequired {
+		if rank <= group.NumUsersRequired {
 			return true, nil
 		} else {
 			return false, nil

@@ -1,8 +1,9 @@
 package domain
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type GroupRequestStatus string
@@ -14,10 +15,10 @@ const (
 )
 
 type GroupDAO struct {
-	ID              primitive.ObjectID `bson:"_id, omitempty"`
-	ExhibitionID    string
-	NumUserRequired int
-	Users           []*UserDAO
+	ID               primitive.ObjectID `bson:"_id, omitempty"`
+	ExhibitionID     string
+	NumUsersRequired int
+	Users            []*UserDAO
 }
 
 type GroupRequestDAO struct {

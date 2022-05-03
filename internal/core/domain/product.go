@@ -156,7 +156,7 @@ type ProductDAO struct {
 	SalesInstruction    *AlloffInstructionDAO
 	PriceHistory        []PriceHistoryDAO
 	IsUpdated           bool
-	IsHide              bool
+	IsSpecial           bool
 	Created             time.Time
 	Updated             time.Time
 	ThumbnailImage      string

@@ -95,7 +95,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		Banners:            mapBanners(exDao.Banners),
 		TotalProducts:      numProducts,
 		TotalProductGroups: numPgs,
-		NumUsersRequired:   exDao.NumUserRequired,
+		NumUsersRequired:   exDao.NumUsersRequired,
 		TotalParticipants:  exDao.TotalParticipants,
 		TotalUserGroups:    exDao.TotalGroups,
 		UserGroup:          &model.UserGroup{},

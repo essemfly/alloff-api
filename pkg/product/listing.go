@@ -15,8 +15,11 @@ const (
 	NO_MATTER_CLASSIFIED Classified = "NO_MATTER_CLASSIFIED"
 )
 
-func ProductsSearchListing(offset, limit int, classifiedType Classified, moduleName, brandID, categoryID, alloffCategoryID, keyword string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
-	filter := bson.M{"removed": false, "ishide": false}
+func ProductsSearchListing(offset, limit int, includeSpecial bool, classifiedType Classified, moduleName, brandID, categoryID, alloffCategoryID, keyword string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
+	filter := bson.M{"removed": false}
+	if !includeSpecial {
+		filter["isspecial"] = false
+	}
 
 	if classifiedType != NO_MATTER_CLASSIFIED {
 		if classifiedType == CLASSIFIED_DONE {
@@ -103,7 +106,7 @@ func ProductsSearchListing(offset, limit int, classifiedType Classified, moduleN
 
 // (Future) Mongodb에 종속적인 함수: bson이 사용되었다.
 func ProductsListing(offset, limit int, brandID, categoryID, productGroupID, exhibitionID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
-	filter := bson.M{"removed": false, "ishide": false}
+	filter := bson.M{"removed": false, "isspecial": false}
 
 	brandObjID, _ := primitive.ObjectIDFromHex(brandID)
 	categoryObjID, _ := primitive.ObjectIDFromHex(categoryID)
@@ -116,7 +119,7 @@ func ProductsListing(offset, limit int, brandID, categoryID, productGroupID, exh
 	}
 
 	if exhibitionID != "" {
-		filter["ishide"] = true
+		filter["isspecial"] = true
 		filter["exhibitionid"] = exhibitionID
 
 	}
@@ -176,7 +179,7 @@ func ProductsListing(offset, limit int, brandID, categoryID, productGroupID, exh
 
 // TODO: 위의 함수와 합쳐질 필요가 있다.
 func AlloffCategoryProductsListing(offset, limit int, brandKeynames []string, alloffCategoryID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
-	filter := bson.M{"removed": false, "alloffcategories.done": true, "ishide": false}
+	filter := bson.M{"removed": false, "alloffcategories.done": true, "isspecial": false}
 	if len(brandKeynames) > 0 {
 		filter["productinfo.brand.keyname"] = bson.M{"$in": brandKeynames}
 	}

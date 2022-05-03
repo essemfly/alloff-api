@@ -285,6 +285,12 @@ github.com/labstack/echo/v4 v4.5.0/go.mod h1:czIriw4a0C1dFun+ObrXp7ok03xON0N1awS
 github.com/labstack/gommon v0.3.0/go.mod h1:MULnywXg0yavhxWKc+lOruYdAhDwPK9wf0OL7NoOu+k=
 github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220419083032-3239b8810419 h1:L9bs8GOu+VbIHy7dEN8g9+APwL3yR2ehylgquJtaGlY=
 github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220419083032-3239b8810419/go.mod h1:YNUTDezx6zOBfeXXiQN+w3kzhqIKfv4wssYnbgBdLy8=
+github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220503120844-a9dcf9d8c30e h1:tbH7hNaDaELOXYVFZE/xhZopFqWLib6ES9pSdEdqYzo=
+github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220503120844-a9dcf9d8c30e/go.mod h1:YNUTDezx6zOBfeXXiQN+w3kzhqIKfv4wssYnbgBdLy8=
+github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220503122402-c3fad02729c5 h1:5jjEnye9IKQ+6Vz7ox40GV3nQRKYxOMkWHyRtGd8rE4=
+github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220503122402-c3fad02729c5/go.mod h1:YNUTDezx6zOBfeXXiQN+w3kzhqIKfv4wssYnbgBdLy8=
+github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220503123057-68f981033678 h1:N9yxfSsJuQojYhgc3D47UDmdr5Kx0C7nQhwmqUO9mpY=
+github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220503123057-68f981033678/go.mod h1:YNUTDezx6zOBfeXXiQN+w3kzhqIKfv4wssYnbgBdLy8=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/matryer/moq v0.0.0-20200106131100-75d0ddfc0007/go.mod h1:9ELz6aaclSIGnZBoaSLZ3NAl1VTufbOrXBPvtcy6WiQ=

@@ -19,6 +19,7 @@ func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) (*domain.ProductGroupDAO,
 		}
 		if newPd.ProductGroupId != pgDao.ID.Hex() {
 			newPd.ProductGroupId = pgDao.ID.Hex()
+			newPd.ExhibitionID = pgDao.ExhibitionID
 			updatedPd, err := ioc.Repo.Products.Upsert(newPd)
 			if err != nil {
 				log.Println("err upsert product", newPd.ID.Hex())

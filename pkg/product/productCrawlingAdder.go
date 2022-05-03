@@ -28,6 +28,7 @@ func AddProductInCrawling(request *ProductCrawlingAddRequest) {
 			IsTranslateRequired: request.IsTranslateRequired,
 			Created:             time.Now(),
 			Updated:             time.Now(),
+			IsSpecial:           false,
 		}
 	} else if err != nil {
 		log.Println("IsThere?", err)

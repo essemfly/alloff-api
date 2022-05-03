@@ -51,7 +51,8 @@ func (r *queryResolver) Find(ctx context.Context, input model.ProductQueryInput)
 		}
 	}
 
-	pdDaos, cnt, err := product.ProductsSearchListing(input.Offset, input.Limit, product.NO_MATTER_CLASSIFIED, "", "", "", "", input.Keyword, priceSorting, priceRange)
+	includeSpecial := false
+	pdDaos, cnt, err := product.ProductsSearchListing(input.Offset, input.Limit, includeSpecial, product.NO_MATTER_CLASSIFIED, "", "", "", "", input.Keyword, priceSorting, priceRange)
 	if err != nil {
 		return nil, err
 	}

@@ -31,6 +31,7 @@ func BuildBasketItems(input *model.OrderInput) ([]*order.BasketItem, error) {
 				pg.RemoveProduct(pd.ID.Hex())
 				ioc.Repo.ProductGroups.Upsert(pg)
 				pd.ProductGroupId = ""
+				pd.ExhibitionID = ""
 				ioc.Repo.Products.Upsert(pd)
 			} else {
 				basketItem.ProductGroup = pg
