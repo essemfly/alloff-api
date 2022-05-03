@@ -189,6 +189,11 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		}
 	}
 
+	numUsersRequired := 0
+	if req.NumUsersRequired != nil {
+		numUsersRequired = int(*req.NumUsersRequired)
+	}
+
 	exDao := &domain.ExhibitionDAO{
 		ID:               primitive.NewObjectID(),
 		BannerImage:      req.BannerImage,
@@ -203,7 +208,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		TargetSales:      int(req.TargetSales),
 		Banners:          banners,
 		CreatedAt:        time.Now(),
-		NumUsersRequired: int(*req.NumUsersRequired),
+		NumUsersRequired: numUsersRequired,
 	}
 
 	pgs := []*domain.ProductGroupDAO{}
