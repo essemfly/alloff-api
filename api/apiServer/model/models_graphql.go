@@ -470,11 +470,12 @@ type SizeGuide struct {
 }
 
 type TopBanner struct {
-	ID           string `json:"id"`
-	ImageURL     string `json:"imageUrl"`
-	ExhibitionID string `json:"exhibitionId"`
-	Title        string `json:"title"`
-	SubTitle     string `json:"subTitle"`
+	ID             string         `json:"id"`
+	ImageURL       string         `json:"imageUrl"`
+	ExhibitionID   string         `json:"exhibitionId"`
+	ExhibitionType ExhibitionType `json:"exhibitionType"`
+	Title          string         `json:"title"`
+	SubTitle       string         `json:"subTitle"`
 }
 
 type User struct {

@@ -57,6 +57,8 @@ func (s *TopBannerService) EditTopBanner(ctx context.Context, req *grpcServer.Ed
 	}
 	if req.ExhibitionId != nil {
 		bannerDao.ExhibitionID = *req.ExhibitionId
+		exDao, _ := ioc.Repo.Exhibitions.Get(*req.ExhibitionId)
+		bannerDao.ExhibitionType = string(exDao.ExhibitionType)
 	}
 	if req.Title != nil {
 		bannerDao.Title = *req.Title
@@ -83,14 +85,20 @@ func (s *TopBannerService) EditTopBanner(ctx context.Context, req *grpcServer.Ed
 
 func (s *TopBannerService) CreateTopBanner(ctx context.Context, req *grpcServer.CreateTopBannerRequest) (*grpcServer.CreateTopBannerResponse, error) {
 
+	exDao, err := ioc.Repo.Exhibitions.Get(req.ExhibitionId)
+	if err != nil {
+		log.Println("err on create top banner", err)
+	}
+
 	bannerDao := &domain.TopBannerDAO{
-		ID:           primitive.NewObjectID(),
-		ImageUrl:     req.BannerImage,
-		ExhibitionID: req.ExhibitionId,
-		Title:        req.Title,
-		SubTitle:     req.Subtitle,
-		IsLive:       req.IsLive,
-		Weight:       int(req.Weight),
+		ID:             primitive.NewObjectID(),
+		ImageUrl:       req.BannerImage,
+		ExhibitionID:   req.ExhibitionId,
+		ExhibitionType: string(exDao.ExhibitionType),
+		Title:          req.Title,
+		SubTitle:       req.Subtitle,
+		IsLive:         req.IsLive,
+		Weight:         int(req.Weight),
 	}
 
 	newBannerDao, err := ioc.Repo.TopBanners.Insert(bannerDao)

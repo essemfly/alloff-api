@@ -170,5 +170,4 @@ func (r *queryResolver) JoinGroup(ctx context.Context, groupID string) (*model.G
 	// TODO: Add Users for the groupid
 
 	return mapper.MapGroupDaoToGroup(groupDao), nil
-
 }
