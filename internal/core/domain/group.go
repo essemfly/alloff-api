@@ -30,3 +30,17 @@ type GroupRequestDAO struct {
 	Status       GroupRequestStatus
 	CreatedAt    time.Time
 }
+
+type GroupdealTicketDAO struct {
+	ID           primitive.ObjectID `bson:"_id, omitempty"`
+	ExhibitionID string
+	UserID       string
+	Group        *GroupDAO
+	CreatedAt    time.Time
+}
+
+type GroupRequestListParams struct {
+	GroupID      *string
+	UserID       *string
+	ExhibitionID *string
+}
