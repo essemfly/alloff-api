@@ -12,21 +12,34 @@ func CheckRequestPossible(request *domain.GroupRequestDAO) (bool, error) {
 	groupRequests, err := ioc.Repo.GroupRequest.ListByGroupID(request.GroupID, statusFilter)
 	if err != nil {
 		log.Println("error on get group requests data : ", err)
-		return false, err
 	}
 	group, err := ioc.Repo.Groups.Get(request.GroupID)
 	if err != nil {
 		log.Println("error on get group data : ", err)
-		return false, err
 	}
 
 	if len(groupRequests) <= group.NumUsersRequired {
+		request.Status = domain.GroupRequestStatusSuccess
+		_, err := ioc.Repo.GroupRequest.Update(request)
+		if err != nil {
+			log.Println("error on update group request")
+		}
 		return true, nil
 	} else {
 		rank := getRankOfRequest(request, groupRequests)
 		if rank <= group.NumUsersRequired {
+			request.Status = domain.GroupRequestStatusSuccess
+			_, err := ioc.Repo.GroupRequest.Update(request)
+			if err != nil {
+				log.Println("error on update group request")
+			}
 			return true, nil
 		} else {
+			request.Status = domain.GroupRequestStatusFailed
+			_, err := ioc.Repo.GroupRequest.Update(request)
+			if err != nil {
+				log.Println("error on update group request")
+			}
 			return false, nil
 		}
 	}
