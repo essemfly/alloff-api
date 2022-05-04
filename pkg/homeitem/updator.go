@@ -3,6 +3,7 @@ package homeitem
 import (
 	"log"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -40,19 +41,18 @@ func UpdateHomeItems() {
 		} else if item.ItemType == model.HomeItemTypeProduct {
 			numProductsToShow := 10
 			if item.TargetID != "" {
-				var sortingOptions []string
-				for _, sortingType := range item.Sorting {
-					if sortingType == model.SortingTypeDiscount70_100 {
-						sortingOptions = append(sortingOptions, "100")
-					} else if sortingType == model.SortingTypeDiscount50_70 {
-						sortingOptions = append(sortingOptions, "70")
-					} else if sortingType == model.SortingTypeDiscount30_50 {
-						sortingOptions = append(sortingOptions, "30")
-					} else if sortingType == model.SortingTypeDiscount0_30 {
-						sortingOptions = append(sortingOptions, "0")
-					}
+				priceRanges, priceSorting := mapper.MapProductSortingAndRanges(item.Sorting)
+
+				query := product.ProductListInput{
+					Offset:                    0,
+					Limit:                     numProductsToShow,
+					AlloffCategoryID:          item.TargetID,
+					IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+					IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+					PriceRanges:               priceRanges,
+					PriceSorting:              priceSorting,
 				}
-				products, _, err := product.AlloffCategoryProductsListing(0, numProductsToShow, nil, item.TargetID, "", sortingOptions)
+				products, _, err := product.Listing(query)
 				if err != nil {
 					log.Println("Errors list products")
 				}

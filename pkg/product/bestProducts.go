@@ -4,7 +4,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -81,9 +80,7 @@ func getTotalBestProducts(limit int, from, to time.Time) ([]*domain.ProductDAO, 
 		limit := 100 - len(allBestPds)
 		randomPds := GetBestProductsFromAll(limit)
 		log.Printf("product count of totalBest is less than 100 (now %v), add %v of random product\n", len(allBestPds), limit)
-		for _, pd := range randomPds {
-			allBestPds = append(allBestPds, pd)
-		}
+		allBestPds = append(allBestPds, randomPds...)
 	}
 	log.Printf("successfully loaded %v best products for all\n", len(allBestPds))
 	return allBestPds, nil
@@ -115,25 +112,23 @@ func getCatBestProducts(limit int, from, to time.Time, catId string) ([]*domain.
 		limit := 100 - len(catBestPds)
 		randomPds := GetAlloffCategoryProducts(catId, limit)
 		log.Printf("product count of category %s is less than 100 (now %v), add %v of random product\n", catId, len(catBestPds), limit)
-		for _, pd := range randomPds {
-			catBestPds = append(catBestPds, pd)
-		}
+		catBestPds = append(catBestPds, randomPds...)
 	}
 	log.Printf("successfully loaded %v best products for cat id : %s\n", len(catBestPds), catId)
 	return catBestPds, nil
 }
 
-func getIdsFromDocuments(doc *dto.DocumentCountDTO) (ids []string) {
-	// buckets : Elasticsearch의 Aggregation Query의 결과가 담기는 리스트
-	buckets := doc.Aggregations.GroupByState.Buckets
-	for _, bucket := range buckets {
-		ids = append(ids, bucket.Key)
-	}
-	return
-}
-
 func GetAlloffCategoryProducts(alloffCatID string, limit int) []*domain.ProductDAO {
-	pds, _, err := AlloffCategoryProductsListing(0, limit, nil, alloffCatID, "", []string{"70", "50"})
+	query := ProductListInput{
+		Offset:                    0,
+		Limit:                     limit,
+		AlloffCategoryID:          alloffCatID,
+		IncludeSpecialProductType: NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     NO_MATTER_CLASSIFIED,
+		PriceRanges:               []PriceRangeType{PRICE_RANGE_50, PRICE_RANGE_70},
+	}
+
+	pds, _, err := Listing(query)
 	if err != nil {
 		log.Println("err occured in alloff cats product recording")
 	}
@@ -142,7 +137,15 @@ func GetAlloffCategoryProducts(alloffCatID string, limit int) []*domain.ProductD
 }
 
 func GetBestProductsFromAll(limit int) []*domain.ProductDAO {
-	productDaos, _, err := ProductsListing(0, limit, "", "", "", "", "", []string{"70", "100"})
+	query := ProductListInput{
+		Offset:                    0,
+		Limit:                     limit,
+		IncludeSpecialProductType: NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     NO_MATTER_CLASSIFIED,
+		PriceRanges:               []PriceRangeType{PRICE_RANGE_100, PRICE_RANGE_70},
+	}
+
+	productDaos, _, err := Listing(query)
 	if err != nil {
 		log.Println("err occured in products listing")
 	}

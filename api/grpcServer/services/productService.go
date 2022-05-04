@@ -62,34 +62,27 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		}
 	}
 
-	priceSorting := ""
-	priceRange := []string{}
+	var priceSorting product.PriceSortingType
+	priceRanges := []product.PriceRangeType{}
 	if req.Query.Options != nil {
-		for _, sorting := range req.Query.Options {
-			if sorting == grpcServer.SortingOptions_PRICE_ASCENDING {
-				priceSorting = "ascending"
-			} else if sorting == grpcServer.SortingOptions_PRICE_DESCENDING {
-				priceSorting = "descending"
-			} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_ASCENDING {
-				priceSorting = "discountrateAscending"
-			} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_DESCENDING {
-				priceSorting = "discountrateDescending"
-			} else {
-				if sorting == grpcServer.SortingOptions_DISCOUNT_0_30 {
-					priceRange = append(priceRange, "30")
-				} else if sorting == grpcServer.SortingOptions_DISCOUNT_30_50 {
-					priceRange = append(priceRange, "50")
-				} else if sorting == grpcServer.SortingOptions_DISCOUNT_50_70 {
-					priceRange = append(priceRange, "70")
-				} else {
-					priceRange = append(priceRange, "100")
-				}
-			}
-		}
+		priceRanges, priceSorting = mapper.ProductSortingAndRangesMapper(req.Query.Options)
 	}
 
-	includeSpecial := true
-	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), includeSpecial, classifiedType, moduleName, brandID, categoryID, alloffCategoryID, searchKeyword, priceSorting, priceRange)
+	query := product.ProductListInput{
+		Offset:                    int(req.Offset),
+		Limit:                     int(req.Limit),
+		BrandID:                   brandID,
+		CategoryID:                categoryID,
+		AlloffCategoryID:          alloffCategoryID,
+		Keyword:                   searchKeyword,
+		Modulename:                moduleName,
+		IncludeClassifiedType:     classifiedType,
+		IncludeSpecialProductType: product.ALL_PRODUCTS,
+		PriceRanges:               priceRanges,
+		PriceSorting:              priceSorting,
+	}
+
+	products, cnt, err := product.Listing(query)
 	if err != nil {
 		return nil, err
 	}

@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -165,26 +166,19 @@ type AlloffCategoryItemRequest struct {
 
 func (req *AlloffCategoryItemRequest) fillItemContents(item *domain.HomeTabItemDAO) *domain.HomeTabItemDAO {
 	numProductsToShow := 10
-	priceSorting := ""
-	var priceRange []string
-	for _, sorting := range req.SortingOptions {
-		if sorting == model.SortingTypePriceAscending {
-			priceSorting = "ascending"
-		} else if sorting == model.SortingTypePriceDescending {
-			priceSorting = "descending"
-		} else {
-			if sorting == model.SortingTypeDiscount0_30 {
-				priceRange = append(priceRange, "30")
-			} else if sorting == model.SortingTypeDiscount30_50 {
-				priceRange = append(priceRange, "50")
-			} else if sorting == model.SortingTypeDiscount50_70 {
-				priceRange = append(priceRange, "70")
-			} else {
-				priceRange = append(priceRange, "100")
-			}
-		}
+	priceRanges, priceSorting := mapper.MapProductSortingAndRanges(req.SortingOptions)
+
+	query := product.ProductListInput{
+		Offset:                    0,
+		Limit:                     numProductsToShow,
+		AlloffCategoryID:          req.AlloffCategoryID,
+		IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+		PriceRanges:               priceRanges,
+		PriceSorting:              priceSorting,
 	}
-	products, _, err := product.AlloffCategoryProductsListing(0, numProductsToShow, nil, req.AlloffCategoryID, priceSorting, priceRange)
+
+	products, _, err := product.Listing(query)
 	if err != nil {
 		log.Println("alloffcat id not found: " + req.AlloffCategoryID)
 	}
@@ -212,26 +206,20 @@ func (req *BrandProductsItemRequest) fillItemContents(item *domain.HomeTabItemDA
 	}
 
 	numProductsToShow := 10
-	priceSorting := ""
-	var priceRange []string
-	for _, sorting := range req.SortingOptions {
-		if sorting == model.SortingTypePriceAscending {
-			priceSorting = "ascending"
-		} else if sorting == model.SortingTypePriceDescending {
-			priceSorting = "descending"
-		} else {
-			if sorting == model.SortingTypeDiscount0_30 {
-				priceRange = append(priceRange, "30")
-			} else if sorting == model.SortingTypeDiscount30_50 {
-				priceRange = append(priceRange, "50")
-			} else if sorting == model.SortingTypeDiscount50_70 {
-				priceRange = append(priceRange, "70")
-			} else {
-				priceRange = append(priceRange, "100")
-			}
-		}
+	priceRanges, priceSorting := mapper.MapProductSortingAndRanges(req.SortingOptions)
+
+	brandID := brand.ID.Hex()
+	query := product.ProductListInput{
+		Offset:                    0,
+		Limit:                     numProductsToShow,
+		BrandID:                   brandID,
+		IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+		PriceRanges:               priceRanges,
+		PriceSorting:              priceSorting,
 	}
-	products, _, err := product.ProductsListing(0, numProductsToShow, brand.ID.Hex(), "", "", "", priceSorting, priceRange)
+
+	products, _, err := product.Listing(query)
 	if err != nil {
 		log.Println("brand id not found: " + brand.ID.Hex())
 	}

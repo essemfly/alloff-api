@@ -37,7 +37,15 @@ func ListBrandCategories(brandDao *domain.BrandDAO) []*domain.CategoryDAO {
 	}
 
 	for _, catDao := range catDaos {
-		_, pdCount, _ := product.ProductsListing(0, 1, brandDao.ID.Hex(), catDao.ID.Hex(), "", "", "", nil)
+		query := product.ProductListInput{
+			Offset:                    0,
+			Limit:                     1,
+			BrandID:                   brandDao.ID.Hex(),
+			CategoryID:                catDao.ID.Hex(),
+			IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+			IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+		}
+		_, pdCount, _ := product.Listing(query)
 		if pdCount == 0 {
 			continue
 		}
@@ -56,7 +64,15 @@ func ListBrandAlloffCategories(brandDao *domain.BrandDAO) []*domain.AlloffCatego
 	}
 
 	for _, alloffcat := range alloffcatDaos {
-		_, pdCount, _ := product.AlloffCategoryProductsListing(0, 1, []string{brandDao.KeyName}, alloffcat.ID.Hex(), "", nil)
+		query := product.ProductListInput{
+			Offset:                    0,
+			Limit:                     1,
+			BrandID:                   brandDao.ID.Hex(),
+			AlloffCategoryID:          alloffcat.ID.Hex(),
+			IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+			IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+		}
+		_, pdCount, _ := product.Listing(query)
 		if pdCount == 0 {
 			continue
 		}

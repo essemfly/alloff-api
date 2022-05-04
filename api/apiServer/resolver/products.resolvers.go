@@ -27,32 +27,19 @@ func (r *mutationResolver) LikeProduct(ctx context.Context, input *model.LikePro
 }
 
 func (r *queryResolver) Find(ctx context.Context, input model.ProductQueryInput) (*model.ProductsOutput, error) {
-	priceSorting := ""
-	var priceRange []string
-	for _, sorting := range input.Sorting {
-		if sorting == model.SortingTypePriceAscending {
-			priceSorting = "ascending"
-		} else if sorting == model.SortingTypePriceDescending {
-			priceSorting = "descending"
-		} else if sorting == model.SortingTypeDiscountrateAscending {
-			priceSorting = "discountrateAscending"
-		} else if sorting == model.SortingTypeDiscountrateDescending {
-			priceSorting = "discountrateDescending"
-		} else {
-			if sorting == model.SortingTypeDiscount0_30 {
-				priceRange = append(priceRange, "30")
-			} else if sorting == model.SortingTypeDiscount30_50 {
-				priceRange = append(priceRange, "50")
-			} else if sorting == model.SortingTypeDiscount50_70 {
-				priceRange = append(priceRange, "70")
-			} else {
-				priceRange = append(priceRange, "100")
-			}
-		}
+	priceRanges, priceSorting := mapper.MapProductSortingAndRanges(input.Sorting)
+
+	query := product.ProductListInput{
+		Offset:                    input.Offset,
+		Limit:                     input.Limit,
+		IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+		Keyword:                   input.Keyword,
+		PriceRanges:               priceRanges,
+		PriceSorting:              priceSorting,
 	}
 
-	includeSpecial := false
-	pdDaos, cnt, err := product.ProductsSearchListing(input.Offset, input.Limit, includeSpecial, product.NO_MATTER_CLASSIFIED, "", "", "", "", input.Keyword, priceSorting, priceRange)
+	pdDaos, cnt, err := product.Listing(query)
 	if err != nil {
 		return nil, err
 	}
@@ -85,66 +72,51 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product,
 }
 
 func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error) {
-	var productDaos []*domain.ProductDAO
+	priceRanges, priceSorting := mapper.MapProductSortingAndRanges(input.Sorting)
 
-	priceSorting := ""
-	var priceRange []string
-	for _, sorting := range input.Sorting {
-		if sorting == model.SortingTypePriceAscending {
-			priceSorting = "ascending"
-		} else if sorting == model.SortingTypePriceDescending {
-			priceSorting = "descending"
-		} else if sorting == model.SortingTypeDiscountrateAscending {
-			priceSorting = "discountrateAscending"
-		} else if sorting == model.SortingTypeDiscountrateDescending {
-			priceSorting = "discountrateDescending"
-		} else {
-			if sorting == model.SortingTypeDiscount0_30 {
-				priceRange = append(priceRange, "30")
-			} else if sorting == model.SortingTypeDiscount30_50 {
-				priceRange = append(priceRange, "50")
-			} else if sorting == model.SortingTypeDiscount50_70 {
-				priceRange = append(priceRange, "70")
-			} else {
-				priceRange = append(priceRange, "100")
-			}
-		}
+	query := product.ProductListInput{
+		Offset:                    input.Offset,
+		Limit:                     input.Limit,
+		ExhibitionID:              *input.ExhibitionID,
+		ProductGroupID:            *input.ProductGroupID,
+		IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+		PriceRanges:               priceRanges,
+		PriceSorting:              priceSorting,
 	}
 
-	totalCount := 0
-
-	if input.ExhibitionID != nil {
-		if input.ProductGroupID != nil {
-			productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, "", "", *input.ProductGroupID, *input.ExhibitionID, priceSorting, priceRange)
-		}
-		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, "", "", "", *input.ExhibitionID, priceSorting, priceRange)
-	} else if input.Brand != nil {
+	if input.Brand != nil {
 		brandDao, err := ioc.Repo.Brands.Get(*input.Brand)
 		if err != nil || !brandDao.IsOpenBrand() {
 			return &model.ProductsOutput{
 				Products:   nil,
 				Offset:     input.Offset,
 				Limit:      input.Limit,
-				TotalCount: totalCount,
+				TotalCount: 0,
 			}, err
 		}
-		if input.Category == nil {
-			productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, "", "", "", priceSorting, priceRange)
-		} else {
+
+		query.BrandID = *input.Brand
+		if input.Category != nil {
 			if brandDao.UseAlloffCategory {
-				productDaos, totalCount, _ = product.AlloffCategoryProductsListing(input.Offset, input.Limit, []string{brandDao.KeyName}, *input.Category, priceSorting, priceRange)
+				query.AlloffCategoryID = *input.Category
 			} else {
-				productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, *input.Brand, *input.Category, "", "", priceSorting, priceRange)
+				query.CategoryID = *input.Category
 			}
 		}
-	} else if input.ProductGroupID != nil {
-		productDaos, totalCount, _ = product.ProductsListing(input.Offset, input.Limit, "", "", *input.ProductGroupID, "", priceSorting, priceRange)
-	} else {
-		return nil, errors.New("no parameters given")
+	}
+
+	if input.ExhibitionID != nil {
+		query.IncludeSpecialProductType = product.ALL_PRODUCTS
+	}
+
+	pdDaos, cnt, err := product.Listing(query)
+	if err != nil {
+		return nil, err
 	}
 
 	var products []*model.Product
-	for _, productDao := range productDaos {
+	for _, productDao := range pdDaos {
 		newProd := mapper.MapProductDaoToProduct(productDao)
 		products = append(products, newProd)
 	}
@@ -153,34 +125,24 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 		Products:   products,
 		Offset:     input.Offset,
 		Limit:      input.Limit,
-		TotalCount: totalCount,
+		TotalCount: cnt,
 	}, nil
 }
 
 func (r *queryResolver) AlloffCategoryProducts(ctx context.Context, input model.AlloffCategoryProductsInput) (*model.AlloffCategoryProducts, error) {
-	priceSorting := ""
-	var priceRange []string
-	for _, sorting := range input.Sorting {
-		if sorting == model.SortingTypePriceAscending {
-			priceSorting = "ascending"
-		} else if sorting == model.SortingTypePriceDescending {
-			priceSorting = "descending"
-		} else {
-			if sorting == model.SortingTypeDiscount0_30 {
-				priceRange = append(priceRange, "30")
-			} else if sorting == model.SortingTypeDiscount30_50 {
-				priceRange = append(priceRange, "50")
-			} else if sorting == model.SortingTypeDiscount50_70 {
-				priceRange = append(priceRange, "70")
-			} else {
-				priceRange = append(priceRange, "100")
-			}
-		}
+	priceRanges, priceSorting := mapper.MapProductSortingAndRanges(input.Sorting)
+
+	query := product.ProductListInput{
+		Offset:                    input.Offset,
+		Limit:                     input.Limit,
+		AlloffCategoryID:          input.AlloffcategoryID,
+		IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+		PriceRanges:               priceRanges,
+		PriceSorting:              priceSorting,
 	}
 
-	totalCount := 0
-
-	productDaos, totalCount, err := product.AlloffCategoryProductsListing(input.Offset, input.Limit, input.BrandIds, input.AlloffcategoryID, priceSorting, priceRange)
+	productDaos, totalCount, err := product.Listing(query)
 	if err != nil {
 		return nil, err
 	}

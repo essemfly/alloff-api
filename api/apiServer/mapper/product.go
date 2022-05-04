@@ -131,3 +131,29 @@ func MapCancelDescription(cancelDesc *domain.CancelDescriptionDAO) *model.Cancel
 		RefundFee:       cancelDesc.RefundFee,
 	}
 }
+
+func MapProductSortingAndRanges(sortings []model.SortingType) (priceRanges []product.PriceRangeType, priceSorting product.PriceSortingType) {
+	for _, sorting := range sortings {
+		if sorting == model.SortingTypePriceAscending {
+			priceSorting = product.PRICE_ASCENDING
+		} else if sorting == model.SortingTypePriceDescending {
+			priceSorting = product.PRICE_DESCENDING
+		} else if sorting == model.SortingTypeDiscountrateAscending {
+			priceSorting = product.DISCOUNTRATE_ASCENDING
+		} else if sorting == model.SortingTypeDiscountrateDescending {
+			priceSorting = product.DISCOUNTRATE_DESCENDING
+		} else {
+			if sorting == model.SortingTypeDiscount0_30 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_30)
+			} else if sorting == model.SortingTypeDiscount30_50 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_50)
+			} else if sorting == model.SortingTypeDiscount50_70 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_70)
+			} else {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_100)
+			}
+		}
+	}
+
+	return
+}

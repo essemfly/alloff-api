@@ -86,19 +86,16 @@ func (r *queryResolver) BestBrands(ctx context.Context, offset int, limit int) (
 }
 
 func (r *queryResolver) BargainProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) ([]*model.Product, error) {
-	if alloffCategoryID == "" {
-		productDaos, _, err := product.ProductsListing(offset, limit, "", "", "", "", "", []string{"100"})
-		if err != nil {
-			return nil, err
-		}
-		pds := []*model.Product{}
-		for _, productDao := range productDaos {
-			pds = append(pds, mapper.MapProductDaoToProduct(productDao))
-		}
-		return pds, nil
+	query := product.ProductListInput{
+		Offset:                    offset,
+		Limit:                     limit,
+		AlloffCategoryID:          alloffCategoryID,
+		IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+		PriceRanges:               []product.PriceRangeType{product.PRICE_RANGE_100},
 	}
 
-	productDaos, _, err := product.AlloffCategoryProductsListing(offset, limit, nil, alloffCategoryID, "", []string{"100"})
+	productDaos, _, err := product.Listing(query)
 	if err != nil {
 		return nil, err
 	}
