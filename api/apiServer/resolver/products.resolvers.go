@@ -77,8 +77,6 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 	query := product.ProductListInput{
 		Offset:                    input.Offset,
 		Limit:                     input.Limit,
-		ExhibitionID:              *input.ExhibitionID,
-		ProductGroupID:            *input.ProductGroupID,
 		IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
 		IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
 		PriceRanges:               priceRanges,
@@ -108,6 +106,11 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 
 	if input.ExhibitionID != nil {
 		query.IncludeSpecialProductType = product.ALL_PRODUCTS
+		query.ExhibitionID = *input.ExhibitionID
+	}
+
+	if input.ProductGroupID != nil {
+		query.ProductGroupID = *input.ProductGroupID
 	}
 
 	pdDaos, cnt, err := product.Listing(query)
