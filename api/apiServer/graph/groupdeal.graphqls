@@ -23,6 +23,9 @@ extend type Query {
   mygroupdeals(status: GroupdealStatus!): [Exhibition!]!
   groupdeal(id: String!): Exhibition!
   groupdeals(offset: Int!, limit: Int!, status: GroupdealStatus!): [Exhibition!]!
-  createGroup(exhibitionId: String!): Group!
-  joinGroup(groupId: String!): Group!
+}
+
+extend type Mutation {
+    createGroup(exhibitionId: String!): Group!
+    joinGroup(groupId: String!, requestLink: String!): Group!
 }

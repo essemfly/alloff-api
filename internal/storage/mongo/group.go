@@ -19,6 +19,10 @@ type groupRequestRepo struct {
 	col *mongo.Collection
 }
 
+type groupdealTicketRepo struct {
+	col *mongo.Collection
+}
+
 func (repo *groupRepo) Insert(groupDao *domain.GroupDAO) (*domain.GroupDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -69,16 +73,54 @@ func (repo *groupRepo) Update(groupDao *domain.GroupDAO) (*domain.GroupDAO, erro
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	if _, err := repo.col.UpdateByID(ctx, groupDao.ID, bson.M{"$set": &groupDao}); err != nil {
+	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": groupDao.ID}, bson.M{"$set": &groupDao})
+	if err != nil {
 		return nil, err
 	}
 
-	var updatedGroup *domain.GroupDAO
-	if err := repo.col.FindOne(ctx, bson.M{"_id": groupDao.ID}).Decode(&updatedGroup); err != nil {
+	return groupDao, nil
+}
+
+func (repo *groupRepo) GetByDetail(userId, exhibitionId string) (*domain.GroupDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	objectUserId, _ := primitive.ObjectIDFromHex(userId)
+
+	filter := bson.M{
+		"exhibitionid": exhibitionId,
+		"users._id":    objectUserId,
+	}
+
+	var group *domain.GroupDAO
+	if err := repo.col.FindOne(ctx, filter).Decode(&group); err != nil {
 		return nil, err
 	}
 
-	return updatedGroup, nil
+	return group, nil
+}
+
+func (repo *groupRepo) ListByUserId(userId string) ([]*domain.GroupDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	objectUserId, _ := primitive.ObjectIDFromHex(userId)
+	filter := bson.M{
+		"users._id": objectUserId,
+	}
+
+	cursor, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var groups []*domain.GroupDAO
+	err = cursor.All(ctx, &groups)
+	if err != nil {
+		return nil, err
+	}
+
+	return groups, nil
 }
 
 func (repo *groupRequestRepo) Insert(groupRequest *domain.GroupRequestDAO) (*domain.GroupRequestDAO, error) {
@@ -95,25 +137,35 @@ func (repo *groupRequestRepo) Insert(groupRequest *domain.GroupRequestDAO) (*dom
 	return groupRequest, nil
 }
 
-func (repo *groupRequestRepo) List(userID, exhibitionID string, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error) {
+func (repo *groupRequestRepo) List(params domain.GroupRequestListParams, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	filter := bson.M{}
 	if len(status) == 0 {
-		filter = bson.M{
-			"userid":       userID,
-			"exhibitionid": exhibitionID,
+		if params.UserID != nil {
+			filter["userid"] = &params.UserID
+		}
+		if params.GroupID != nil {
+			filter["groupid"] = &params.GroupID
+		}
+		if params.ExhibitionID != nil {
+			filter["exhibitionid"] = &params.ExhibitionID
 		}
 	} else {
 		statusFilter := []interface{}{}
 		for _, st := range status {
 			statusFilter = append(statusFilter, bson.M{"status": st})
 		}
-		filter = bson.M{
-			"userid":       userID,
-			"exhibitionid": exhibitionID,
-			"$or":          statusFilter,
+		filter["$or"] = statusFilter
+		if params.UserID != nil {
+			filter["userid"] = &params.UserID
+		}
+		if params.GroupID != nil {
+			filter["groupid"] = &params.GroupID
+		}
+		if params.ExhibitionID != nil {
+			filter["exhibitionid"] = &params.ExhibitionID
 		}
 	}
 
@@ -185,6 +237,36 @@ func (repo *groupRequestRepo) Update(groupRequestDao *domain.GroupRequestDAO) (*
 	return updatedGroupRequest, nil
 }
 
+func (repo *groupdealTicketRepo) GetByDetail(exhibitionID, userID string) (*domain.GroupdealTicketDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{
+		"exhibitionid": exhibitionID,
+		"userid":       userID,
+	}
+
+	var groupdealTicket *domain.GroupdealTicketDAO
+	if err := repo.col.FindOne(ctx, filter).Decode(&groupdealTicket); err != nil {
+		return nil, err
+	}
+	return groupdealTicket, nil
+}
+
+func (repo *groupdealTicketRepo) Insert(groupdealTicketDao *domain.GroupdealTicketDAO) (*domain.GroupdealTicketDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	groupdealTicketDao.CreatedAt = time.Now()
+
+	_, err := repo.col.InsertOne(ctx, groupdealTicketDao)
+	if err != nil {
+		return nil, err
+	}
+
+	return groupdealTicketDao, nil
+}
+
 func MongoGroupsRepo(conn *MongoDB) repository.GroupRepository {
 	return &groupRepo{
 		col: conn.groupCol,
@@ -194,5 +276,11 @@ func MongoGroupsRepo(conn *MongoDB) repository.GroupRepository {
 func MongoGroupRequestsRepo(conn *MongoDB) repository.GroupRequestRepository {
 	return &groupRequestRepo{
 		col: conn.groupRequestCol,
+	}
+}
+
+func MongoGroupdealTicketRepo(conn *MongoDB) repository.GroupdealTicketRepository {
+	return &groupdealTicketRepo{
+		col: conn.groupdealTicketCol,
 	}
 }
