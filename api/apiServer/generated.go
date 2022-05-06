@@ -135,11 +135,13 @@ type ComplexityRoot struct {
 	Exhibition struct {
 		BannerImage        func(childComplexity int) int
 		Banners            func(childComplexity int) int
+		CheapestPrice      func(childComplexity int) int
 		CurrentSales       func(childComplexity int) int
 		Description        func(childComplexity int) int
 		ExhibitionType     func(childComplexity int) int
 		FinishTime         func(childComplexity int) int
 		ID                 func(childComplexity int) int
+		LatestPurchase     func(childComplexity int) int
 		NumUsersRequired   func(childComplexity int) int
 		ProductGroups      func(childComplexity int) int
 		StartTime          func(childComplexity int) int
@@ -471,6 +473,7 @@ type ComplexityRoot struct {
 
 	UserGroup struct {
 		GroupID func(childComplexity int) int
+		MyInfo  func(childComplexity int) int
 		Users   func(childComplexity int) int
 	}
 }
@@ -947,6 +950,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Exhibition.Banners(childComplexity), true
 
+	case "Exhibition.cheapestPrice":
+		if e.complexity.Exhibition.CheapestPrice == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.CheapestPrice(childComplexity), true
+
 	case "Exhibition.currentSales":
 		if e.complexity.Exhibition.CurrentSales == nil {
 			break
@@ -981,6 +991,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exhibition.ID(childComplexity), true
+
+	case "Exhibition.latestPurchase":
+		if e.complexity.Exhibition.LatestPurchase == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.LatestPurchase(childComplexity), true
 
 	case "Exhibition.numUsersRequired":
 		if e.complexity.Exhibition.NumUsersRequired == nil {
@@ -2818,6 +2835,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserGroup.GroupID(childComplexity), true
 
+	case "UserGroup.myInfo":
+		if e.complexity.UserGroup.MyInfo == nil {
+			break
+		}
+
+		return e.complexity.UserGroup.MyInfo(childComplexity), true
+
 	case "UserGroup.users":
 		if e.complexity.UserGroup.Users == nil {
 			break
@@ -3368,10 +3392,13 @@ type Exhibition {
   totalParticipants: Int!
   numUsersRequired: Int!
   totalUserGroups: Int!
+  cheapestPrice: Int!
   userGroup: UserGroup!
+  latestPurchase: [OrderInfo!]!
 }
 
 type UserGroup {
+  myInfo: User!
   groupId: ID!
   users: [User!]!
 }
@@ -6883,6 +6910,41 @@ func (ec *executionContext) _Exhibition_totalUserGroups(ctx context.Context, fie
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Exhibition_cheapestPrice(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CheapestPrice, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Exhibition_userGroup(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6916,6 +6978,41 @@ func (ec *executionContext) _Exhibition_userGroup(ctx context.Context, field gra
 	res := resTmp.(*model.UserGroup)
 	fc.Result = res
 	return ec.marshalNUserGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐUserGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exhibition_latestPurchase(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LatestPurchase, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.OrderInfo)
+	fc.Result = res
+	return ec.marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderInfoᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ExhibitionBanner_imgUrl(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionBanner) (ret graphql.Marshaler) {
@@ -15027,6 +15124,41 @@ func (ec *executionContext) _User_personalCustomsNumber(ctx context.Context, fie
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _UserGroup_myInfo(ctx context.Context, field graphql.CollectedField, obj *model.UserGroup) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "UserGroup",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MyInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _UserGroup_groupId(ctx context.Context, field graphql.CollectedField, obj *model.UserGroup) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -17622,8 +17754,18 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "cheapestPrice":
+			out.Values[i] = ec._Exhibition_cheapestPrice(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "userGroup":
 			out.Values[i] = ec._Exhibition_userGroup(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "latestPurchase":
+			out.Values[i] = ec._Exhibition_latestPurchase(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -19641,6 +19783,11 @@ func (ec *executionContext) _UserGroup(ctx context.Context, sel ast.SelectionSet
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("UserGroup")
+		case "myInfo":
+			out.Values[i] = ec._UserGroup_myInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "groupId":
 			out.Values[i] = ec._UserGroup_groupId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

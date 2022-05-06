@@ -41,10 +41,13 @@ type Exhibition {
   totalParticipants: Int!
   numUsersRequired: Int!
   totalUserGroups: Int!
+  cheapestPrice: Int!
   userGroup: UserGroup!
+  latestPurchase: [OrderInfo!]!
 }
 
 type UserGroup {
+  myInfo: User!
   groupId: ID!
   users: [User!]!
 }

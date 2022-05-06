@@ -93,7 +93,7 @@ func (repo *groupRepo) GetByDetail(userId, exhibitionId string) (*domain.GroupDA
 	}
 
 	var group *domain.GroupDAO
-	if err := repo.col.FindOne(ctx, filter).Decode(&group); err != nil {
+	group := &domain.GroupDAO{}
 		return nil, err
 	}
 

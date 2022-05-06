@@ -127,6 +127,7 @@ func (repo *exhibitionRepo) ListGroupDeals(offset, limit int, onlyLive bool, exh
 
 	if exhibitionStatus == domain.GROUPDEAL_PENDING {
 		filter["starttime"] = bson.M{"$gte": now}
+		filter["recruitstarttime"] = bson.M{"$lte": now}
 	} else if exhibitionStatus == domain.GROUPDEAL_OPEN {
 		filter["starttime"] = bson.M{"$lte": now}
 		filter["finishtime"] = bson.M{"$gte": now}

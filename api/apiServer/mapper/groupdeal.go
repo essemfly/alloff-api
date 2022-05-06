@@ -19,13 +19,14 @@ func MapGroupDaoToGroup(groupDao *domain.GroupDAO) *model.Group {
 	}
 }
 
-func MapGroupDaoToUserGroup(groupDao *domain.GroupDAO) *model.UserGroup {
+func MapGroupDaoToUserGroup(groupDao *domain.GroupDAO, userMe *domain.UserDAO) *model.UserGroup {
 	users := []*model.User{}
 	for _, userDao := range groupDao.Users {
 		users = append(users, MapUserDaoToUser(userDao))
 	}
 
 	return &model.UserGroup{
+		MyInfo:  MapUserDaoToUser(userMe),
 		GroupID: groupDao.ID.Hex(),
 		Users:   users,
 	}

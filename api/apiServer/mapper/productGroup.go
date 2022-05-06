@@ -98,6 +98,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		TotalParticipants:  exDao.TotalParticipants,
 		TotalUserGroups:    exDao.TotalGroups,
 		UserGroup:          &model.UserGroup{},
+		CheapestPrice:      exDao.CheapestPrice,
 	}
 }
 

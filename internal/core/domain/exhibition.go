@@ -38,6 +38,7 @@ type ExhibitionDAO struct {
 	Description       string
 	StartTime         time.Time
 	FinishTime        time.Time
+	RecruitStartTime  time.Time
 	ProductGroups     []*ProductGroupDAO
 	IsLive            bool
 	CreatedAt         time.Time
@@ -48,6 +49,7 @@ type ExhibitionDAO struct {
 	TotalParticipants int
 	NumUsersRequired  int
 	TotalGroups       int
+	CheapestPrice     int
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {

@@ -140,7 +140,9 @@ type Exhibition struct {
 	TotalParticipants  int                 `json:"totalParticipants"`
 	NumUsersRequired   int                 `json:"numUsersRequired"`
 	TotalUserGroups    int                 `json:"totalUserGroups"`
+	CheapestPrice      int                 `json:"cheapestPrice"`
 	UserGroup          *UserGroup          `json:"userGroup"`
+	LatestPurchase     []*OrderInfo        `json:"latestPurchase"`
 }
 
 type ExhibitionBanner struct {
@@ -491,6 +493,7 @@ type User struct {
 }
 
 type UserGroup struct {
+	MyInfo  *User   `json:"myInfo"`
 	GroupID string  `json:"groupId"`
 	Users   []*User `json:"users"`
 }
