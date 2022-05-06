@@ -95,6 +95,7 @@ type OrdersRepository interface {
 	GetByAlloffID(ID string) (*domain.OrderDAO, error)
 	ListAllPaid() ([]*domain.OrderDAO, error)
 	List(userID string, onlyPaid bool) ([]*domain.OrderDAO, error)
+	ListByOrderItemsExhibitionID(exhibitionID string) ([]*domain.OrderDAO, error)
 	Insert(*domain.OrderDAO) (*domain.OrderDAO, error)
 	Update(*domain.OrderDAO) (*domain.OrderDAO, error)
 }
