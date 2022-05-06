@@ -6,19 +6,141 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"log"
+	"sync"
+	"time"
+
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/pkg/exhibition"
+	exhibitionService "github.com/lessbutter/alloff-api/pkg/exhibition"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"log"
-	"sync"
-	"time"
 )
 
-// TODO 10195번 페이지 영우님에게 확인 내가 신청한것만 뜨는건지, 성공한것만 뜨는건지 (성공한것만 뜨는거면 입장권 쿼리 사용해서 최적화)
+func (r *mutationResolver) CreateGroup(ctx context.Context, exhibitionID string) (*model.Group, error) {
+	userDao := middleware.ForContext(ctx)
+	if userDao == nil {
+		return nil, fmt.Errorf("ERR000:invalid token")
+	}
+
+	userID := userDao.ID.Hex()
+	params := domain.GroupRequestListParams{
+		UserID:       &userID,
+		ExhibitionID: &exhibitionID,
+	}
+
+	userGroupRequest, err := ioc.Repo.GroupRequest.List(params, []domain.GroupRequestStatus{})
+	if len(userGroupRequest) > 0 {
+		return nil, fmt.Errorf("ERR502:user already has group")
+	}
+
+	exhibition, err := ioc.Repo.Exhibitions.Get(exhibitionID)
+	if err != nil {
+		return nil, err
+	}
+
+	if time.Now().After(exhibition.StartTime) {
+		return nil, fmt.Errorf("ERR500:expired create group time")
+	}
+
+	newGroup := domain.GroupDAO{
+		ID:               primitive.NewObjectID(),
+		ExhibitionID:     exhibitionID,
+		NumUsersRequired: exhibition.NumUsersRequired,
+		Users:            []*domain.UserDAO{userDao},
+	}
+	newGroupDao, err := ioc.Repo.Groups.Insert(&newGroup)
+	if err != nil {
+		return nil, err
+	}
+
+	newRequest := &domain.GroupRequestDAO{
+		ID:           primitive.NewObjectID(),
+		UserID:       userDao.ID.Hex(),
+		ExhibitionID: exhibitionID,
+		GroupID:      newGroup.ID.Hex(),
+		RequestLink:  "",
+		Status:       domain.GroupRequestStatusSuccess,
+	}
+	_, err = ioc.Repo.GroupRequest.Insert(newRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	exhibition.TotalGroups += 1
+	_, err = ioc.Repo.Exhibitions.Upsert(exhibition)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.MapGroupDaoToGroup(newGroupDao), nil
+}
+
+func (r *mutationResolver) JoinGroup(ctx context.Context, groupID string, requestLink string) (*model.Group, error) {
+	var mutex = &sync.Mutex{}
+	userDao := middleware.ForContext(ctx)
+	if userDao == nil {
+		return nil, fmt.Errorf("ERR000:invalid token")
+	}
+
+	userID := userDao.ID.Hex()
+	params := domain.GroupRequestListParams{
+		UserID:  &userID,
+		GroupID: &groupID,
+	}
+
+	userGroupRequest, err := ioc.Repo.GroupRequest.List(params, []domain.GroupRequestStatus{})
+	if len(userGroupRequest) > 0 {
+		return nil, fmt.Errorf("ERR502:user already has group")
+	}
+
+	mutex.Lock()
+	groupDao, err := ioc.Repo.Groups.Get(groupID)
+	if err != nil {
+		return nil, err
+	}
+
+	exhibition, err := ioc.Repo.Exhibitions.Get(groupDao.ExhibitionID)
+	if err != nil {
+		return nil, err
+	}
+
+	if time.Now().After(exhibition.StartTime) {
+		return nil, fmt.Errorf("ERR504:expired join group time")
+	}
+
+	if exhibition.RecruitStartTime.After(userDao.Created) {
+		return nil, fmt.Errorf("ERR503:not new user")
+	}
+
+	if len(groupDao.Users) < exhibition.NumUsersRequired {
+		groupDao.Users = append(groupDao.Users, userDao)
+		_, err = ioc.Repo.Groups.Update(groupDao)
+		if err != nil {
+			return nil, err
+		}
+		newRequest := &domain.GroupRequestDAO{
+			ID:           primitive.NewObjectID(),
+			UserID:       userDao.ID.Hex(),
+			ExhibitionID: groupDao.ExhibitionID,
+			GroupID:      groupID,
+			RequestLink:  requestLink,
+			Status:       domain.GroupRequestStatusSuccess,
+		}
+		_, err = ioc.Repo.GroupRequest.Insert(newRequest)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		return nil, fmt.Errorf("ERR501:group already completed")
+	}
+	mutex.Unlock()
+	exhibitionService.UpdateGroupdealInfo(groupDao, exhibition)
+	return mapper.MapGroupDaoToGroup(groupDao), nil
+}
+
 func (r *queryResolver) Mygroupdeal(ctx context.Context) (*model.MyGroupDeal, error) {
 	user := middleware.ForContext(ctx)
 	if user == nil {
@@ -38,17 +160,18 @@ func (r *queryResolver) Mygroupdeal(ctx context.Context) (*model.MyGroupDeal, er
 	offset, limit := 0, 1000
 	onlyLive := true
 
+	// TODO 얘내 초대장에서 가져오는걸로 바꿔야함
 	liveExhibitions, _, err := ioc.Repo.Exhibitions.ListGroupDeals(offset, limit, onlyLive, domain.GROUPDEAL_OPEN)
 	if err != nil {
 		return nil, err
 	}
-	liveGroupdealCnt := exhibition.GetUserParticipatesCount(liveExhibitions, userGroupRequests)
+	liveGroupdealCnt := exhibitionService.GetUserParticipatesCount(liveExhibitions, userGroupRequests)
 
 	pendingExhibitions, _, err := ioc.Repo.Exhibitions.ListGroupDeals(offset, limit, onlyLive, domain.GROUPDEAL_PENDING)
 	if err != nil {
 		return nil, err
 	}
-	pendingGroupdealCnt := exhibition.GetUserParticipatesCount(pendingExhibitions, userGroupRequests)
+	pendingGroupdealCnt := exhibitionService.GetUserParticipatesCount(pendingExhibitions, userGroupRequests)
 
 	return &model.MyGroupDeal{
 		User:              mapper.MapUserDaoToUser(user),
@@ -75,7 +198,7 @@ func (r *queryResolver) Mygroupdeals(ctx context.Context, status model.Groupdeal
 			return nil, err
 		}
 		exhibitionModel := mapper.MapExhibition(exhibitionDao, true)
-		exhibitionModel.UserGroup = mapper.MapGroupDaoToUserGroup(userGroupDao)
+		exhibitionModel.UserGroup = mapper.MapGroupDaoToUserGroup(userGroupDao, userDao)
 		exhibitions = append(exhibitions, exhibitionModel)
 	}
 	return exhibitions, nil
@@ -94,13 +217,25 @@ func (r *queryResolver) Groupdeal(ctx context.Context, id string) (*model.Exhibi
 		return exhibition, nil
 	}
 
-	// TODO: dev code for giving group users
-	user := mapper.MapUserDaoToUser(userDao)
-	userGroup := model.UserGroup{
-		GroupID: primitive.NewObjectID().Hex(),
-		Users:   []*model.User{user},
+	userGroup := &model.UserGroup{}
+	userGroupDao, err := ioc.Repo.Groups.GetByDetail(userDao.ID.Hex(), id)
+	if err != nil {
+		userGroup = nil
 	}
-	exhibition.UserGroup = &userGroup
+	userGroup = mapper.MapGroupDaoToUserGroup(userGroupDao, userDao)
+
+	latestPurchase := []*model.OrderInfo{}
+	orderDaos, err := ioc.Repo.Orders.ListByOrderItemsExhibitionID(id)
+	if err != nil {
+		latestPurchase = nil
+	}
+	for _, orderDao := range orderDaos {
+		latestPurchase = append(latestPurchase, mapper.MapOrder(orderDao))
+	}
+
+	exhibition.UserGroup = userGroup
+	exhibition.LatestPurchase = latestPurchase
+
 	return exhibition, nil
 }
 
@@ -118,116 +253,20 @@ func (r *queryResolver) Groupdeals(ctx context.Context, offset int, limit int, s
 		return nil, err
 	}
 
+	userDao := middleware.ForContext(ctx)
+
 	exhibitions := []*model.Exhibition{}
 	for _, exhibitionDao := range exhibitionDaos {
-		exhibitions = append(exhibitions, mapper.MapExhibition(exhibitionDao, true))
+		userGroup := &model.UserGroup{}
+		if userDao != nil {
+			userGroupDao, _ := ioc.Repo.Groups.GetByDetail(userDao.ID.Hex(), exhibitionDao.ID.Hex())
+			if userGroupDao != nil {
+				userGroup = mapper.MapGroupDaoToUserGroup(userGroupDao, userDao)
+			}
+		}
+		exhibitionModel := mapper.MapExhibition(exhibitionDao, true)
+		exhibitionModel.UserGroup = userGroup
+		exhibitions = append(exhibitions, exhibitionModel)
 	}
-
-	userDao := middleware.ForContext(ctx)
-	if userDao == nil {
-		return exhibitions, nil
-	}
-
-	// TODO: dev code for giving group users
-	user := mapper.MapUserDaoToUser(userDao)
-	userGroup := model.UserGroup{
-		GroupID: primitive.NewObjectID().Hex(),
-		Users:   []*model.User{user},
-	}
-	for _, exhibition := range exhibitions {
-		exhibition.UserGroup = &userGroup
-	}
-
 	return exhibitions, nil
-}
-
-func (r *mutationResolver) CreateGroup(ctx context.Context, exhibitionID string) (*model.Group, error) {
-	userDao := middleware.ForContext(ctx)
-	if userDao == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
-	}
-
-	exhibition, err := ioc.Repo.Exhibitions.Get(exhibitionID)
-	if err != nil {
-		return nil, err
-	}
-
-	if time.Now().After(exhibition.FinishTime) {
-		return nil, fmt.Errorf("ERR500:expired creategroup time")
-	}
-
-	newGroup := domain.GroupDAO{
-		ID:           primitive.NewObjectID(),
-		ExhibitionID: exhibitionID,
-		Users:        []*domain.UserDAO{userDao},
-	}
-	newGroupDao, err := ioc.Repo.Groups.Insert(&newGroup)
-	if err != nil {
-		return nil, err
-	}
-
-	newRequest := &domain.GroupRequestDAO{
-		ID:           primitive.NewObjectID(),
-		UserID:       userDao.ID.Hex(),
-		ExhibitionID: exhibitionID,
-		GroupID:      newGroup.ID.Hex(),
-		RequestLink:  "",
-		Status:       domain.GroupRequestStatusSuccess,
-	}
-	_, err = ioc.Repo.GroupRequest.Insert(newRequest)
-	if err != nil {
-		return nil, err
-	}
-
-	return mapper.MapGroupDaoToGroup(newGroupDao), nil
-}
-
-func (r *mutationResolver) JoinGroup(ctx context.Context, groupID string, requestLink string) (*model.Group, error) {
-	var mutex = &sync.Mutex{}
-	userDao := middleware.ForContext(ctx)
-	if userDao == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
-	}
-
-	userID := userDao.ID.Hex()
-	params := domain.GroupRequestListParams{
-		UserID:  &userID,
-		GroupID: &groupID,
-	}
-
-	userGroupRequest, err := ioc.Repo.GroupRequest.List(params, []domain.GroupRequestStatus{})
-	if len(userGroupRequest) > 0 {
-		return nil, fmt.Errorf("ERR502:user already joined to this group")
-	}
-
-	mutex.Lock()
-	groupDao, err := ioc.Repo.Groups.Get(groupID)
-	if err != nil {
-		return nil, err
-	}
-
-	// TODO 리퀘스트에 스테이터스 필요 없을지도 ..?
-	if len(groupDao.Users) < 5 {
-		groupDao.Users = append(groupDao.Users, userDao)
-		_, err = ioc.Repo.Groups.Update(groupDao)
-		if err != nil {
-			return nil, err
-		}
-		newRequest := &domain.GroupRequestDAO{
-			ID:           primitive.NewObjectID(),
-			UserID:       userDao.ID.Hex(),
-			ExhibitionID: groupDao.ExhibitionID,
-			GroupID:      groupID,
-			RequestLink:  requestLink,
-			Status:       domain.GroupRequestStatusSuccess,
-		}
-		_, err = ioc.Repo.GroupRequest.Insert(newRequest)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		return nil, fmt.Errorf("ERR501:group already completed")
-	}
-	mutex.Unlock()
-	return mapper.MapGroupDaoToGroup(groupDao), nil
 }
