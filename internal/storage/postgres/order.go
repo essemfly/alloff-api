@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/go-pg/pg/v10"
@@ -87,20 +86,6 @@ func (repo *orderRepo) ListAllPaid() ([]*domain.OrderDAO, error) {
 		order.OrderItems = orderItems
 	}
 
-	return orders, nil
-}
-
-func (repo *orderRepo) ListByOrderItemsExhibitionID(exhibitionID string) ([]*domain.OrderDAO, error) {
-	orders := []*domain.OrderDAO{}
-
-	// TODO: go-pg JOIN 해결
-	query := repo.db.Model(&orders).Column("*").Join("JOIN order_items ON orders.id = order_items.order_id").Where("order_items.exhibition_id", exhibitionID)
-
-	if err := query.Order("created_at DESC").Select(); err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	log.Println(orders)
 	return orders, nil
 }
 

@@ -43,7 +43,7 @@ type Exhibition {
   totalUserGroups: Int!
   cheapestPrice: Int!
   userGroup: UserGroup!
-  latestPurchase: [OrderInfo!]!
+  latestPurchase: [OrderItem!]!
 }
 
 type UserGroup {

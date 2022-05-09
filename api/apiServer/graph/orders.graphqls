@@ -73,6 +73,8 @@ type OrderItem {
   cancelRequestedAt: Date!
   cancelFinishedAt: Date!
   confirmedAt: Date!
+  userId: String!
+  user: User!
 }
 
 input OrderItemInput {

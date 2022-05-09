@@ -142,7 +142,7 @@ type Exhibition struct {
 	TotalUserGroups    int                 `json:"totalUserGroups"`
 	CheapestPrice      int                 `json:"cheapestPrice"`
 	UserGroup          *UserGroup          `json:"userGroup"`
-	LatestPurchase     []*OrderInfo        `json:"latestPurchase"`
+	LatestPurchase     []*OrderItem        `json:"latestPurchase"`
 }
 
 type ExhibitionBanner struct {
@@ -294,6 +294,8 @@ type OrderItem struct {
 	CancelRequestedAt      string               `json:"cancelRequestedAt"`
 	CancelFinishedAt       string               `json:"cancelFinishedAt"`
 	ConfirmedAt            string               `json:"confirmedAt"`
+	UserID                 string               `json:"userId"`
+	User                   *User                `json:"user"`
 }
 
 type OrderItemInput struct {
