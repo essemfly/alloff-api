@@ -234,7 +234,7 @@ type ComplexityRoot struct {
 		CreateGroup           func(childComplexity int, exhibitionID string) int
 		CreateUser            func(childComplexity int, input model.NewUser) int
 		HandlePaymentResponse func(childComplexity int, input *model.OrderResponse) int
-		JoinGroup             func(childComplexity int, groupID string, requestLink string) int
+		JoinGroup             func(childComplexity int, exhibitionID string, groupID string, requestLink string) int
 		LikeBrand             func(childComplexity int, input *model.LikeBrandInput) int
 		LikeProduct           func(childComplexity int, input *model.LikeProductInput) int
 		Login                 func(childComplexity int, input model.Login) int
@@ -290,6 +290,8 @@ type ComplexityRoot struct {
 		SalesPrice             func(childComplexity int) int
 		Selectsize             func(childComplexity int) int
 		UpdatedAt              func(childComplexity int) int
+		User                   func(childComplexity int) int
+		UserID                 func(childComplexity int) int
 	}
 
 	OrderItemStatusDescription struct {
@@ -486,7 +488,7 @@ type MutationResolver interface {
 	RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error)
 	LikeBrand(ctx context.Context, input *model.LikeBrandInput) (bool, error)
 	CreateGroup(ctx context.Context, exhibitionID string) (*model.Group, error)
-	JoinGroup(ctx context.Context, groupID string, requestLink string) (*model.Group, error)
+	JoinGroup(ctx context.Context, exhibitionID string, groupID string, requestLink string) (*model.Group, error)
 	CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error)
 	RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error)
 	RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
@@ -1478,7 +1480,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.JoinGroup(childComplexity, args["groupId"].(string), args["requestLink"].(string)), true
+		return e.complexity.Mutation.JoinGroup(childComplexity, args["exhibitionId"].(string), args["groupId"].(string), args["requestLink"].(string)), true
 
 	case "Mutation.likeBrand":
 		if e.complexity.Mutation.LikeBrand == nil {
@@ -1841,6 +1843,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.OrderItem.UpdatedAt(childComplexity), true
+
+	case "OrderItem.user":
+		if e.complexity.OrderItem.User == nil {
+			break
+		}
+
+		return e.complexity.OrderItem.User(childComplexity), true
+
+	case "OrderItem.userId":
+		if e.complexity.OrderItem.UserID == nil {
+			break
+		}
+
+		return e.complexity.OrderItem.UserID(childComplexity), true
 
 	case "OrderItemStatusDescription.deliveryType":
 		if e.complexity.OrderItemStatusDescription.DeliveryType == nil {
@@ -3079,7 +3095,7 @@ extend type Query {
 
 extend type Mutation {
     createGroup(exhibitionId: String!): Group!
-    joinGroup(groupId: String!, requestLink: String!): Group!
+    joinGroup(exhibitionId: String!, groupId: String!, requestLink: String!): Group!
 }`, BuiltIn: false},
 	{Name: "api/apiServer/graph/hometab.graphqls", Input: `enum HomeTabItemTypeEnum {
   HOMETAB_ITEM_BRANDS
@@ -3221,6 +3237,8 @@ type OrderItem {
   cancelRequestedAt: Date!
   cancelFinishedAt: Date!
   confirmedAt: Date!
+  userId: String!
+  user: User!
 }
 
 input OrderItemInput {
@@ -3394,7 +3412,7 @@ type Exhibition {
   totalUserGroups: Int!
   cheapestPrice: Int!
   userGroup: UserGroup!
-  latestPurchase: [OrderInfo!]!
+  latestPurchase: [OrderItem!]!
 }
 
 type UserGroup {
@@ -3758,23 +3776,32 @@ func (ec *executionContext) field_Mutation_joinGroup_args(ctx context.Context, r
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["groupId"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+	if tmp, ok := rawArgs["exhibitionId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exhibitionId"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["groupId"] = arg0
+	args["exhibitionId"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["requestLink"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("requestLink"))
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["requestLink"] = arg1
+	args["groupId"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["requestLink"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("requestLink"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["requestLink"] = arg2
 	return args, nil
 }
 
@@ -7010,9 +7037,9 @@ func (ec *executionContext) _Exhibition_latestPurchase(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.OrderInfo)
+	res := resTmp.([]*model.OrderItem)
 	fc.Result = res
-	return ec.marshalNOrderInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderInfoᚄ(ctx, field.Selections, res)
+	return ec.marshalNOrderItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ExhibitionBanner_imgUrl(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionBanner) (ret graphql.Marshaler) {
@@ -8836,7 +8863,7 @@ func (ec *executionContext) _Mutation_joinGroup(ctx context.Context, field graph
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().JoinGroup(rctx, args["groupId"].(string), args["requestLink"].(string))
+		return ec.resolvers.Mutation().JoinGroup(rctx, args["exhibitionId"].(string), args["groupId"].(string), args["requestLink"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10511,6 +10538,76 @@ func (ec *executionContext) _OrderItem_confirmedAt(ctx context.Context, field gr
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderItem_userId(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _OrderItem_user(ctx context.Context, field graphql.CollectedField, obj *model.OrderItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "OrderItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.User, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐUser(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _OrderItemStatusDescription_deliveryType(ctx context.Context, field graphql.CollectedField, obj *model.OrderItemStatusDescription) (ret graphql.Marshaler) {
@@ -18532,6 +18629,16 @@ func (ec *executionContext) _OrderItem(ctx context.Context, sel ast.SelectionSet
 			}
 		case "confirmedAt":
 			out.Values[i] = ec._OrderItem_confirmedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "userId":
+			out.Values[i] = ec._OrderItem_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "user":
+			out.Values[i] = ec._OrderItem_user(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
