@@ -8,7 +8,16 @@ import (
 	"math"
 )
 
-func GetCheapestPrice(exhibition *domain.ExhibitionDAO) int {
+func UpdateCheapestPrice(exhibitionDao *domain.ExhibitionDAO) {
+	cheapestPrice := getCheapestPrice(exhibitionDao)
+	exhibitionDao.CheapestPrice = cheapestPrice
+	_, err := ioc.Repo.Exhibitions.Upsert(exhibitionDao)
+	if err != nil {
+		log.Println("err occurred on update cheapest price : ", err)
+	}
+}
+
+func getCheapestPrice(exhibition *domain.ExhibitionDAO) int {
 	cheapestPrice := math.MaxInt64
 	for _, pg := range exhibition.ProductGroups {
 		for _, pd := range pg.Products {

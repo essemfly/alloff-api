@@ -158,14 +158,7 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	}
 
 	go broker.ExhibitionSyncer(newExhibitionDao)
-	go func() {
-		cheapestPrice := exhibition.GetCheapestPrice(newExhibitionDao)
-		newExhibitionDao.CheapestPrice = cheapestPrice
-		_, err = ioc.Repo.Exhibitions.Upsert(newExhibitionDao)
-		if err != nil {
-			log.Println("err occurred on update cheapest price : ", err)
-		}
-	}()
+	go exhibition.UpdateCheapestPrice(newExhibitionDao)
 
 	return &grpcServer.EditExhibitionResponse{
 		Exhibition: mapper.ExhibitionMapper(newExhibitionDao, false),
@@ -250,14 +243,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		return nil, err
 	}
 
-	go func() {
-		cheapestPrice := exhibition.GetCheapestPrice(newExDao)
-		newExDao.CheapestPrice = cheapestPrice
-		_, err = ioc.Repo.Exhibitions.Upsert(newExDao)
-		if err != nil {
-			log.Println("err occurred on update cheapest price : ", err)
-		}
-	}()
+	go exhibition.UpdateCheapestPrice(newExDao)
 
 	return &grpcServer.CreateExhibitionResponse{
 		Exhibition: mapper.ExhibitionMapper(newExDao, false),
