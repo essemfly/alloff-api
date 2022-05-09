@@ -50,6 +50,7 @@ type ExhibitionDAO struct {
 	NumUsersRequired  int
 	TotalGroups       int
 	CheapestPrice     int
+	AllowOldUser      bool
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {

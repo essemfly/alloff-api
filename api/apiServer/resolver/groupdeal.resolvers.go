@@ -20,19 +20,20 @@ import (
 )
 
 func (r *mutationResolver) CreateGroup(ctx context.Context, exhibitionID string) (*model.Group, error) {
+	var mutex = &sync.Mutex{}
 	userDao := middleware.ForContext(ctx)
 	if userDao == nil {
 		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
 	userID := userDao.ID.Hex()
-	params := domain.GroupRequestListParams{
+	params := domain.GroupRequestParams{
 		UserID:       &userID,
 		ExhibitionID: &exhibitionID,
 	}
 
-	userGroupRequest, err := ioc.Repo.GroupRequest.List(params, []domain.GroupRequestStatus{})
-	if len(userGroupRequest) > 0 {
+	userGroupRequest, _ := ioc.Repo.GroupRequest.Get(params)
+	if userGroupRequest != nil {
 		return nil, fmt.Errorf("ERR502:user already has group")
 	}
 
@@ -45,6 +46,7 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, exhibitionID string)
 		return nil, fmt.Errorf("ERR500:expired create group time")
 	}
 
+	mutex.Lock()
 	newGroup := domain.GroupDAO{
 		ID:               primitive.NewObjectID(),
 		ExhibitionID:     exhibitionID,
@@ -74,11 +76,12 @@ func (r *mutationResolver) CreateGroup(ctx context.Context, exhibitionID string)
 	if err != nil {
 		return nil, err
 	}
+	mutex.Unlock()
 
 	return mapper.MapGroupDaoToGroup(newGroupDao), nil
 }
 
-func (r *mutationResolver) JoinGroup(ctx context.Context, groupID string, requestLink string) (*model.Group, error) {
+func (r *mutationResolver) JoinGroup(ctx context.Context, exhibitionID string, groupID string, requestLink string) (*model.Group, error) {
 	var mutex = &sync.Mutex{}
 	userDao := middleware.ForContext(ctx)
 	if userDao == nil {
@@ -86,13 +89,13 @@ func (r *mutationResolver) JoinGroup(ctx context.Context, groupID string, reques
 	}
 
 	userID := userDao.ID.Hex()
-	params := domain.GroupRequestListParams{
-		UserID:  &userID,
-		GroupID: &groupID,
+	params := domain.GroupRequestParams{
+		UserID:       &userID,
+		ExhibitionID: &exhibitionID,
 	}
 
-	userGroupRequest, err := ioc.Repo.GroupRequest.List(params, []domain.GroupRequestStatus{})
-	if len(userGroupRequest) > 0 {
+	userGroupRequest, _ := ioc.Repo.GroupRequest.Get(params)
+	if userGroupRequest != nil {
 		return nil, fmt.Errorf("ERR502:user already has group")
 	}
 
@@ -111,7 +114,7 @@ func (r *mutationResolver) JoinGroup(ctx context.Context, groupID string, reques
 		return nil, fmt.Errorf("ERR504:expired join group time")
 	}
 
-	if exhibition.RecruitStartTime.After(userDao.Created) {
+	if exhibition.RecruitStartTime.After(userDao.Created) && !exhibition.AllowOldUser {
 		return nil, fmt.Errorf("ERR503:not new user")
 	}
 
@@ -148,7 +151,7 @@ func (r *queryResolver) Mygroupdeal(ctx context.Context) (*model.MyGroupDeal, er
 	}
 
 	userid := user.ID.Hex()
-	params := domain.GroupRequestListParams{
+	params := domain.GroupRequestParams{
 		UserID: &userid,
 	}
 	userGroupRequests, err := ioc.Repo.GroupRequest.List(params, []domain.GroupRequestStatus{})
@@ -156,22 +159,26 @@ func (r *queryResolver) Mygroupdeal(ctx context.Context) (*model.MyGroupDeal, er
 		log.Println("error on get list of group requests")
 		return nil, err
 	}
+	userTickets, err := ioc.Repo.GroupdealTickets.ListByUserID(user.ID.Hex())
+	if err != nil {
+		log.Println("error on get list of tickets")
+		return nil, err
+	}
 
 	offset, limit := 0, 1000
 	onlyLive := true
 
-	// TODO 얘내 초대장에서 가져오는걸로 바꿔야함
 	liveExhibitions, _, err := ioc.Repo.Exhibitions.ListGroupDeals(offset, limit, onlyLive, domain.GROUPDEAL_OPEN)
 	if err != nil {
 		return nil, err
 	}
-	liveGroupdealCnt := exhibitionService.GetUserParticipatesCount(liveExhibitions, userGroupRequests)
+	liveGroupdealCnt := exhibitionService.GetUserPurchasableGroupCount(liveExhibitions, userTickets)
 
 	pendingExhibitions, _, err := ioc.Repo.Exhibitions.ListGroupDeals(offset, limit, onlyLive, domain.GROUPDEAL_PENDING)
 	if err != nil {
 		return nil, err
 	}
-	pendingGroupdealCnt := exhibitionService.GetUserParticipatesCount(pendingExhibitions, userGroupRequests)
+	pendingGroupdealCnt := exhibitionService.GetUserPendingGroupCount(pendingExhibitions, userGroupRequests)
 
 	return &model.MyGroupDeal{
 		User:              mapper.MapUserDaoToUser(user),
@@ -224,13 +231,13 @@ func (r *queryResolver) Groupdeal(ctx context.Context, id string) (*model.Exhibi
 	}
 	userGroup = mapper.MapGroupDaoToUserGroup(userGroupDao, userDao)
 
-	latestPurchase := []*model.OrderInfo{}
-	orderDaos, err := ioc.Repo.Orders.ListByOrderItemsExhibitionID(id)
+	latestPurchase := []*model.OrderItem{}
+	orderDaos, err := ioc.Repo.OrderItems.ListByExhibitionID(id)
 	if err != nil {
 		latestPurchase = nil
 	}
 	for _, orderDao := range orderDaos {
-		latestPurchase = append(latestPurchase, mapper.MapOrder(orderDao))
+		latestPurchase = append(latestPurchase, mapper.MapOrderItem(orderDao))
 	}
 
 	exhibition.UserGroup = userGroup

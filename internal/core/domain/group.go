@@ -39,7 +39,7 @@ type GroupdealTicketDAO struct {
 	CreatedAt    time.Time
 }
 
-type GroupRequestListParams struct {
+type GroupRequestParams struct {
 	GroupID      *string
 	UserID       *string
 	ExhibitionID *string

@@ -27,5 +27,5 @@ extend type Query {
 
 extend type Mutation {
     createGroup(exhibitionId: String!): Group!
-    joinGroup(groupId: String!, requestLink: String!): Group!
+    joinGroup(exhibitionId: String!, groupId: String!, requestLink: String!): Group!
 }

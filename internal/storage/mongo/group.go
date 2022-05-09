@@ -137,7 +137,7 @@ func (repo *groupRequestRepo) Insert(groupRequest *domain.GroupRequestDAO) (*dom
 	return groupRequest, nil
 }
 
-func (repo *groupRequestRepo) List(params domain.GroupRequestListParams, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error) {
+func (repo *groupRequestRepo) List(params domain.GroupRequestParams, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -237,6 +237,29 @@ func (repo *groupRequestRepo) Update(groupRequestDao *domain.GroupRequestDAO) (*
 	return updatedGroupRequest, nil
 }
 
+func (repo *groupRequestRepo) Get(params domain.GroupRequestParams) (*domain.GroupRequestDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{}
+	if params.UserID != nil {
+		filter["userid"] = &params.UserID
+	}
+	if params.GroupID != nil {
+		filter["groupid"] = &params.GroupID
+	}
+	if params.ExhibitionID != nil {
+		filter["exhibitionid"] = &params.ExhibitionID
+	}
+
+	groupRequest := &domain.GroupRequestDAO{}
+	if err := repo.col.FindOne(ctx, filter).Decode(groupRequest); err != nil {
+		return nil, err
+	}
+
+	return groupRequest, nil
+}
+
 func (repo *groupdealTicketRepo) GetByDetail(exhibitionID, userID string) (*domain.GroupdealTicketDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -265,6 +288,27 @@ func (repo *groupdealTicketRepo) Insert(groupdealTicketDao *domain.GroupdealTick
 	}
 
 	return groupdealTicketDao, nil
+}
+
+func (repo *groupdealTicketRepo) ListByUserID(userID string) ([]*domain.GroupdealTicketDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{"userid": userID}
+
+	cursor, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	groupdealTickets := []*domain.GroupdealTicketDAO{}
+	err = cursor.All(ctx, &groupdealTickets)
+	if err != nil {
+		return nil, err
+	}
+
+	return groupdealTickets, nil
+
 }
 
 func MongoGroupsRepo(conn *MongoDB) repository.GroupRepository {
