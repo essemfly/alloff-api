@@ -95,7 +95,6 @@ type OrdersRepository interface {
 	GetByAlloffID(ID string) (*domain.OrderDAO, error)
 	ListAllPaid() ([]*domain.OrderDAO, error)
 	List(userID string, onlyPaid bool) ([]*domain.OrderDAO, error)
-	ListByOrderItemsExhibitionID(exhibitionID string) ([]*domain.OrderDAO, error)
 	Insert(*domain.OrderDAO) (*domain.OrderDAO, error)
 	Update(*domain.OrderDAO) (*domain.OrderDAO, error)
 }
@@ -105,6 +104,7 @@ type OrderItemsRepository interface {
 	GetByCode(code string) (*domain.OrderItemDAO, error)
 	ListByProductGroupID(pgID string) ([]*domain.OrderItemDAO, int, error)
 	ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error)
+	ListByExhibitionID(exhibitionID string) ([]*domain.OrderItemDAO, error)
 	ListAllCanceled() ([]*domain.OrderItemDAO, error)
 	Update(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
 }
@@ -197,13 +197,15 @@ type GroupRepository interface {
 type GroupRequestRepository interface {
 	Insert(*domain.GroupRequestDAO) (*domain.GroupRequestDAO, error)
 	Update(*domain.GroupRequestDAO) (*domain.GroupRequestDAO, error)
-	List(params domain.GroupRequestListParams, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error)
+	List(params domain.GroupRequestParams, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error)
 	ListByGroupID(groupID string, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error)
+	Get(params domain.GroupRequestParams) (*domain.GroupRequestDAO, error)
 }
 
 type GroupdealTicketRepository interface {
 	Insert(dao *domain.GroupdealTicketDAO) (*domain.GroupdealTicketDAO, error)
 	GetByDetail(userID, exhibitionID string) (*domain.GroupdealTicketDAO, error)
+	ListByUserID(userID string) ([]*domain.GroupdealTicketDAO, error)
 }
 
 type OrderCountsRepository interface {
