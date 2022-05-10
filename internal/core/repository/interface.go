@@ -190,7 +190,6 @@ type GroupRepository interface {
 	Get(ID string) (*domain.GroupDAO, error)
 	GetByDetail(userId, exhibitionId string) (*domain.GroupDAO, error)
 	ListByUserId(userId string) ([]*domain.GroupDAO, error)
-	List(exhibitionID string) ([]*domain.GroupDAO, error)
 	Update(dao *domain.GroupDAO) (*domain.GroupDAO, error)
 }
 

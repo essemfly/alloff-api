@@ -49,26 +49,6 @@ func (repo *groupRepo) Get(groupID string) (*domain.GroupDAO, error) {
 	return group, nil
 }
 
-func (repo *groupRepo) List(exhibitionID string) ([]*domain.GroupDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	filter := bson.M{"exhibitionid": exhibitionID}
-
-	cursor, err := repo.col.Find(ctx, filter)
-	if err != nil {
-		return nil, err
-	}
-
-	var groups []*domain.GroupDAO
-	err = cursor.All(ctx, &groups)
-	if err != nil {
-		return nil, err
-	}
-
-	return groups, nil
-}
-
 func (repo *groupRepo) Update(groupDao *domain.GroupDAO) (*domain.GroupDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
