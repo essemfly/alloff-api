@@ -205,7 +205,7 @@ type GroupRequestRepository interface {
 type GroupdealTicketRepository interface {
 	Insert(dao *domain.GroupdealTicketDAO) (*domain.GroupdealTicketDAO, error)
 	GetByDetail(userID, exhibitionID string) (*domain.GroupdealTicketDAO, error)
-	ListByUserID(userID string) ([]*domain.GroupdealTicketDAO, error)
+	ListByDetail(userID, exhibitionID string) ([]*domain.GroupdealTicketDAO, error)
 }
 
 type OrderCountsRepository interface {

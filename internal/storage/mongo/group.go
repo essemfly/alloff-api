@@ -290,11 +290,17 @@ func (repo *groupdealTicketRepo) Insert(groupdealTicketDao *domain.GroupdealTick
 	return groupdealTicketDao, nil
 }
 
-func (repo *groupdealTicketRepo) ListByUserID(userID string) ([]*domain.GroupdealTicketDAO, error) {
+func (repo *groupdealTicketRepo) ListByDetail(userID, exhibitionID string) ([]*domain.GroupdealTicketDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	filter := bson.M{"userid": userID}
+	filter := bson.M{}
+	if userID != "" {
+		filter["userid"] = userID
+	}
+	if exhibitionID != "" {
+		filter["exhibitionid"] = exhibitionID
+	}
 
 	cursor, err := repo.col.Find(ctx, filter)
 	if err != nil {
@@ -308,7 +314,6 @@ func (repo *groupdealTicketRepo) ListByUserID(userID string) ([]*domain.Groupdea
 	}
 
 	return groupdealTickets, nil
-
 }
 
 func MongoGroupsRepo(conn *MongoDB) repository.GroupRepository {
