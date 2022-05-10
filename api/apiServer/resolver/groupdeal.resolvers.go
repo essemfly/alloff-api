@@ -13,6 +13,8 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/cmd"
+	"github.com/lessbutter/alloff-api/cmd/scripter/scripts"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	exhibitionService "github.com/lessbutter/alloff-api/pkg/exhibition"
@@ -144,6 +146,101 @@ func (r *mutationResolver) JoinGroup(ctx context.Context, exhibitionID string, g
 	return mapper.MapGroupDaoToGroup(groupDao), nil
 }
 
+func (r *mutationResolver) AddMockGroupdeal(ctx context.Context, input *model.AddMockGroupdealInput) (*model.Exhibition, error) {
+	// for prevent query to prod env
+	cmd.SetBaseConfig("dev")
+
+	recruitStartTime := time.Now()
+	startTime := time.Now()
+	finishTime := time.Now()
+
+	switch input.GroupdealStatus {
+	case model.GroupdealStatusPending:
+		startTime = startTime.Add(72 * time.Hour)
+		finishTime = startTime.Add(72 * time.Hour)
+	case model.GroupdealStatusOpen:
+		recruitStartTime = recruitStartTime.Add(-72 * time.Hour)
+		finishTime = finishTime.Add(72 * time.Hour)
+	case model.GroupdealStatusClosed:
+		recruitStartTime = recruitStartTime.Add(-144 * time.Hour)
+		startTime = startTime.Add(-72 * time.Hour)
+	}
+
+	newExhibition := &domain.ExhibitionDAO{
+		ID:               primitive.NewObjectID(),
+		BannerImage:      input.BannerImage,
+		ThumbnailImage:   input.ThumbnailImage,
+		Title:            input.Title,
+		SubTitle:         input.Subtitle,
+		Description:      input.Description,
+		StartTime:        startTime,
+		FinishTime:       finishTime,
+		RecruitStartTime: recruitStartTime,
+		IsLive:           true,
+		CreatedAt:        time.Now(),
+		UpdatedAt:        time.Now(),
+		ExhibitionType:   domain.EXHIBITION_GROUPDEAL,
+		NumUsersRequired: input.NumUsersRequired,
+		AllowOldUser:     input.AllowOldUser,
+	}
+
+	newExhibition.ProductGroups = scripts.AddGroupdealProductGroups(newExhibition)
+	_, err := ioc.Repo.Exhibitions.Upsert(newExhibition)
+	if err != nil {
+		return nil, err
+	}
+	exhibitionService.UpdateCheapestPrice(newExhibition)
+	exhibitionService.UpdateGroupdealInfo(&domain.GroupDAO{}, newExhibition)
+	return mapper.MapExhibition(newExhibition, false), nil
+}
+
+func (r *mutationResolver) AddMockGroup(ctx context.Context, exhibitionID string, isCompleted bool) (*model.Group, error) {
+	// for prevent query to prod env
+	cmd.SetBaseConfig("dev")
+
+	exhibition, err := ioc.Repo.Exhibitions.Get(exhibitionID)
+	if err != nil {
+		return nil, err
+	}
+
+	exhibition.TotalGroups += 1
+	_, err = ioc.Repo.Exhibitions.Upsert(exhibition)
+	if err != nil {
+		log.Println("error occurred on update total groups : ", err)
+		return nil, err
+	}
+
+	group, err := scripts.AddMockGroup(exhibition, isCompleted)
+	if err != nil {
+		return nil, err
+	}
+
+	exhibitionService.UpdateGroupdealInfo(group, exhibition)
+	return mapper.MapGroupDaoToGroup(group), nil
+}
+
+func (r *mutationResolver) PushMockUserToGroup(ctx context.Context, groupID string) (*model.Group, error) {
+	// for prevent query to prod env
+	cmd.SetBaseConfig("dev")
+
+	groupDao, err := ioc.Repo.Groups.Get(groupID)
+	if err != nil {
+		return nil, err
+	}
+
+	exhibition, err := ioc.Repo.Exhibitions.Get(groupDao.ExhibitionID)
+	if err != nil {
+		return nil, err
+	}
+
+	groupDao, err = scripts.PushMockUserToGroup(groupDao)
+	if err != nil {
+		return nil, err
+	}
+	exhibitionService.UpdateGroupdealInfo(groupDao, exhibition)
+	return mapper.MapGroupDaoToGroup(groupDao), nil
+}
+
 func (r *queryResolver) Mygroupdeal(ctx context.Context) (*model.MyGroupDeal, error) {
 	user := middleware.ForContext(ctx)
 	if user == nil {
@@ -159,7 +256,7 @@ func (r *queryResolver) Mygroupdeal(ctx context.Context) (*model.MyGroupDeal, er
 		log.Println("error on get list of group requests")
 		return nil, err
 	}
-	userTickets, err := ioc.Repo.GroupdealTickets.ListByUserID(user.ID.Hex())
+	userTickets, err := ioc.Repo.GroupdealTickets.ListByDetail(user.ID.Hex(), "")
 	if err != nil {
 		log.Println("error on get list of tickets")
 		return nil, err
@@ -240,8 +337,14 @@ func (r *queryResolver) Groupdeal(ctx context.Context, id string) (*model.Exhibi
 		latestPurchase = append(latestPurchase, mapper.MapOrderItem(orderDao))
 	}
 
+	totalTickets, err := ioc.Repo.GroupdealTickets.ListByDetail("", id)
+	if err != nil {
+		return nil, err
+	}
+
 	exhibition.UserGroup = userGroup
 	exhibition.LatestPurchase = latestPurchase
+	exhibition.TotalGroupdealTickets = len(totalTickets)
 
 	return exhibition, nil
 }

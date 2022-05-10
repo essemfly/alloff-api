@@ -32,6 +32,7 @@ type Exhibition {
   productGroups: [ProductGroup!]!
   startTime: Date!
   finishTime: Date!
+  recruitStartTime: Date!
   targetSales: Int!
   currentSales: Int!
   exhibitionType: ExhibitionType!
@@ -44,6 +45,8 @@ type Exhibition {
   cheapestPrice: Int!
   userGroup: UserGroup!
   latestPurchase: [OrderItem!]!
+  allowOldUser: Boolean!
+  totalGroupdealTickets: Int!
 }
 
 type UserGroup {

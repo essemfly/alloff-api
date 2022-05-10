@@ -18,6 +18,17 @@ type Group {
     users: [User!]!
 }
 
+input AddMockGroupdealInput {
+    title: String!
+    subtitle: String!
+    description: String!
+    numUsersRequired: Int!
+    allowOldUser: Boolean!
+    bannerImage: String!
+    thumbnailImage: String!
+    groupdealStatus: GroupdealStatus!
+}
+
 extend type Query {
   mygroupdeal: MyGroupDeal!
   mygroupdeals(status: GroupdealStatus!): [Exhibition!]!
@@ -29,4 +40,7 @@ extend type Query {
 extend type Mutation {
     createGroup(exhibitionId: String!): Group!
     joinGroup(exhibitionId: String!, groupId: String!, requestLink: String!): Group!
+    addMockGroupdeal(input: AddMockGroupdealInput): Exhibition!
+    addMockGroup(exhibitionId: String!, isCompleted: Boolean!): Group!
+    pushMockUserToGroup(groupId: String!): Group!
 }

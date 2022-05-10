@@ -90,6 +90,69 @@ func addTimedealProductGroups(exhibitionId string) []*domain.ProductGroupDAO {
 	return pgs
 }
 
+func AddGroupdealProductGroups(exhibitionDao *domain.ExhibitionDAO) []*domain.ProductGroupDAO {
+	brands, _, err := ioc.Repo.Brands.List(0, 10, true, true, nil)
+	if err != nil {
+		log.Println("err on get list of brands : ", err)
+		return nil
+	}
+
+	var pgs []*domain.ProductGroupDAO
+	for _, brand := range brands {
+		pg := &domain.ProductGroupDAO{
+			ID:           primitive.NewObjectID(),
+			Title:        brand.KorName + " 그룹딜 2.0 테스트 타이틀",
+			ShortTitle:   brand.KorName + " 그룹딜 2.0 테스트 숏타이틀",
+			Instruction:  []string{"그룹딜 2.0 인스트럭션", "그룹딜 2.0 인스트럭션 2"},
+			ImgUrl:       "https://picsum.photos/seed/" + utils.CreateShortUUID() + "/375/215",
+			GroupType:    domain.PRODUCT_GROUP_GROUPDEAL,
+			StartTime:    exhibitionDao.StartTime,
+			FinishTime:   exhibitionDao.FinishTime,
+			Created:      time.Now(),
+			Updated:      time.Now(),
+			ExhibitionID: exhibitionDao.ID.Hex(),
+			Brand:        brand,
+		}
+
+		filter := bson.M{
+			"productinfo.brand.keyname": brand.KeyName,
+			"removed":                   false,
+		}
+
+		products, _, err := ioc.Repo.Products.List(0, 10, filter, nil)
+		if err != nil {
+			log.Println("Error on listing products : ", err)
+		}
+
+		var pdPriorities []*domain.ProductPriorityDAO
+		for i, pd := range products {
+			pd.SpecialPrice = pd.DiscountedPrice
+			pdPriorities = append(pdPriorities, &domain.ProductPriorityDAO{
+				Priority:  i,
+				Product:   pd,
+				ProductID: pd.ID,
+			})
+			pd.ProductGroupId = pg.ID.Hex()
+			pd.ExhibitionID = pg.ExhibitionID
+			_, err = ioc.Repo.Products.Upsert(pd)
+			if err != nil {
+				log.Println("Error on upsert product : ", err)
+			}
+		}
+
+		pg.Products = pdPriorities
+		pg.ExhibitionID = exhibitionDao.ID.Hex()
+		_, err = ioc.Repo.ProductGroups.Upsert(pg)
+		if err != nil {
+			log.Println("Error on upsert productGroups : ", err)
+		}
+		pgs = append(pgs, pg)
+	}
+
+	return pgs
+
+}
+
 func AddProductGroups() {
 	loc, _ := time.LoadLocation("Asia/Seoul")
 	timedealInstrctuion := []string{

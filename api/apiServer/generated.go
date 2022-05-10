@@ -133,27 +133,30 @@ type ComplexityRoot struct {
 	}
 
 	Exhibition struct {
-		BannerImage        func(childComplexity int) int
-		Banners            func(childComplexity int) int
-		CheapestPrice      func(childComplexity int) int
-		CurrentSales       func(childComplexity int) int
-		Description        func(childComplexity int) int
-		ExhibitionType     func(childComplexity int) int
-		FinishTime         func(childComplexity int) int
-		ID                 func(childComplexity int) int
-		LatestPurchase     func(childComplexity int) int
-		NumUsersRequired   func(childComplexity int) int
-		ProductGroups      func(childComplexity int) int
-		StartTime          func(childComplexity int) int
-		SubTitle           func(childComplexity int) int
-		TargetSales        func(childComplexity int) int
-		ThumbnailImage     func(childComplexity int) int
-		Title              func(childComplexity int) int
-		TotalParticipants  func(childComplexity int) int
-		TotalProductGroups func(childComplexity int) int
-		TotalProducts      func(childComplexity int) int
-		TotalUserGroups    func(childComplexity int) int
-		UserGroup          func(childComplexity int) int
+		AllowOldUser          func(childComplexity int) int
+		BannerImage           func(childComplexity int) int
+		Banners               func(childComplexity int) int
+		CheapestPrice         func(childComplexity int) int
+		CurrentSales          func(childComplexity int) int
+		Description           func(childComplexity int) int
+		ExhibitionType        func(childComplexity int) int
+		FinishTime            func(childComplexity int) int
+		ID                    func(childComplexity int) int
+		LatestPurchase        func(childComplexity int) int
+		NumUsersRequired      func(childComplexity int) int
+		ProductGroups         func(childComplexity int) int
+		RecruitStartTime      func(childComplexity int) int
+		StartTime             func(childComplexity int) int
+		SubTitle              func(childComplexity int) int
+		TargetSales           func(childComplexity int) int
+		ThumbnailImage        func(childComplexity int) int
+		Title                 func(childComplexity int) int
+		TotalGroupdealTickets func(childComplexity int) int
+		TotalParticipants     func(childComplexity int) int
+		TotalProductGroups    func(childComplexity int) int
+		TotalProducts         func(childComplexity int) int
+		TotalUserGroups       func(childComplexity int) int
+		UserGroup             func(childComplexity int) int
 	}
 
 	ExhibitionBanner struct {
@@ -227,6 +230,8 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
+		AddMockGroup          func(childComplexity int, exhibitionID string, isCompleted bool) int
+		AddMockGroupdeal      func(childComplexity int, input *model.AddMockGroupdealInput) int
 		CancelOrderItem       func(childComplexity int, orderID string, orderItemID string) int
 		CancelPayment         func(childComplexity int, input *model.PaymentClientInput) int
 		CheckOrder            func(childComplexity int, input *model.OrderInput) int
@@ -238,6 +243,7 @@ type ComplexityRoot struct {
 		LikeBrand             func(childComplexity int, input *model.LikeBrandInput) int
 		LikeProduct           func(childComplexity int, input *model.LikeProductInput) int
 		Login                 func(childComplexity int, input model.Login) int
+		PushMockUserToGroup   func(childComplexity int, groupID string) int
 		RefreshToken          func(childComplexity int, input model.RefreshTokenInput) int
 		RegisterNotification  func(childComplexity int, deviceID string, allowNotification bool, userID *string) int
 		RequestOrder          func(childComplexity int, input *model.OrderInput) int
@@ -490,6 +496,9 @@ type MutationResolver interface {
 	LikeBrand(ctx context.Context, input *model.LikeBrandInput) (bool, error)
 	CreateGroup(ctx context.Context, exhibitionID string) (*model.Group, error)
 	JoinGroup(ctx context.Context, exhibitionID string, groupID string, requestLink string) (*model.Group, error)
+	AddMockGroupdeal(ctx context.Context, input *model.AddMockGroupdealInput) (*model.Exhibition, error)
+	AddMockGroup(ctx context.Context, exhibitionID string, isCompleted bool) (*model.Group, error)
+	PushMockUserToGroup(ctx context.Context, groupID string) (*model.Group, error)
 	CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error)
 	RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error)
 	RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
@@ -940,6 +949,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Device.UserID(childComplexity), true
 
+	case "Exhibition.allowOldUser":
+		if e.complexity.Exhibition.AllowOldUser == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.AllowOldUser(childComplexity), true
+
 	case "Exhibition.bannerImage":
 		if e.complexity.Exhibition.BannerImage == nil {
 			break
@@ -1017,6 +1033,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Exhibition.ProductGroups(childComplexity), true
 
+	case "Exhibition.recruitStartTime":
+		if e.complexity.Exhibition.RecruitStartTime == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.RecruitStartTime(childComplexity), true
+
 	case "Exhibition.startTime":
 		if e.complexity.Exhibition.StartTime == nil {
 			break
@@ -1051,6 +1074,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exhibition.Title(childComplexity), true
+
+	case "Exhibition.totalGroupdealTickets":
+		if e.complexity.Exhibition.TotalGroupdealTickets == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.TotalGroupdealTickets(childComplexity), true
 
 	case "Exhibition.totalParticipants":
 		if e.complexity.Exhibition.TotalParticipants == nil {
@@ -1388,6 +1418,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LikeProductOutput.OldProduct(childComplexity), true
 
+	case "Mutation.addMockGroup":
+		if e.complexity.Mutation.AddMockGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addMockGroup_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddMockGroup(childComplexity, args["exhibitionId"].(string), args["isCompleted"].(bool)), true
+
+	case "Mutation.addMockGroupdeal":
+		if e.complexity.Mutation.AddMockGroupdeal == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_addMockGroupdeal_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AddMockGroupdeal(childComplexity, args["input"].(*model.AddMockGroupdealInput)), true
+
 	case "Mutation.cancelOrderItem":
 		if e.complexity.Mutation.CancelOrderItem == nil {
 			break
@@ -1519,6 +1573,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Login(childComplexity, args["input"].(model.Login)), true
+
+	case "Mutation.pushMockUserToGroup":
+		if e.complexity.Mutation.PushMockUserToGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_pushMockUserToGroup_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.PushMockUserToGroup(childComplexity, args["groupId"].(string)), true
 
 	case "Mutation.refreshToken":
 		if e.complexity.Mutation.RefreshToken == nil {
@@ -3100,6 +3166,17 @@ type Group {
     users: [User!]!
 }
 
+input AddMockGroupdealInput {
+    title: String!
+    subtitle: String!
+    description: String!
+    numUsersRequired: Int!
+    allowOldUser: Boolean!
+    bannerImage: String!
+    thumbnailImage: String!
+    groupdealStatus: GroupdealStatus!
+}
+
 extend type Query {
   mygroupdeal: MyGroupDeal!
   mygroupdeals(status: GroupdealStatus!): [Exhibition!]!
@@ -3111,6 +3188,9 @@ extend type Query {
 extend type Mutation {
     createGroup(exhibitionId: String!): Group!
     joinGroup(exhibitionId: String!, groupId: String!, requestLink: String!): Group!
+    addMockGroupdeal(input: AddMockGroupdealInput): Exhibition!
+    addMockGroup(exhibitionId: String!, isCompleted: Boolean!): Group!
+    pushMockUserToGroup(groupId: String!): Group!
 }`, BuiltIn: false},
 	{Name: "api/apiServer/graph/hometab.graphqls", Input: `enum HomeTabItemTypeEnum {
   HOMETAB_ITEM_BRANDS
@@ -3416,6 +3496,7 @@ type Exhibition {
   productGroups: [ProductGroup!]!
   startTime: Date!
   finishTime: Date!
+  recruitStartTime: Date!
   targetSales: Int!
   currentSales: Int!
   exhibitionType: ExhibitionType!
@@ -3428,6 +3509,8 @@ type Exhibition {
   cheapestPrice: Int!
   userGroup: UserGroup!
   latestPurchase: [OrderItem!]!
+  allowOldUser: Boolean!
+  totalGroupdealTickets: Int!
 }
 
 type UserGroup {
@@ -3664,6 +3747,45 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
+func (ec *executionContext) field_Mutation_addMockGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["exhibitionId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exhibitionId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["exhibitionId"] = arg0
+	var arg1 bool
+	if tmp, ok := rawArgs["isCompleted"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isCompleted"))
+		arg1, err = ec.unmarshalNBoolean2bool(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["isCompleted"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_addMockGroupdeal_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.AddMockGroupdealInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOAddMockGroupdealInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAddMockGroupdealInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_cancelOrderItem_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3862,6 +3984,21 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_pushMockUserToGroup_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["groupId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["groupId"] = arg0
 	return args, nil
 }
 
@@ -6652,6 +6789,41 @@ func (ec *executionContext) _Exhibition_finishTime(ctx context.Context, field gr
 	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Exhibition_recruitStartTime(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecruitStartTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Exhibition_targetSales(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -7070,6 +7242,76 @@ func (ec *executionContext) _Exhibition_latestPurchase(ctx context.Context, fiel
 	res := resTmp.([]*model.OrderItem)
 	fc.Result = res
 	return ec.marshalNOrderItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exhibition_allowOldUser(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AllowOldUser, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exhibition_totalGroupdealTickets(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalGroupdealTickets, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ExhibitionBanner_imgUrl(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionBanner) (ret graphql.Marshaler) {
@@ -8894,6 +9136,132 @@ func (ec *executionContext) _Mutation_joinGroup(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().JoinGroup(rctx, args["exhibitionId"].(string), args["groupId"].(string), args["requestLink"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Group)
+	fc.Result = res
+	return ec.marshalNGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addMockGroupdeal(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addMockGroupdeal_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddMockGroupdeal(rctx, args["input"].(*model.AddMockGroupdealInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Exhibition)
+	fc.Result = res
+	return ec.marshalNExhibition2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibition(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_addMockGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_addMockGroup_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AddMockGroup(rctx, args["exhibitionId"].(string), args["isCompleted"].(bool))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Group)
+	fc.Result = res
+	return ec.marshalNGroup2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐGroup(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_pushMockUserToGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_pushMockUserToGroup_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().PushMockUserToGroup(rctx, args["groupId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16520,6 +16888,85 @@ func (ec *executionContext) ___Type_ofType(ctx context.Context, field graphql.Co
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputAddMockGroupdealInput(ctx context.Context, obj interface{}) (model.AddMockGroupdealInput, error) {
+	var it model.AddMockGroupdealInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	for k, v := range asMap {
+		switch k {
+		case "title":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
+			it.Title, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "subtitle":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("subtitle"))
+			it.Subtitle, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "description":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("description"))
+			it.Description, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "numUsersRequired":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("numUsersRequired"))
+			it.NumUsersRequired, err = ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "allowOldUser":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("allowOldUser"))
+			it.AllowOldUser, err = ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "bannerImage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("bannerImage"))
+			it.BannerImage, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "thumbnailImage":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("thumbnailImage"))
+			it.ThumbnailImage, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "groupdealStatus":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("groupdealStatus"))
+			it.GroupdealStatus, err = ec.unmarshalNGroupdealStatus2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐGroupdealStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputAlloffCategoryId(ctx context.Context, obj interface{}) (model.AlloffCategoryID, error) {
 	var it model.AlloffCategoryID
 	asMap := map[string]interface{}{}
@@ -17878,6 +18325,11 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "recruitStartTime":
+			out.Values[i] = ec._Exhibition_recruitStartTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "targetSales":
 			out.Values[i] = ec._Exhibition_targetSales(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -17935,6 +18387,16 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			}
 		case "latestPurchase":
 			out.Values[i] = ec._Exhibition_latestPurchase(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "allowOldUser":
+			out.Values[i] = ec._Exhibition_allowOldUser(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "totalGroupdealTickets":
+			out.Values[i] = ec._Exhibition_totalGroupdealTickets(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -18411,6 +18873,21 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "joinGroup":
 			out.Values[i] = ec._Mutation_joinGroup(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addMockGroupdeal":
+			out.Values[i] = ec._Mutation_addMockGroupdeal(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "addMockGroup":
+			out.Values[i] = ec._Mutation_addMockGroup(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "pushMockUserToGroup":
+			out.Values[i] = ec._Mutation_pushMockUserToGroup(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -22214,6 +22691,14 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalOAddMockGroupdealInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAddMockGroupdealInput(ctx context.Context, v interface{}) (*model.AddMockGroupdealInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAddMockGroupdealInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOAlloffCategoryId2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategoryID(ctx context.Context, v interface{}) (*model.AlloffCategoryID, error) {

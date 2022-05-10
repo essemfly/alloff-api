@@ -88,6 +88,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		ProductGroups:      pgs,
 		StartTime:          exDao.StartTime.Add(9 * time.Hour).String(),
 		FinishTime:         exDao.FinishTime.Add(9 * time.Hour).String(),
+		RecruitStartTime:   exDao.RecruitStartTime.Add(9 * time.Hour).String(),
 		ExhibitionType:     MapExhibitionType(exDao.ExhibitionType),
 		TargetSales:        exDao.TargetSales,
 		CurrentSales:       sales,
@@ -99,6 +100,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		TotalUserGroups:    exDao.TotalGroups,
 		UserGroup:          &model.UserGroup{},
 		CheapestPrice:      exDao.CheapestPrice,
+		AllowOldUser:       exDao.AllowOldUser,
 	}
 }
 

@@ -8,6 +8,17 @@ import (
 	"strconv"
 )
 
+type AddMockGroupdealInput struct {
+	Title            string          `json:"title"`
+	Subtitle         string          `json:"subtitle"`
+	Description      string          `json:"description"`
+	NumUsersRequired int             `json:"numUsersRequired"`
+	AllowOldUser     bool            `json:"allowOldUser"`
+	BannerImage      string          `json:"bannerImage"`
+	ThumbnailImage   string          `json:"thumbnailImage"`
+	GroupdealStatus  GroupdealStatus `json:"groupdealStatus"`
+}
+
 type AlloffCategory struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
@@ -122,27 +133,30 @@ type Device struct {
 }
 
 type Exhibition struct {
-	ID                 string              `json:"id"`
-	BannerImage        string              `json:"bannerImage"`
-	ThumbnailImage     string              `json:"thumbnailImage"`
-	Title              string              `json:"title"`
-	SubTitle           string              `json:"subTitle"`
-	Description        string              `json:"description"`
-	ProductGroups      []*ProductGroup     `json:"productGroups"`
-	StartTime          string              `json:"startTime"`
-	FinishTime         string              `json:"finishTime"`
-	TargetSales        int                 `json:"targetSales"`
-	CurrentSales       int                 `json:"currentSales"`
-	ExhibitionType     ExhibitionType      `json:"exhibitionType"`
-	Banners            []*ExhibitionBanner `json:"banners"`
-	TotalProducts      int                 `json:"totalProducts"`
-	TotalProductGroups int                 `json:"totalProductGroups"`
-	TotalParticipants  int                 `json:"totalParticipants"`
-	NumUsersRequired   int                 `json:"numUsersRequired"`
-	TotalUserGroups    int                 `json:"totalUserGroups"`
-	CheapestPrice      int                 `json:"cheapestPrice"`
-	UserGroup          *UserGroup          `json:"userGroup"`
-	LatestPurchase     []*OrderItem        `json:"latestPurchase"`
+	ID                    string              `json:"id"`
+	BannerImage           string              `json:"bannerImage"`
+	ThumbnailImage        string              `json:"thumbnailImage"`
+	Title                 string              `json:"title"`
+	SubTitle              string              `json:"subTitle"`
+	Description           string              `json:"description"`
+	ProductGroups         []*ProductGroup     `json:"productGroups"`
+	StartTime             string              `json:"startTime"`
+	FinishTime            string              `json:"finishTime"`
+	RecruitStartTime      string              `json:"recruitStartTime"`
+	TargetSales           int                 `json:"targetSales"`
+	CurrentSales          int                 `json:"currentSales"`
+	ExhibitionType        ExhibitionType      `json:"exhibitionType"`
+	Banners               []*ExhibitionBanner `json:"banners"`
+	TotalProducts         int                 `json:"totalProducts"`
+	TotalProductGroups    int                 `json:"totalProductGroups"`
+	TotalParticipants     int                 `json:"totalParticipants"`
+	NumUsersRequired      int                 `json:"numUsersRequired"`
+	TotalUserGroups       int                 `json:"totalUserGroups"`
+	CheapestPrice         int                 `json:"cheapestPrice"`
+	UserGroup             *UserGroup          `json:"userGroup"`
+	LatestPurchase        []*OrderItem        `json:"latestPurchase"`
+	AllowOldUser          bool                `json:"allowOldUser"`
+	TotalGroupdealTickets int                 `json:"totalGroupdealTickets"`
 }
 
 type ExhibitionBanner struct {
