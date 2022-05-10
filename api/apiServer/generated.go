@@ -416,6 +416,7 @@ type ComplexityRoot struct {
 		BestProducts           func(childComplexity int, offset int, limit int, alloffCategoryID string, brief bool) int
 		Brand                  func(childComplexity int, input *model.BrandInput) int
 		Brands                 func(childComplexity int, input *model.BrandsInput) int
+		CheckTicket            func(childComplexity int, exhibitionID string) int
 		Exhibition             func(childComplexity int, id string) int
 		Exhibitions            func(childComplexity int) int
 		Featureds              func(childComplexity int) int
@@ -508,6 +509,7 @@ type QueryResolver interface {
 	Mygroupdeals(ctx context.Context, status model.GroupdealStatus) ([]*model.Exhibition, error)
 	Groupdeal(ctx context.Context, id string) (*model.Exhibition, error)
 	Groupdeals(ctx context.Context, offset int, limit int, status model.GroupdealStatus) ([]*model.Exhibition, error)
+	CheckTicket(ctx context.Context, exhibitionID string) (bool, error)
 	HomeTabItems(ctx context.Context, onlyLive bool, offset *int, limit *int) ([]*model.HomeTabItem, error)
 	BestProducts(ctx context.Context, offset int, limit int, alloffCategoryID string, brief bool) (*model.ProductsResult, error)
 	BestBrands(ctx context.Context, offset int, limit int) (*model.BrandsResult, error)
@@ -2493,6 +2495,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Brands(childComplexity, args["input"].(*model.BrandsInput)), true
 
+	case "Query.checkTicket":
+		if e.complexity.Query.CheckTicket == nil {
+			break
+		}
+
+		args, err := ec.field_Query_checkTicket_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CheckTicket(childComplexity, args["exhibitionId"].(string)), true
+
 	case "Query.exhibition":
 		if e.complexity.Query.Exhibition == nil {
 			break
@@ -3091,6 +3105,7 @@ extend type Query {
   mygroupdeals(status: GroupdealStatus!): [Exhibition!]!
   groupdeal(id: String!): Exhibition!
   groupdeals(offset: Int!, limit: Int!, status: GroupdealStatus!): [Exhibition!]!
+  checkTicket(exhibitionId: String!): Boolean!
 }
 
 extend type Mutation {
@@ -4138,6 +4153,21 @@ func (ec *executionContext) field_Query_brands_args(ctx context.Context, rawArgs
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_checkTicket_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["exhibitionId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exhibitionId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["exhibitionId"] = arg0
 	return args, nil
 }
 
@@ -13621,6 +13651,48 @@ func (ec *executionContext) _Query_groupdeals(ctx context.Context, field graphql
 	return ec.marshalNExhibition2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_checkTicket(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Query_checkTicket_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CheckTicket(rctx, args["exhibitionId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_homeTabItems(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -19390,6 +19462,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_groupdeals(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
+		case "checkTicket":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_checkTicket(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

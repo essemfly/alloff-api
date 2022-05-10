@@ -277,3 +277,17 @@ func (r *queryResolver) Groupdeals(ctx context.Context, offset int, limit int, s
 	}
 	return exhibitions, nil
 }
+
+func (r *queryResolver) CheckTicket(ctx context.Context, exhibitionID string) (bool, error) {
+	userDao := middleware.ForContext(ctx)
+	if userDao == nil {
+		return false, nil
+	}
+
+	_, err := ioc.Repo.GroupdealTickets.GetByDetail(userDao.ID.Hex(), exhibitionID)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
