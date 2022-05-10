@@ -90,6 +90,10 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	if req.Description != nil {
 		exDao.Description = *req.Description
 	}
+	if req.RecruitStartTime != nil {
+		recruitStartTimeObj, _ := time.Parse(layout, *req.RecruitStartTime)
+		exDao.RecruitStartTime = recruitStartTimeObj
+	}
 	if req.StartTime != nil {
 		startTimeObj, _ := time.Parse(layout, *req.StartTime)
 		exDao.StartTime = startTimeObj
@@ -104,6 +108,9 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 
 	if req.NumUsersRequired != nil {
 		exDao.NumUsersRequired = int(*req.NumUsersRequired)
+	}
+	if req.AllowOldUser != nil {
+		exDao.AllowOldUser = *req.AllowOldUser
 	}
 
 	banners := []domain.ExhibitionBanner{}
@@ -168,6 +175,7 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServer.CreateExhibitionRequest) (*grpcServer.CreateExhibitionResponse, error) {
 	layout := "2006-01-02T15:04:05Z07:00"
 
+	recruitStartTimeObj, _ := time.Parse(layout, req.RecruitStartTime)
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
@@ -203,6 +211,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		Title:            req.Title,
 		SubTitle:         req.Subtitle,
 		Description:      req.Description,
+		RecruitStartTime: recruitStartTimeObj,
 		StartTime:        startTimeObj,
 		FinishTime:       finishTimeObj,
 		IsLive:           false,
@@ -211,6 +220,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		Banners:          banners,
 		CreatedAt:        time.Now(),
 		NumUsersRequired: numUsersRequired,
+		AllowOldUser:     req.AllowOldUser,
 	}
 
 	pgs := []*domain.ProductGroupDAO{}

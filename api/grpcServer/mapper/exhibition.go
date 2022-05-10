@@ -26,6 +26,7 @@ func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.Exhib
 		Title:             exDao.Title,
 		Subtitle:          exDao.SubTitle,
 		Description:       exDao.Description,
+		RecruitStartTime:  exDao.RecruitStartTime.String(),
 		StartTime:         exDao.StartTime.String(),
 		FinishTime:        exDao.FinishTime.String(),
 		Pgs:               pgs,
@@ -37,6 +38,7 @@ func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.Exhib
 		TotalParticipants: int32(exDao.TotalParticipants),
 		NumUsersRequired:  int32(exDao.NumUsersRequired),
 		TotalGroups:       int32(exDao.TotalGroups),
+		AllowOldUser:      exDao.AllowOldUser,
 	}
 }
 
