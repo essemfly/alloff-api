@@ -150,9 +150,9 @@ func (r *mutationResolver) AddMockGroupdeal(ctx context.Context, input *model.Ad
 	// for prevent query to prod env
 	cmd.SetBaseConfig("dev")
 
-	recruitStartTime := time.Now()
-	startTime := time.Now()
-	finishTime := time.Now()
+	recruitStartTime := time.Now().Round(time.Second)
+	startTime := time.Now().Round(time.Second)
+	finishTime := time.Now().Round(time.Second)
 
 	switch input.GroupdealStatus {
 	case model.GroupdealStatusPending:
