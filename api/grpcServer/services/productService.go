@@ -231,8 +231,14 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		pdDao.DiscountedPrice = int(*req.DiscountedPrice)
 	}
 
+	alloffPriceDiscountRate := pdDao.DiscountRate
+
 	if req.SpecialPrice != nil {
 		pdDao.SpecialPrice = int(*req.SpecialPrice)
+		pdDao.DiscountRate = alloffPriceDiscountRate
+		alloffPriceDiscountRate = utils.CalculateDiscountRate(pdDao.OriginalPrice, pdDao.DiscountedPrice) // 스페셜프라이스의 할인율이 더 높으면 이걸로 브랜드 할인율을 적용하나?
+	} else {
+		alloffPriceDiscountRate = utils.CalculateDiscountRate(pdDao.OriginalPrice, pdDao.DiscountedPrice)
 	}
 
 	if req.BrandKeyName != nil {
@@ -318,8 +324,6 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	if !pdDao.Soldout {
 		pdDao.CheckSoldout()
 	}
-
-	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.OriginalPrice, pdDao.DiscountedPrice)
 
 	if alloffPriceDiscountRate > pdDao.ProductInfo.Brand.MaxDiscountRate {
 		pdDao.ProductInfo.Brand.MaxDiscountRate = alloffPriceDiscountRate

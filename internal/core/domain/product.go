@@ -169,7 +169,12 @@ func (pd *ProductDAO) UpdatePrice(origPrice, discountedPrice int) bool {
 	if origPrice == 0 {
 		pd.OriginalPrice = discountedPrice
 	}
-	pd.DiscountRate = utils.CalculateDiscountRate(origPrice, discountedPrice)
+
+	if pd.SpecialPrice != 0 {
+		pd.DiscountRate = utils.CalculateDiscountRate(origPrice, pd.SpecialPrice)
+	} else {
+		pd.DiscountRate = utils.CalculateDiscountRate(origPrice, discountedPrice)
+	}
 
 	newHistory := []PriceHistoryDAO{
 		{
