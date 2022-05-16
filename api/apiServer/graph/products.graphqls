@@ -37,6 +37,13 @@ type Product {
   cancelDescription: CancelDescription!
   deliveryDescription: DeliveryDescription!
   thumbnailImage: String!
+  alloffInventory: [alloffInventory!]!
+  IsInventoryMapped: Boolean!
+}
+
+type alloffInventory {
+  alloffSize: AlloffSize!
+  quantity: Int!
 }
 
 type Inventory {

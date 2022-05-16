@@ -95,6 +95,11 @@ type InventoryDAO struct {
 	Quantity int
 }
 
+type AlloffInventoryDAO struct {
+	AlloffSize AlloffSizeDAO
+	Quantity   int
+}
+
 type ProductScoreInfoDAO struct {
 	// 신상품 위로 올려줄때 쓰는 필드
 	IsNewlyCrawled bool
@@ -148,6 +153,7 @@ type ProductDAO struct {
 	DiscountRate        int
 	SpecialPrice        int
 	AlloffCategories    *ProductAlloffCategoryDAO
+	ProductCategories   *ProductCategoryDAO
 	Soldout             bool
 	Removed             bool
 	Inventory           []InventoryDAO
@@ -158,6 +164,8 @@ type ProductDAO struct {
 	Created             time.Time
 	Updated             time.Time
 	ThumbnailImage      string
+	AlloffInventory     []AlloffInventoryDAO
+	IsInventoryMapped   bool
 	IsImageCached       bool
 	IsTranslateRequired bool
 }
@@ -221,6 +229,31 @@ func (pd *ProductDAO) UpdateInventory(newInven []InventoryDAO) {
 	}
 
 	pd.Soldout = isSoldout
+}
+
+func (pd *ProductDAO) MapAlloffInventory() {
+	mappingPolicies := pd.ProductInfo.Brand.InventoryMappingPolicies
+	productInventory := pd.Inventory
+	alloffInventory := []AlloffInventoryDAO{}
+
+	if mappingPolicies != nil {
+		for _, mappingPolicy := range mappingPolicies {
+			for _, inv := range productInventory {
+				if mappingPolicy.BrandSize == inv.Size {
+					alloffInventory = append(alloffInventory, AlloffInventoryDAO{
+						AlloffSize: mappingPolicy.AlloffSize,
+						Quantity:   inv.Quantity,
+					})
+				}
+			}
+		}
+	}
+
+	if len(alloffInventory) > 0 {
+		pd.IsInventoryMapped = true
+	}
+
+	pd.AlloffInventory = alloffInventory
 }
 
 func (pd *ProductDAO) UpdateAlloffCategory(cat *ProductAlloffCategoryDAO) {

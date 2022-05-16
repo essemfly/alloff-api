@@ -90,6 +90,8 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		CancelDescription:   MapCancelDescription(pdDao.SalesInstruction.CancelDescription),
 		DeliveryDescription: deliveryDesc,
 		ThumbnailImage:      thumbnailImage,
+		AlloffInventory:     MapAlloffInventory(pdDao),
+		IsInventoryMapped:   pdDao.IsInventoryMapped,
 	}
 }
 
@@ -130,4 +132,17 @@ func MapCancelDescription(cancelDesc *domain.CancelDescriptionDAO) *model.Cancel
 		ChangeFee:       cancelDesc.ChangeFee,
 		RefundFee:       cancelDesc.RefundFee,
 	}
+}
+
+func MapAlloffInventory(pdDao *domain.ProductDAO) []*model.AlloffInventory {
+	pdDao.MapAlloffInventory()
+	daoInvens := pdDao.AlloffInventory
+	modelInvens := []*model.AlloffInventory{}
+	for _, inv := range daoInvens {
+		modelInvens = append(modelInvens, &model.AlloffInventory{
+			AlloffSize: MapAlloffSizeDaoToAlloffSize(&inv.AlloffSize),
+			Quantity:   inv.Quantity,
+		})
+	}
+	return modelInvens
 }
