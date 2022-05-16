@@ -37,6 +37,7 @@ type iocRepo struct {
 	ProductLog       repository.ProductLogRepository
 	BrandLog         repository.BrandLogRepository
 	SearchLog        repository.SearchLogRepository
+	AlloffSize       repository.AlloffSizeRepository
 }
 
 var Repo iocRepo

@@ -3,7 +3,7 @@ module github.com/lessbutter/alloff-api
 go 1.16
 
 require (
-	cloud.google.com/go v0.65.0
+	cloud.google.com/go/translate v1.2.0
 	github.com/99designs/gqlgen v0.14.0
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/antchfx/htmlquery v1.2.4 // indirect
@@ -22,21 +22,18 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.7.2 // indirect
 	github.com/iamport/interface v0.0.15
 	github.com/kennygrant/sanitize v1.2.4 // indirect
-	github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220419083032-3239b8810419
+	github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220510092514-78bebce14bcd
 	github.com/renatoaf/amplitude-go v1.0.0
 	github.com/rs/cors v1.6.0
 	github.com/rs/xid v1.3.0
 	github.com/saintfish/chardet v0.0.0-20120816061221-3af4cd4741ca // indirect
-	github.com/stretchr/testify v1.7.0
+	github.com/spf13/viper v1.11.0
+	github.com/stretchr/testify v1.7.1
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/tkanos/gonfig v0.0.0-20210106201359-53e13348de2f
 	github.com/vektah/gqlparser/v2 v2.2.0
 	go.mongodb.org/mongo-driver v1.8.1
-	golang.org/x/net v0.0.0-20220114011407-0dd24b26b47d // indirect
-	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7
-	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20220114231437-d2e6a121cae0 // indirect
 	google.golang.org/grpc v1.45.0
 	google.golang.org/protobuf v1.28.0
 )

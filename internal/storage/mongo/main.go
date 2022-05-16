@@ -36,6 +36,7 @@ type MongoDB struct {
 	topBannersCol      *mongo.Collection
 	bestProductsCol    *mongo.Collection
 	bestBrandsCol      *mongo.Collection
+	alloffSizeCol      *mongo.Collection
 }
 
 func NewMongoDB(conf config.Configuration) *MongoDB {
@@ -71,6 +72,7 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 		topBannersCol:      db.Collection("top_banners"),
 		bestProductsCol:    db.Collection("best_products"),
 		bestBrandsCol:      db.Collection("best_brands"),
+		alloffSizeCol:      db.Collection("alloff_size"),
 	}
 }
 
@@ -98,6 +100,7 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.TopBanners = MongoTopBannersRepo(conn)
 	ioc.Repo.BestProducts = MongoBestProductsRepo(conn)
 	ioc.Repo.BestBrands = MongoBestBrandsRepo(conn)
+	ioc.Repo.AlloffSize = MongoAlloffSizeRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context, conf config.Configuration) (*mongo.Client, error) {

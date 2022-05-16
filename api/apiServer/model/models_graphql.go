@@ -43,6 +43,12 @@ type AlloffCategoryProductsInput struct {
 	Sorting          []SortingType `json:"sorting"`
 }
 
+type AlloffSize struct {
+	ID         string `json:"id"`
+	SizeName   string `json:"sizeName"`
+	GuideImage string `json:"guideImage"`
+}
+
 type AppVersion struct {
 	LatestVersion     string  `json:"latestVersion"`
 	MinVersion        string  `json:"minVersion"`
@@ -384,6 +390,8 @@ type Product struct {
 	CancelDescription   *CancelDescription   `json:"cancelDescription"`
 	DeliveryDescription *DeliveryDescription `json:"deliveryDescription"`
 	ThumbnailImage      string               `json:"thumbnailImage"`
+	AlloffInventory     []*AlloffInventory   `json:"alloffInventory"`
+	IsInventoryMapped   bool                 `json:"IsInventoryMapped"`
 }
 
 type ProductDescription struct {
@@ -480,6 +488,11 @@ type UserInfoInput struct {
 	DetailAddress         *string `json:"detailAddress"`
 	Postcode              *string `json:"postcode"`
 	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
+}
+
+type AlloffInventory struct {
+	AlloffSize *AlloffSize `json:"alloffSize"`
+	Quantity   int         `json:"quantity"`
 }
 
 type CommunityItemType string

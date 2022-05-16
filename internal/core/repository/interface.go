@@ -188,6 +188,11 @@ type OrderCountsRepository interface {
 	Cancel(exhibitionID string) (int, error)
 }
 
+type AlloffSizeRepository interface {
+	Upsert(dao *domain.AlloffSizeDAO) (*domain.AlloffSizeDAO, error)
+	List(offset, limit int) ([]*domain.AlloffSizeDAO, int, error)
+}
+
 type AccessLogRepository interface {
 	Index(*domain.AccessLogDAO) (int, error)
 	List(limit int, from, to time.Time, order string) (*dto.AccessLogDTO, error)
