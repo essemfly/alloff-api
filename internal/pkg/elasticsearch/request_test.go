@@ -1,9 +1,10 @@
 package elasticsearch
 
 import (
+	"testing"
+
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestAccessLogDAO_JsonEncoder(t *testing.T) {

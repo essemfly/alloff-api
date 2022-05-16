@@ -2,28 +2,29 @@ package elasticsearch
 
 import (
 	"context"
-	es8 "github.com/elastic/go-elasticsearch/v8"
-	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/lessbutter/alloff-api/config"
-	"github.com/lessbutter/alloff-api/config/ioc"
 	"log"
 	"net/http"
 	"strings"
+
+	es8 "github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/spf13/viper"
 )
 
 type ESClient struct {
 	Client *es8.Client
 }
 
-func NewElasticSearch(conf config.Configuration) *ESClient {
+func NewElasticSearch() *ESClient {
 	defaultIndexName := []string{"access_log", "product_log", "search_log", "brand_log"}
 
 	header := http.Header{}
-	header.Add("Authorization", "Basic "+conf.ELASTICSEARCH_APIKEY)
+	header.Add("Authorization", "Basic "+viper.GetString("ELASTICSEARCH_APIKEY"))
 
 	cfg := es8.Config{
 		Addresses: []string{
-			conf.ELASTICSEARCH_URL,
+			viper.GetString("ELASTICSEARCH_URL"),
 		},
 		Header:       header,
 		DisableRetry: true,

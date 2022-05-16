@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -13,18 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var (
-	GitInfo   = "no info"
-	BuildTime = "no datetime"
-	Env       = "prod"
-)
-
 func main() {
-	fmt.Println("Git commit information: ", GitInfo)
-	fmt.Println("Build date, time: ", BuildTime)
-
-	cmd.SetBaseConfig(Env)
-
+	cmd.SetBaseConfig()
 	scripts.InsertDiffNotifi()
 	scripts.SendProductDiffNoti()
 

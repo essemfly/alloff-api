@@ -1,23 +1,12 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/lessbutter/alloff-api/cmd"
 	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 )
 
-var (
-	GitInfo   = "no info"
-	BuildTime = "no datetime"
-	Env       = "prod"
-)
-
 func main() {
-	fmt.Println("Git commit information: ", GitInfo)
-	fmt.Println("Build date, time: ", BuildTime)
-
-	cmd.SetBaseConfig(Env)
+	cmd.SetBaseConfig()
 
 	broker.HomeTabSyncer()
 	// notis, err := ioc.Repo.Notifications.List(0, 100, []domain.NotificationType{domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION}, true)

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -38,14 +38,15 @@ type MongoDB struct {
 	bestBrandsCol      *mongo.Collection
 }
 
-func NewMongoDB(conf config.Configuration) *MongoDB {
+func NewMongoDB() *MongoDB {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	mongoClient, err := makeMongoClient(ctx, conf)
+	viper.Get("MONGO_DB_NAME")
+	mongoClient, err := makeMongoClient(ctx)
 	checkErr(err, "Connection in mongodb")
 	checkErr(mongoClient.Ping(ctx, readpref.Primary()), "Ping error in mongoconnect")
-	db := mongoClient.Database(conf.MONGO_DB_NAME)
+	db := mongoClient.Database(viper.GetString("MONGO_DB_NAME"))
 
 	return &MongoDB{
 		brandCol:           db.Collection("brands"),
@@ -100,10 +101,10 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.BestBrands = MongoBestBrandsRepo(conn)
 }
 
-func makeMongoClient(ctx context.Context, conf config.Configuration) (*mongo.Client, error) {
-	clientOptions := options.Client().ApplyURI("mongodb://" + conf.MONGO_URL + "/" + conf.MONGO_DB_NAME + "?&connect=direct&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false").SetAuth(options.Credential{
-		Username: conf.MONGO_USERNAME,
-		Password: conf.MONGO_PASSWORD,
+func makeMongoClient(ctx context.Context) (*mongo.Client, error) {
+	clientOptions := options.Client().ApplyURI("mongodb://" + viper.GetString("MONGO_URL") + "/" + viper.GetString("MONGO_DB_NAME") + "?&connect=direct&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false").SetAuth(options.Credential{
+		Username: viper.GetString("MONGO_USERNAME"),
+		Password: viper.GetString("MONGO_PASSWORD"),
 	})
 	mongoClient, err := mongo.Connect(ctx, clientOptions)
 

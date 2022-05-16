@@ -5,21 +5,22 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/elastic/go-elasticsearch/v8/esapi"
-	"github.com/lessbutter/alloff-api/config"
-	"github.com/lessbutter/alloff-api/internal/storage/elasticsearch"
-	"github.com/lessbutter/alloff-api/internal/utils"
-	"github.com/stretchr/testify/require"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"time"
 
-	"github.com/go-chi/chi"
-	chimiddleware "github.com/go-chi/chi/middleware"
+	"github.com/elastic/go-elasticsearch/v8/esapi"
+	"github.com/lessbutter/alloff-api/internal/storage/elasticsearch"
+	"github.com/lessbutter/alloff-api/internal/utils"
+	"github.com/stretchr/testify/require"
+
 	"os"
 	"testing"
+
+	"github.com/go-chi/chi"
+	chimiddleware "github.com/go-chi/chi/middleware"
 )
 
 type TestResponse struct {
@@ -33,9 +34,7 @@ type TestResponse struct {
 }
 
 func TestElasticSearchLogger(t *testing.T) {
-	testConf := config.GetConfiguration("dev")
-
-	esConn := elasticsearch.NewElasticSearch(testConf)
+	esConn := elasticsearch.NewElasticSearch()
 	esConn.RegisterRepos()
 
 	sv := chi.NewRouter()

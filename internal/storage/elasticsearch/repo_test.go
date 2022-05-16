@@ -1,21 +1,20 @@
 package elasticsearch
 
 import (
-	"github.com/lessbutter/alloff-api/config"
+	"log"
+	"testing"
+	"time"
+
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/stretchr/testify/require"
-	"log"
-	"testing"
-	"time"
 )
 
 func TestEvent(t *testing.T) {
-	testConf := config.GetConfiguration("dev")
-	mongoConn := mongo.NewMongoDB(testConf)
+	mongoConn := mongo.NewMongoDB()
 	mongoConn.RegisterRepos()
-	esConn := NewElasticSearch(testConf)
+	esConn := NewElasticSearch()
 	esConn.RegisterRepos()
 
 	t.Run("Test Indexing Product For Product View", func(t *testing.T) {

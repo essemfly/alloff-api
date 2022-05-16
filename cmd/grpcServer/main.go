@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
-	"os"
-	"strconv"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	"github.com/spf13/viper"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/services"
 	"github.com/lessbutter/alloff-api/cmd"
@@ -16,22 +14,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-var (
-	GitInfo   = "no info"
-	BuildTime = "no datetime"
-	Env       = "dev"
-)
-
 func main() {
-	fmt.Println("Git commit information: ", GitInfo)
-	fmt.Println("Build date, time: ", BuildTime)
-
-	conf := cmd.SetBaseConfig(Env)
-
-	port := os.Getenv("GRPC_PORT")
-	if port == "" {
-		port = strconv.Itoa(conf.GRPC_PORT)
-	}
+	cmd.SetBaseConfig()
+	port := viper.GetString("GRPC_PORT")
 
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {

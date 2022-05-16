@@ -1,15 +1,14 @@
 package elasticsearch
 
 import (
-	"github.com/lessbutter/alloff-api/config"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestConnElasticSearch(t *testing.T) {
-	testConf := config.GetConfiguration("local")
 	t.Run("Test Connection", func(t *testing.T) {
-		conn := NewElasticSearch(testConf)
+		conn := NewElasticSearch()
 		res, err := conn.Client.Info()
 		if err != nil {
 			t.Errorf("Error getting response : %v", err)

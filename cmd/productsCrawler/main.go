@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"strings"
@@ -20,17 +19,8 @@ import (
 
 const numWorkers = 20
 
-var (
-	GitInfo   = "no info"
-	BuildTime = "no datetime"
-	Env       = "prod"
-)
-
 func main() {
-	fmt.Println("Git commit information: ", GitInfo)
-	fmt.Println("Build date, time: ", BuildTime)
-
-	cmd.SetBaseConfig(Env)
+	cmd.SetBaseConfig()
 
 	crawlModules := []string{
 		"lottefashion",

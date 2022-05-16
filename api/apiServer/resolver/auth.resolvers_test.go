@@ -3,25 +3,24 @@ package resolver
 import (
 	"context"
 	"fmt"
+	"math/rand"
+	"reflect"
+	"testing"
+	"time"
+
 	"github.com/99designs/gqlgen/client"
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/google/uuid"
 	"github.com/lessbutter/alloff-api/api/apiServer"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
-	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/stretchr/testify/require"
-	"math/rand"
-	"reflect"
-	"testing"
-	"time"
 )
 
 func TestAuthResolvers(t *testing.T) {
-	testConf := config.GetConfiguration("local")
-	conn := mongo.NewMongoDB(testConf)
+	conn := mongo.NewMongoDB()
 	conn.RegisterRepos()
 
 	testUserMobile := "01073881067"

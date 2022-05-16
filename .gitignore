@@ -24,3 +24,5 @@
 .idea/
 
 config/config.*.json
+
+.env.*
