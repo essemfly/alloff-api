@@ -51,6 +51,7 @@ func main() {
 	pb.RegisterExhibitionServer(grpcServer, &services.ExhibitionService{})
 	pb.RegisterTopBannerServer(grpcServer, &services.TopBannerService{})
 	pb.RegisterAlloffCategoryServer(grpcServer, &services.AlloffCategoryService{})
+	pb.RegisterAlloffSizeServer(grpcServer, &services.AlloffSizeService{})
 
 	log.Printf("start gRPC server on %s port", port)
 	if err := grpcServer.Serve(lis); err != nil {
