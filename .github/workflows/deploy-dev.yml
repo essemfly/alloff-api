@@ -41,7 +41,7 @@ jobs:
           go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
 
       - name: Upload coverage report
-        uses: odecov/codecov-action@v2
+        uses: codecov/codecov-action@v2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./coverage.txt
