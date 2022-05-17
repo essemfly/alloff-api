@@ -15,7 +15,7 @@ env:
   CONTAINER_NAME: alloff-api-dev
 
 jobs:
-    codecov:
+  codecov:
     name: codecov
     runs-on: ubuntu-latest
     steps:
