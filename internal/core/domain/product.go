@@ -142,6 +142,29 @@ type CancelDescriptionDAO struct {
 	RefundFee       int
 }
 
+// ProductClassifierDAO : 상품 타입 및 옴니어스 분류에 따른 카테고리를 담고 있음. 궁극적으로 AlloffCategoryDAO 대체할 예정
+type ProductClassifierDAO struct {
+	Classifier    []AlloffClassifier
+	OmniousResult map[string]string
+	First         CategoryClassifier
+	Second        CategoryClassifier
+}
+
+// CategoryClassifier : poc; 옴니어스에서 구별해준 카테고리를 입력받음
+type CategoryClassifier struct {
+	Name    string
+	KeyName string
+}
+
+type AlloffClassifier string
+
+const (
+	Male   = AlloffClassifier("MALE")
+	Female = AlloffClassifier("FEMALE")
+	Kids   = AlloffClassifier("KIDS")
+	Sports = AlloffClassifier("SPROTS") // 스포츠 좀 안어울린다는 생각..?
+)
+
 type ProductDAO struct {
 	ID                  primitive.ObjectID `bson:"_id,omitempty"`
 	ProductInfo         *ProductMetaInfoDAO
@@ -153,7 +176,7 @@ type ProductDAO struct {
 	DiscountRate        int
 	SpecialPrice        int
 	AlloffCategories    *ProductAlloffCategoryDAO
-	ProductCategories   *ProductCategoryDAO
+	ProductClassifier   *ProductClassifierDAO
 	Soldout             bool
 	Removed             bool
 	Inventory           []InventoryDAO
