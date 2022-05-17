@@ -1,0 +1,20 @@
+FROM golang:1.16.4-buster AS builder
+
+RUN mkdir /root/.ssh/
+ARG ssh_prv_key
+RUN echo "$ssh_prv_key" >> /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/id_rsa
+RUN touch /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+
+WORKDIR /go/src/app
+COPY . .
+
+RUN git config --global user.email "essemfly@gmail.com"
+RUN git config --global credential.helper store
+RUN echo 'https://essemfly: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@github.com' > ${HOME}/.git-credentials
+
+RUN go build -o apiServer ./cmd/apiServer/main.go
+RUN go build -o grpcServer ./cmd/grpcServer/main.go
+
+EXPOSE 80
