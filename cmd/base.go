@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"github.com/lessbutter/alloff-api/internal/storage/elasticsearch"
+	"github.com/lessbutter/alloff-api/internal/storage/redis"
 	"log"
 
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/lessbutter/alloff-api/internal/storage/postgres"
-	"github.com/lessbutter/alloff-api/internal/storage/redis"
 )
 
 func SetBaseConfig(Env string) config.Configuration {
@@ -28,6 +28,7 @@ func SetBaseConfig(Env string) config.Configuration {
 	config.InitNotification(conf)
 	config.InitSentry(conf)
 	config.InitAmplitude(conf)
+	config.InitOmnious(conf)
 
 	return conf
 }

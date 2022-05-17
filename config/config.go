@@ -32,6 +32,7 @@ type Configuration struct {
 	REDIS_URL            string
 	ELASTICSEARCH_URL    string
 	ELASTICSEARCH_APIKEY string
+	OMNIOUS_KEY          string
 }
 
 func GetConfiguration(env string) Configuration {
