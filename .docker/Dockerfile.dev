@@ -12,7 +12,8 @@ COPY . .
 
 RUN git config --global user.email "essemfly@gmail.com"
 RUN git config --global credential.helper store
-RUN echo 'https://essemfly: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@github.com' > ${HOME}/.git-credentials
+ARG git_token
+RUN echo "$git_token" > ${HOME}/.git-credentials
 
 RUN go build -o apiServer ./cmd/apiServer/main.go
 RUN go build -o grpcServer ./cmd/grpcServer/main.go

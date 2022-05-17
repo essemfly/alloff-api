@@ -18,6 +18,9 @@ jobs:
   codecov:
     name: codecov
     runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: github.com/lessbutter/alloff-api
+      GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
     steps:
       - name: Set up Go 1.18
         uses: actions/setup-go@v1
@@ -25,18 +28,10 @@ jobs:
           go-version: 1.18
         id: go
 
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_KEY }}
-          known_hosts: |
-            github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
-          name: id_rsa # optional
-          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
-     
       - name: Check out code into the Go module directory
         uses: actions/checkout@v3
 
+      - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
       - name: Get dependencies
         run: |
           go get -v -t -d ./...
@@ -101,7 +96,7 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build --build-arg ssh_prv_key="${{ secrets.SSH_KEY }}" -f .docker/Dockerfile.dev -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg ssh_prv_key="${{ secrets.SSH_KEY }}" git_token="${{ secrets.GIT_TOKEN }}" -f .docker/Dockerfile.dev -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
