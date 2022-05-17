@@ -5,6 +5,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/core/repository"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
@@ -19,7 +20,7 @@ func (repo *alloffSizeRepo) Upsert(alloffSize *domain.AlloffSizeDAO) (*domain.Al
 	defer cancel()
 
 	opts := options.Update().SetUpsert(true)
-	filter := bson.M{"sizename": &alloffSize.SizeName}
+	filter := bson.M{"_id": alloffSize.ID}
 
 	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &alloffSize}, opts); err != nil {
 		return nil, err
@@ -54,6 +55,24 @@ func (repo *alloffSizeRepo) List(offset, limit int) ([]*domain.AlloffSizeDAO, in
 	}
 
 	return alloffSizes, int(totalCount), nil
+}
+
+func (repo *alloffSizeRepo) Get(alloffSizeID string) (*domain.AlloffSizeDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	oid, err := primitive.ObjectIDFromHex(alloffSizeID)
+	if err != nil {
+		return nil, err
+	}
+
+	var alloffSize *domain.AlloffSizeDAO
+	filter := bson.M{"_id": oid}
+	if err := repo.col.FindOne(ctx, filter).Decode(&alloffSize); err != nil {
+		return nil, err
+	}
+
+	return alloffSize, nil
 }
 
 func MongoAlloffSizeRepo(conn *MongoDB) repository.AlloffSizeRepository {

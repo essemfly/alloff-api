@@ -189,6 +189,7 @@ type OrderCountsRepository interface {
 }
 
 type AlloffSizeRepository interface {
+	Get(alloffSizeID string) (*domain.AlloffSizeDAO, error)
 	Upsert(dao *domain.AlloffSizeDAO) (*domain.AlloffSizeDAO, error)
 	List(offset, limit int) ([]*domain.AlloffSizeDAO, int, error)
 }
