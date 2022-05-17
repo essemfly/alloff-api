@@ -3,7 +3,7 @@ name: Deploy to Amazon ECS - DEV
 on:
   push:
     branches:
-      - feature/cd
+      - refactor
 
 env:
   ENV: dev
@@ -36,7 +36,7 @@ jobs:
       - name: Configure ENV variables
         run: |
           echo "COMMIT_SHA=${{ github.sha }}
-          ${{ secrets.ENV_DEV }}" > config/config.dev.json
+          ${{ secrets.ENV_DEV }}" > .env
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
