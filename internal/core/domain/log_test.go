@@ -1,8 +1,9 @@
 package domain
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestAccessLogDAO_JsonEncoder(t *testing.T) {
