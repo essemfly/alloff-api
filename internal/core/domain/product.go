@@ -155,7 +155,7 @@ type CancelDescriptionDAO struct {
 // ProductClassifierDAO : 상품 타입 및 옴니어스 분류에 따른 카테고리를 담고 있음. 궁극적으로 AlloffCategoryDAO 대체할 예정
 type ProductClassifierDAO struct {
 	Classifier    []AlloffClassifier
-	OmniousResult dto.TaggingResult
+	TaggingResult dto.TaggingResult
 	First         CategoryClassifier
 	Second        CategoryClassifier
 }
