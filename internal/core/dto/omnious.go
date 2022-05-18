@@ -1,4 +1,4 @@
-package omnious
+package dto
 
 type EstimateModelType struct {
 	Id         string
@@ -6,15 +6,15 @@ type EstimateModelType struct {
 	Confidence float64
 }
 
-type Tags struct {
+type OmniousResult struct {
 	Category struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
 	} `json:"category"`
-	Position struct {
-		X float64 `json:"x"`
-		Y float64 `json:"y"`
-	} `json:"position"`
+	TaggingResult
+}
+
+type TaggingResult struct {
 	Item         EstimateModelType   `json:"item"`
 	Colors       []EstimateModelType `json:"colors"`
 	ColorDetails []EstimateModelType `json:"colorDetails"`
@@ -32,12 +32,12 @@ type Tags struct {
 type PostResponse struct {
 	Data struct {
 		Objects []struct {
-			Type string `json:"type"`
-			Tags []Tags `json:"tags"`
+			Type string          `json:"type"`
+			Tags []OmniousResult `json:"tags"`
 		} `json:"objects"`
 		NotMatchedObject []struct {
-			Type string `json:"type"`
-			Tags []Tags `json:"tags"`
+			Type string          `json:"type"`
+			Tags []OmniousResult `json:"tags"`
 		} `json:"notMatchedObject"`
 	} `json:"data"`
 	Error  interface{} `json:"error"`

@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"time"
 
 	"github.com/lessbutter/alloff-api/internal/utils"
@@ -21,6 +22,15 @@ type DeliveryType string
 const (
 	Domestic DeliveryType = "DOMESTIC"
 	Foreign  DeliveryType = "FOREIGN"
+)
+
+type AlloffClassifier string
+
+const (
+	Male   = AlloffClassifier("MALE")
+	Female = AlloffClassifier("FEMALE")
+	Kids   = AlloffClassifier("KIDS")
+	Sports = AlloffClassifier("SPROTS") // 스포츠 좀 안어울린다는 생각..?
 )
 
 type ProductMetaInfoDAO struct {
@@ -145,7 +155,7 @@ type CancelDescriptionDAO struct {
 // ProductClassifierDAO : 상품 타입 및 옴니어스 분류에 따른 카테고리를 담고 있음. 궁극적으로 AlloffCategoryDAO 대체할 예정
 type ProductClassifierDAO struct {
 	Classifier    []AlloffClassifier
-	OmniousResult map[string]string
+	OmniousResult dto.TaggingResult
 	First         CategoryClassifier
 	Second        CategoryClassifier
 }
@@ -155,15 +165,6 @@ type CategoryClassifier struct {
 	Name    string
 	KeyName string
 }
-
-type AlloffClassifier string
-
-const (
-	Male   = AlloffClassifier("MALE")
-	Female = AlloffClassifier("FEMALE")
-	Kids   = AlloffClassifier("KIDS")
-	Sports = AlloffClassifier("SPROTS") // 스포츠 좀 안어울린다는 생각..?
-)
 
 type ProductDAO struct {
 	ID                  primitive.ObjectID `bson:"_id,omitempty"`

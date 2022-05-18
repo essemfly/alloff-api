@@ -121,6 +121,6 @@ func GetTheoutnetHeaders() map[string]string {
 func GetOmniousHeader(omniousKey string) map[string]string {
 	return map[string]string{
 		"x-api-key":       omniousKey,
-		"accept-language": "ko-KR",
+		"accept-language": "ko",
 	}
 }

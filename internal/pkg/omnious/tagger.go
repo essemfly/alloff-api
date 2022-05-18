@@ -4,13 +4,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/lessbutter/alloff-api/config"
+	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"io/ioutil"
 )
 
-func GetOmniousData(imgUrl string) {
+const (
+	PostTaggerURL = "https://api.omnious.com/tagger/v2.12/tags"
+)
+
+func GetOmniousData(imgUrl string) (*dto.OmniousResult, error) {
 	omniousKey := config.OmniousKey
-	url := "https://api.omnious.com/tagger/v2.12/tags"
 	method := utils.REQUEST_POST
 	header := utils.GetOmniousHeader(omniousKey)
 	body := fmt.Sprintf(`
@@ -22,21 +26,26 @@ func GetOmniousData(imgUrl string) {
 		}
 	`, imgUrl)
 
-	resp, err := utils.MakeRequest(url, method, header, body)
+	resp, err := utils.MakeRequest(PostTaggerURL, method, header, body)
 	if err != nil {
-		fmt.Println("TODO: 에러처리1 : ", err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("TODO 에러처리2 : ", err)
+		return nil, err
 	}
 
-	var result PostResponse
+	var result dto.PostResponse
 	if err := json.Unmarshal(respBody, &result); err != nil {
-		fmt.Println("TODO 에러처리3 : ", err)
+		return nil, err
 	}
 
-	fmt.Println(result)
+	omniousResult, err := MapPostResponseToResult(&result)
+	if err != nil {
+		return nil, err
+	}
+
+	return omniousResult, nil
 }
