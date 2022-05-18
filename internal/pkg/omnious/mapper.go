@@ -7,7 +7,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/dto"
 )
 
-func MapPostResponseToResult(pr *dto.PostResponse) (*dto.OmniousResult, error) {
+func mapPostResponseToResult(pr *dto.PostResponse) (*dto.OmniousResult, error) {
 	if len(pr.Data.Objects) > 1 {
 		return nil, fmt.Errorf("ERR500:image has two more items")
 	}

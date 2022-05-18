@@ -42,7 +42,7 @@ func GetOmniousData(imgUrl string) (*dto.OmniousResult, error) {
 		return nil, err
 	}
 
-	omniousResult, err := MapPostResponseToResult(&result)
+	omniousResult, err := mapPostResponseToResult(&result)
 	if err != nil {
 		return nil, err
 	}
