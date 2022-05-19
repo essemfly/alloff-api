@@ -171,6 +171,7 @@ type ProductDAO struct {
 	ProductInfo         *ProductMetaInfoDAO
 	Images              []string
 	ProductGroupId      string
+	ExhibitionID        string
 	AlloffName          string
 	OriginalPrice       int
 	DiscountedPrice     int
