@@ -71,10 +71,30 @@ func AddHomeItems() {
 	}
 
 	onepieceCategory, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_ONEPIECE")
-	onepieceProducts, _, _ := product.AlloffCategoryProductsListing(0, 10, nil, onepieceCategory.ID.Hex(), "", nil)
-	onepiece50products, _, _ := product.AlloffCategoryProductsListing(0, 10, nil, onepieceCategory.ID.Hex(), "", []string{"70", "100"})
+	onepieceProducts, _, _ := product.Listing(product.ProductListInput{
+		Offset:                    0,
+		Limit:                     10,
+		AlloffCategoryID:          onepieceCategory.ID.Hex(),
+		IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+	})
+	onepiece50products, _, _ := product.Listing(product.ProductListInput{
+		Offset:                    0,
+		Limit:                     10,
+		AlloffCategoryID:          onepieceCategory.ID.Hex(),
+		PriceRanges:               []product.PriceRangeType{product.PRICE_RANGE_100, product.PRICE_RANGE_70},
+		IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+	})
 	knitCategory, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_KNITWARE")
-	knitProducts, _, _ := product.AlloffCategoryProductsListing(0, 10, nil, knitCategory.ID.Hex(), "", []string{"70", "100"})
+	knitProducts, _, _ := product.Listing(product.ProductListInput{
+		Offset:                    0,
+		Limit:                     10,
+		AlloffCategoryID:          knitCategory.ID.Hex(),
+		PriceRanges:               []product.PriceRangeType{product.PRICE_RANGE_100, product.PRICE_RANGE_70},
+		IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+		IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+	})
 
 	timedeal := domain.PRODUCT_GROUP_TIMEDEAL
 	pgs, _, _ := ioc.Repo.ProductGroups.List(0, 10, &timedeal, "")

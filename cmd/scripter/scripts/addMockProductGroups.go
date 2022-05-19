@@ -71,6 +71,7 @@ func addTimedealProductGroups(exhibitionId string) []*domain.ProductGroupDAO {
 				ProductID: pd.ID,
 			})
 			pd.ProductGroupId = pg.ID.Hex()
+			pd.ExhibitionID = pg.ExhibitionID
 			_, err = ioc.Repo.Products.Upsert(pd)
 			if err != nil {
 				log.Println("Error on upsert product : ", err)
@@ -164,7 +165,13 @@ func AddProductGroups() {
 
 	for idx, pg := range pgs {
 		totalNumProducts := 10
-		products, _, err := product.AlloffCategoryProductsListing(0, totalNumProducts, nil, alloffcats[idx].Hex(), "", nil)
+		products, _, err := product.Listing(product.ProductListInput{
+			Offset:                    0,
+			Limit:                     totalNumProducts,
+			AlloffCategoryID:          alloffcats[idx].Hex(),
+			IncludeSpecialProductType: product.NOT_SPECIAL_PRODUCTS,
+			IncludeClassifiedType:     product.NO_MATTER_CLASSIFIED,
+		})
 		if err != nil {
 			log.Println("add sample product error", err)
 		}
@@ -178,6 +185,7 @@ func AddProductGroups() {
 				ProductID: pd.ID,
 			})
 			pd.ProductGroupId = pg.ID.Hex()
+			pd.ExhibitionID = pg.ExhibitionID
 			_, err = ioc.Repo.Products.Upsert(pd)
 			if err != nil {
 				log.Println("product upsert failed")

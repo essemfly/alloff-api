@@ -90,8 +90,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		CancelDescription:   MapCancelDescription(pdDao.SalesInstruction.CancelDescription),
 		DeliveryDescription: deliveryDesc,
 		ThumbnailImage:      thumbnailImage,
-		AlloffInventory:     MapAlloffInventory(pdDao),
-		IsInventoryMapped:   pdDao.IsInventoryMapped,
+		ProductClassifier:   MapProductClassifier(pdDao.ProductClassifier),
 	}
 }
 
@@ -134,15 +133,77 @@ func MapCancelDescription(cancelDesc *domain.CancelDescriptionDAO) *model.Cancel
 	}
 }
 
-func MapAlloffInventory(pdDao *domain.ProductDAO) []*model.AlloffInventory {
-	pdDao.MapAlloffInventory()
-	daoInvens := pdDao.AlloffInventory
-	modelInvens := []*model.AlloffInventory{}
-	for _, inv := range daoInvens {
-		modelInvens = append(modelInvens, &model.AlloffInventory{
-			AlloffSize: MapAlloffSizeDaoToAlloffSize(&inv.AlloffSize),
-			Quantity:   inv.Quantity,
-		})
+func MapProductSortingAndRanges(sortings []model.SortingType) (priceRanges []product.PriceRangeType, priceSorting product.PriceSortingType) {
+	for _, sorting := range sortings {
+		if sorting == model.SortingTypePriceAscending {
+			priceSorting = product.PRICE_ASCENDING
+		} else if sorting == model.SortingTypePriceDescending {
+			priceSorting = product.PRICE_DESCENDING
+		} else if sorting == model.SortingTypeDiscountrateAscending {
+			priceSorting = product.DISCOUNTRATE_ASCENDING
+		} else if sorting == model.SortingTypeDiscountrateDescending {
+			priceSorting = product.DISCOUNTRATE_DESCENDING
+		} else {
+			if sorting == model.SortingTypeDiscount0_30 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_30)
+			} else if sorting == model.SortingTypeDiscount30_50 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_50)
+			} else if sorting == model.SortingTypeDiscount50_70 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_70)
+			} else {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_100)
+			}
+		}
 	}
-	return modelInvens
+
+	return
+}
+
+func MapAlloffClassifier(classifiers []domain.AlloffClassifier) []model.AlloffClassifier {
+	res := []model.AlloffClassifier{}
+	for _, classifier := range classifiers {
+		switch classifier {
+		case domain.Male:
+			res = append(res, model.AlloffClassifierMale)
+		case domain.Female:
+			res = append(res, model.AlloffClassifierFemale)
+		case domain.Kids:
+			res = append(res, model.AlloffClassifierKids)
+		case domain.Sports:
+			res = append(res, model.AlloffClassifierSports)
+		}
+	}
+	return res
+}
+
+func MapCategoryClassifier(classifier domain.CategoryClassifier) *model.CategoryClassifier {
+	return &model.CategoryClassifier{
+		KeyName: classifier.KeyName,
+		Name:    classifier.Name,
+	}
+}
+
+func MapProductClassifier(classifier *domain.ProductClassifierDAO) *model.ProductClassifier {
+	return &model.ProductClassifier{
+		Classifier: MapAlloffClassifier(classifier.Classifier),
+		First:      MapCategoryClassifier(classifier.First),
+		Second:     MapCategoryClassifier(classifier.Second),
+	}
+}
+
+func MapAlloffClassifierModelToDAO(classifiers []model.AlloffClassifier) []domain.AlloffClassifier {
+	res := []domain.AlloffClassifier{}
+	for _, classifier := range classifiers {
+		switch classifier {
+		case model.AlloffClassifierMale:
+			res = append(res, domain.Male)
+		case model.AlloffClassifierFemale:
+			res = append(res, domain.Female)
+		case model.AlloffClassifierKids:
+			res = append(res, domain.Kids)
+		case model.AlloffClassifierSports:
+			res = append(res, domain.Sports)
+		}
+	}
+	return res
 }
