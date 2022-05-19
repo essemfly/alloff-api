@@ -11,6 +11,7 @@ import (
 // Pg를 받으면, 안에 있는 PD들 Productgroupid 업데이트하고, 새 것들을 PG에 넣어주는 역할
 // PG안에 있는 PD들이 PGID가 잘못박혀서 결제 못되게 하는 것을 막는다.
 // 다만 PG가 끝난 PD들에서 PGID들을 없애는 것은 불가능함
+// Product의 ExhibitionID를 여기서 syncing 해주는게 맞을까?
 func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) (*domain.ProductGroupDAO, error) {
 	for _, pd := range pgDao.Products {
 		newPd, err := ioc.Repo.Products.Get(pd.Product.ID.Hex())
@@ -19,6 +20,7 @@ func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) (*domain.ProductGroupDAO,
 		}
 		if newPd.ProductGroupId != pgDao.ID.Hex() {
 			newPd.ProductGroupId = pgDao.ID.Hex()
+			newPd.ExhibitionID = pgDao.ExhibitionID
 			updatedPd, err := ioc.Repo.Products.Upsert(newPd)
 			if err != nil {
 				log.Println("err upsert product", newPd.ID.Hex())

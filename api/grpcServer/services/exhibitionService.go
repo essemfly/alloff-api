@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"log"
 	"time"
 
@@ -142,7 +143,6 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 			}
 			pgs = append(pgs, newPg)
 		}
-
 		exDao.ProductGroups = pgs
 	}
 
@@ -152,6 +152,7 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	}
 
 	go broker.ExhibitionSyncer(newExhibitionDao)
+	go exhibition.UpdateExhibitionClassifier(exDao)
 
 	return &grpcServer.EditExhibitionResponse{
 		Exhibition: mapper.ExhibitionMapper(newExhibitionDao, false),
@@ -229,6 +230,7 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		return nil, err
 	}
 
+	go exhibition.UpdateExhibitionClassifier(exDao)
 	return &grpcServer.CreateExhibitionResponse{
 		Exhibition: mapper.ExhibitionMapper(newExDao, false),
 	}, nil
