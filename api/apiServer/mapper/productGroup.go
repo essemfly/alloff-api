@@ -93,6 +93,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		TargetSales:        exDao.TargetSales,
 		CurrentSales:       sales,
 		Banners:            mapBanners(exDao.Banners),
+		Classifier:         MapExhibitionClassifier(exDao.Classifier),
 		TotalProducts:      numProducts,
 		TotalProductGroups: numPgs,
 	}
@@ -124,4 +125,24 @@ func mapBanners(bannersDaos []domain.ExhibitionBanner) []*model.ExhibitionBanner
 		res = append(res, &bannerDto)
 	}
 	return res
+}
+
+func MapExhibitionClassifier(exClassifierDao domain.ExhibitionClassifier) *model.ExhibitionClassifier {
+	classifier := MapAlloffClassifier(exClassifierDao.Classifier)
+	first := []*model.CategoryClassifier{}
+	second := []*model.CategoryClassifier{}
+
+	for _, firstCat := range exClassifierDao.First {
+		first = append(first, MapCategoryClassifier(firstCat))
+	}
+
+	for _, secondCat := range exClassifierDao.Second {
+		second = append(second, MapCategoryClassifier(secondCat))
+	}
+
+	return &model.ExhibitionClassifier{
+		Classifier: classifier,
+		First:      first,
+		Second:     second,
+	}
 }

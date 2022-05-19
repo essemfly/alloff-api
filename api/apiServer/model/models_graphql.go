@@ -105,6 +105,11 @@ type Category struct {
 	Name    string `json:"name"`
 }
 
+type CategoryClassifier struct {
+	Name    string `json:"name"`
+	KeyName string `json:"keyName"`
+}
+
 type CommunityItem struct {
 	Name       string            `json:"name"`
 	Target     string            `json:"target"`
@@ -128,21 +133,22 @@ type Device struct {
 }
 
 type Exhibition struct {
-	ID                 string              `json:"id"`
-	BannerImage        string              `json:"bannerImage"`
-	ThumbnailImage     string              `json:"thumbnailImage"`
-	Title              string              `json:"title"`
-	SubTitle           string              `json:"subTitle"`
-	Description        string              `json:"description"`
-	ProductGroups      []*ProductGroup     `json:"productGroups"`
-	StartTime          string              `json:"startTime"`
-	FinishTime         string              `json:"finishTime"`
-	TargetSales        int                 `json:"targetSales"`
-	CurrentSales       int                 `json:"currentSales"`
-	ExhibitionType     ExhibitionType      `json:"exhibitionType"`
-	Banners            []*ExhibitionBanner `json:"banners"`
-	TotalProducts      int                 `json:"totalProducts"`
-	TotalProductGroups int                 `json:"totalProductGroups"`
+	ID                 string                `json:"id"`
+	BannerImage        string                `json:"bannerImage"`
+	ThumbnailImage     string                `json:"thumbnailImage"`
+	Title              string                `json:"title"`
+	SubTitle           string                `json:"subTitle"`
+	Description        string                `json:"description"`
+	ProductGroups      []*ProductGroup       `json:"productGroups"`
+	StartTime          string                `json:"startTime"`
+	FinishTime         string                `json:"finishTime"`
+	TargetSales        int                   `json:"targetSales"`
+	CurrentSales       int                   `json:"currentSales"`
+	ExhibitionType     ExhibitionType        `json:"exhibitionType"`
+	Banners            []*ExhibitionBanner   `json:"banners"`
+	Classifier         *ExhibitionClassifier `json:"classifier"`
+	TotalProducts      int                   `json:"totalProducts"`
+	TotalProductGroups int                   `json:"totalProductGroups"`
 }
 
 type ExhibitionBanner struct {
@@ -150,6 +156,12 @@ type ExhibitionBanner struct {
 	ProductGroupID string `json:"productGroupId"`
 	Title          string `json:"title"`
 	Subtitle       string `json:"subtitle"`
+}
+
+type ExhibitionClassifier struct {
+	Classifier []AlloffClassifier    `json:"classifier"`
+	First      []*CategoryClassifier `json:"first"`
+	Second     []*CategoryClassifier `json:"second"`
 }
 
 type FeaturedItem struct {
@@ -392,6 +404,13 @@ type Product struct {
 	ThumbnailImage      string               `json:"thumbnailImage"`
 	AlloffInventory     []*AlloffInventory   `json:"alloffInventory"`
 	IsInventoryMapped   bool                 `json:"IsInventoryMapped"`
+	ProductClassifier   *ProductClassifier   `json:"productClassifier"`
+}
+
+type ProductClassifier struct {
+	Classifier []AlloffClassifier  `json:"classifier"`
+	First      *CategoryClassifier `json:"first"`
+	Second     *CategoryClassifier `json:"second"`
 }
 
 type ProductDescription struct {
@@ -423,12 +442,15 @@ type ProductQueryInput struct {
 }
 
 type ProductsInput struct {
-	Offset         int           `json:"offset"`
-	Limit          int           `json:"limit"`
-	Brand          *string       `json:"brand"`
-	Category       *string       `json:"category"`
-	Sorting        []SortingType `json:"sorting"`
-	ProductGroupID *string       `json:"productGroupId"`
+	Offset             int                `json:"offset"`
+	Limit              int                `json:"limit"`
+	Brand              *string            `json:"brand"`
+	Category           *string            `json:"category"`
+	Sorting            []SortingType      `json:"sorting"`
+	ProductGroupID     *string            `json:"productGroupId"`
+	ExhibitionID       *string            `json:"exhibitionId"`
+	AlloffClassifier   []AlloffClassifier `json:"alloffClassifier"`
+	CategoryClassifier string             `json:"categoryClassifier"`
 }
 
 type ProductsOutput struct {
@@ -493,6 +515,51 @@ type UserInfoInput struct {
 type AlloffInventory struct {
 	AlloffSize *AlloffSize `json:"alloffSize"`
 	Quantity   int         `json:"quantity"`
+}
+
+type AlloffClassifier string
+
+const (
+	AlloffClassifierMale   AlloffClassifier = "MALE"
+	AlloffClassifierFemale AlloffClassifier = "FEMALE"
+	AlloffClassifierKids   AlloffClassifier = "KIDS"
+	AlloffClassifierSports AlloffClassifier = "SPORTS"
+)
+
+var AllAlloffClassifier = []AlloffClassifier{
+	AlloffClassifierMale,
+	AlloffClassifierFemale,
+	AlloffClassifierKids,
+	AlloffClassifierSports,
+}
+
+func (e AlloffClassifier) IsValid() bool {
+	switch e {
+	case AlloffClassifierMale, AlloffClassifierFemale, AlloffClassifierKids, AlloffClassifierSports:
+		return true
+	}
+	return false
+}
+
+func (e AlloffClassifier) String() string {
+	return string(e)
+}
+
+func (e *AlloffClassifier) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = AlloffClassifier(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid AlloffClassifier", str)
+	}
+	return nil
+}
+
+func (e AlloffClassifier) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type CommunityItemType string

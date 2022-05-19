@@ -14,6 +14,24 @@ enum DeliveryType {
   FOREIGN_DELIVERY
 }
 
+enum AlloffClassifier{
+  MALE
+  FEMALE
+  KIDS
+  SPORTS
+}
+
+type CategoryClassifier {
+  name: String!
+  keyName: String!
+}
+
+type ProductClassifier {
+  classifier: [AlloffClassifier!]!
+  first: CategoryClassifier!
+  second: CategoryClassifier!
+}
+
 type Product {
   id: ID!
   category: Category!
@@ -39,6 +57,7 @@ type Product {
   thumbnailImage: String!
   alloffInventory: [alloffInventory!]!
   IsInventoryMapped: Boolean!
+  productClassifier: ProductClassifier!
 }
 
 type alloffInventory {
@@ -89,6 +108,9 @@ input ProductsInput {
   category: String
   sorting: [SortingType!]
   productGroupId: String
+  exhibitionId: String
+  alloffClassifier: [AlloffClassifier!]
+  categoryClassifier: String!
 }
 
 input AlloffCategoryProductsInput {

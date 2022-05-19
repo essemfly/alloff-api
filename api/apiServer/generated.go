@@ -116,6 +116,11 @@ type ComplexityRoot struct {
 		Name    func(childComplexity int) int
 	}
 
+	CategoryClassifier struct {
+		KeyName func(childComplexity int) int
+		Name    func(childComplexity int) int
+	}
+
 	CommunityItem struct {
 		ImgURL     func(childComplexity int) int
 		Name       func(childComplexity int) int
@@ -141,6 +146,7 @@ type ComplexityRoot struct {
 	Exhibition struct {
 		BannerImage        func(childComplexity int) int
 		Banners            func(childComplexity int) int
+		Classifier         func(childComplexity int) int
 		CurrentSales       func(childComplexity int) int
 		Description        func(childComplexity int) int
 		ExhibitionType     func(childComplexity int) int
@@ -161,6 +167,12 @@ type ComplexityRoot struct {
 		ProductGroupID func(childComplexity int) int
 		Subtitle       func(childComplexity int) int
 		Title          func(childComplexity int) int
+	}
+
+	ExhibitionClassifier struct {
+		Classifier func(childComplexity int) int
+		First      func(childComplexity int) int
+		Second     func(childComplexity int) int
 	}
 
 	FeaturedItem struct {
@@ -350,6 +362,7 @@ type ComplexityRoot struct {
 		IsUpdated           func(childComplexity int) int
 		Name                func(childComplexity int) int
 		OriginalPrice       func(childComplexity int) int
+		ProductClassifier   func(childComplexity int) int
 		ProductGroupID      func(childComplexity int) int
 		ProductURL          func(childComplexity int) int
 		Removed             func(childComplexity int) int
@@ -357,6 +370,12 @@ type ComplexityRoot struct {
 		SpecialDiscountRate func(childComplexity int) int
 		SpecialPrice        func(childComplexity int) int
 		ThumbnailImage      func(childComplexity int) int
+	}
+
+	ProductClassifier struct {
+		Classifier func(childComplexity int) int
+		First      func(childComplexity int) int
+		Second     func(childComplexity int) int
 	}
 
 	ProductDescription struct {
@@ -845,6 +864,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Category.Name(childComplexity), true
 
+	case "CategoryClassifier.keyName":
+		if e.complexity.CategoryClassifier.KeyName == nil {
+			break
+		}
+
+		return e.complexity.CategoryClassifier.KeyName(childComplexity), true
+
+	case "CategoryClassifier.name":
+		if e.complexity.CategoryClassifier.Name == nil {
+			break
+		}
+
+		return e.complexity.CategoryClassifier.Name(childComplexity), true
+
 	case "CommunityItem.imgUrl":
 		if e.complexity.CommunityItem.ImgURL == nil {
 			break
@@ -949,6 +982,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exhibition.Banners(childComplexity), true
+
+	case "Exhibition.classifier":
+		if e.complexity.Exhibition.Classifier == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.Classifier(childComplexity), true
 
 	case "Exhibition.currentSales":
 		if e.complexity.Exhibition.CurrentSales == nil {
@@ -1068,6 +1108,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ExhibitionBanner.Title(childComplexity), true
+
+	case "ExhibitionClassifier.classifier":
+		if e.complexity.ExhibitionClassifier.Classifier == nil {
+			break
+		}
+
+		return e.complexity.ExhibitionClassifier.Classifier(childComplexity), true
+
+	case "ExhibitionClassifier.first":
+		if e.complexity.ExhibitionClassifier.First == nil {
+			break
+		}
+
+		return e.complexity.ExhibitionClassifier.First(childComplexity), true
+
+	case "ExhibitionClassifier.second":
+		if e.complexity.ExhibitionClassifier.Second == nil {
+			break
+		}
+
+		return e.complexity.ExhibitionClassifier.Second(childComplexity), true
 
 	case "FeaturedItem.brand":
 		if e.complexity.FeaturedItem.Brand == nil {
@@ -2084,6 +2145,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.OriginalPrice(childComplexity), true
 
+	case "Product.productClassifier":
+		if e.complexity.Product.ProductClassifier == nil {
+			break
+		}
+
+		return e.complexity.Product.ProductClassifier(childComplexity), true
+
 	case "Product.productGroupId":
 		if e.complexity.Product.ProductGroupID == nil {
 			break
@@ -2132,6 +2200,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Product.ThumbnailImage(childComplexity), true
+
+	case "ProductClassifier.classifier":
+		if e.complexity.ProductClassifier.Classifier == nil {
+			break
+		}
+
+		return e.complexity.ProductClassifier.Classifier(childComplexity), true
+
+	case "ProductClassifier.first":
+		if e.complexity.ProductClassifier.First == nil {
+			break
+		}
+
+		return e.complexity.ProductClassifier.First(childComplexity), true
+
+	case "ProductClassifier.second":
+		if e.complexity.ProductClassifier.Second == nil {
+			break
+		}
+
+		return e.complexity.ProductClassifier.Second(childComplexity), true
 
 	case "ProductDescription.images":
 		if e.complexity.ProductDescription.Images == nil {
@@ -3220,6 +3309,7 @@ type Exhibition {
   currentSales: Int!
   exhibitionType: ExhibitionType!
   banners: [ExhibitionBanner!]!
+  classifier: ExhibitionClassifier!
   totalProducts: Int!
   totalProductGroups: Int!
 }
@@ -3229,6 +3319,12 @@ type ExhibitionBanner {
   productGroupId: String!
   title: String!
   subtitle: String!
+}
+
+type ExhibitionClassifier {
+  classifier: [AlloffClassifier!]!
+  first: [CategoryClassifier!]!
+  second: [CategoryClassifier!]!
 }
 
 extend type Query {
@@ -3256,6 +3352,24 @@ enum DeliveryType {
   FOREIGN_DELIVERY
 }
 
+enum AlloffClassifier{
+  MALE
+  FEMALE
+  KIDS
+  SPORTS
+}
+
+type CategoryClassifier {
+  name: String!
+  keyName: String!
+}
+
+type ProductClassifier {
+  classifier: [AlloffClassifier!]!
+  first: CategoryClassifier!
+  second: CategoryClassifier!
+}
+
 type Product {
   id: ID!
   category: Category!
@@ -3281,6 +3395,7 @@ type Product {
   thumbnailImage: String!
   alloffInventory: [alloffInventory!]!
   IsInventoryMapped: Boolean!
+  productClassifier: ProductClassifier!
 }
 
 type alloffInventory {
@@ -3331,6 +3446,9 @@ input ProductsInput {
   category: String
   sorting: [SortingType!]
   productGroupId: String
+  exhibitionId: String
+  alloffClassifier: [AlloffClassifier!]
+  categoryClassifier: String!
 }
 
 input AlloffCategoryProductsInput {
@@ -5662,6 +5780,76 @@ func (ec *executionContext) _Category_name(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _CategoryClassifier_name(ctx context.Context, field graphql.CollectedField, obj *model.CategoryClassifier) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CategoryClassifier",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _CategoryClassifier_keyName(ctx context.Context, field graphql.CollectedField, obj *model.CategoryClassifier) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CategoryClassifier",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.KeyName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _CommunityItem_name(ctx context.Context, field graphql.CollectedField, obj *model.CommunityItem) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6566,6 +6754,41 @@ func (ec *executionContext) _Exhibition_banners(ctx context.Context, field graph
 	return ec.marshalNExhibitionBanner2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionBannerᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Exhibition_classifier(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Classifier, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ExhibitionClassifier)
+	fc.Result = res
+	return ec.marshalNExhibitionClassifier2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionClassifier(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Exhibition_totalProducts(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6774,6 +6997,111 @@ func (ec *executionContext) _ExhibitionBanner_subtitle(ctx context.Context, fiel
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExhibitionClassifier_classifier(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionClassifier) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExhibitionClassifier",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Classifier, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]model.AlloffClassifier)
+	fc.Result = res
+	return ec.marshalNAlloffClassifier2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifierᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExhibitionClassifier_first(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionClassifier) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExhibitionClassifier",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.First, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CategoryClassifier)
+	fc.Result = res
+	return ec.marshalNCategoryClassifier2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCategoryClassifierᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ExhibitionClassifier_second(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionClassifier) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ExhibitionClassifier",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Second, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.CategoryClassifier)
+	fc.Result = res
+	return ec.marshalNCategoryClassifier2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCategoryClassifierᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _FeaturedItem_id(ctx context.Context, field graphql.CollectedField, obj *model.FeaturedItem) (ret graphql.Marshaler) {
@@ -11799,6 +12127,146 @@ func (ec *executionContext) _Product_IsInventoryMapped(ctx context.Context, fiel
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Product_productClassifier(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Product",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProductClassifier, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.ProductClassifier)
+	fc.Result = res
+	return ec.marshalNProductClassifier2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductClassifier(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProductClassifier_classifier(ctx context.Context, field graphql.CollectedField, obj *model.ProductClassifier) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProductClassifier",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Classifier, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]model.AlloffClassifier)
+	fc.Result = res
+	return ec.marshalNAlloffClassifier2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifierᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProductClassifier_first(ctx context.Context, field graphql.CollectedField, obj *model.ProductClassifier) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProductClassifier",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.First, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.CategoryClassifier)
+	fc.Result = res
+	return ec.marshalNCategoryClassifier2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCategoryClassifier(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _ProductClassifier_second(ctx context.Context, field graphql.CollectedField, obj *model.ProductClassifier) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "ProductClassifier",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Second, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.CategoryClassifier)
+	fc.Result = res
+	return ec.marshalNCategoryClassifier2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCategoryClassifier(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ProductDescription_images(ctx context.Context, field graphql.CollectedField, obj *model.ProductDescription) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -16226,6 +16694,30 @@ func (ec *executionContext) unmarshalInputProductsInput(ctx context.Context, obj
 			if err != nil {
 				return it, err
 			}
+		case "exhibitionId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exhibitionId"))
+			it.ExhibitionID, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "alloffClassifier":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alloffClassifier"))
+			it.AlloffClassifier, err = ec.unmarshalOAlloffClassifier2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifierᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "categoryClassifier":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("categoryClassifier"))
+			it.CategoryClassifier, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -16758,6 +17250,38 @@ func (ec *executionContext) _Category(ctx context.Context, sel ast.SelectionSet,
 	return out
 }
 
+var categoryClassifierImplementors = []string{"CategoryClassifier"}
+
+func (ec *executionContext) _CategoryClassifier(ctx context.Context, sel ast.SelectionSet, obj *model.CategoryClassifier) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, categoryClassifierImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CategoryClassifier")
+		case "name":
+			out.Values[i] = ec._CategoryClassifier_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "keyName":
+			out.Values[i] = ec._CategoryClassifier_keyName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var communityItemImplementors = []string{"CommunityItem"}
 
 func (ec *executionContext) _CommunityItem(ctx context.Context, sel ast.SelectionSet, obj *model.CommunityItem) graphql.Marshaler {
@@ -16959,6 +17483,11 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "classifier":
+			out.Values[i] = ec._Exhibition_classifier(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "totalProducts":
 			out.Values[i] = ec._Exhibition_totalProducts(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -17008,6 +17537,43 @@ func (ec *executionContext) _ExhibitionBanner(ctx context.Context, sel ast.Selec
 			}
 		case "subtitle":
 			out.Values[i] = ec._ExhibitionBanner_subtitle(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var exhibitionClassifierImplementors = []string{"ExhibitionClassifier"}
+
+func (ec *executionContext) _ExhibitionClassifier(ctx context.Context, sel ast.SelectionSet, obj *model.ExhibitionClassifier) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, exhibitionClassifierImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ExhibitionClassifier")
+		case "classifier":
+			out.Values[i] = ec._ExhibitionClassifier_classifier(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "first":
+			out.Values[i] = ec._ExhibitionClassifier_first(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "second":
+			out.Values[i] = ec._ExhibitionClassifier_second(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -18073,6 +18639,48 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "IsInventoryMapped":
 			out.Values[i] = ec._Product_IsInventoryMapped(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "productClassifier":
+			out.Values[i] = ec._Product_productClassifier(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var productClassifierImplementors = []string{"ProductClassifier"}
+
+func (ec *executionContext) _ProductClassifier(ctx context.Context, sel ast.SelectionSet, obj *model.ProductClassifier) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, productClassifierImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProductClassifier")
+		case "classifier":
+			out.Values[i] = ec._ProductClassifier_classifier(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "first":
+			out.Values[i] = ec._ProductClassifier_first(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "second":
+			out.Values[i] = ec._ProductClassifier_second(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -19219,6 +19827,81 @@ func (ec *executionContext) unmarshalNAlloffCategoryProductsInput2githubᚗcom�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNAlloffClassifier2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifier(ctx context.Context, v interface{}) (model.AlloffClassifier, error) {
+	var res model.AlloffClassifier
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNAlloffClassifier2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifier(ctx context.Context, sel ast.SelectionSet, v model.AlloffClassifier) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNAlloffClassifier2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifierᚄ(ctx context.Context, v interface{}) ([]model.AlloffClassifier, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]model.AlloffClassifier, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNAlloffClassifier2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifier(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNAlloffClassifier2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifierᚄ(ctx context.Context, sel ast.SelectionSet, v []model.AlloffClassifier) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAlloffClassifier2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifier(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNAlloffSize2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffSizeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AlloffSize) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -19492,6 +20175,60 @@ func (ec *executionContext) marshalNCategory2ᚖgithubᚗcomᚋlessbutterᚋallo
 	return ec._Category(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNCategoryClassifier2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCategoryClassifierᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CategoryClassifier) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNCategoryClassifier2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCategoryClassifier(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNCategoryClassifier2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCategoryClassifier(ctx context.Context, sel ast.SelectionSet, v *model.CategoryClassifier) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._CategoryClassifier(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNCommunityItem2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCommunityItemᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CommunityItem) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -19715,6 +20452,16 @@ func (ec *executionContext) marshalNExhibitionBanner2ᚖgithubᚗcomᚋlessbutte
 		return graphql.Null
 	}
 	return ec._ExhibitionBanner(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNExhibitionClassifier2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionClassifier(ctx context.Context, sel ast.SelectionSet, v *model.ExhibitionClassifier) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ExhibitionClassifier(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNExhibitionType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionType(ctx context.Context, v interface{}) (model.ExhibitionType, error) {
@@ -20457,6 +21204,16 @@ func (ec *executionContext) marshalNProduct2ᚖgithubᚗcomᚋlessbutterᚋallof
 	return ec._Product(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNProductClassifier2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductClassifier(ctx context.Context, sel ast.SelectionSet, v *model.ProductClassifier) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ProductClassifier(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNProductGroup2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductGroup(ctx context.Context, sel ast.SelectionSet, v model.ProductGroup) graphql.Marshaler {
 	return ec._ProductGroup(ctx, sel, &v)
 }
@@ -21136,6 +21893,77 @@ func (ec *executionContext) unmarshalOAlloffCategoryInput2ᚖgithubᚗcomᚋless
 	}
 	res, err := ec.unmarshalInputAlloffCategoryInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOAlloffClassifier2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifierᚄ(ctx context.Context, v interface{}) ([]model.AlloffClassifier, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]model.AlloffClassifier, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNAlloffClassifier2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifier(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOAlloffClassifier2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifierᚄ(ctx context.Context, sel ast.SelectionSet, v []model.AlloffClassifier) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNAlloffClassifier2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffClassifier(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

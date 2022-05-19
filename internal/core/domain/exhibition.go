@@ -21,6 +21,12 @@ type ExhibitionBanner struct {
 	ProductGroupId string
 }
 
+type ExhibitionClassifier struct {
+	Classifier []AlloffClassifier
+	First      []CategoryClassifier
+	Second     []CategoryClassifier
+}
+
 type ExhibitionDAO struct {
 	ID             primitive.ObjectID `bson:"_id, omitempty"`
 	BannerImage    string
@@ -37,6 +43,7 @@ type ExhibitionDAO struct {
 	ExhibitionType ExhibitionType
 	TargetSales    int
 	Banners        []ExhibitionBanner
+	Classifier     ExhibitionClassifier
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {
