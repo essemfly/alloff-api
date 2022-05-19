@@ -142,6 +142,7 @@ type ProductDAO struct {
 	ProductInfo         *ProductMetaInfoDAO
 	Images              []string
 	ProductGroupId      string
+	ExhibitionID        string
 	AlloffName          string
 	OriginalPrice       int
 	DiscountedPrice     int
@@ -155,6 +156,7 @@ type ProductDAO struct {
 	SalesInstruction    *AlloffInstructionDAO
 	PriceHistory        []PriceHistoryDAO
 	IsUpdated           bool
+	IsSpecial           bool
 	Created             time.Time
 	Updated             time.Time
 	ThumbnailImage      string

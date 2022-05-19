@@ -36,6 +36,9 @@ type MongoDB struct {
 	topBannersCol      *mongo.Collection
 	bestProductsCol    *mongo.Collection
 	bestBrandsCol      *mongo.Collection
+	groupCol           *mongo.Collection
+	groupRequestCol    *mongo.Collection
+	groupdealTicketCol *mongo.Collection
 }
 
 func NewMongoDB() *MongoDB {
@@ -72,6 +75,9 @@ func NewMongoDB() *MongoDB {
 		topBannersCol:      db.Collection("top_banners"),
 		bestProductsCol:    db.Collection("best_products"),
 		bestBrandsCol:      db.Collection("best_brands"),
+		groupCol:           db.Collection("groups"),
+		groupRequestCol:    db.Collection("group_requests"),
+		groupdealTicketCol: db.Collection("groupdeal_tickets"),
 	}
 }
 
@@ -99,6 +105,9 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.TopBanners = MongoTopBannersRepo(conn)
 	ioc.Repo.BestProducts = MongoBestProductsRepo(conn)
 	ioc.Repo.BestBrands = MongoBestBrandsRepo(conn)
+	ioc.Repo.Groups = MongoGroupsRepo(conn)
+	ioc.Repo.GroupRequest = MongoGroupRequestsRepo(conn)
+	ioc.Repo.GroupdealTickets = MongoGroupdealTicketRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context) (*mongo.Client, error) {

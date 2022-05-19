@@ -46,10 +46,11 @@ func MapHomeTabItem(item *domain.HomeTabItemDAO) *model.HomeTabItem {
 
 func MapTopBanner(banner *domain.TopBannerDAO) *model.TopBanner {
 	return &model.TopBanner{
-		ID:           banner.ID.Hex(),
-		ImageURL:     banner.ImageUrl,
-		ExhibitionID: banner.ExhibitionID,
-		Title:        banner.Title,
-		SubTitle:     banner.SubTitle,
+		ID:             banner.ID.Hex(),
+		ImageURL:       banner.ImageUrl,
+		ExhibitionID:   banner.ExhibitionID,
+		ExhibitionType: MapExhibitionType(domain.ExhibitionType(banner.ExhibitionType)),
+		Title:          banner.Title,
+		SubTitle:       banner.SubTitle,
 	}
 }

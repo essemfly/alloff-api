@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"log"
 	"time"
 )
 
@@ -22,6 +23,7 @@ func (repo *bestBrandsRepo) Insert(bestBrandDao *domain.BestBrandDAO) (*domain.B
 	_, err := repo.col.InsertOne(ctx, bestBrandDao)
 
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 

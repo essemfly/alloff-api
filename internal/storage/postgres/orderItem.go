@@ -39,6 +39,14 @@ func (repo *orderItemRepo) ListByOrderID(orderID int) ([]*domain.OrderItemDAO, e
 	return orderItems, nil
 }
 
+func (repo *orderItemRepo) ListByExhibitionID(exhibitionID string) ([]*domain.OrderItemDAO, error) {
+	orderItems := []*domain.OrderItemDAO{}
+	if err := repo.db.Model(&orderItems).Where("exhibition_id = ?", exhibitionID).Order("exhibition_id DESC").Limit(5).Select(); err != nil {
+		return nil, err
+	}
+	return orderItems, nil
+}
+
 func (repo *orderItemRepo) Update(orderItemDao *domain.OrderItemDAO) (*domain.OrderItemDAO, error) {
 	_, err := repo.db.Model(orderItemDao).WherePK().Update()
 	if err != nil {

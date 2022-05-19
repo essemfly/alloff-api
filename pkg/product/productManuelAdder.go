@@ -24,6 +24,7 @@ func AddProductManually(request *ProductManualAddRequest) (*domain.ProductDAO, e
 		Created:       time.Now(),
 		Updated:       time.Now(),
 		IsImageCached: true,
+		IsSpecial:     request.IsSpecial,
 	}
 
 	return ProcessManualProductRequest(pd, request)

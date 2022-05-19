@@ -70,6 +70,8 @@ type OrderItemDAO struct {
 	ConfirmedAt            time.Time               `pg:"confirmed_at"`
 	ExhibitionID           string                  `pg:"exhibition_id"`
 	CompanyKeyname         string                  `pg:"company_keyname"`
+	UserID                 string                  `pg:"user_id"`
+	User                   *UserDAO                `pg:"user"`
 }
 
 func (orderItemDao *OrderItemDAO) ConfirmOrder() error {

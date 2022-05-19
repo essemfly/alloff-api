@@ -64,6 +64,8 @@ func MapOrderItem(orderItemDao *domain.OrderItemDAO) *model.OrderItem {
 		CancelRequestedAt:      orderItemDao.CancelRequestedAt.Add(9 * time.Hour).String(),
 		CancelFinishedAt:       orderItemDao.CancelFinishedAt.Add(9 * time.Hour).String(),
 		ConfirmedAt:            orderItemDao.ConfirmedAt.Add(9 * time.Hour).String(),
+		UserID:                 orderItemDao.UserID,
+		User:                   MapUserDaoToUser(orderItemDao.User),
 	}
 }
 

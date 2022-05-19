@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/product"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
@@ -69,4 +70,30 @@ func InventoryMapper(pd *domain.ProductDAO) []*grpcServer.ProductInventoryMessag
 		})
 	}
 	return invMessages
+}
+
+func ProductSortingAndRangesMapper(sortings []grpcServer.SortingOptions) (priceRanges []product.PriceRangeType, priceSorting product.PriceSortingType) {
+	for _, sorting := range sortings {
+		if sorting == grpcServer.SortingOptions_PRICE_ASCENDING {
+			priceSorting = product.PRICE_ASCENDING
+		} else if sorting == grpcServer.SortingOptions_PRICE_DESCENDING {
+			priceSorting = product.PRICE_DESCENDING
+		} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_ASCENDING {
+			priceSorting = product.DISCOUNTRATE_ASCENDING
+		} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_DESCENDING {
+			priceSorting = product.DISCOUNTRATE_DESCENDING
+		} else {
+			if sorting == grpcServer.SortingOptions_DISCOUNT_0_30 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_30)
+			} else if sorting == grpcServer.SortingOptions_DISCOUNT_30_50 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_50)
+			} else if sorting == grpcServer.SortingOptions_DISCOUNT_50_70 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_70)
+			} else {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_100)
+			}
+		}
+	}
+
+	return
 }

@@ -14,6 +14,14 @@ const (
 	EXHIBITION_GROUPDEAL ExhibitionType = "GROUPDEAL"
 )
 
+type GroupdealStatus string
+
+const (
+	GROUPDEAL_PENDING GroupdealStatus = "PENDING"
+	GROUPDEAL_OPEN    GroupdealStatus = "OPEN"
+	GROUPDEAL_CLOSED  GroupdealStatus = "CLOSED"
+)
+
 type ExhibitionBanner struct {
 	ImgUrl         string
 	Title          string
@@ -22,21 +30,27 @@ type ExhibitionBanner struct {
 }
 
 type ExhibitionDAO struct {
-	ID             primitive.ObjectID `bson:"_id, omitempty"`
-	BannerImage    string
-	ThumbnailImage string
-	Title          string
-	SubTitle       string
-	Description    string
-	StartTime      time.Time
-	FinishTime     time.Time
-	ProductGroups  []*ProductGroupDAO
-	IsLive         bool
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	ExhibitionType ExhibitionType
-	TargetSales    int
-	Banners        []ExhibitionBanner
+	ID                primitive.ObjectID `bson:"_id, omitempty"`
+	BannerImage       string
+	ThumbnailImage    string
+	Title             string
+	SubTitle          string
+	Description       string
+	StartTime         time.Time
+	FinishTime        time.Time
+	RecruitStartTime  time.Time
+	ProductGroups     []*ProductGroupDAO
+	IsLive            bool
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
+	ExhibitionType    ExhibitionType
+	TargetSales       int
+	Banners           []ExhibitionBanner
+	TotalParticipants int
+	NumUsersRequired  int
+	TotalGroups       int
+	CheapestPrice     int
+	AllowOldUser      bool
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {

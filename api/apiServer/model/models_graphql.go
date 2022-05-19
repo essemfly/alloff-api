@@ -8,6 +8,17 @@ import (
 	"strconv"
 )
 
+type AddMockGroupdealInput struct {
+	Title            string          `json:"title"`
+	Subtitle         string          `json:"subtitle"`
+	Description      string          `json:"description"`
+	NumUsersRequired int             `json:"numUsersRequired"`
+	AllowOldUser     bool            `json:"allowOldUser"`
+	BannerImage      string          `json:"bannerImage"`
+	ThumbnailImage   string          `json:"thumbnailImage"`
+	GroupdealStatus  GroupdealStatus `json:"groupdealStatus"`
+}
+
 type AlloffCategory struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
@@ -122,21 +133,30 @@ type Device struct {
 }
 
 type Exhibition struct {
-	ID                 string              `json:"id"`
-	BannerImage        string              `json:"bannerImage"`
-	ThumbnailImage     string              `json:"thumbnailImage"`
-	Title              string              `json:"title"`
-	SubTitle           string              `json:"subTitle"`
-	Description        string              `json:"description"`
-	ProductGroups      []*ProductGroup     `json:"productGroups"`
-	StartTime          string              `json:"startTime"`
-	FinishTime         string              `json:"finishTime"`
-	TargetSales        int                 `json:"targetSales"`
-	CurrentSales       int                 `json:"currentSales"`
-	ExhibitionType     ExhibitionType      `json:"exhibitionType"`
-	Banners            []*ExhibitionBanner `json:"banners"`
-	TotalProducts      int                 `json:"totalProducts"`
-	TotalProductGroups int                 `json:"totalProductGroups"`
+	ID                    string              `json:"id"`
+	BannerImage           string              `json:"bannerImage"`
+	ThumbnailImage        string              `json:"thumbnailImage"`
+	Title                 string              `json:"title"`
+	SubTitle              string              `json:"subTitle"`
+	Description           string              `json:"description"`
+	ProductGroups         []*ProductGroup     `json:"productGroups"`
+	StartTime             string              `json:"startTime"`
+	FinishTime            string              `json:"finishTime"`
+	RecruitStartTime      string              `json:"recruitStartTime"`
+	TargetSales           int                 `json:"targetSales"`
+	CurrentSales          int                 `json:"currentSales"`
+	ExhibitionType        ExhibitionType      `json:"exhibitionType"`
+	Banners               []*ExhibitionBanner `json:"banners"`
+	TotalProducts         int                 `json:"totalProducts"`
+	TotalProductGroups    int                 `json:"totalProductGroups"`
+	TotalParticipants     int                 `json:"totalParticipants"`
+	NumUsersRequired      int                 `json:"numUsersRequired"`
+	TotalUserGroups       int                 `json:"totalUserGroups"`
+	CheapestPrice         int                 `json:"cheapestPrice"`
+	UserGroup             *UserGroup          `json:"userGroup"`
+	LatestPurchase        []*OrderItem        `json:"latestPurchase"`
+	AllowOldUser          bool                `json:"allowOldUser"`
+	TotalGroupdealTickets int                 `json:"totalGroupdealTickets"`
 }
 
 type ExhibitionBanner struct {
@@ -152,6 +172,13 @@ type FeaturedItem struct {
 	Brand    *Brand    `json:"brand"`
 	Img      string    `json:"img"`
 	Category *Category `json:"category"`
+}
+
+type Group struct {
+	ID               string  `json:"id"`
+	ExhibitionID     string  `json:"exhibitionId"`
+	NumUsersRequired int     `json:"numUsersRequired"`
+	Users            []*User `json:"users"`
 }
 
 type HomeItem struct {
@@ -220,6 +247,12 @@ type Login struct {
 	Mobile string `json:"mobile"`
 }
 
+type MyGroupDeal struct {
+	User              *User `json:"user"`
+	NumParticipates   int   `json:"numParticipates"`
+	NumLiveGroupdeals int   `json:"numLiveGroupdeals"`
+}
+
 type NewUser struct {
 	UUID                  string  `json:"uuid"`
 	Mobile                string  `json:"mobile"`
@@ -275,6 +308,8 @@ type OrderItem struct {
 	CancelRequestedAt      string               `json:"cancelRequestedAt"`
 	CancelFinishedAt       string               `json:"cancelFinishedAt"`
 	ConfirmedAt            string               `json:"confirmedAt"`
+	UserID                 string               `json:"userId"`
+	User                   *User                `json:"user"`
 }
 
 type OrderItemInput struct {
@@ -421,6 +456,7 @@ type ProductsInput struct {
 	Category       *string       `json:"category"`
 	Sorting        []SortingType `json:"sorting"`
 	ProductGroupID *string       `json:"productGroupId"`
+	ExhibitionID   *string       `json:"exhibitionId"`
 }
 
 type ProductsOutput struct {
@@ -452,11 +488,12 @@ type SizeGuide struct {
 }
 
 type TopBanner struct {
-	ID           string `json:"id"`
-	ImageURL     string `json:"imageUrl"`
-	ExhibitionID string `json:"exhibitionId"`
-	Title        string `json:"title"`
-	SubTitle     string `json:"subTitle"`
+	ID             string         `json:"id"`
+	ImageURL       string         `json:"imageUrl"`
+	ExhibitionID   string         `json:"exhibitionId"`
+	ExhibitionType ExhibitionType `json:"exhibitionType"`
+	Title          string         `json:"title"`
+	SubTitle       string         `json:"subTitle"`
 }
 
 type User struct {
@@ -469,6 +506,12 @@ type User struct {
 	DetailAddress         *string `json:"detailAddress"`
 	Postcode              *string `json:"postcode"`
 	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
+}
+
+type UserGroup struct {
+	MyInfo  *User   `json:"myInfo"`
+	GroupID string  `json:"groupId"`
+	Users   []*User `json:"users"`
 }
 
 type UserInfoInput struct {
@@ -606,6 +649,49 @@ func (e *ExhibitionType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ExhibitionType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GroupdealStatus string
+
+const (
+	GroupdealStatusPending GroupdealStatus = "PENDING"
+	GroupdealStatusOpen    GroupdealStatus = "OPEN"
+	GroupdealStatusClosed  GroupdealStatus = "CLOSED"
+)
+
+var AllGroupdealStatus = []GroupdealStatus{
+	GroupdealStatusPending,
+	GroupdealStatusOpen,
+	GroupdealStatusClosed,
+}
+
+func (e GroupdealStatus) IsValid() bool {
+	switch e {
+	case GroupdealStatusPending, GroupdealStatusOpen, GroupdealStatusClosed:
+		return true
+	}
+	return false
+}
+
+func (e GroupdealStatus) String() string {
+	return string(e)
+}
+
+func (e *GroupdealStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GroupdealStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid GroupdealStatus", str)
+	}
+	return nil
+}
+
+func (e GroupdealStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

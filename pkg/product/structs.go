@@ -43,4 +43,5 @@ type ProductManualAddRequest struct {
 	DescriptionInfos     map[string]string
 	ProductInfos         map[string]string
 	ThumbnailImage       string
+	IsSpecial            bool
 }

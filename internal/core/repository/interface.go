@@ -1,8 +1,9 @@
 package repository
 
 import (
-	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"time"
+
+	"github.com/lessbutter/alloff-api/internal/core/dto"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
@@ -85,6 +86,7 @@ type ProductGroupsRepository interface {
 type ExhibitionsRepository interface {
 	Get(ID string) (*domain.ExhibitionDAO, error)
 	List(offset, limit int, onlyLive bool, exhibitionType domain.ExhibitionType, query string) ([]*domain.ExhibitionDAO, int, error)
+	ListGroupDeals(offset, limit int, onlyLive bool, exhibitionStatus domain.GroupdealStatus) ([]*domain.ExhibitionDAO, int, error)
 	Upsert(*domain.ExhibitionDAO) (*domain.ExhibitionDAO, error)
 }
 
@@ -102,6 +104,7 @@ type OrderItemsRepository interface {
 	GetByCode(code string) (*domain.OrderItemDAO, error)
 	ListByProductGroupID(pgID string) ([]*domain.OrderItemDAO, int, error)
 	ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error)
+	ListByExhibitionID(exhibitionID string) ([]*domain.OrderItemDAO, error)
 	ListAllCanceled() ([]*domain.OrderItemDAO, error)
 	Update(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
 }
@@ -180,6 +183,28 @@ type BestProductsRepository interface {
 type BestBrandRepository interface {
 	Insert(dao *domain.BestBrandDAO) (*domain.BestBrandDAO, error)
 	GetLatest() (*domain.BestBrandDAO, error)
+}
+
+type GroupRepository interface {
+	Insert(*domain.GroupDAO) (*domain.GroupDAO, error)
+	Get(ID string) (*domain.GroupDAO, error)
+	GetByDetail(userId, exhibitionId string) (*domain.GroupDAO, error)
+	ListByUserId(userId string) ([]*domain.GroupDAO, error)
+	Update(dao *domain.GroupDAO) (*domain.GroupDAO, error)
+}
+
+type GroupRequestRepository interface {
+	Insert(*domain.GroupRequestDAO) (*domain.GroupRequestDAO, error)
+	Update(*domain.GroupRequestDAO) (*domain.GroupRequestDAO, error)
+	List(params domain.GroupRequestParams, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error)
+	ListByGroupID(groupID string, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error)
+	Get(params domain.GroupRequestParams) (*domain.GroupRequestDAO, error)
+}
+
+type GroupdealTicketRepository interface {
+	Insert(dao *domain.GroupdealTicketDAO) (*domain.GroupdealTicketDAO, error)
+	GetByDetail(userID, exhibitionID string) (*domain.GroupdealTicketDAO, error)
+	ListByDetail(userID, exhibitionID string) ([]*domain.GroupdealTicketDAO, error)
 }
 
 type OrderCountsRepository interface {

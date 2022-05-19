@@ -1,10 +1,9 @@
 package exhibition
 
 import (
-	"log"
-
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"log"
 )
 
 func FindExhibitionInProductGroup(productGroupID string) (*domain.ExhibitionDAO, error) {

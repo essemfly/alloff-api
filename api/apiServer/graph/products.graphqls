@@ -82,6 +82,7 @@ input ProductsInput {
   category: String
   sorting: [SortingType!]
   productGroupId: String
+  exhibitionId: String
 }
 
 input AlloffCategoryProductsInput {

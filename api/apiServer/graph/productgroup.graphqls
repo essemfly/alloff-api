@@ -32,12 +32,27 @@ type Exhibition {
   productGroups: [ProductGroup!]!
   startTime: Date!
   finishTime: Date!
+  recruitStartTime: Date!
   targetSales: Int!
   currentSales: Int!
   exhibitionType: ExhibitionType!
   banners: [ExhibitionBanner!]!
   totalProducts: Int!
   totalProductGroups: Int!
+  totalParticipants: Int!
+  numUsersRequired: Int!
+  totalUserGroups: Int!
+  cheapestPrice: Int!
+  userGroup: UserGroup!
+  latestPurchase: [OrderItem!]!
+  allowOldUser: Boolean!
+  totalGroupdealTickets: Int!
+}
+
+type UserGroup {
+  myInfo: User!
+  groupId: ID!
+  users: [User!]!
 }
 
 type ExhibitionBanner {
@@ -53,5 +68,4 @@ extend type Query {
   exhibition(id: String!): Exhibition!
   exhibitions: [Exhibition!]!
   timedeal: Exhibition!
-  groupdeal: Exhibition!
 }

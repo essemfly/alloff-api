@@ -17,8 +17,20 @@ func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) (*domain.ProductGroupDAO,
 		if err != nil {
 			log.Println("err not found product", pd.Product.ID.Hex())
 		}
+
+		if pgDao.GroupType == domain.PRODUCT_GROUP_GROUPDEAL && !newPd.IsSpecial {
+			newPd.IsSpecial = true
+			newPd, _ = ioc.Repo.Products.Upsert(newPd)
+		}
+
+		if newPd.ExhibitionID != pgDao.ExhibitionID {
+			newPd.ExhibitionID = pgDao.ExhibitionID
+			newPd, _ = ioc.Repo.Products.Upsert(newPd)
+		}
+
 		if newPd.ProductGroupId != pgDao.ID.Hex() {
 			newPd.ProductGroupId = pgDao.ID.Hex()
+			newPd.ExhibitionID = pgDao.ExhibitionID
 			updatedPd, err := ioc.Repo.Products.Upsert(newPd)
 			if err != nil {
 				log.Println("err upsert product", newPd.ID.Hex())

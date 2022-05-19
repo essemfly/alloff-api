@@ -294,6 +294,7 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 		return nil, err
 	}
 	pd.ProductGroupId = ""
+	pd.ExhibitionID = ""
 	_, err = ioc.Repo.Products.Upsert(pd)
 	if err != nil {
 		return nil, err

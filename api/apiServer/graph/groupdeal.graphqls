@@ -1,0 +1,46 @@
+
+enum GroupdealStatus {
+  PENDING
+  OPEN
+  CLOSED
+}
+
+type MyGroupDeal {
+  user: User!
+  numParticipates: Int!
+  numLiveGroupdeals: Int!
+}
+
+type Group {
+    id: ID!
+    exhibitionId: String!
+    numUsersRequired: Int!
+    users: [User!]!
+}
+
+input AddMockGroupdealInput {
+    title: String!
+    subtitle: String!
+    description: String!
+    numUsersRequired: Int!
+    allowOldUser: Boolean!
+    bannerImage: String!
+    thumbnailImage: String!
+    groupdealStatus: GroupdealStatus!
+}
+
+extend type Query {
+  mygroupdeal: MyGroupDeal!
+  mygroupdeals(status: GroupdealStatus!): [Exhibition!]!
+  groupdeal(id: String!): Exhibition!
+  groupdeals(offset: Int!, limit: Int!, status: GroupdealStatus!): [Exhibition!]!
+  checkTicket(exhibitionId: String!): Boolean!
+}
+
+extend type Mutation {
+    createGroup(exhibitionId: String!): Group!
+    joinGroup(exhibitionId: String!, groupId: String!, requestLink: String!): Group!
+    addMockGroupdeal(input: AddMockGroupdealInput): Exhibition!
+    addMockGroup(exhibitionId: String!, isCompleted: Boolean!): Group!
+    pushMockUserToGroup(groupId: String!): Group!
+}
