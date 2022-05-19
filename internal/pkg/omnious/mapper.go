@@ -11,6 +11,9 @@ func mapPostResponseToResult(pr *dto.PostResponse) (*dto.OmniousResult, error) {
 	if len(pr.Data.Objects) > 1 {
 		return nil, fmt.Errorf("ERR500:image has two more items")
 	}
+	if len(pr.Data.Objects[0].Tags) == 0 {
+		return nil, fmt.Errorf("ERR501:omnious tagger did not retrieves data")
+	}
 	omniousData := pr.Data.Objects[0].Tags[0]
 
 	taggingResult := dto.TaggingResult{
