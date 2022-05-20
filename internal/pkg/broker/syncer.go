@@ -84,33 +84,6 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) {
 	}
 }
 
-// PD가 업데이트되면, 홈탭에 있는 상품들 업데이트 하는 코드는 갖고있기가 어려움. 일단 패스
-
-// HomeTab Syncer
-func HomeTabSyncer() {
-	items, cnt, err := ioc.Repo.HomeTabItems.List(0, 200, false)
-	if err != nil {
-		log.Println("listing hometab item error", err)
-	}
-	log.Println("total cnt", cnt)
-
-	for _, item := range items {
-		for idx, exhibition := range item.Exhibitions {
-			newExhibition, err := ioc.Repo.Exhibitions.Get(exhibition.ID.Hex())
-			if err != nil {
-				log.Println("find ex error", err)
-			}
-			item.Exhibitions[idx] = newExhibition
-			item.Products = newExhibition.ListCheifProducts()
-		}
-
-		_, err = ioc.Repo.HomeTabItems.Update(item)
-		if err != nil {
-			log.Println("HOIT", err)
-		}
-	}
-}
-
 func BrandSyncer(brandKeyname string) {
 	offset, limit := 0, 20000
 

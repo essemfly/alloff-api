@@ -32,7 +32,6 @@ type MongoDB struct {
 	likeBrandsCol      *mongo.Collection
 	likeProductsCol    *mongo.Collection
 	exhibitionCol      *mongo.Collection
-	hometabItemsCol    *mongo.Collection
 	topBannersCol      *mongo.Collection
 	bestProductsCol    *mongo.Collection
 	bestBrandsCol      *mongo.Collection
@@ -67,7 +66,6 @@ func NewMongoDB(conf config.Configuration) *MongoDB {
 		alimtalkCol:        db.Collection("alimtalks"),
 		likeBrandsCol:      db.Collection("likes_brands"),
 		likeProductsCol:    db.Collection("likes_products"),
-		hometabItemsCol:    db.Collection("hometabitems"),
 		exhibitionCol:      db.Collection("exhibitions"),
 		topBannersCol:      db.Collection("top_banners"),
 		bestProductsCol:    db.Collection("best_products"),
@@ -86,8 +84,6 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.AlloffCategories = MongoAlloffCategoriesRepo(conn)
 	ioc.Repo.ClassifyRules = MongoClassifyRulesRepo(conn)
 	ioc.Repo.ProductDiffs = MongoProductDiffsRepo(conn)
-	ioc.Repo.Featureds = MongoFeaturedsRepo(conn)
-	ioc.Repo.HomeItems = MongoHomeItemsRepo(conn)
 	ioc.Repo.LikeBrands = MongoBrandLikesRepo(conn)
 	ioc.Repo.LikeProducts = MongoProductLikesRepo(conn)
 	ioc.Repo.Users = MongoUsersRepo(conn)
@@ -96,7 +92,6 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.ProductGroups = MongoProductGroupsRepo(conn)
 	ioc.Repo.Exhibitions = MongoExhibitionsRepo(conn)
 	ioc.Repo.Notifications = MongoNotificationsRepo(conn)
-	ioc.Repo.HomeTabItems = MongoHometabItemsRepo(conn)
 	ioc.Repo.TopBanners = MongoTopBannersRepo(conn)
 	ioc.Repo.BestProducts = MongoBestProductsRepo(conn)
 	ioc.Repo.BestBrands = MongoBestBrandsRepo(conn)

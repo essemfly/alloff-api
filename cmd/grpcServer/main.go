@@ -47,7 +47,6 @@ func main() {
 	pb.RegisterProductGroupServer(grpcServer, &services.ProductGroupService{})
 	pb.RegisterBrandServer(grpcServer, &services.BrandService{})
 	pb.RegisterNotificationServer(grpcServer, &services.NotiService{})
-	pb.RegisterHomeTabItemServer(grpcServer, &services.HomeTabService{})
 	pb.RegisterExhibitionServer(grpcServer, &services.ExhibitionService{})
 	pb.RegisterTopBannerServer(grpcServer, &services.TopBannerService{})
 	pb.RegisterAlloffCategoryServer(grpcServer, &services.AlloffCategoryService{})

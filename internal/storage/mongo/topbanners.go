@@ -63,7 +63,7 @@ func (repo *topBannersRepo) List(offset, limit int, onlyLive bool) ([]*domain.To
 	totalCount, _ := repo.col.CountDocuments(ctx, filter)
 	cur, err := repo.col.Find(ctx, filter, options)
 	if err != nil {
-		log.Println("err occured in hometabitem lists", err)
+		log.Println("err occured in topbanner lists", err)
 		return nil, 0, err
 	}
 

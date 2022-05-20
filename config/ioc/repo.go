@@ -15,8 +15,6 @@ type iocRepo struct {
 	Categories       repository.CategoriesRepository
 	AlloffCategories repository.AlloffCategoriesRepository
 	ClassifyRules    repository.ClassifyRulesRepository
-	Featureds        repository.FeaturedsRepository
-	HomeItems        repository.HomeItemsRepository
 	Orders           repository.OrdersRepository
 	OrderItems       repository.OrderItemsRepository
 	Payments         repository.PaymentsRepository
@@ -28,7 +26,6 @@ type iocRepo struct {
 	LikeProducts     repository.LikeProductsRepository
 	Exhibitions      repository.ExhibitionsRepository
 	Refunds          repository.RefundItemsRepository
-	HomeTabItems     repository.HomeTabItemsRepository
 	TopBanners       repository.TopBannersRepository
 	BestProducts     repository.BestProductsRepository
 	BestBrands       repository.BestBrandRepository

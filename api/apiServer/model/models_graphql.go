@@ -43,6 +43,11 @@ type AlloffCategoryProductsInput struct {
 	Sorting          []SortingType `json:"sorting"`
 }
 
+type AlloffInventory struct {
+	AlloffSize *AlloffSize `json:"alloffSize"`
+	Quantity   int         `json:"quantity"`
+}
+
 type AlloffSize struct {
 	ID         string `json:"id"`
 	SizeName   string `json:"sizeName"`
@@ -78,18 +83,8 @@ type BrandInput struct {
 	BrandID string `json:"brandId"`
 }
 
-type BrandItem struct {
-	ImgURL string `json:"imgUrl"`
-	Brand  *Brand `json:"brand"`
-}
-
 type BrandsInput struct {
 	OnlyLikes *bool `json:"onlyLikes"`
-}
-
-type BrandsResult struct {
-	Brands      []*Brand `json:"brands"`
-	LastUpdated string   `json:"lastUpdated"`
 }
 
 type CancelDescription struct {
@@ -108,13 +103,6 @@ type Category struct {
 type CategoryClassifier struct {
 	Name    string `json:"name"`
 	KeyName string `json:"keyName"`
-}
-
-type CommunityItem struct {
-	Name       string            `json:"name"`
-	Target     string            `json:"target"`
-	TargetType CommunityItemType `json:"targetType"`
-	ImgURL     string            `json:"imgUrl"`
 }
 
 type DeliveryDescription struct {
@@ -147,6 +135,7 @@ type Exhibition struct {
 	ExhibitionType     ExhibitionType        `json:"exhibitionType"`
 	Banners            []*ExhibitionBanner   `json:"banners"`
 	Classifier         *ExhibitionClassifier `json:"classifier"`
+	AlloffInventory    []*AlloffInventory    `json:"alloffInventory"`
 	TotalProducts      int                   `json:"totalProducts"`
 	TotalProductGroups int                   `json:"totalProductGroups"`
 }
@@ -164,41 +153,6 @@ type ExhibitionClassifier struct {
 	Second     []*CategoryClassifier `json:"second"`
 }
 
-type FeaturedItem struct {
-	ID       string    `json:"id"`
-	Order    int       `json:"order"`
-	Brand    *Brand    `json:"brand"`
-	Img      string    `json:"img"`
-	Category *Category `json:"category"`
-}
-
-type HomeItem struct {
-	ID             string           `json:"id"`
-	Priority       int              `json:"priority"`
-	Title          string           `json:"title"`
-	ItemType       HomeItemType     `json:"itemType"`
-	TargetID       string           `json:"targetId"`
-	Sorting        []SortingType    `json:"sorting"`
-	Images         []string         `json:"images"`
-	CommunityItems []*CommunityItem `json:"communityItems"`
-	Brands         []*BrandItem     `json:"brands"`
-	Products       []*Product       `json:"products"`
-	ProductGroups  []*ProductGroup  `json:"productGroups"`
-}
-
-type HomeTabItem struct {
-	ID           string              `json:"id"`
-	Title        string              `json:"title"`
-	Description  string              `json:"description"`
-	Tags         []string            `json:"tags"`
-	BackImageURL string              `json:"backImageUrl"`
-	ItemType     HomeTabItemTypeEnum `json:"itemType"`
-	Products     []*Product          `json:"products"`
-	Brands       []*Brand            `json:"brands"`
-	Exhibitions  []*Exhibition       `json:"exhibitions"`
-	Reference    *ItemReference      `json:"reference"`
-}
-
 type Inventory struct {
 	Size     string `json:"size"`
 	Quantity int    `json:"quantity"`
@@ -207,12 +161,6 @@ type Inventory struct {
 type InventoryInput struct {
 	Size     string `json:"size"`
 	Quantity int    `json:"quantity"`
-}
-
-type ItemReference struct {
-	Path    string        `json:"path"`
-	Params  string        `json:"params"`
-	Options []SortingType `json:"options"`
 }
 
 type KeyValueInfo struct {
@@ -442,15 +390,17 @@ type ProductQueryInput struct {
 }
 
 type ProductsInput struct {
-	Offset             int                `json:"offset"`
-	Limit              int                `json:"limit"`
-	Brand              *string            `json:"brand"`
-	Category           *string            `json:"category"`
-	Sorting            []SortingType      `json:"sorting"`
-	ProductGroupID     *string            `json:"productGroupId"`
-	ExhibitionID       *string            `json:"exhibitionId"`
-	AlloffClassifier   []AlloffClassifier `json:"alloffClassifier"`
-	CategoryClassifier string             `json:"categoryClassifier"`
+	Offset                int                `json:"offset"`
+	Limit                 int                `json:"limit"`
+	Category              *string            `json:"category"`
+	Sorting               []SortingType      `json:"sorting"`
+	ProductGroupID        *string            `json:"productGroupId"`
+	ExhibitionID          *string            `json:"exhibitionId"`
+	AlloffClassifier      []AlloffClassifier `json:"alloffClassifier"`
+	BrandID               []string           `json:"brandId"`
+	AlloffSizeID          []string           `json:"alloffSizeId"`
+	CategoryClassifier    *string            `json:"categoryClassifier"`
+	OnlyProductClassified *bool              `json:"onlyProductClassified"`
 }
 
 type ProductsOutput struct {
@@ -458,11 +408,6 @@ type ProductsOutput struct {
 	Offset     int        `json:"offset"`
 	Limit      int        `json:"limit"`
 	Products   []*Product `json:"products"`
-}
-
-type ProductsResult struct {
-	Products    []*Product `json:"products"`
-	LastUpdated string     `json:"lastUpdated"`
 }
 
 type RefreshTokenInput struct {
@@ -479,14 +424,6 @@ type RefundInfo struct {
 type SizeGuide struct {
 	Label  string `json:"label"`
 	ImgURL string `json:"imgUrl"`
-}
-
-type TopBanner struct {
-	ID           string `json:"id"`
-	ImageURL     string `json:"imageUrl"`
-	ExhibitionID string `json:"exhibitionId"`
-	Title        string `json:"title"`
-	SubTitle     string `json:"subTitle"`
 }
 
 type User struct {
@@ -510,11 +447,6 @@ type UserInfoInput struct {
 	DetailAddress         *string `json:"detailAddress"`
 	Postcode              *string `json:"postcode"`
 	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
-}
-
-type AlloffInventory struct {
-	AlloffSize *AlloffSize `json:"alloffSize"`
-	Quantity   int         `json:"quantity"`
 }
 
 type AlloffClassifier string
@@ -559,47 +491,6 @@ func (e *AlloffClassifier) UnmarshalGQL(v interface{}) error {
 }
 
 func (e AlloffClassifier) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type CommunityItemType string
-
-const (
-	CommunityItemTypeOutlink  CommunityItemType = "OUTLINK"
-	CommunityItemTypeInternal CommunityItemType = "INTERNAL"
-)
-
-var AllCommunityItemType = []CommunityItemType{
-	CommunityItemTypeOutlink,
-	CommunityItemTypeInternal,
-}
-
-func (e CommunityItemType) IsValid() bool {
-	switch e {
-	case CommunityItemTypeOutlink, CommunityItemTypeInternal:
-		return true
-	}
-	return false
-}
-
-func (e CommunityItemType) String() string {
-	return string(e)
-}
-
-func (e *CommunityItemType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = CommunityItemType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid CommunityItemType", str)
-	}
-	return nil
-}
-
-func (e CommunityItemType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -686,102 +577,6 @@ func (e *ExhibitionType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ExhibitionType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type HomeItemType string
-
-const (
-	HomeItemTypeCommunity HomeItemType = "COMMUNITY"
-	HomeItemTypeImage     HomeItemType = "IMAGE"
-	HomeItemTypeProduct   HomeItemType = "PRODUCT"
-	HomeItemTypeBrand     HomeItemType = "BRAND"
-	HomeItemTypeTimedeal  HomeItemType = "TIMEDEAL"
-)
-
-var AllHomeItemType = []HomeItemType{
-	HomeItemTypeCommunity,
-	HomeItemTypeImage,
-	HomeItemTypeProduct,
-	HomeItemTypeBrand,
-	HomeItemTypeTimedeal,
-}
-
-func (e HomeItemType) IsValid() bool {
-	switch e {
-	case HomeItemTypeCommunity, HomeItemTypeImage, HomeItemTypeProduct, HomeItemTypeBrand, HomeItemTypeTimedeal:
-		return true
-	}
-	return false
-}
-
-func (e HomeItemType) String() string {
-	return string(e)
-}
-
-func (e *HomeItemType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = HomeItemType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid HomeItemType", str)
-	}
-	return nil
-}
-
-func (e HomeItemType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type HomeTabItemTypeEnum string
-
-const (
-	HomeTabItemTypeEnumHometabItemBrands             HomeTabItemTypeEnum = "HOMETAB_ITEM_BRANDS"
-	HomeTabItemTypeEnumHometabItemBrandExhibition    HomeTabItemTypeEnum = "HOMETAB_ITEM_BRAND_EXHIBITION"
-	HomeTabItemTypeEnumHometabItemExhibitions        HomeTabItemTypeEnum = "HOMETAB_ITEM_EXHIBITIONS"
-	HomeTabItemTypeEnumHometabItemExhibition         HomeTabItemTypeEnum = "HOMETAB_ITEM_EXHIBITION"
-	HomeTabItemTypeEnumHometabItemProductsBrands     HomeTabItemTypeEnum = "HOMETAB_ITEM_PRODUCTS_BRANDS"
-	HomeTabItemTypeEnumHometabItemProductsCategories HomeTabItemTypeEnum = "HOMETAB_ITEM_PRODUCTS_CATEGORIES"
-)
-
-var AllHomeTabItemTypeEnum = []HomeTabItemTypeEnum{
-	HomeTabItemTypeEnumHometabItemBrands,
-	HomeTabItemTypeEnumHometabItemBrandExhibition,
-	HomeTabItemTypeEnumHometabItemExhibitions,
-	HomeTabItemTypeEnumHometabItemExhibition,
-	HomeTabItemTypeEnumHometabItemProductsBrands,
-	HomeTabItemTypeEnumHometabItemProductsCategories,
-}
-
-func (e HomeTabItemTypeEnum) IsValid() bool {
-	switch e {
-	case HomeTabItemTypeEnumHometabItemBrands, HomeTabItemTypeEnumHometabItemBrandExhibition, HomeTabItemTypeEnumHometabItemExhibitions, HomeTabItemTypeEnumHometabItemExhibition, HomeTabItemTypeEnumHometabItemProductsBrands, HomeTabItemTypeEnumHometabItemProductsCategories:
-		return true
-	}
-	return false
-}
-
-func (e HomeTabItemTypeEnum) String() string {
-	return string(e)
-}
-
-func (e *HomeTabItemTypeEnum) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = HomeTabItemTypeEnum(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid HomeTabItemTypeEnum", str)
-	}
-	return nil
-}
-
-func (e HomeTabItemTypeEnum) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
