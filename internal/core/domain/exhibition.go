@@ -28,22 +28,23 @@ type ExhibitionClassifier struct {
 }
 
 type ExhibitionDAO struct {
-	ID             primitive.ObjectID `bson:"_id, omitempty"`
-	BannerImage    string
-	ThumbnailImage string
-	Title          string
-	SubTitle       string
-	Description    string
-	StartTime      time.Time
-	FinishTime     time.Time
-	ProductGroups  []*ProductGroupDAO
-	IsLive         bool
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
-	ExhibitionType ExhibitionType
-	TargetSales    int
-	Banners        []ExhibitionBanner
-	Classifier     ExhibitionClassifier
+	ID              primitive.ObjectID `bson:"_id, omitempty"`
+	BannerImage     string
+	ThumbnailImage  string
+	Title           string
+	SubTitle        string
+	Description     string
+	StartTime       time.Time
+	FinishTime      time.Time
+	ProductGroups   []*ProductGroupDAO
+	IsLive          bool
+	CreatedAt       time.Time
+	UpdatedAt       time.Time
+	ExhibitionType  ExhibitionType
+	TargetSales     int
+	Banners         []ExhibitionBanner
+	Classifier      ExhibitionClassifier
+	AlloffInventory []AlloffInventoryDAO
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {

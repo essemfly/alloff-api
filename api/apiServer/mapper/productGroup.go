@@ -94,12 +94,12 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		CurrentSales:       sales,
 		Banners:            mapBanners(exDao.Banners),
 		Classifier:         MapExhibitionClassifier(exDao.Classifier),
+		AlloffInventory:    MapAlloffInventory(exDao.AlloffInventory),
 		TotalProducts:      numProducts,
 		TotalProductGroups: numPgs,
 	}
 }
 
-// MapExhibitionType : TODO 이거 ExhibitionDAO 에 메서드로 넣고싶다..
 func MapExhibitionType(enum domain.ExhibitionType) model.ExhibitionType {
 	switch enum {
 	case domain.EXHIBITION_GROUPDEAL:
@@ -112,7 +112,6 @@ func MapExhibitionType(enum domain.ExhibitionType) model.ExhibitionType {
 	return model.ExhibitionTypeNormal
 }
 
-// mapBanners : TODO 이거 ExhibitionDAO 에 메서드로 넣고싶다..
 func mapBanners(bannersDaos []domain.ExhibitionBanner) []*model.ExhibitionBanner {
 	var res []*model.ExhibitionBanner
 	for _, banner := range bannersDaos {
