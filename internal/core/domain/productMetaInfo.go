@@ -3,6 +3,7 @@ package domain
 import (
 	"time"
 
+	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -56,12 +57,38 @@ type ProductAlloffCategoryDAO struct {
 	Touched bool
 }
 
+type AlloffClassifier string
+
+const (
+	Male   = AlloffClassifier("MALE")
+	Female = AlloffClassifier("FEMALE")
+	Kids   = AlloffClassifier("KIDS")
+	Sports = AlloffClassifier("SPROTS") // 스포츠 좀 안어울린다는 생각..?
+)
+
+type ProductClassifierDAO struct {
+	Classifier    []AlloffClassifier
+	TaggingResult dto.TaggingResult
+	First         CategoryClassifier
+	Second        CategoryClassifier
+}
+
+type CategoryClassifier struct {
+	Name    string
+	KeyName string
+}
+
+type AlloffInventoryDAO struct {
+	AlloffSize AlloffSizeDAO
+	Quantity   int
+}
+
 type ProductMetaInfoDAO struct {
 	ID                   primitive.ObjectID `bson:"_id,omitempty"`
 	Brand                *BrandDAO
 	Source               *CrawlSourceDAO
 	Category             *CategoryDAO
-	AlloffCategory       *ProductAlloffCategoryDAO
+	ProductClassifier    *ProductClassifierDAO
 	OriginalName         string
 	ProductID            string
 	ProductUrl           string
@@ -70,9 +97,10 @@ type ProductMetaInfoDAO struct {
 	CachedImages         []string
 	Colors               []string
 	Sizes                []string
-	Inventory            []*InventoryDAO
+	AlloffInventory      []*AlloffInventoryDAO
 	SalesInstruction     *AlloffInstructionDAO
 	IsImageCached        bool
+	IsInventoryMapped    bool
 	IsTranslateRequired  bool
 	IsCategoryClassified bool
 	IsRemoved            bool
