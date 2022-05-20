@@ -114,6 +114,7 @@ func ProcessCrawlingProductRequest(pd *domain.ProductDAO, request *ProductCrawli
 	alloffScore := GetProductScore(pd)
 	pd.UpdateScore(alloffScore)
 	pd.UpdateInventory(request.Inventories)
+	pd.MapAlloffInventory()
 
 	lastPrice := pd.DiscountedPrice
 	newOrigPrice, newDiscPrice := GetProductPrice(pd)
