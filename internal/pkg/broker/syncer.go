@@ -11,6 +11,7 @@ import (
 // Pg를 받으면, 안에 있는 PD들 Productgroupid 업데이트하고, 새 것들을 PG에 넣어주는 역할
 // PG안에 있는 PD들이 PGID가 잘못박혀서 결제 못되게 하는 것을 막는다.
 // 다만 PG가 끝난 PD들에서 PGID들을 없애는 것은 불가능함
+// Product의 ExhibitionID를 여기서 syncing 해주는게 맞을까?
 func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) (*domain.ProductGroupDAO, error) {
 	for _, pd := range pgDao.Products {
 		newPd, err := ioc.Repo.Products.Get(pd.Product.ID.Hex())
@@ -86,33 +87,6 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) {
 	_, err := ioc.Repo.Exhibitions.Upsert(exDao)
 	if err != nil {
 		log.Println("failed in upsert exhibition", err)
-	}
-}
-
-// PD가 업데이트되면, 홈탭에 있는 상품들 업데이트 하는 코드는 갖고있기가 어려움. 일단 패스
-
-// HomeTab Syncer
-func HomeTabSyncer() {
-	items, cnt, err := ioc.Repo.HomeTabItems.List(0, 200, false)
-	if err != nil {
-		log.Println("listing hometab item error", err)
-	}
-	log.Println("total cnt", cnt)
-
-	for _, item := range items {
-		for idx, exhibition := range item.Exhibitions {
-			newExhibition, err := ioc.Repo.Exhibitions.Get(exhibition.ID.Hex())
-			if err != nil {
-				log.Println("find ex error", err)
-			}
-			item.Exhibitions[idx] = newExhibition
-			item.Products = newExhibition.ListCheifProducts()
-		}
-
-		_, err = ioc.Repo.HomeTabItems.Update(item)
-		if err != nil {
-			log.Println("HOIT", err)
-		}
 	}
 }
 

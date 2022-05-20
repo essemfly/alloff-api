@@ -2,11 +2,11 @@ package cmd
 
 import (
 	"github.com/lessbutter/alloff-api/internal/storage/elasticsearch"
+	"github.com/lessbutter/alloff-api/internal/storage/redis"
 
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/storage/mongo"
 	"github.com/lessbutter/alloff-api/internal/storage/postgres"
-	"github.com/lessbutter/alloff-api/internal/storage/redis"
 )
 
 func SetBaseConfig() {

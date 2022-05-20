@@ -100,7 +100,7 @@ func ProcessManualProductRequest(pd *domain.ProductDAO, request *ProductManualAd
 	alloffScore := GetProductScore(pd)
 	pd.UpdateScore(alloffScore)
 	pd.UpdateInventory(request.Inventory)
-
+	pd.MapAlloffInventory()
 	pd.UpdatePrice(request.OriginalPrice, request.DiscountedPrice)
 	pd.SpecialPrice = request.SpecialPrice
 

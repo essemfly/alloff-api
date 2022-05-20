@@ -223,10 +223,8 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 
 	amplitude.LogOrderRecord(user, orderDao, paymentDao)
 
-	exhibitionOrder := false
 	for _, item := range orderDao.OrderItems {
 		if item.ExhibitionID != "" {
-			exhibitionOrder = true
 			_, err := ioc.Repo.OrderCounts.Push(item.ExhibitionID)
 			if err != nil {
 				log.Println("update order counts failed on groupdeal", orderDao.ID)
@@ -239,10 +237,6 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 			}
 			go broker.ExhibitionSyncer(exDao)
 		}
-	}
-
-	if exhibitionOrder {
-		go broker.HomeTabSyncer()
 	}
 
 	return &model.PaymentResult{
@@ -289,10 +283,8 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 
 	amplitude.LogCancelOrderItemRecord(user, orderItemDao, paymentDao)
 
-	exhibitionOrder := false
 	for _, item := range orderDao.OrderItems {
 		if item.ExhibitionID != "" {
-			exhibitionOrder = true
 			_, err := ioc.Repo.OrderCounts.Cancel(item.ExhibitionID)
 			if err != nil {
 				log.Println("update order counts failed on groupdeal", orderDao.ID)
@@ -305,10 +297,6 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 			}
 			go broker.ExhibitionSyncer(exDao)
 		}
-	}
-
-	if exhibitionOrder {
-		go broker.HomeTabSyncer()
 	}
 
 	result.Success = true

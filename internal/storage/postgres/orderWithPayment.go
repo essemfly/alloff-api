@@ -203,6 +203,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			}
 
 			err = pd.Release(item.Size, item.Quantity)
+			pd.MapAlloffInventory()
 			if err != nil {
 				return fmt.Errorf("ERR106:product update failed" + err.Error())
 			}

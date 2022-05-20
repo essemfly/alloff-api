@@ -65,6 +65,39 @@ func (pd *ProductDAO) UpdateInventory(newInven []*InventoryDAO) {
 	pd.IsSoldout = isSoldout
 }
 
+func (pd *ProductDAO) MapAlloffInventory() {
+	mappingPolicies := pd.ProductInfo.Brand.InventoryMappingPolicies
+	productInventory := pd.Inventory
+	alloffInventory := []*AlloffInventoryDAO{}
+
+	if mappingPolicies != nil {
+		for _, mappingPolicy := range mappingPolicies {
+			for _, inv := range productInventory {
+				if mappingPolicy.BrandSize == inv.Size {
+					alloffInventory = append(alloffInventory, &AlloffInventoryDAO{
+						AlloffSize: mappingPolicy.AlloffSize,
+						Quantity:   inv.Quantity,
+					})
+				}
+			}
+		}
+	}
+
+	if len(alloffInventory) > 0 {
+		pd.ProductInfo.IsInventoryMapped = true
+	}
+
+	pd.ProductInfo.AlloffInventory = alloffInventory
+}
+
+// func (pd *ProductDAO) UpdateAlloffCategory(cat *ProductAlloffCategoryDAO) {
+// 	pd.ProductInfo.AlloffCategories = cat
+// }
+
+func (pd *ProductDAO) UpdateInstruction(instruction *AlloffInstructionDAO) {
+	pd.ProductInfo.SalesInstruction = instruction
+}
+
 func (pd *ProductDAO) Release(size string, quantity int) error {
 	for idx, option := range pd.Inventory {
 		if option.Size == size {

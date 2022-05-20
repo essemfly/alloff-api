@@ -32,13 +32,10 @@ type MongoDB struct {
 	likeBrandsCol      *mongo.Collection
 	likeProductsCol    *mongo.Collection
 	exhibitionCol      *mongo.Collection
-	hometabItemsCol    *mongo.Collection
 	topBannersCol      *mongo.Collection
 	bestProductsCol    *mongo.Collection
 	bestBrandsCol      *mongo.Collection
-	groupCol           *mongo.Collection
-	groupRequestCol    *mongo.Collection
-	groupdealTicketCol *mongo.Collection
+	alloffSizeCol      *mongo.Collection
 }
 
 func NewMongoDB() *MongoDB {
@@ -70,14 +67,11 @@ func NewMongoDB() *MongoDB {
 		alimtalkCol:        db.Collection("alimtalks"),
 		likeBrandsCol:      db.Collection("likes_brands"),
 		likeProductsCol:    db.Collection("likes_products"),
-		hometabItemsCol:    db.Collection("hometabitems"),
 		exhibitionCol:      db.Collection("exhibitions"),
 		topBannersCol:      db.Collection("top_banners"),
 		bestProductsCol:    db.Collection("best_products"),
 		bestBrandsCol:      db.Collection("best_brands"),
-		groupCol:           db.Collection("groups"),
-		groupRequestCol:    db.Collection("group_requests"),
-		groupdealTicketCol: db.Collection("groupdeal_tickets"),
+		alloffSizeCol:      db.Collection("alloff_size"),
 	}
 }
 
@@ -91,8 +85,6 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.AlloffCategories = MongoAlloffCategoriesRepo(conn)
 	ioc.Repo.ClassifyRules = MongoClassifyRulesRepo(conn)
 	ioc.Repo.ProductDiffs = MongoProductDiffsRepo(conn)
-	ioc.Repo.Featureds = MongoFeaturedsRepo(conn)
-	ioc.Repo.HomeItems = MongoHomeItemsRepo(conn)
 	ioc.Repo.LikeBrands = MongoBrandLikesRepo(conn)
 	ioc.Repo.LikeProducts = MongoProductLikesRepo(conn)
 	ioc.Repo.Users = MongoUsersRepo(conn)
@@ -101,13 +93,10 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.ProductGroups = MongoProductGroupsRepo(conn)
 	ioc.Repo.Exhibitions = MongoExhibitionsRepo(conn)
 	ioc.Repo.Notifications = MongoNotificationsRepo(conn)
-	ioc.Repo.HomeTabItems = MongoHometabItemsRepo(conn)
 	ioc.Repo.TopBanners = MongoTopBannersRepo(conn)
 	ioc.Repo.BestProducts = MongoBestProductsRepo(conn)
 	ioc.Repo.BestBrands = MongoBestBrandsRepo(conn)
-	ioc.Repo.Groups = MongoGroupsRepo(conn)
-	ioc.Repo.GroupRequest = MongoGroupRequestsRepo(conn)
-	ioc.Repo.GroupdealTickets = MongoGroupdealTicketRepo(conn)
+	ioc.Repo.AlloffSize = MongoAlloffSizeRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context) (*mongo.Client, error) {

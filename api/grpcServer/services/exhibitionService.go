@@ -154,7 +154,6 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 			}
 			pgs = append(pgs, newPg)
 		}
-
 		exDao.ProductGroups = pgs
 	}
 

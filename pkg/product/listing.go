@@ -51,12 +51,17 @@ type ProductListInput struct {
 	AlloffCategoryID          string
 	ExhibitionID              string
 	ProductGroupID            string
+	AlloffClassifier          []domain.AlloffClassifier
+	CategoryClassifierName    string
 	Modulename                string
 	Keyword                   string
 	IncludeClassifiedType     CategoryClassifiedType
 	IncludeSpecialProductType SpecialProductType
 	PriceRanges               []PriceRangeType
 	PriceSorting              PriceSortingType
+	OnlyProductClassified     bool
+	AlloffSizeIds             []string
+	BrandIds                  []string
 }
 
 func (input *ProductListInput) BuildFilter() (bson.M, error) {
@@ -80,6 +85,20 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 				filter["alloffcategories.second.keyname"] = alloffcat.KeyName
 			}
 		}
+	}
+
+	if len(input.AlloffClassifier) != 0 {
+		query := []domain.AlloffClassifier{}
+		for _, alloffClassifier := range input.AlloffClassifier {
+			query = append(query, alloffClassifier)
+		}
+		filter["productclassifier.classifier"] = bson.M{"$all": query}
+	}
+
+	// alloffCategory 와 다르게 각 카테고리가 objectID를 갖지 않는 구조라 db에 인덱싱 필요할듯?..
+	// lv2 카테고리 검색하는건 추후 추가 지금은 lv1 까지만
+	if input.CategoryClassifierName != "" {
+		filter["productclassifier.first.keyname"] = input.CategoryClassifierName
 	}
 
 	if input.ExhibitionID != "" {
@@ -106,12 +125,32 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 		}
 	}
 
-	if input.IncludeSpecialProductType != ALL_PRODUCTS {
-		if input.IncludeSpecialProductType == SPECIAL_PRODUCTS {
-			filter["isspecial"] = true
-		} else {
-			filter["isspecial"] = false
+	if input.OnlyProductClassified {
+		filter["isproductclassified"] = true
+	}
+
+	if len(input.AlloffSizeIds) > 0 {
+		query := []bson.M{}
+		for _, id := range input.AlloffSizeIds {
+			oid, err := primitive.ObjectIDFromHex(id)
+			if err != nil {
+				continue
+			}
+			query = append(query, bson.M{"alloffinventory.alloffsize._id": oid})
 		}
+		filter["$or"] = query
+	}
+
+	if len(input.BrandIds) > 0 {
+		query := []bson.M{}
+		for _, id := range input.BrandIds {
+			oid, err := primitive.ObjectIDFromHex(id)
+			if err != nil {
+				continue
+			}
+			query = append(query, bson.M{"productinfo.brand._id": oid})
+		}
+		filter["$or"] = query
 	}
 
 	priceQueryRanges := []bson.M{}

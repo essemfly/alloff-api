@@ -31,22 +31,20 @@ func (s *ProductService) GetProduct(ctx context.Context, req *grpcServer.GetProd
 
 func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListProductsRequest) (*grpcServer.ListProductsResponse, error) {
 	moduleName := ""
-
 	if req.ModuleName != nil {
 		moduleName = *req.ModuleName
 	}
-	brandID := ""
-	if req.Query.BrandId != nil {
-		brandID = *req.Query.BrandId
-	}
+
 	categoryID := ""
 	if req.Query.CategoryId != nil {
 		categoryID = *req.Query.CategoryId
 	}
+
 	alloffCategoryID := ""
 	if req.Query.AlloffCategoryId != nil {
 		alloffCategoryID = *req.Query.AlloffCategoryId
 	}
+
 	searchKeyword := ""
 	if req.Query.SearchQuery != nil {
 		searchKeyword = *req.Query.SearchQuery

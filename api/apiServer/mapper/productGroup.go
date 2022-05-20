@@ -93,6 +93,8 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		TargetSales:        exDao.TargetSales,
 		CurrentSales:       sales,
 		Banners:            mapBanners(exDao.Banners),
+		Classifier:         MapExhibitionClassifier(exDao.Classifier),
+		AlloffInventory:    MapAlloffInventory(exDao.AlloffInventory),
 		TotalProducts:      numProducts,
 		TotalProductGroups: numPgs,
 		NumUsersRequired:   exDao.NumUsersRequired,
@@ -104,7 +106,6 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 	}
 }
 
-// MapExhibitionType : TODO 이거 ExhibitionDAO 에 메서드로 넣고싶다..
 func MapExhibitionType(enum domain.ExhibitionType) model.ExhibitionType {
 	switch enum {
 	case domain.EXHIBITION_GROUPDEAL:
@@ -117,7 +118,6 @@ func MapExhibitionType(enum domain.ExhibitionType) model.ExhibitionType {
 	return model.ExhibitionTypeNormal
 }
 
-// mapBanners : TODO 이거 ExhibitionDAO 에 메서드로 넣고싶다..
 func mapBanners(bannersDaos []domain.ExhibitionBanner) []*model.ExhibitionBanner {
 	var res []*model.ExhibitionBanner
 	for _, banner := range bannersDaos {
@@ -130,4 +130,24 @@ func mapBanners(bannersDaos []domain.ExhibitionBanner) []*model.ExhibitionBanner
 		res = append(res, &bannerDto)
 	}
 	return res
+}
+
+func MapExhibitionClassifier(exClassifierDao domain.ExhibitionClassifier) *model.ExhibitionClassifier {
+	classifier := MapAlloffClassifier(exClassifierDao.Classifier)
+	first := []*model.CategoryClassifier{}
+	second := []*model.CategoryClassifier{}
+
+	for _, firstCat := range exClassifierDao.First {
+		first = append(first, MapCategoryClassifier(firstCat))
+	}
+
+	for _, secondCat := range exClassifierDao.Second {
+		second = append(second, MapCategoryClassifier(secondCat))
+	}
+
+	return &model.ExhibitionClassifier{
+		Classifier: classifier,
+		First:      first,
+		Second:     second,
+	}
 }

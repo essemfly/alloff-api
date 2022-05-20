@@ -89,6 +89,8 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		CancelDescription:   MapCancelDescription(pdDao.ProductInfo.SalesInstruction.CancelDescription),
 		DeliveryDescription: deliveryDesc,
 		ThumbnailImage:      thumbnailImage,
+		ProductClassifier:   MapProductClassifier(pdDao.ProductClassifier),
+		AlloffInventory:     MapAlloffInventory(pdDao.AlloffInventory),
 	}
 }
 
@@ -155,4 +157,68 @@ func MapProductSortingAndRanges(sortings []model.SortingType) (priceRanges []pro
 	}
 
 	return
+}
+
+func MapAlloffInventory(invs []domain.AlloffInventoryDAO) []*model.AlloffInventory {
+	res := []*model.AlloffInventory{}
+	for _, inv := range invs {
+		invModel := &model.AlloffInventory{
+			Quantity:   inv.Quantity,
+			AlloffSize: MapAlloffSizeDaoToAlloffSize(&inv.AlloffSize),
+		}
+		res = append(res, invModel)
+	}
+	return res
+}
+
+func MapAlloffClassifier(classifiers []domain.AlloffClassifier) []model.AlloffClassifier {
+	res := []model.AlloffClassifier{}
+	for _, classifier := range classifiers {
+		switch classifier {
+		case domain.Male:
+			res = append(res, model.AlloffClassifierMale)
+		case domain.Female:
+			res = append(res, model.AlloffClassifierFemale)
+		case domain.Kids:
+			res = append(res, model.AlloffClassifierKids)
+		case domain.Sports:
+			res = append(res, model.AlloffClassifierSports)
+		}
+	}
+	return res
+}
+
+func MapCategoryClassifier(classifier domain.CategoryClassifier) *model.CategoryClassifier {
+	return &model.CategoryClassifier{
+		KeyName: classifier.KeyName,
+		Name:    classifier.Name,
+	}
+}
+
+func MapProductClassifier(classifier *domain.ProductClassifierDAO) *model.ProductClassifier {
+	if classifier == nil {
+		return &model.ProductClassifier{}
+	}
+	return &model.ProductClassifier{
+		Classifier: MapAlloffClassifier(classifier.Classifier),
+		First:      MapCategoryClassifier(classifier.First),
+		Second:     MapCategoryClassifier(classifier.Second),
+	}
+}
+
+func MapAlloffClassifierModelToDAO(classifiers []model.AlloffClassifier) []domain.AlloffClassifier {
+	res := []domain.AlloffClassifier{}
+	for _, classifier := range classifiers {
+		switch classifier {
+		case model.AlloffClassifierMale:
+			res = append(res, domain.Male)
+		case model.AlloffClassifierFemale:
+			res = append(res, domain.Female)
+		case model.AlloffClassifierKids:
+			res = append(res, domain.Kids)
+		case model.AlloffClassifierSports:
+			res = append(res, domain.Sports)
+		}
+	}
+	return res
 }

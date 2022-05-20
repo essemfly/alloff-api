@@ -37,6 +37,8 @@ type Exhibition {
   currentSales: Int!
   exhibitionType: ExhibitionType!
   banners: [ExhibitionBanner!]!
+  classifier: ExhibitionClassifier!
+  alloffInventory: [AlloffInventory!]!
   totalProducts: Int!
   totalProductGroups: Int!
   totalParticipants: Int!
@@ -60,6 +62,12 @@ type ExhibitionBanner {
   productGroupId: String!
   title: String!
   subtitle: String!
+}
+
+type ExhibitionClassifier {
+  classifier: [AlloffClassifier!]!
+  first: [CategoryClassifier!]!
+  second: [CategoryClassifier!]!
 }
 
 extend type Query {

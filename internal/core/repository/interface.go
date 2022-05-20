@@ -66,17 +66,6 @@ type CrawlRecordsRepository interface {
 	Insert(*domain.CrawlRecordDAO) error
 }
 
-type FeaturedsRepository interface {
-	Insert(*domain.FeaturedDAO) error
-	List() ([]*domain.FeaturedDAO, error)
-}
-
-type HomeItemsRepository interface {
-	Insert(*domain.HomeItemDAO) error
-	Update(*domain.HomeItemDAO) error
-	List() ([]*domain.HomeItemDAO, error)
-}
-
 type ProductGroupsRepository interface {
 	Get(ID string) (*domain.ProductGroupDAO, error)
 	List(offset, limit int, groupType *domain.ProductGroupType, keyword string) ([]*domain.ProductGroupDAO, int, error)
@@ -161,13 +150,6 @@ type NotificationsRepository interface {
 	Update(*domain.NotificationDAO) (*domain.NotificationDAO, error)
 }
 
-type HomeTabItemsRepository interface {
-	Insert(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
-	Get(itemID string) (*domain.HomeTabItemDAO, error)
-	List(offset, limit int, onlyLive bool) ([]*domain.HomeTabItemDAO, int, error)
-	Update(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
-}
-
 type TopBannersRepository interface {
 	Insert(*domain.TopBannerDAO) (*domain.TopBannerDAO, error)
 	Get(itemID string) (*domain.TopBannerDAO, error)
@@ -211,6 +193,12 @@ type OrderCountsRepository interface {
 	Get(exhibitionID string) (int, error)
 	Push(exhibitionID string) (int, error)
 	Cancel(exhibitionID string) (int, error)
+}
+
+type AlloffSizeRepository interface {
+	Get(alloffSizeID string) (*domain.AlloffSizeDAO, error)
+	Upsert(dao *domain.AlloffSizeDAO) (*domain.AlloffSizeDAO, error)
+	List(offset, limit int) ([]*domain.AlloffSizeDAO, int, error)
 }
 
 type AccessLogRepository interface {
