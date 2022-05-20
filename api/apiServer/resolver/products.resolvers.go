@@ -65,7 +65,6 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product,
 		return nil, err
 	}
 
-	//go elasticsearch.ProductLogRequest(pdDao, domain.PRODUCT_VIEW)
 	go ioc.Repo.ProductLog.Index(pdDao, domain.PRODUCT_VIEW)
 
 	return mapper.MapProductDaoToProduct(pdDao), nil
@@ -82,28 +81,8 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 		PriceRanges:               priceRanges,
 		PriceSorting:              priceSorting,
 		AlloffClassifier:          mapper.MapAlloffClassifierModelToDAO(input.AlloffClassifier),
-		CategoryClassifierName:    input.CategoryClassifier,
-	}
-
-	if input.Brand != nil {
-		brandDao, err := ioc.Repo.Brands.Get(*input.Brand)
-		if err != nil || !brandDao.IsOpenBrand() {
-			return &model.ProductsOutput{
-				Products:   nil,
-				Offset:     input.Offset,
-				Limit:      input.Limit,
-				TotalCount: 0,
-			}, err
-		}
-
-		query.BrandID = *input.Brand
-		if input.Category != nil {
-			if brandDao.UseAlloffCategory {
-				query.AlloffCategoryID = *input.Category
-			} else {
-				query.CategoryID = *input.Category
-			}
-		}
+		AlloffSizeIds:             input.AlloffSizeID,
+		BrandIds:                  input.BrandID,
 	}
 
 	if input.ExhibitionID != nil {
@@ -113,6 +92,15 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 
 	if input.ProductGroupID != nil {
 		query.ProductGroupID = *input.ProductGroupID
+	}
+
+	if input.CategoryClassifier != nil {
+		query.CategoryClassifierName = *input.CategoryClassifier
+	}
+
+	// TODO 옴니어스 돈 상품들만 보여주는 용도로 추가했는데, 어차피 옴니어스 돈 상품만 보여줄거면 IncludeClassifiedType은 필요없다.
+	if input.OnlyProductClassified != nil {
+		query.OnlyProductClassified = *input.OnlyProductClassified
 	}
 
 	pdDaos, cnt, err := product.Listing(query)

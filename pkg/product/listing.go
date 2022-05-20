@@ -46,7 +46,6 @@ const (
 type ProductListInput struct {
 	Offset                    int
 	Limit                     int
-	BrandID                   string
 	CategoryID                string
 	AlloffCategoryID          string
 	ExhibitionID              string
@@ -59,14 +58,13 @@ type ProductListInput struct {
 	IncludeSpecialProductType SpecialProductType
 	PriceRanges               []PriceRangeType
 	PriceSorting              PriceSortingType
+	OnlyProductClassified     bool
+	AlloffSizeIds             []string
+	BrandIds                  []string
 }
 
 func (input *ProductListInput) BuildFilter() (bson.M, error) {
 	filter := bson.M{"removed": false}
-	if input.BrandID != "" {
-		brandObjID, _ := primitive.ObjectIDFromHex(input.BrandID)
-		filter["productinfo.brand._id"] = brandObjID
-	}
 
 	if input.CategoryID != "" {
 		categoryObjID, _ := primitive.ObjectIDFromHex(input.CategoryID)
@@ -120,6 +118,34 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 		} else {
 			filter["alloffcategories.done"] = false
 		}
+	}
+
+	if input.OnlyProductClassified {
+		filter["isproductclassified"] = true
+	}
+
+	if len(input.AlloffSizeIds) > 0 {
+		query := []bson.M{}
+		for _, id := range input.AlloffSizeIds {
+			oid, err := primitive.ObjectIDFromHex(id)
+			if err != nil {
+				continue
+			}
+			query = append(query, bson.M{"alloffinventory.alloffsize._id": oid})
+		}
+		filter["$or"] = query
+	}
+
+	if len(input.BrandIds) > 0 {
+		query := []bson.M{}
+		for _, id := range input.BrandIds {
+			oid, err := primitive.ObjectIDFromHex(id)
+			if err != nil {
+				continue
+			}
+			query = append(query, bson.M{"productinfo.brand._id": oid})
+		}
+		filter["$or"] = query
 	}
 
 	priceQueryRanges := []bson.M{}
