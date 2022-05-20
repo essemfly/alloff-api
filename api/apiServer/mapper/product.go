@@ -91,6 +91,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		DeliveryDescription: deliveryDesc,
 		ThumbnailImage:      thumbnailImage,
 		ProductClassifier:   MapProductClassifier(pdDao.ProductClassifier),
+		AlloffInventory:     MapAlloffInventory(pdDao.AlloffInventory),
 	}
 }
 
@@ -159,6 +160,18 @@ func MapProductSortingAndRanges(sortings []model.SortingType) (priceRanges []pro
 	return
 }
 
+func MapAlloffInventory(invs []domain.AlloffInventoryDAO) []*model.AlloffInventory {
+	res := []*model.AlloffInventory{}
+	for _, inv := range invs {
+		invModel := &model.AlloffInventory{
+			Quantity:   inv.Quantity,
+			AlloffSize: MapAlloffSizeDaoToAlloffSize(&inv.AlloffSize),
+		}
+		res = append(res, invModel)
+	}
+	return res
+}
+
 func MapAlloffClassifier(classifiers []domain.AlloffClassifier) []model.AlloffClassifier {
 	res := []model.AlloffClassifier{}
 	for _, classifier := range classifiers {
@@ -184,6 +197,9 @@ func MapCategoryClassifier(classifier domain.CategoryClassifier) *model.Category
 }
 
 func MapProductClassifier(classifier *domain.ProductClassifierDAO) *model.ProductClassifier {
+	if classifier == nil {
+		return &model.ProductClassifier{}
+	}
 	return &model.ProductClassifier{
 		Classifier: MapAlloffClassifier(classifier.Classifier),
 		First:      MapCategoryClassifier(classifier.First),
