@@ -49,7 +49,7 @@ func UpdateBrandDiscountRate() {
 				if maxDiscountRate < product.DiscountRate {
 					maxDiscountRate = product.DiscountRate
 				}
-				if product.Score.IsNewlyCrawled && !product.Soldout {
+				if product.Score.IsNewlyCrawled && !product.IsSoldout {
 					newlyCrawledProductsIn2Days += 1
 				}
 				if product.Created.After(newProductCriterion) {

@@ -30,7 +30,7 @@ func BuildBasketItems(input *model.OrderInput) ([]*order.BasketItem, error) {
 			if pg.FinishTime.Before(now) {
 				pg.RemoveProduct(pd.ID.Hex())
 				ioc.Repo.ProductGroups.Upsert(pg)
-				pd.ProductGroupId = ""
+				pd.ProductGroupID = ""
 				pd.ExhibitionID = ""
 				ioc.Repo.Products.Upsert(pd)
 			} else {

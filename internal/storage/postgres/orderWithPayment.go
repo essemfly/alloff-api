@@ -195,10 +195,10 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 				return fmt.Errorf("ERR100:alloffproduct not found")
 			}
 
-			if pd.Removed {
+			if pd.IsRemoved {
 				return fmt.Errorf("ERR102:alloffproduct is removed")
 			}
-			if pd.Soldout {
+			if pd.IsSoldout {
 				return fmt.Errorf("ERR105:product soldout")
 			}
 

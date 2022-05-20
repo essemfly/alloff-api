@@ -16,7 +16,7 @@ func TranslateProductInfo(pd *domain.ProductDAO) (*domain.ProductDAO, error) {
 		return nil, err
 	}
 	informationKorean := map[string]string{}
-	for key, value := range pd.ProductInfo.Information {
+	for key, value := range pd.ProductInfo.SalesInstruction.Information {
 		keyKorean, err := translater.TranslateText(language.Korean.String(), key)
 		if err != nil {
 			log.Println("info translate key err", err)
@@ -43,8 +43,8 @@ func TranslateProductInfo(pd *domain.ProductDAO) (*domain.ProductDAO, error) {
 	// }
 
 	pd.AlloffName = titleInKorean
-	pd.ProductInfo.Information = informationKorean
-	pd.IsTranslateRequired = false
+	pd.ProductInfo.SalesInstruction.Information = informationKorean
+	pd.ProductInfo.IsTranslateRequired = false
 	// pd.Inventory = inventoryKorean
 	newPd, err := ioc.Repo.Products.Upsert(pd)
 	if err != nil {

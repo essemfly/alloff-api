@@ -29,9 +29,9 @@ func GetProductDescription(pd *domain.ProductDAO, source *domain.CrawlSourceDAO)
 
 	descriptionText := []string{}
 	descriptionInfo := map[string]string{}
-	if pd.SalesInstruction != nil {
-		descriptionText = pd.SalesInstruction.Description.Texts
-		descriptionInfo = pd.SalesInstruction.Description.Infos
+	if pd.ProductInfo.SalesInstruction != nil {
+		descriptionText = pd.ProductInfo.SalesInstruction.Description.Texts
+		descriptionInfo = pd.ProductInfo.SalesInstruction.Description.Infos
 	}
 
 	return &domain.AlloffInstructionDAO{

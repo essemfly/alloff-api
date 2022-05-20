@@ -69,7 +69,7 @@ func getTotalBestProducts(limit int, from, to time.Time) ([]*domain.ProductDAO, 
 			log.Println("error on get product for product ids : ", err)
 			return nil, err
 		}
-		if !pd.Soldout && !pd.Removed {
+		if !pd.IsSoldout && !pd.IsRemoved {
 			allBestPds = append(allBestPds, pd)
 		}
 	}
@@ -101,7 +101,7 @@ func getCatBestProducts(limit int, from, to time.Time, catId string) ([]*domain.
 			log.Println("error on get product for product ids : ", err)
 			return nil, err
 		}
-		if !pd.Soldout && !pd.Removed {
+		if !pd.IsSoldout && !pd.IsRemoved {
 			catBestPds = append(catBestPds, pd)
 		}
 	}

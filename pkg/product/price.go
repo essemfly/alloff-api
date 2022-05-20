@@ -12,10 +12,5 @@ func GetCurrentPrice(pdDao *domain.ProductDAO) int {
 		pdDao.OriginalPrice = alloffPrice
 	}
 
-	if pdDao.ProductGroupId != "" {
-		if pdDao.SpecialPrice != 0 {
-			alloffPrice = pdDao.SpecialPrice
-		}
-	}
 	return alloffPrice
 }

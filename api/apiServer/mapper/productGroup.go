@@ -17,7 +17,7 @@ func MapProductGroupDao(pgDao *domain.ProductGroupDAO) *model.ProductGroup {
 	})
 
 	for _, productInPg := range pgDao.Products {
-		if productInPg.Product.Removed {
+		if productInPg.Product.IsRemoved {
 			continue
 		}
 

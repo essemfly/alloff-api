@@ -49,12 +49,12 @@ func (basket *Basket) IsValid() []error {
 			}
 		}
 
-		if item.Product.Soldout {
+		if item.Product.IsSoldout {
 			item.Quantity = 0
 			errs = append(errs, fmt.Errorf("ERR105:product soldout"))
 		}
 
-		if item.Product.Removed {
+		if item.Product.IsRemoved {
 			item.Quantity = 0
 			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is removed"))
 		}
@@ -115,10 +115,10 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 			ProductImg:             item.Product.ProductInfo.Images[0],
 			BrandKeyname:           item.Product.ProductInfo.Brand.KeyName,
 			BrandKorname:           item.Product.ProductInfo.Brand.KorName,
-			Removed:                item.Product.Removed,
+			Removed:                item.Product.IsRemoved,
 			SalesPrice:             productPrice,
-			CancelDescription:      item.Product.SalesInstruction.CancelDescription,
-			DeliveryDescription:    item.Product.SalesInstruction.DeliveryDescription,
+			CancelDescription:      item.Product.ProductInfo.SalesInstruction.CancelDescription,
+			DeliveryDescription:    item.Product.ProductInfo.SalesInstruction.DeliveryDescription,
 			OrderItemType:          orderItemType,
 			OrderItemStatus:        domain.ORDER_ITEM_CREATED,
 			DeliveryTrackingNumber: []string{},

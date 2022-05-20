@@ -10,7 +10,6 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 	"github.com/lessbutter/alloff-api/internal/utils"
-	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"github.com/lessbutter/alloff-api/pkg/product"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
@@ -232,14 +231,6 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 
 	alloffPriceDiscountRate := pdDao.DiscountRate
 
-	if req.SpecialPrice != nil {
-		pdDao.SpecialPrice = int(*req.SpecialPrice)
-		pdDao.DiscountRate = alloffPriceDiscountRate
-		alloffPriceDiscountRate = utils.CalculateDiscountRate(pdDao.OriginalPrice, pdDao.DiscountedPrice) // 스페셜프라이스의 할인율이 더 높으면 이걸로 브랜드 할인율을 적용하나?
-	} else {
-		alloffPriceDiscountRate = utils.CalculateDiscountRate(pdDao.OriginalPrice, pdDao.DiscountedPrice)
-	}
-
 	if req.BrandKeyName != nil {
 		brand, err := ioc.Repo.Brands.GetByKeyname(*req.BrandKeyName)
 		if err != nil {
@@ -249,9 +240,9 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	}
 
 	if req.Inventory != nil {
-		invDaos := []domain.InventoryDAO{}
+		invDaos := []*domain.InventoryDAO{}
 		for _, inv := range req.Inventory {
-			invDaos = append(invDaos, domain.InventoryDAO{
+			invDaos = append(invDaos, &domain.InventoryDAO{
 				Size:     inv.Size,
 				Quantity: int(inv.Quantity),
 			})
@@ -260,51 +251,47 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	}
 
 	if req.Description != nil {
-		pdDao.SalesInstruction.Description.Texts = req.Description
+		pdDao.ProductInfo.SalesInstruction.Description.Texts = req.Description
 	}
 
 	if req.DescriptionInfos != nil {
-		pdDao.SalesInstruction.Description.Infos = req.DescriptionInfos
+		pdDao.ProductInfo.SalesInstruction.Description.Infos = req.DescriptionInfos
 	}
 
 	if req.ProductInfos != nil {
-		pdDao.ProductInfo.Information = req.ProductInfos
+		pdDao.ProductInfo.SalesInstruction.Information = req.ProductInfos
 	}
 
 	if req.EarliestDeliveryDays != nil {
-		pdDao.SalesInstruction.DeliveryDescription.EarliestDeliveryDays = int(*req.EarliestDeliveryDays)
+		pdDao.ProductInfo.SalesInstruction.DeliveryDescription.EarliestDeliveryDays = int(*req.EarliestDeliveryDays)
 	}
 
 	if req.LatestDeliveryDays != nil {
-		pdDao.SalesInstruction.DeliveryDescription.LatestDeliveryDays = int(*req.LatestDeliveryDays)
+		pdDao.ProductInfo.SalesInstruction.DeliveryDescription.LatestDeliveryDays = int(*req.LatestDeliveryDays)
 	}
 
 	if req.IsRefundPossible != nil {
-		pdDao.SalesInstruction.CancelDescription.RefundAvailable = *req.IsRefundPossible
-		pdDao.SalesInstruction.CancelDescription.ChangeAvailable = *req.IsRefundPossible
+		pdDao.ProductInfo.SalesInstruction.CancelDescription.RefundAvailable = *req.IsRefundPossible
+		pdDao.ProductInfo.SalesInstruction.CancelDescription.ChangeAvailable = *req.IsRefundPossible
 	}
 
 	if req.Images != nil {
 		pdDao.ProductInfo.Images = req.Images
-		pdDao.Images = req.Images
+		pdDao.ProductInfo.CachedImages = req.Images
 	}
 
 	if req.DescriptionImages != nil {
-		pdDao.SalesInstruction.Description.Images = req.DescriptionImages
+		pdDao.ProductInfo.SalesInstruction.Description.Images = req.DescriptionImages
 	}
 
 	if req.IsRemoved != nil {
-		pdDao.Removed = *req.IsRemoved
-	}
-
-	if req.IsSpecial != nil {
-		pdDao.IsSpecial = *req.IsSpecial
+		pdDao.IsRemoved = *req.IsRemoved
 	}
 
 	if req.AlloffCategoryId != nil {
-		productCatDao := classifier.ClassifyProducts(*req.AlloffCategoryId)
-		pdDao.UpdateAlloffCategory(productCatDao)
-		pdDao.AlloffCategories.Touched = true
+		// productCatDao := classifier.ClassifyProducts(*req.AlloffCategoryId)
+		// pdDao.UpdateAlloffCategory(productCatDao)
+		pdDao.ProductInfo.AlloffCategory.Touched = true
 	}
 
 	if req.ProductId != nil {
@@ -316,15 +303,15 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	}
 
 	if req.RefundFee != nil {
-		pdDao.SalesInstruction.CancelDescription.ChangeFee = int(*req.RefundFee)
-		pdDao.SalesInstruction.CancelDescription.RefundFee = int(*req.RefundFee)
+		pdDao.ProductInfo.SalesInstruction.CancelDescription.ChangeFee = int(*req.RefundFee)
+		pdDao.ProductInfo.SalesInstruction.CancelDescription.RefundFee = int(*req.RefundFee)
 	}
 
 	if req.IsSoldout != nil {
-		pdDao.Soldout = *req.IsSoldout
+		pdDao.IsSoldout = *req.IsSoldout
 	}
 
-	if !pdDao.Soldout {
+	if !pdDao.IsSoldout {
 		pdDao.CheckSoldout()
 	}
 
@@ -341,8 +328,8 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		return nil, err
 	}
 
-	if newPdDao.ProductGroupId != "" {
-		pg, err := ioc.Repo.ProductGroups.Get(newPdDao.ProductGroupId)
+	if newPdDao.ProductGroupID != "" {
+		pg, err := ioc.Repo.ProductGroups.Get(newPdDao.ProductGroupID)
 		if err != nil {
 			log.Println("err found in product group update", err)
 		} else {

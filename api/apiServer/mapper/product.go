@@ -21,14 +21,14 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 	}
 
 	var information []*model.KeyValueInfo
-	for k, v := range pdDao.ProductInfo.Information {
+	for k, v := range pdDao.ProductInfo.SalesInstruction.Information {
 		var newInfo model.KeyValueInfo
 		newInfo.Key = k
 		newInfo.Value = v
 		information = append(information, &newInfo)
 	}
 
-	deliveryDesc := MapDeliveryDescription(pdDao.SalesInstruction.DeliveryDescription)
+	deliveryDesc := MapDeliveryDescription(pdDao.ProductInfo.SalesInstruction.DeliveryDescription)
 	if pdDao.ProductInfo.Source.IsForeignDelivery {
 		deliveryDesc.DeliveryType = model.DeliveryTypeForeignDelivery
 	} else {
@@ -45,18 +45,18 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		}
 	}
 
-	if isSoldout && !pdDao.Soldout {
-		pdDao.Soldout = true
+	if isSoldout && !pdDao.IsSoldout {
+		pdDao.IsSoldout = true
 		go ioc.Repo.Products.Upsert(pdDao)
 	}
 
-	if pdDao.Soldout {
+	if pdDao.IsSoldout {
 		isSoldout = true
 	}
 
 	images := pdDao.ProductInfo.Images
-	if pdDao.IsImageCached {
-		images = pdDao.Images
+	if pdDao.ProductInfo.IsImageCached {
+		images = pdDao.ProductInfo.CachedImages
 	}
 
 	thumbnailImage := ""
@@ -73,7 +73,7 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		Brand:               MapBrandDaoToBrand(pdDao.ProductInfo.Brand, false),
 		Name:                pdDao.AlloffName,
 		OriginalPrice:       pdDao.OriginalPrice,
-		ProductGroupID:      pdDao.ProductGroupId,
+		ProductGroupID:      pdDao.ProductGroupID,
 		Soldout:             isSoldout,
 		Images:              images,
 		DiscountedPrice:     alloffPrice,
@@ -82,12 +82,11 @@ func MapProductDaoToProduct(pdDao *domain.ProductDAO) *model.Product {
 		SpecialDiscountRate: &alloffPriceDiscountRate,
 		ProductURL:          pdDao.ProductInfo.ProductUrl,
 		Inventory:           inventories,
-		IsUpdated:           pdDao.IsUpdated,
 		IsNewProduct:        pdDao.Score.IsNewlyCrawled,
-		Removed:             pdDao.Removed,
+		Removed:             pdDao.IsRemoved,
 		Information:         information,
-		Description:         MapDescription(pdDao.SalesInstruction.Description),
-		CancelDescription:   MapCancelDescription(pdDao.SalesInstruction.CancelDescription),
+		Description:         MapDescription(pdDao.ProductInfo.SalesInstruction.Description),
+		CancelDescription:   MapCancelDescription(pdDao.ProductInfo.SalesInstruction.CancelDescription),
 		DeliveryDescription: deliveryDesc,
 		ThumbnailImage:      thumbnailImage,
 	}
