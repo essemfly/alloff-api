@@ -61,6 +61,7 @@ func AddProductClassifier(pds []*domain.ProductDAO) {
 			TaggingResult: omniousTaggingResult,
 		}
 		pd.ProductClassifier = classifier
+		pd.IsProductClassified = true
 
 		_, err = ioc.Repo.Products.Upsert(pd)
 		if err != nil {

@@ -193,6 +193,7 @@ type ProductDAO struct {
 	IsInventoryMapped   bool
 	IsImageCached       bool
 	IsTranslateRequired bool
+	IsProductClassified bool
 }
 
 func (pd *ProductDAO) UpdatePrice(origPrice, discountedPrice int) bool {
