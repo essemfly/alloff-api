@@ -39,6 +39,7 @@ func mapPostResponseToResult(pr *dto.PostResponse) (*dto.OmniousResult, error) {
 	return res, nil
 }
 
+// TODO 옴니어스 분석결과 <> alloff 카테고리 어떻게 나눌지 결정되면 수정 필요
 func MapOmniousCategoryToCategoryClassifier(omniousCat string) *domain.CategoryClassifier {
 	catMap := map[string]string{
 		"베스트":     "1_outer",

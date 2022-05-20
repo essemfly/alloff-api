@@ -15,6 +15,7 @@ func UpdateExhibitionClassifier(exhibitionDao *domain.ExhibitionDAO) {
 		ExhibitionID: exhibitionDao.ID.Hex(),
 	}
 	pds, _, err := product.Listing(filter)
+
 	if err != nil {
 		log.Println("err occurred on get product list : ", err)
 	}

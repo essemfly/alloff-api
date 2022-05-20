@@ -32,22 +32,20 @@ func (s *ProductService) GetProduct(ctx context.Context, req *grpcServer.GetProd
 
 func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListProductsRequest) (*grpcServer.ListProductsResponse, error) {
 	moduleName := ""
-
 	if req.ModuleName != nil {
 		moduleName = *req.ModuleName
 	}
-	brandID := ""
-	if req.Query.BrandId != nil {
-		brandID = *req.Query.BrandId
-	}
+
 	categoryID := ""
 	if req.Query.CategoryId != nil {
 		categoryID = *req.Query.CategoryId
 	}
+
 	alloffCategoryID := ""
 	if req.Query.AlloffCategoryId != nil {
 		alloffCategoryID = *req.Query.AlloffCategoryId
 	}
+
 	searchKeyword := ""
 	if req.Query.SearchQuery != nil {
 		searchKeyword = *req.Query.SearchQuery
@@ -68,10 +66,10 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		priceRanges, priceSorting = mapper.ProductSortingAndRangesMapper(req.Query.Options)
 	}
 
+	// TODO grpc 메시지 수정 필요 (exhibitionID, sizeIds, brandIds 받도록 <> brandId 안받도록)
 	query := product.ProductListInput{
 		Offset:                    int(req.Offset),
 		Limit:                     int(req.Limit),
-		BrandID:                   brandID,
 		CategoryID:                categoryID,
 		AlloffCategoryID:          alloffCategoryID,
 		Keyword:                   searchKeyword,
