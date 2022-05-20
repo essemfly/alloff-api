@@ -37,6 +37,7 @@ type Exhibition {
   exhibitionType: ExhibitionType!
   banners: [ExhibitionBanner!]!
   classifier: ExhibitionClassifier!
+  alloffInventory: [AlloffInventory!]!
   totalProducts: Int!
   totalProductGroups: Int!
 }

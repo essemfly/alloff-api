@@ -55,12 +55,12 @@ type Product {
   cancelDescription: CancelDescription!
   deliveryDescription: DeliveryDescription!
   thumbnailImage: String!
-  alloffInventory: [alloffInventory!]!
+  alloffInventory: [AlloffInventory!]!
   IsInventoryMapped: Boolean!
   productClassifier: ProductClassifier!
 }
 
-type alloffInventory {
+type AlloffInventory {
   alloffSize: AlloffSize!
   quantity: Int!
 }
@@ -104,13 +104,15 @@ type KeyValueInfo {
 input ProductsInput {
   offset: Int!
   limit: Int!
-  brand: String
   category: String
   sorting: [SortingType!]
   productGroupId: String
   exhibitionId: String
   alloffClassifier: [AlloffClassifier!]
-  categoryClassifier: String!
+  brandId: [String!]
+  alloffSizeId: [String!]
+  categoryClassifier: String
+  onlyProductClassified: Boolean
 }
 
 input AlloffCategoryProductsInput {
