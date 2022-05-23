@@ -30,18 +30,17 @@ type Exhibition {
   tags: [String!]!
   bannerImage: String!
   thumbnailImage: String!
-  productGroups: [ProductGroup!]!
   startTime: Date!
   finishTime: Date!  
   numAlarms: Int!
-  metaInfos: [ExhibitionInfo]!
+  metaInfos: ExhibitionInfo!
 }
 
 type ExhibitionInfo {
   productTypes: [AlloffProductType!]!
   brands: [Brand!]!
   alloffCategories: [AlloffCategory!]!
-  alloffSizes: [AlloffSize!]!
+  alloffInventories: [AlloffInventory!]!
   maxDisctounts: Int!
 }
 

@@ -5,7 +5,6 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
-	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 func MapProduct(pdDao *domain.ProductDAO) *model.Product {
@@ -17,30 +16,29 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 		deliveryDesc.DeliveryType = model.DeliveryTypeDomesticDelivery
 	}
 
-	alloffPrice := product.GetCurrentPrice(pdDao)
-	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.OriginalPrice, alloffPrice)
+	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.ProductInfo.Price.OriginalPrice, pdDao.ProductInfo.Price.CurrentPrice)
 
 	isSoldOut := true
-	for _, inv := range pdDao.Inventory {
+	for _, inv := range pdDao.ProductInfo.Inventory {
 		if inv.Quantity > 0 {
 			isSoldOut = false
 		}
 	}
 
-	if isSoldOut && !pdDao.IsSoldout {
-		pdDao.IsSoldout = true
-		go ioc.Repo.Products.Upsert(pdDao)
+	if isSoldOut && !pdDao.ProductInfo.IsSoldout {
+		pdDao.ProductInfo.IsSoldout = true
+		go ioc.Repo.ProductMetaInfos.Upsert(pdDao.ProductInfo)
 	}
 
-	if pdDao.IsSoldout {
+	if pdDao.ProductInfo.IsSoldout {
 		isSoldOut = true
 	}
 
 	thumbnailImage := ""
 	if len(pdDao.ProductInfo.Images) > 0 {
 		thumbnailImage = pdDao.ProductInfo.Images[0]
-		if pdDao.ThumbnailImage != "" {
-			thumbnailImage = pdDao.ThumbnailImage
+		if pdDao.ProductInfo.ThumbnailImage != "" {
+			thumbnailImage = pdDao.ProductInfo.ThumbnailImage
 		}
 	}
 
@@ -48,13 +46,13 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 		ID:                  pdDao.ID.Hex(),
 		Brand:               MapBrandDaoToBrand(pdDao.ProductInfo.Brand, false),
 		AlloffCategory:      MapAlloffCatDaoToAlloffCat(pdDao.ProductInfo.AlloffCategory.First),
-		Name:                pdDao.AlloffName,
-		OriginalPrice:       pdDao.OriginalPrice,
-		DiscountedPrice:     alloffPrice,
+		Name:                pdDao.ProductInfo.AlloffName,
+		OriginalPrice:       pdDao.ProductInfo.Price.OriginalPrice,
+		DiscountedPrice:     pdDao.ProductInfo.Price.CurrentPrice,
 		DiscountRate:        alloffPriceDiscountRate,
 		Images:              pdDao.ProductInfo.Images,
 		ThumbnailImage:      thumbnailImage,
-		Inventory:           MapAlloffInventory(pdDao.Inventory),
+		Inventory:           MapAlloffInventory(pdDao.ProductInfo.AlloffInventory),
 		IsSoldout:           isSoldOut,
 		Description:         MapDescription(pdDao.ProductInfo.SalesInstruction.Description),
 		DeliveryDescription: deliveryDesc,

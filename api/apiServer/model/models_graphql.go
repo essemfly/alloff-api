@@ -23,9 +23,9 @@ type AlloffInventory struct {
 }
 
 type AlloffSize struct {
-	ID         string `json:"id"`
-	SizeName   string `json:"sizeName"`
-	GuideImage string `json:"guideImage"`
+	ID             string          `json:"id"`
+	SizeName       string          `json:"sizeName"`
+	AlloffCategory *AlloffCategory `json:"alloffCategory"`
 }
 
 type AppVersion struct {
@@ -90,27 +90,26 @@ type Device struct {
 }
 
 type Exhibition struct {
-	ID             string            `json:"id"`
-	ExhibitionType ExhibitionType    `json:"exhibitionType"`
-	Title          string            `json:"title"`
-	SubTitle       string            `json:"subTitle"`
-	Description    string            `json:"description"`
-	Tags           []string          `json:"tags"`
-	BannerImage    string            `json:"bannerImage"`
-	ThumbnailImage string            `json:"thumbnailImage"`
-	ProductGroups  []*ProductGroup   `json:"productGroups"`
-	StartTime      string            `json:"startTime"`
-	FinishTime     string            `json:"finishTime"`
-	NumAlarms      int               `json:"numAlarms"`
-	MetaInfos      []*ExhibitionInfo `json:"metaInfos"`
+	ID             string          `json:"id"`
+	ExhibitionType ExhibitionType  `json:"exhibitionType"`
+	Title          string          `json:"title"`
+	SubTitle       string          `json:"subTitle"`
+	Description    string          `json:"description"`
+	Tags           []string        `json:"tags"`
+	BannerImage    string          `json:"bannerImage"`
+	ThumbnailImage string          `json:"thumbnailImage"`
+	StartTime      string          `json:"startTime"`
+	FinishTime     string          `json:"finishTime"`
+	NumAlarms      int             `json:"numAlarms"`
+	MetaInfos      *ExhibitionInfo `json:"metaInfos"`
 }
 
 type ExhibitionInfo struct {
-	ProductTypes     []AlloffProductType `json:"productTypes"`
-	Brands           []*Brand            `json:"brands"`
-	AlloffCategories []*AlloffCategory   `json:"alloffCategories"`
-	AlloffSizes      []*AlloffSize       `json:"alloffSizes"`
-	MaxDisctounts    int                 `json:"maxDisctounts"`
+	ProductTypes      []AlloffProductType `json:"productTypes"`
+	Brands            []*Brand            `json:"brands"`
+	AlloffCategories  []*AlloffCategory   `json:"alloffCategories"`
+	AlloffInventories []*AlloffInventory  `json:"alloffInventories"`
+	MaxDisctounts     int                 `json:"maxDisctounts"`
 }
 
 type ExhibitionInput struct {

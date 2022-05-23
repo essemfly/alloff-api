@@ -35,7 +35,7 @@ type AlloffCategory {
 type AlloffSize {
     id: ID!
     sizeName: String!
-    guideImage: String!
+    alloffCategory: AlloffCategory!
 }
 
 type Product {

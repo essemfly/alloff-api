@@ -58,7 +58,7 @@ type ExhibitionDAO struct {
 }
 
 type ExhibitionMetaInfoDAO struct {
-	ProductTypes      []*AlloffProductType
+	ProductTypes      []AlloffProductType
 	Brands            []*BrandDAO
 	AlloffCategories  []*AlloffCategoryDAO
 	AlloffInventories []*AlloffInventoryDAO

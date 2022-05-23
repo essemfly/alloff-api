@@ -85,7 +85,7 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) {
 	exDao.ProductGroups = newPgs
 	// TODO ExhibitionDAO의 metainfos들이 추가되어야한다.
 	exDao.MetaInfos = &domain.ExhibitionMetaInfoDAO{
-		ProductTypes:      []*domain.AlloffProductType{},
+		ProductTypes:      []domain.AlloffProductType{},
 		Brands:            []*domain.BrandDAO{},
 		AlloffCategories:  []*domain.AlloffCategoryDAO{},
 		AlloffInventories: []*domain.AlloffInventoryDAO{},
