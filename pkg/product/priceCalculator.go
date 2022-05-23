@@ -213,3 +213,14 @@ func CalculateClaudiePierlotPrice(priceKRW int) int {
 	priceKRW = int(math.Round(float64(priceKRW)/1000)) * 1000 // 1000원단위 가격 반올림
 	return priceKRW
 }
+
+func GetCurrentPrice(pgDao *domain.ProductDAO) int {
+	alloffPrice := pgDao.DiscountedPrice
+	if alloffPrice == 0 {
+		alloffPrice = pgDao.OriginalPrice
+	} else if pgDao.OriginalPrice == 0 {
+		pgDao.OriginalPrice = alloffPrice
+	}
+
+	return alloffPrice
+}
