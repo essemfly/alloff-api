@@ -80,12 +80,12 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 			if err != nil {
 				return err
 			}
-			err = pd.Revert(orderItemDao.Size, orderItemDao.Quantity)
+			err = pd.ProductInfo.Revert(orderItemDao.Size, orderItemDao.Quantity)
 			if err != nil {
 				return err
 			}
 
-			pd.CheckSoldout()
+			pd.ProductInfo.CheckSoldout()
 			_, err = ioc.Repo.Products.Upsert(pd)
 			if err != nil {
 				log.Println("productDao Update", err)
@@ -195,20 +195,24 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 				return fmt.Errorf("ERR100:alloffproduct not found")
 			}
 
-			if pd.IsRemoved {
+			if pd.IsNotSale {
+				return fmt.Errorf("ERR102:alloffproduct is not for sale")
+			}
+
+			if pd.ProductInfo.IsRemoved {
 				return fmt.Errorf("ERR102:alloffproduct is removed")
 			}
-			if pd.IsSoldout {
+
+			if pd.ProductInfo.IsSoldout {
 				return fmt.Errorf("ERR105:product soldout")
 			}
 
-			err = pd.Release(item.Size, item.Quantity)
-			pd.MapAlloffInventory()
+			err = pd.ProductInfo.Release(item.Size, item.Quantity)
 			if err != nil {
 				return fmt.Errorf("ERR106:product update failed" + err.Error())
 			}
 			totalProductPrices += item.Quantity * item.SalesPrice
-			pd.CheckSoldout()
+			pd.ProductInfo.CheckSoldout()
 
 			_, err = ioc.Repo.Products.Upsert(pd)
 			if err != nil {
@@ -297,11 +301,11 @@ func (repo *orderPaymentService) CancelPayment(orderDao *domain.OrderDAO, paymen
 			if err != nil {
 				return err
 			}
-			err = pd.Revert(item.Size, item.Quantity)
+			err = pd.ProductInfo.Revert(item.Size, item.Quantity)
 			if err != nil {
 				return err
 			}
-			pd.CheckSoldout()
+			pd.ProductInfo.CheckSoldout()
 			_, err = ioc.Repo.Products.Upsert(pd)
 			if err != nil {
 				log.Println("productDao Update", err)

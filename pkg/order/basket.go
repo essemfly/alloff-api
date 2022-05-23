@@ -27,7 +27,7 @@ func (basket *Basket) IsValid() []error {
 	totalPrices := 0
 
 	for _, item := range basket.Items {
-		currentPrice := item.Product.DiscountedPrice
+		currentPrice := item.Product.ProductInfo.Price.CurrentPrice
 		totalPrices += currentPrice * item.Quantity
 
 		if item.ProductGroup != nil {
@@ -37,7 +37,7 @@ func (basket *Basket) IsValid() []error {
 		}
 
 		isValidSize, isValidQuantity := false, false
-		for _, inv := range item.Product.Inventory {
+		for _, inv := range item.Product.ProductInfo.AlloffInventory {
 			if inv.AlloffSize.SizeName == item.Size {
 				isValidSize = true
 				if inv.Quantity >= item.Quantity {
@@ -48,14 +48,14 @@ func (basket *Basket) IsValid() []error {
 			}
 		}
 
-		if item.Product.IsSoldout {
+		if item.Product.ProductInfo.IsSoldout {
 			item.Quantity = 0
 			errs = append(errs, fmt.Errorf("ERR105:product soldout"))
 		}
 
-		if item.Product.IsRemoved {
+		if item.Product.IsNotSale {
 			item.Quantity = 0
-			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is removed"))
+			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is not for sale"))
 		}
 
 		if !isValidSize {
@@ -83,7 +83,7 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 	totalProductPrice := 0
 	for _, item := range basket.Items {
 		orderItemType := domain.NORMAL_ORDER
-		productPrice := item.Product.DiscountedPrice
+		productPrice := item.Product.ProductInfo.Price.CurrentPrice
 		if item.ProductGroup != nil {
 			if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
 				orderItemType = domain.EXHIBITION_ORDER
@@ -109,12 +109,12 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 		orderItems = append(orderItems, &domain.OrderItemDAO{
 			OrderItemCode:          itemCode,
 			ProductID:              item.Product.ID.Hex(),
-			ProductName:            item.Product.AlloffName,
+			ProductName:            item.Product.ProductInfo.AlloffName,
 			ProductUrl:             item.Product.ProductInfo.ProductUrl,
 			ProductImg:             item.Product.ProductInfo.Images[0],
 			BrandKeyname:           item.Product.ProductInfo.Brand.KeyName,
 			BrandKorname:           item.Product.ProductInfo.Brand.KorName,
-			Removed:                item.Product.IsRemoved,
+			Removed:                item.Product.IsNotSale,
 			SalesPrice:             productPrice,
 			CancelDescription:      item.Product.ProductInfo.SalesInstruction.CancelDescription,
 			DeliveryDescription:    item.Product.ProductInfo.SalesInstruction.DeliveryDescription,

@@ -7,8 +7,7 @@ import (
 
 func MapAlloffSizeDaoToAlloffSize(alloffSizeDao *domain.AlloffSizeDAO) *model.AlloffSize {
 	return &model.AlloffSize{
-		ID:         alloffSizeDao.ID.Hex(),
-		SizeName:   alloffSizeDao.SizeName,
-		GuideImage: alloffSizeDao.GuideImage,
+		ID:       alloffSizeDao.ID.Hex(),
+		SizeName: alloffSizeDao.SizeName,
 	}
 }
