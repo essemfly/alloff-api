@@ -109,7 +109,7 @@ type ExhibitionInfo struct {
 	Brands            []*Brand            `json:"brands"`
 	AlloffCategories  []*AlloffCategory   `json:"alloffCategories"`
 	AlloffInventories []*AlloffInventory  `json:"alloffInventories"`
-	MaxDisctounts     int                 `json:"maxDisctounts"`
+	MaxDiscounts      int                 `json:"maxDiscounts"`
 }
 
 type ExhibitionInput struct {

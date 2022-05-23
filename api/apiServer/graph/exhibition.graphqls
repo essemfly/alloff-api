@@ -41,7 +41,7 @@ type ExhibitionInfo {
   brands: [Brand!]!
   alloffCategories: [AlloffCategory!]!
   alloffInventories: [AlloffInventory!]!
-  maxDisctounts: Int!
+  maxDiscounts: Int!
 }
 
 input ExhibitionInput {

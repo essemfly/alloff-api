@@ -135,7 +135,7 @@ type ComplexityRoot struct {
 		AlloffCategories  func(childComplexity int) int
 		AlloffInventories func(childComplexity int) int
 		Brands            func(childComplexity int) int
-		MaxDisctounts     func(childComplexity int) int
+		MaxDiscounts      func(childComplexity int) int
 		ProductTypes      func(childComplexity int) int
 	}
 
@@ -819,12 +819,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ExhibitionInfo.Brands(childComplexity), true
 
-	case "ExhibitionInfo.maxDisctounts":
-		if e.complexity.ExhibitionInfo.MaxDisctounts == nil {
+	case "ExhibitionInfo.maxDiscounts":
+		if e.complexity.ExhibitionInfo.MaxDiscounts == nil {
 			break
 		}
 
-		return e.complexity.ExhibitionInfo.MaxDisctounts(childComplexity), true
+		return e.complexity.ExhibitionInfo.MaxDiscounts(childComplexity), true
 
 	case "ExhibitionInfo.productTypes":
 		if e.complexity.ExhibitionInfo.ProductTypes == nil {
@@ -2189,7 +2189,7 @@ type ExhibitionInfo {
   brands: [Brand!]!
   alloffCategories: [AlloffCategory!]!
   alloffInventories: [AlloffInventory!]!
-  maxDisctounts: Int!
+  maxDiscounts: Int!
 }
 
 input ExhibitionInput {
@@ -5117,7 +5117,7 @@ func (ec *executionContext) _ExhibitionInfo_alloffInventories(ctx context.Contex
 	return ec.marshalNAlloffInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffInventoryᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ExhibitionInfo_maxDisctounts(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionInfo) (ret graphql.Marshaler) {
+func (ec *executionContext) _ExhibitionInfo_maxDiscounts(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionInfo) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5135,7 +5135,7 @@ func (ec *executionContext) _ExhibitionInfo_maxDisctounts(ctx context.Context, f
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.MaxDisctounts, nil
+		return obj.MaxDiscounts, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12764,8 +12764,8 @@ func (ec *executionContext) _ExhibitionInfo(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "maxDisctounts":
-			out.Values[i] = ec._ExhibitionInfo_maxDisctounts(ctx, field, obj)
+		case "maxDiscounts":
+			out.Values[i] = ec._ExhibitionInfo_maxDiscounts(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
