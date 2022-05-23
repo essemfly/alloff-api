@@ -10,18 +10,19 @@ func ProductGroupMapper(pg *domain.ProductGroupDAO) *grpcServer.ProductGroupMess
 	products := []*grpcServer.ProductInGroupMessage{}
 	for _, pd := range pg.Products {
 		if pd.Product != nil {
+			// 이 부분 productgroup에서 어떤 products들을 보내줘야할지에 대해서 고민이 필요하다.
 			products = append(products, &grpcServer.ProductInGroupMessage{
 				Priority: int32(pd.Priority),
-				Product:  ProductMapper(pd.Product),
+				Product:  ProductInfoMapper(pd.Product.ProductInfo),
 			})
 		} else {
-			pdDao, err := ioc.Repo.Products.Get(pd.ProductID.Hex())
+			pdInfoDao, err := ioc.Repo.ProductMetaInfos.Get(pd.ProductID.Hex())
 			if err != nil {
 				continue
 			}
 			products = append(products, &grpcServer.ProductInGroupMessage{
 				Priority: int32(pd.Priority),
-				Product:  ProductMapper(pdDao),
+				Product:  ProductInfoMapper(pdInfoDao),
 			})
 		}
 	}

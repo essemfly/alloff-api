@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"log"
 	"time"
 
@@ -228,7 +227,6 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		if err != nil {
 			log.Println("exhibbition find error", err)
 		} else {
-			go exhibition.UpdateExhibitionClassifier(exDao)
 			go broker.ExhibitionSyncer(exDao)
 		}
 	}
@@ -273,7 +271,6 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 			log.Println("exhibbition find error", err)
 		} else {
 			go broker.ExhibitionSyncer(exDao)
-			go exhibition.UpdateExhibitionClassifier(exDao)
 		}
 	}
 
@@ -314,7 +311,6 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 			log.Println("exhibbition find error", err)
 		} else {
 			go broker.ExhibitionSyncer(exDao)
-			go exhibition.UpdateExhibitionClassifier(exDao)
 		}
 	}
 

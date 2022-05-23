@@ -15,7 +15,7 @@ type BrandsRepository interface {
 
 type ProductsRepository interface {
 	Get(ID string) (*domain.ProductDAO, error)
-	GetByMetaID(MetaID string) (*domain.ProductDAO, error)
+	ListByMetaID(metaID string) ([]*domain.ProductDAO, error)
 	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
 	ListDistinctBrands(alloffCategoryID string) ([]*domain.BrandDAO, error)
 	Insert(*domain.ProductDAO) (*domain.ProductDAO, error)
@@ -25,7 +25,9 @@ type ProductsRepository interface {
 }
 
 type ProductMetaInfoRepository interface {
+	Get(ID string) (*domain.ProductMetaInfoDAO, error)
 	GetByProductID(brandKeyname string, productID string) (*domain.ProductMetaInfoDAO, error)
+	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductMetaInfoDAO, int, error)
 	Insert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
 	Upsert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
 }
