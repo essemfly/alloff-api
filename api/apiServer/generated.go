@@ -140,7 +140,7 @@ type ComplexityRoot struct {
 		ProductTypes     func(childComplexity int) int
 	}
 
-	ExhibitionsOutput struct {
+	ExhibitionOutput struct {
 		Exhibitions   func(childComplexity int) int
 		LiveCounts    func(childComplexity int) int
 		NotOpenCounts func(childComplexity int) int
@@ -165,6 +165,7 @@ type ComplexityRoot struct {
 		RegisterNotification  func(childComplexity int, deviceID string, allowNotification bool, userID *string) int
 		RequestOrder          func(childComplexity int, input *model.OrderInput) int
 		RequestPayment        func(childComplexity int, input *model.PaymentClientInput) int
+		SetAlarm              func(childComplexity int, id string) int
 		UpdateUserInfo        func(childComplexity int, input model.UserInfoInput) int
 	}
 
@@ -312,13 +313,12 @@ type ComplexityRoot struct {
 		Brand           func(childComplexity int, input *model.BrandInput) int
 		Brands          func(childComplexity int, input *model.BrandsInput) int
 		Exhibition      func(childComplexity int, id string) int
-		Exhibitions     func(childComplexity int, input model.ExhibitionsInput) int
+		Exhibitions     func(childComplexity int, input model.ExhibitionInput) int
 		Order           func(childComplexity int, id string) int
 		OrderItemStatus func(childComplexity int) int
 		Orders          func(childComplexity int) int
 		Product         func(childComplexity int, id string) int
 		Products        func(childComplexity int, input model.ProductsInput) int
-		SetAlarm        func(childComplexity int, id string) int
 		User            func(childComplexity int) int
 		Version         func(childComplexity int) int
 	}
@@ -355,6 +355,7 @@ type MutationResolver interface {
 	Login(ctx context.Context, input model.Login) (string, error)
 	RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error)
 	LikeBrand(ctx context.Context, input *model.LikeBrandInput) (bool, error)
+	SetAlarm(ctx context.Context, id string) (bool, error)
 	CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error)
 	RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error)
 	RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
@@ -368,8 +369,7 @@ type QueryResolver interface {
 	Brand(ctx context.Context, input *model.BrandInput) (*model.Brand, error)
 	Brands(ctx context.Context, input *model.BrandsInput) ([]*model.Brand, error)
 	Exhibition(ctx context.Context, id string) (*model.Exhibition, error)
-	Exhibitions(ctx context.Context, input model.ExhibitionsInput) (*model.ExhibitionsOutput, error)
-	SetAlarm(ctx context.Context, id string) (bool, error)
+	Exhibitions(ctx context.Context, input model.ExhibitionInput) (*model.ExhibitionOutput, error)
 	Order(ctx context.Context, id string) (*model.OrderInfo, error)
 	Orders(ctx context.Context) ([]*model.OrderInfo, error)
 	OrderItemStatus(ctx context.Context) ([]*model.OrderItemStatusDescription, error)
@@ -841,33 +841,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ExhibitionInfo.ProductTypes(childComplexity), true
 
-	case "ExhibitionsOutput.exhibitions":
-		if e.complexity.ExhibitionsOutput.Exhibitions == nil {
+	case "ExhibitionOutput.exhibitions":
+		if e.complexity.ExhibitionOutput.Exhibitions == nil {
 			break
 		}
 
-		return e.complexity.ExhibitionsOutput.Exhibitions(childComplexity), true
+		return e.complexity.ExhibitionOutput.Exhibitions(childComplexity), true
 
-	case "ExhibitionsOutput.liveCounts":
-		if e.complexity.ExhibitionsOutput.LiveCounts == nil {
+	case "ExhibitionOutput.liveCounts":
+		if e.complexity.ExhibitionOutput.LiveCounts == nil {
 			break
 		}
 
-		return e.complexity.ExhibitionsOutput.LiveCounts(childComplexity), true
+		return e.complexity.ExhibitionOutput.LiveCounts(childComplexity), true
 
-	case "ExhibitionsOutput.notOpenCounts":
-		if e.complexity.ExhibitionsOutput.NotOpenCounts == nil {
+	case "ExhibitionOutput.notOpenCounts":
+		if e.complexity.ExhibitionOutput.NotOpenCounts == nil {
 			break
 		}
 
-		return e.complexity.ExhibitionsOutput.NotOpenCounts(childComplexity), true
+		return e.complexity.ExhibitionOutput.NotOpenCounts(childComplexity), true
 
-	case "ExhibitionsOutput.status":
-		if e.complexity.ExhibitionsOutput.Status == nil {
+	case "ExhibitionOutput.status":
+		if e.complexity.ExhibitionOutput.Status == nil {
 			break
 		}
 
-		return e.complexity.ExhibitionsOutput.Status(childComplexity), true
+		return e.complexity.ExhibitionOutput.Status(childComplexity), true
 
 	case "KeyValueInfo.key":
 		if e.complexity.KeyValueInfo.Key == nil {
@@ -1026,6 +1026,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RequestPayment(childComplexity, args["input"].(*model.PaymentClientInput)), true
+
+	case "Mutation.setAlarm":
+		if e.complexity.Mutation.SetAlarm == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_setAlarm_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.SetAlarm(childComplexity, args["id"].(string)), true
 
 	case "Mutation.updateUserInfo":
 		if e.complexity.Mutation.UpdateUserInfo == nil {
@@ -1792,7 +1804,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Exhibitions(childComplexity, args["input"].(model.ExhibitionsInput)), true
+		return e.complexity.Query.Exhibitions(childComplexity, args["input"].(model.ExhibitionInput)), true
 
 	case "Query.order":
 		if e.complexity.Query.Order == nil {
@@ -1843,18 +1855,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Products(childComplexity, args["input"].(model.ProductsInput)), true
-
-	case "Query.setAlarm":
-		if e.complexity.Query.SetAlarm == nil {
-			break
-		}
-
-		args, err := ec.field_Query_setAlarm_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.SetAlarm(childComplexity, args["id"].(string)), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -2168,6 +2168,7 @@ enum ExhibitionType {
   NORMAL
   GROUPDEAL
   TIMEDEAL
+  ALL
 }
 
 enum ExhibitionStatus {
@@ -2200,11 +2201,11 @@ type ExhibitionInfo {
   maxDisctounts: Int!
 }
 
-input ExhibitionsInput {
+input ExhibitionInput {
   status: ExhibitionStatus!
 }
 
-type ExhibitionsOutput {
+type ExhibitionOutput {
   exhibitions: [Exhibition!]!
   status: ExhibitionStatus!
   liveCounts: Int!
@@ -2213,10 +2214,12 @@ type ExhibitionsOutput {
 
 extend type Query {
   exhibition(id: String!): Exhibition!
-  exhibitions(input: ExhibitionsInput!): ExhibitionsOutput!
-  setAlarm(id: String!): Boolean!
+  exhibitions(input: ExhibitionInput!): ExhibitionOutput!
 }
-`, BuiltIn: false},
+
+extend type Mutation {
+  setAlarm(id: String!): Boolean!
+}`, BuiltIn: false},
 	{Name: "api/apiServer/graph/orders.graphqls", Input: `scalar Date
 
 enum OrderItemTypeEnum {
@@ -2774,6 +2777,21 @@ func (ec *executionContext) field_Mutation_requestPayment_args(ctx context.Conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_setAlarm_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateUserInfo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -2852,10 +2870,10 @@ func (ec *executionContext) field_Query_exhibition_args(ctx context.Context, raw
 func (ec *executionContext) field_Query_exhibitions_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.ExhibitionsInput
+	var arg0 model.ExhibitionInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNExhibitionsInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionsInput(ctx, tmp)
+		arg0, err = ec.unmarshalNExhibitionInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -2906,21 +2924,6 @@ func (ec *executionContext) field_Query_products_args(ctx context.Context, rawAr
 		}
 	}
 	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_setAlarm_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
 	return args, nil
 }
 
@@ -5193,7 +5196,7 @@ func (ec *executionContext) _ExhibitionInfo_maxDisctounts(ctx context.Context, f
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ExhibitionsOutput_exhibitions(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionsOutput) (ret graphql.Marshaler) {
+func (ec *executionContext) _ExhibitionOutput_exhibitions(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5201,7 +5204,7 @@ func (ec *executionContext) _ExhibitionsOutput_exhibitions(ctx context.Context, 
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "ExhibitionsOutput",
+		Object:     "ExhibitionOutput",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -5228,7 +5231,7 @@ func (ec *executionContext) _ExhibitionsOutput_exhibitions(ctx context.Context, 
 	return ec.marshalNExhibition2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ExhibitionsOutput_status(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionsOutput) (ret graphql.Marshaler) {
+func (ec *executionContext) _ExhibitionOutput_status(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5236,7 +5239,7 @@ func (ec *executionContext) _ExhibitionsOutput_status(ctx context.Context, field
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "ExhibitionsOutput",
+		Object:     "ExhibitionOutput",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -5263,7 +5266,7 @@ func (ec *executionContext) _ExhibitionsOutput_status(ctx context.Context, field
 	return ec.marshalNExhibitionStatus2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ExhibitionsOutput_liveCounts(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionsOutput) (ret graphql.Marshaler) {
+func (ec *executionContext) _ExhibitionOutput_liveCounts(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5271,7 +5274,7 @@ func (ec *executionContext) _ExhibitionsOutput_liveCounts(ctx context.Context, f
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "ExhibitionsOutput",
+		Object:     "ExhibitionOutput",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -5298,7 +5301,7 @@ func (ec *executionContext) _ExhibitionsOutput_liveCounts(ctx context.Context, f
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _ExhibitionsOutput_notOpenCounts(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionsOutput) (ret graphql.Marshaler) {
+func (ec *executionContext) _ExhibitionOutput_notOpenCounts(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5306,7 +5309,7 @@ func (ec *executionContext) _ExhibitionsOutput_notOpenCounts(ctx context.Context
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "ExhibitionsOutput",
+		Object:     "ExhibitionOutput",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -5639,6 +5642,48 @@ func (ec *executionContext) _Mutation_likeBrand(ctx context.Context, field graph
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().LikeBrand(rctx, args["input"].(*model.LikeBrandInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_setAlarm(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_setAlarm_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().SetAlarm(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9625,7 +9670,7 @@ func (ec *executionContext) _Query_exhibitions(ctx context.Context, field graphq
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Exhibitions(rctx, args["input"].(model.ExhibitionsInput))
+		return ec.resolvers.Query().Exhibitions(rctx, args["input"].(model.ExhibitionInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9637,51 +9682,9 @@ func (ec *executionContext) _Query_exhibitions(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.ExhibitionsOutput)
+	res := resTmp.(*model.ExhibitionOutput)
 	fc.Result = res
-	return ec.marshalNExhibitionsOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionsOutput(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Query_setAlarm(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_setAlarm_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().SetAlarm(rctx, args["id"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNExhibitionOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionOutput(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_order(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -11661,8 +11664,8 @@ func (ec *executionContext) unmarshalInputBrandsInput(ctx context.Context, obj i
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputExhibitionsInput(ctx context.Context, obj interface{}) (model.ExhibitionsInput, error) {
-	var it model.ExhibitionsInput
+func (ec *executionContext) unmarshalInputExhibitionInput(ctx context.Context, obj interface{}) (model.ExhibitionInput, error) {
+	var it model.ExhibitionInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -12826,34 +12829,34 @@ func (ec *executionContext) _ExhibitionInfo(ctx context.Context, sel ast.Selecti
 	return out
 }
 
-var exhibitionsOutputImplementors = []string{"ExhibitionsOutput"}
+var exhibitionOutputImplementors = []string{"ExhibitionOutput"}
 
-func (ec *executionContext) _ExhibitionsOutput(ctx context.Context, sel ast.SelectionSet, obj *model.ExhibitionsOutput) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, exhibitionsOutputImplementors)
+func (ec *executionContext) _ExhibitionOutput(ctx context.Context, sel ast.SelectionSet, obj *model.ExhibitionOutput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, exhibitionOutputImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("ExhibitionsOutput")
+			out.Values[i] = graphql.MarshalString("ExhibitionOutput")
 		case "exhibitions":
-			out.Values[i] = ec._ExhibitionsOutput_exhibitions(ctx, field, obj)
+			out.Values[i] = ec._ExhibitionOutput_exhibitions(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "status":
-			out.Values[i] = ec._ExhibitionsOutput_status(ctx, field, obj)
+			out.Values[i] = ec._ExhibitionOutput_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "liveCounts":
-			out.Values[i] = ec._ExhibitionsOutput_liveCounts(ctx, field, obj)
+			out.Values[i] = ec._ExhibitionOutput_liveCounts(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
 		case "notOpenCounts":
-			out.Values[i] = ec._ExhibitionsOutput_notOpenCounts(ctx, field, obj)
+			out.Values[i] = ec._ExhibitionOutput_notOpenCounts(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -12942,6 +12945,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "likeBrand":
 			out.Values[i] = ec._Mutation_likeBrand(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "setAlarm":
+			out.Values[i] = ec._Mutation_setAlarm(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -13817,20 +13825,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_exhibitions(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			})
-		case "setAlarm":
-			field := field
-			out.Concurrently(i, func() (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_setAlarm(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -14841,6 +14835,25 @@ func (ec *executionContext) marshalNExhibitionInfo2ᚕᚖgithubᚗcomᚋlessbutt
 	return ret
 }
 
+func (ec *executionContext) unmarshalNExhibitionInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionInput(ctx context.Context, v interface{}) (model.ExhibitionInput, error) {
+	res, err := ec.unmarshalInputExhibitionInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNExhibitionOutput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionOutput(ctx context.Context, sel ast.SelectionSet, v model.ExhibitionOutput) graphql.Marshaler {
+	return ec._ExhibitionOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNExhibitionOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionOutput(ctx context.Context, sel ast.SelectionSet, v *model.ExhibitionOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._ExhibitionOutput(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNExhibitionStatus2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionStatus(ctx context.Context, v interface{}) (model.ExhibitionStatus, error) {
 	var res model.ExhibitionStatus
 	err := res.UnmarshalGQL(v)
@@ -14859,25 +14872,6 @@ func (ec *executionContext) unmarshalNExhibitionType2githubᚗcomᚋlessbutter�
 
 func (ec *executionContext) marshalNExhibitionType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionType(ctx context.Context, sel ast.SelectionSet, v model.ExhibitionType) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) unmarshalNExhibitionsInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionsInput(ctx context.Context, v interface{}) (model.ExhibitionsInput, error) {
-	res, err := ec.unmarshalInputExhibitionsInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNExhibitionsOutput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionsOutput(ctx context.Context, sel ast.SelectionSet, v model.ExhibitionsOutput) graphql.Marshaler {
-	return ec._ExhibitionsOutput(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNExhibitionsOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐExhibitionsOutput(ctx context.Context, sel ast.SelectionSet, v *model.ExhibitionsOutput) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._ExhibitionsOutput(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {

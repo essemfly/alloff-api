@@ -113,11 +113,11 @@ type ExhibitionInfo struct {
 	MaxDisctounts    int                 `json:"maxDisctounts"`
 }
 
-type ExhibitionsInput struct {
+type ExhibitionInput struct {
 	Status ExhibitionStatus `json:"status"`
 }
 
-type ExhibitionsOutput struct {
+type ExhibitionOutput struct {
 	Exhibitions   []*Exhibition    `json:"exhibitions"`
 	Status        ExhibitionStatus `json:"status"`
 	LiveCounts    int              `json:"liveCounts"`
@@ -513,17 +513,19 @@ const (
 	ExhibitionTypeNormal    ExhibitionType = "NORMAL"
 	ExhibitionTypeGroupdeal ExhibitionType = "GROUPDEAL"
 	ExhibitionTypeTimedeal  ExhibitionType = "TIMEDEAL"
+	ExhibitionTypeAll       ExhibitionType = "ALL"
 )
 
 var AllExhibitionType = []ExhibitionType{
 	ExhibitionTypeNormal,
 	ExhibitionTypeGroupdeal,
 	ExhibitionTypeTimedeal,
+	ExhibitionTypeAll,
 }
 
 func (e ExhibitionType) IsValid() bool {
 	switch e {
-	case ExhibitionTypeNormal, ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal:
+	case ExhibitionTypeNormal, ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal, ExhibitionTypeAll:
 		return true
 	}
 	return false

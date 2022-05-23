@@ -12,6 +12,7 @@ enum ExhibitionType {
   NORMAL
   GROUPDEAL
   TIMEDEAL
+  ALL
 }
 
 enum ExhibitionStatus {
@@ -44,11 +45,11 @@ type ExhibitionInfo {
   maxDisctounts: Int!
 }
 
-input ExhibitionsInput {
+input ExhibitionInput {
   status: ExhibitionStatus!
 }
 
-type ExhibitionsOutput {
+type ExhibitionOutput {
   exhibitions: [Exhibition!]!
   status: ExhibitionStatus!
   liveCounts: Int!
@@ -57,6 +58,9 @@ type ExhibitionsOutput {
 
 extend type Query {
   exhibition(id: String!): Exhibition!
-  exhibitions(input: ExhibitionsInput!): ExhibitionsOutput!
+  exhibitions(input: ExhibitionInput!): ExhibitionOutput!
+}
+
+extend type Mutation {
   setAlarm(id: String!): Boolean!
 }
