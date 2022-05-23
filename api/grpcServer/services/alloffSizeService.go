@@ -38,9 +38,6 @@ func (s *AlloffSizeService) EditAlloffSize(ctx context.Context, req *grpcServer.
 	if req.SizeName != nil {
 		alloffSizeDao.SizeName = *req.SizeName
 	}
-	if req.GuideImage != nil {
-		alloffSizeDao.GuideImage = *req.GuideImage
-	}
 
 	newAlloffSizeDao, err := ioc.Repo.AlloffSizes.Upsert(alloffSizeDao)
 	if err != nil {
@@ -52,9 +49,9 @@ func (s *AlloffSizeService) EditAlloffSize(ctx context.Context, req *grpcServer.
 
 func (s *AlloffSizeService) CreateAlloffSize(ctx context.Context, req *grpcServer.CreateAlloffSizeRequest) (*grpcServer.AlloffSizeMessage, error) {
 	alloffSizeDao := &domain.AlloffSizeDAO{
-		ID:         primitive.NewObjectID(),
-		SizeName:   req.SizeName,
-		GuideImage: req.GuideImage,
+		ID:             primitive.NewObjectID(),
+		SizeName:       req.SizeName,
+		AlloffCategory: nil,
 	}
 
 	newAlloffSize, err := ioc.Repo.AlloffSizes.Upsert(alloffSizeDao)

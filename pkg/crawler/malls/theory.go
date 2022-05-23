@@ -1,14 +1,15 @@
 package malls
 
 import (
+	"log"
+	"strconv"
+	"strings"
+
 	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/product"
-	"log"
-	"strconv"
-	"strings"
 )
 
 func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -63,24 +64,30 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		productName := e.ChildText(".link")
 		images, sizes, colors, inventories, description := getTheoryDetail(productUrl, productCode)
 
-		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:               brand,
-			Source:              source,
-			ProductID:           productId,
-			ProductName:         productName,
-			ProductUrl:          productUrl,
+		addRequest := &product.AddMetaInfoRequest{
+			AlloffName:      productName,
+			ProductID:       productId,
+			ProductUrl:      productUrl,
+			ProductType:     []domain.AlloffProductType{domain.Female},
+			OriginalPrice:   float32(originalPrice),
+			DiscountedPrice: float32(discountedPrice),
+			CurrencyType:    domain.CurrencyUSD,
+			Brand:           brand,
+			Source:          source,
+			// AlloffCategory:  nil,
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyUSD,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
+			ModuleName:          source.CrawlModuleName,
 		}
+
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		product.ProcessAddProductInfoRequests(addRequest)
+
 	})
 
 	err = c.Visit(source.CrawlUrl)

@@ -2,16 +2,18 @@ package services
 
 import (
 	"context"
-	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/broker"
+	"github.com/lessbutter/alloff-api/pkg/product"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.uber.org/zap"
 )
 
 type ProductGroupService struct {
@@ -23,7 +25,17 @@ func (s *ProductGroupService) GetProductGroup(ctx context.Context, req *grpcServ
 	if err != nil {
 		return nil, err
 	}
-	return mapper.ProductGroupMapper(pgDao), nil
+	productListInput := product.ProductListInput{
+		ProductGroupID: pgDao.ID.Hex(),
+	}
+
+	pds, _, err := product.ListProducts(productListInput)
+	if err != nil {
+		config.Logger.Error("error occured on listing products on pg mapper", zap.Error(err))
+		return nil, err
+	}
+
+	return mapper.ProductGroupMapper(pgDao, pds), nil
 }
 
 func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcServer.CreateProductGroupRequest) (*grpcServer.ProductGroupMessage, error) {
@@ -83,7 +95,7 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 		return nil, err
 	}
 
-	return mapper.ProductGroupMapper(newPgDao), nil
+	return mapper.ProductGroupMapper(newPgDao, nil), nil
 }
 
 func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcServer.ListProductGroupsRequest) (*grpcServer.ListProductGroupsResponse, error) {
@@ -108,7 +120,7 @@ func (s *ProductGroupService) ListProductGroups(ctx context.Context, req *grpcSe
 	}
 	pgs := []*grpcServer.ProductGroupMessage{}
 	for _, pgDao := range pgDaos {
-		pgs = append(pgs, mapper.ProductGroupMapper(pgDao))
+		pgs = append(pgs, mapper.ProductGroupMapper(pgDao, nil))
 	}
 	return &grpcServer.ListProductGroupsResponse{
 		Pgs:         pgs,
@@ -191,7 +203,17 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 		}
 	}
 
-	return mapper.ProductGroupMapper(updatedPgDao), nil
+	productListInput := product.ProductListInput{
+		ProductGroupID: updatedPgDao.ID.Hex(),
+	}
+
+	pds, _, err := product.ListProducts(productListInput)
+	if err != nil {
+		config.Logger.Error("error occured on listing products on pg mapper", zap.Error(err))
+		return nil, err
+	}
+
+	return mapper.ProductGroupMapper(updatedPgDao, pds), nil
 }
 
 func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, req *grpcServer.ProductsInPgRequest) (*grpcServer.ProductGroupMessage, error) {
@@ -200,6 +222,7 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		return nil, err
 	}
 
+	// Must be fixed
 	for _, productPriority := range req.ProductPriorities {
 		productObjId, _ := primitive.ObjectIDFromHex(productPriority.ProductId)
 		pdDao, err := ioc.Repo.Products.Get(productPriority.ProductId)
@@ -228,12 +251,21 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		if err != nil {
 			log.Println("exhibbition find error", err)
 		} else {
-			go exhibition.UpdateExhibitionClassifier(exDao)
 			go broker.ExhibitionSyncer(exDao)
 		}
 	}
 
-	return mapper.ProductGroupMapper(updatedPgDao), nil
+	productListInput := product.ProductListInput{
+		ProductGroupID: newPgDao.ID.Hex(),
+	}
+
+	pds, _, err := product.ListProducts(productListInput)
+	if err != nil {
+		config.Logger.Error("error occured on listing products on pg mapper", zap.Error(err))
+		return nil, err
+	}
+
+	return mapper.ProductGroupMapper(updatedPgDao, pds), nil
 }
 
 func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, req *grpcServer.ProductsInPgRequest) (*grpcServer.ProductGroupMessage, error) {
@@ -242,6 +274,7 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 		return nil, err
 	}
 
+	// Must be fixed
 	pds := []*domain.ProductPriorityDAO{}
 	for _, pd := range req.ProductPriorities {
 		productObjId, _ := primitive.ObjectIDFromHex(pd.ProductId)
@@ -273,11 +306,20 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 			log.Println("exhibbition find error", err)
 		} else {
 			go broker.ExhibitionSyncer(exDao)
-			go exhibition.UpdateExhibitionClassifier(exDao)
 		}
 	}
 
-	return mapper.ProductGroupMapper(updatedPgDao), nil
+	productListInput := product.ProductListInput{
+		ProductGroupID: newPgDao.ID.Hex(),
+	}
+
+	pdDaos, _, err := product.ListProducts(productListInput)
+	if err != nil {
+		config.Logger.Error("error occured on listing products on pg mapper", zap.Error(err))
+		return nil, err
+	}
+
+	return mapper.ProductGroupMapper(updatedPgDao, pdDaos), nil
 }
 
 func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, req *grpcServer.RemoveProductInPgRequest) (*grpcServer.ProductGroupMessage, error) {
@@ -286,7 +328,6 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 		return nil, err
 	}
 
-	pgDao.RemoveProduct(req.ProductId)
 	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
 	if err != nil {
 		return nil, err
@@ -296,8 +337,8 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	pd.ProductGroupID = ""
-	pd.ExhibitionID = ""
+
+	pd.IsNotSale = true
 	_, err = ioc.Repo.Products.Upsert(pd)
 	if err != nil {
 		return nil, err
@@ -314,9 +355,18 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 			log.Println("exhibbition find error", err)
 		} else {
 			go broker.ExhibitionSyncer(exDao)
-			go exhibition.UpdateExhibitionClassifier(exDao)
 		}
 	}
 
-	return mapper.ProductGroupMapper(updatedPgDao), nil
+	productListInput := product.ProductListInput{
+		ProductGroupID: newPgDao.ID.Hex(),
+	}
+
+	pdDaos, _, err := product.ListProducts(productListInput)
+	if err != nil {
+		config.Logger.Error("error occured on listing products on pg mapper", zap.Error(err))
+		return nil, err
+	}
+
+	return mapper.ProductGroupMapper(updatedPgDao, pdDaos), nil
 }

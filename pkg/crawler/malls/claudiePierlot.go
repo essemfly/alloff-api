@@ -2,14 +2,15 @@ package malls
 
 import (
 	"encoding/json"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/product"
-	"log"
-	"strings"
-	"time"
 )
 
 type ImagesURLs struct {
@@ -52,24 +53,30 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 
 		sizes, inventories, description, colors := getClaudiePierlotDetail(productUrl)
 
-		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:               brand,
+		addRequest := &product.AddMetaInfoRequest{
+			AlloffName:      productName,
+			ProductID:       productId,
+			ProductUrl:      productUrl,
+			ProductType:     []domain.AlloffProductType{domain.Female},
+			OriginalPrice:   float32(originalPrice),
+			DiscountedPrice: float32(discountedPrice),
+			CurrencyType:    domain.CurrencyEUR,
+			Brand:           brand,
+			Source:          source,
+			// AlloffCategory:  nil,
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
-			Description:         description,
-			OriginalPrice:       originalPrice,
-			SalesPrice:          discountedPrice,
-			CurrencyType:        domain.CurrencyEUR,
 			Colors:              colors,
-			Source:              source,
-			ProductID:           productId,
-			ProductName:         productName,
-			ProductUrl:          productUrl,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
+			ModuleName:          source.CrawlModuleName,
 		}
+
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		product.ProcessAddProductInfoRequests(addRequest)
+
 	})
 
 	err = c.Visit(source.CrawlUrl)

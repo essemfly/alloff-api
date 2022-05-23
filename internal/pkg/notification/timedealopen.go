@@ -31,8 +31,8 @@ func InsertTimedealNotification(timedeal *domain.ProductGroupDAO, pushtitle stri
 	maxDiscountRate := 0
 	for _, pd := range alloffpds {
 		pdDao, _ := ioc.Repo.Products.Get(pd.ProductID.Hex())
-		if maxDiscountRate < pdDao.DiscountRate {
-			maxDiscountRate = pdDao.DiscountRate
+		if maxDiscountRate < pdDao.ProductInfo.Price.DiscountRate {
+			maxDiscountRate = pdDao.ProductInfo.Price.DiscountRate
 		}
 	}
 

@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -49,12 +50,6 @@ type AlloffInstructionDAO struct {
 	Information         map[string]string
 }
 
-type EstimateModelType struct {
-	Id         string
-	Name       string
-	Confidence float64
-}
-
 type TaggingResultDAO struct {
 	Item         EstimateModelType   `json:"item"`
 	Colors       []EstimateModelType `json:"colors"`
@@ -70,6 +65,25 @@ type TaggingResultDAO struct {
 	Shape        EstimateModelType   `json:"shape"`
 }
 
+type EstimateModelType struct {
+	Id         string
+	Name       string
+	Confidence float64
+}
+
+type InventoryDAO struct {
+	Size     string
+	Quantity int
+}
+
+type ProductScoreInfoDAO struct {
+	// 신상품 위로 올려줄때 쓰는 필드
+	IsNewlyCrawled bool
+	ManualScore    int
+	AutoScore      int
+	TotalScore     int
+}
+
 type ProductAlloffCategoryDAO struct {
 	TaggingResults *TaggingResultDAO
 	First          *AlloffCategoryDAO
@@ -79,10 +93,16 @@ type ProductAlloffCategoryDAO struct {
 }
 
 type PriceDAO struct {
-	OriginalPrice int
 	CurrencyType  CurrencyType
+	OriginalPrice int
 	CurrentPrice  int
+	DiscountRate  int
 	History       []*PriceHistoryDAO
+}
+
+type PriceHistoryDAO struct {
+	Date  time.Time
+	Price int
 }
 
 type AlloffProductType string
@@ -102,11 +122,13 @@ type ProductMetaInfoDAO struct {
 	AlloffCategory       *ProductAlloffCategoryDAO
 	ProductType          []*AlloffProductType
 	OriginalName         string
+	AlloffName           string
 	ProductID            string
 	ProductUrl           string
 	Price                *PriceDAO
 	Images               []string
 	CachedImages         []string
+	ThumbnailImage       string
 	Colors               []string
 	Sizes                []string
 	Inventory            []*InventoryDAO
@@ -116,6 +138,7 @@ type ProductMetaInfoDAO struct {
 	IsInventoryMapped    bool
 	IsTranslateRequired  bool
 	IsCategoryClassified bool
+	IsSoldout            bool
 	IsRemoved            bool
 	Created              time.Time
 	Updated              time.Time
@@ -233,20 +256,38 @@ func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory() {
 	// }
 }
 
-type PriceHistoryDAO struct {
-	Date  time.Time
-	Price int
+func (pdInfo *ProductMetaInfoDAO) Release(size string, quantity int) error {
+	for idx, option := range pdInfo.AlloffInventory {
+		if option.AlloffSize.SizeName == size {
+			if option.Quantity < quantity {
+				return errors.New("insufficient product quantity")
+			}
+			pdInfo.AlloffInventory[idx].Quantity -= quantity
+			if pdInfo.AlloffInventory[idx].Quantity == 0 {
+				pdInfo.IsSoldout = true
+			}
+
+			return nil
+		}
+	}
+	return errors.New("no matched product size option")
 }
 
-type InventoryDAO struct {
-	Size     string
-	Quantity int
+func (pdInfo *ProductMetaInfoDAO) Revert(size string, quantity int) error {
+	for idx, option := range pdInfo.AlloffInventory {
+		if option.AlloffSize.SizeName == size {
+			if option.Quantity == 0 {
+				pdInfo.IsSoldout = false
+			}
+			pdInfo.AlloffInventory[idx].Quantity += quantity
+
+			return nil
+		}
+	}
+	return errors.New("no matched product size option")
 }
 
-type ProductScoreInfoDAO struct {
-	// 신상품 위로 올려줄때 쓰는 필드
-	IsNewlyCrawled bool
-	ManualScore    int
-	AutoScore      int
-	TotalScore     int
+// TODO: Check soldout should be written
+func (pdInfo *ProductMetaInfoDAO) CheckSoldout() {
+
 }

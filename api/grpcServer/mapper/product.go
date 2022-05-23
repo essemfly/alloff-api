@@ -6,65 +6,63 @@ import (
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
-func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
+func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMessage {
 	var alloffCategoryName, alloffCategoryID string
 	IsClassifiedDone, IsClassifiedTouched := false, false
-	if pd.ProductInfo.AlloffCategory != nil {
-		IsClassifiedDone, IsClassifiedTouched = pd.ProductInfo.AlloffCategory.Done, pd.ProductInfo.AlloffCategory.Touched
-		if pd.ProductInfo.AlloffCategory.Done {
-			if pd.ProductInfo.AlloffCategory.Second != nil {
-				alloffCategoryName = pd.ProductInfo.AlloffCategory.Second.Name
-				alloffCategoryID = pd.ProductInfo.AlloffCategory.Second.ID.Hex()
-			} else if pd.ProductInfo.AlloffCategory.First != nil {
-				alloffCategoryName = pd.ProductInfo.AlloffCategory.First.Name
-				alloffCategoryID = pd.ProductInfo.AlloffCategory.First.ID.Hex()
+	if pdInfo.AlloffCategory != nil {
+		IsClassifiedDone, IsClassifiedTouched = pdInfo.AlloffCategory.Done, pdInfo.AlloffCategory.Touched
+		if pdInfo.AlloffCategory.Done {
+			if pdInfo.AlloffCategory.Second != nil {
+				alloffCategoryName = pdInfo.AlloffCategory.Second.Name
+				alloffCategoryID = pdInfo.AlloffCategory.Second.ID.Hex()
+			} else if pdInfo.AlloffCategory.First != nil {
+				alloffCategoryName = pdInfo.AlloffCategory.First.Name
+				alloffCategoryID = pdInfo.AlloffCategory.First.ID.Hex()
 			}
 		}
 	}
-	totalScore := pd.Score.TotalScore
 
-	images := pd.ProductInfo.Images
-	if pd.ProductInfo.IsImageCached {
-		images = pd.ProductInfo.CachedImages
+	images := pdInfo.Images
+	if pdInfo.IsImageCached {
+		images = pdInfo.CachedImages
 	}
 
 	return &grpcServer.ProductMessage{
-		AlloffProductId:      pd.ID.Hex(),
-		AlloffName:           pd.AlloffName,
-		IsForeignDelivery:    pd.ProductInfo.Source.IsForeignDelivery,
-		ProductId:            pd.ProductInfo.ProductID,
-		ProductUrl:           pd.ProductInfo.ProductUrl,
-		OriginalPrice:        int32(pd.OriginalPrice),
-		DiscountedPrice:      int32(pd.DiscountedPrice),
-		BrandKorName:         pd.ProductInfo.Brand.KorName,
-		Inventory:            InventoryMapper(pd),
-		Description:          pd.ProductInfo.SalesInstruction.Description.Texts,
-		EarliestDeliveryDays: int32(pd.ProductInfo.SalesInstruction.DeliveryDescription.EarliestDeliveryDays),
-		LatestDeliveryDays:   int32(pd.ProductInfo.SalesInstruction.DeliveryDescription.LatestDeliveryDays),
-		RefundFee:            int32(pd.ProductInfo.SalesInstruction.CancelDescription.RefundFee),
-		IsRefundPossible:     pd.ProductInfo.SalesInstruction.CancelDescription.RefundAvailable,
+		AlloffProductId:      pdInfo.ID.Hex(),
+		AlloffName:           pdInfo.OriginalName,
+		IsForeignDelivery:    pdInfo.Source.IsForeignDelivery,
+		ProductId:            pdInfo.ProductID,
+		ProductUrl:           pdInfo.ProductUrl,
+		OriginalPrice:        int32(pdInfo.Price.OriginalPrice),
+		DiscountedPrice:      int32(pdInfo.Price.CurrentPrice),
+		BrandKorName:         pdInfo.Brand.KorName,
+		Inventory:            InventoryMapper(pdInfo),
+		Description:          pdInfo.SalesInstruction.Description.Texts,
+		EarliestDeliveryDays: int32(pdInfo.SalesInstruction.DeliveryDescription.EarliestDeliveryDays),
+		LatestDeliveryDays:   int32(pdInfo.SalesInstruction.DeliveryDescription.LatestDeliveryDays),
+		RefundFee:            int32(pdInfo.SalesInstruction.CancelDescription.RefundFee),
+		IsRefundPossible:     pdInfo.SalesInstruction.CancelDescription.RefundAvailable,
 		Images:               images,
-		DescriptionImages:    pd.ProductInfo.SalesInstruction.Description.Images,
-		CategoryName:         pd.ProductInfo.Category.Name,
+		DescriptionImages:    pdInfo.SalesInstruction.Description.Images,
+		CategoryName:         pdInfo.Category.Name,
 		AlloffCategoryName:   alloffCategoryName,
 		AlloffCategoryId:     alloffCategoryID,
-		IsRemoved:            pd.IsRemoved,
-		IsSoldout:            pd.IsSoldout,
-		TotalScore:           int32(totalScore),
-		ModuleName:           pd.ProductInfo.Source.CrawlModuleName,
-		IsClassifiedDone:     IsClassifiedDone,
-		IsClassifiedTouched:  IsClassifiedTouched,
-		ProductInfos:         pd.ProductInfo.SalesInstruction.Information,
-		DescriptionInfos:     pd.ProductInfo.SalesInstruction.Description.Infos,
-		ThumbnailImage:       pd.ThumbnailImage,
+		IsRemoved:            pdInfo.IsRemoved,
+		// IsSoldout:            pdInfo.IsSoldout,
+		ModuleName:          pdInfo.Source.CrawlModuleName,
+		IsClassifiedDone:    IsClassifiedDone,
+		IsClassifiedTouched: IsClassifiedTouched,
+		ProductInfos:        pdInfo.SalesInstruction.Information,
+		DescriptionInfos:    pdInfo.SalesInstruction.Description.Infos,
+		// ThumbnailImage:       pd.ThumbnailImage,
 	}
 }
 
-func InventoryMapper(pd *domain.ProductDAO) []*grpcServer.ProductInventoryMessage {
+func InventoryMapper(pd *domain.ProductMetaInfoDAO) []*grpcServer.ProductInventoryMessage {
 	invMessages := []*grpcServer.ProductInventoryMessage{}
-	for _, inv := range pd.Inventory {
+	for _, inv := range pd.AlloffInventory {
 		invMessages = append(invMessages, &grpcServer.ProductInventoryMessage{
-			Size:     inv.Size,
+			Size:     inv.AlloffSize.SizeName,
 			Quantity: int32(inv.Quantity),
 		})
 	}

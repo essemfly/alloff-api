@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/rs/xid"
+	"go.uber.org/zap"
 )
 
 type Basket struct {
@@ -16,10 +18,11 @@ type Basket struct {
 }
 
 type BasketItem struct {
-	Product      *domain.ProductDAO
-	ProductGroup *domain.ProductGroupDAO
-	Size         string
-	Quantity     int
+	Product        *domain.ProductDAO
+	ProductGroupID string
+	ExhibitionID   string
+	Size           string
+	Quantity       int
 }
 
 func (basket *Basket) IsValid() []error {
@@ -27,17 +30,15 @@ func (basket *Basket) IsValid() []error {
 	totalPrices := 0
 
 	for _, item := range basket.Items {
-		currentPrice := item.Product.DiscountedPrice
+		currentPrice := item.Product.ProductInfo.Price.CurrentPrice
 		totalPrices += currentPrice * item.Quantity
 
-		if item.ProductGroup != nil {
-			if !item.ProductGroup.IsLive() {
-				errs = append(errs, fmt.Errorf("ERR200:productgroup timeout"+item.Product.ID.Hex()))
-			}
+		if item.Product.IsNotSale {
+			errs = append(errs, fmt.Errorf("ERR200:productgroup timeout"+item.Product.ID.Hex()))
 		}
 
 		isValidSize, isValidQuantity := false, false
-		for _, inv := range item.Product.Inventory {
+		for _, inv := range item.Product.ProductInfo.AlloffInventory {
 			if inv.AlloffSize.SizeName == item.Size {
 				isValidSize = true
 				if inv.Quantity >= item.Quantity {
@@ -48,14 +49,14 @@ func (basket *Basket) IsValid() []error {
 			}
 		}
 
-		if item.Product.IsSoldout {
+		if item.Product.ProductInfo.IsSoldout {
 			item.Quantity = 0
 			errs = append(errs, fmt.Errorf("ERR105:product soldout"))
 		}
 
-		if item.Product.IsRemoved {
+		if item.Product.IsNotSale {
 			item.Quantity = 0
-			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is removed"))
+			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is not for sale"))
 		}
 
 		if !isValidSize {
@@ -66,7 +67,6 @@ func (basket *Basket) IsValid() []error {
 		if !isValidQuantity {
 			errs = append(errs, fmt.Errorf("ERR103:invalid product option quantity"+item.Product.ID.Hex()))
 		}
-
 	}
 
 	if basket.ProductPrice != totalPrices {
@@ -83,38 +83,38 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 	totalProductPrice := 0
 	for _, item := range basket.Items {
 		orderItemType := domain.NORMAL_ORDER
-		productPrice := item.Product.DiscountedPrice
-		if item.ProductGroup != nil {
-			if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
-				orderItemType = domain.EXHIBITION_ORDER
-			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_TIMEDEAL {
-				orderItemType = domain.TIMEDEAL_ORDER
-			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_GROUPDEAL {
-				orderItemType = domain.GROUPDEAL_ORDER
-			}
+		productPrice := item.Product.ProductInfo.Price.CurrentPrice
+		pg, err := ioc.Repo.ProductGroups.Get(item.ProductGroupID)
+		if err != nil {
+			config.Logger.Error("pg not found in build order", zap.Error(err))
+			return nil, err
+		}
+		if pg.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
+			orderItemType = domain.EXHIBITION_ORDER
+		} else if pg.GroupType == domain.PRODUCT_GROUP_TIMEDEAL {
+			orderItemType = domain.TIMEDEAL_ORDER
+		} else if pg.GroupType == domain.PRODUCT_GROUP_GROUPDEAL {
+			orderItemType = domain.GROUPDEAL_ORDER
 		}
 
 		itemCode := utils.CreateShortUUID()
 
-		_, err := ioc.Repo.OrderItems.GetByCode(itemCode)
+		_, err = ioc.Repo.OrderItems.GetByCode(itemCode)
 		for err == nil {
 			itemCode = utils.CreateShortUUID()
 		}
 
-		exhibitionID := ""
-		if item.ProductGroup != nil {
-			exhibitionID = item.ProductGroup.ExhibitionID
-		}
+		exhibitionID := item.ExhibitionID
 
 		orderItems = append(orderItems, &domain.OrderItemDAO{
 			OrderItemCode:          itemCode,
 			ProductID:              item.Product.ID.Hex(),
-			ProductName:            item.Product.AlloffName,
+			ProductName:            item.Product.ProductInfo.AlloffName,
 			ProductUrl:             item.Product.ProductInfo.ProductUrl,
 			ProductImg:             item.Product.ProductInfo.Images[0],
 			BrandKeyname:           item.Product.ProductInfo.Brand.KeyName,
 			BrandKorname:           item.Product.ProductInfo.Brand.KorName,
-			Removed:                item.Product.IsRemoved,
+			Removed:                item.Product.IsNotSale,
 			SalesPrice:             productPrice,
 			CancelDescription:      item.Product.ProductInfo.SalesInstruction.CancelDescription,
 			DeliveryDescription:    item.Product.ProductInfo.SalesInstruction.DeliveryDescription,

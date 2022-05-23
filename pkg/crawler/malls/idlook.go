@@ -49,25 +49,29 @@ func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 		delete(description, askey)
 
-		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:               brand,
-			Source:              source,
-			ProductID:           productID,
-			ProductName:         title,
-			ProductUrl:          productUrl,
+		addRequest := &product.AddMetaInfoRequest{
+			AlloffName:      title,
+			ProductID:       productID,
+			ProductUrl:      productUrl,
+			ProductType:     []domain.AlloffProductType{domain.Female},
+			OriginalPrice:   float32(originalPrice),
+			DiscountedPrice: float32(discountedPrice),
+			CurrencyType:    domain.CurrencyKRW,
+			Brand:           brand,
+			Source:          source,
+			// AlloffCategory:  nil,
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
 		}
 
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		product.ProcessAddProductInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {

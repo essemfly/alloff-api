@@ -1,11 +1,13 @@
 package omnious
 
+import "github.com/lessbutter/alloff-api/internal/core/domain"
+
 type OmniousResult struct {
 	Category struct {
 		ID   string `json:"id"`
 		Name string `json:"name"`
 	} `json:"category"`
-	domain.TaggingResult
+	domain.TaggingResultDAO
 }
 
 type PostResponse struct {

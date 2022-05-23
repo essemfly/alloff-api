@@ -102,46 +102,29 @@ func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.Cra
 		productUrl := "https://www.ssfshop.com/" + source.BrandKeyname + "/" + pd.ProductId + "/good"
 		images, colors, sizes, inventories, description := getSSFDetailInfo(productUrl)
 
-		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:               brand,
-			Source:              source,
-			ProductID:           pd.ProductId,
-			ProductName:         pd.God.Name,
-			ProductUrl:          productUrl,
+		addRequest := &product.AddMetaInfoRequest{
+			AlloffName:      pd.God.Name,
+			ProductID:       pd.ProductId,
+			ProductUrl:      productUrl,
+			ProductType:     []domain.AlloffProductType{domain.Female},
+			OriginalPrice:   float32(pd.DspGodPrc.OriginalPrice),
+			DiscountedPrice: float32(pd.DspGodPrc.DiscountedPrice),
+			CurrencyType:    domain.CurrencyKRW,
+			Brand:           brand,
+			Source:          source,
+			// AlloffCategory:  nil,
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(pd.DspGodPrc.OriginalPrice),
-			SalesPrice:          float32(pd.DspGodPrc.DiscountedPrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
 		}
 
 		numProducts += 1
-		product.AddProductInCrawling(addRequest)
-
-		// newProduct := domain.ProductDAO{
-		// 	ProductId:       product.ProductId,
-		// 	Category:        &source.Category,
-		// 	Brand:           brand,
-		// 	Name:            product.God.Name,
-		// 	OriginalPrice:   product.DspGodPrc.OriginalPrice,
-		// 	DiscountedPrice: product.DspGodPrc.DiscountedPrice,
-		// 	DiscountRate:    utils.CalculateDiscountRate(float32(product.DspGodPrc.OriginalPrice), float32(product.DspGodPrc.DiscountedPrice)),
-		// 	Soldout:         isSoldout,
-		// 	Images:          images,
-		// 	Created:         time.Now(),
-		// 	Updated:         time.Now(),
-		// 	IsNewlyCrawled:  true,
-		// 	ProductUrl:      productUrl,
-		// 	Removed:         false,
-		// 	Description:     description,
-		// 	SizeAvailable:   sizes,
-		// 	IsImageCached:   false,
-		// }
-
+		product.ProcessAddProductInfoRequests(addRequest)
 	}
 	return numProducts
 }

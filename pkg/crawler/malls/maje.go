@@ -67,23 +67,32 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 				productNameForDb += " - " + colorName
 			}
 
-			addRequest := &product.ProductCrawlingAddRequest{
-				Brand:               brand,
-				Images:              images,
-				Sizes:               sizes,
-				Inventories:         inventories,
-				Description:         description,
-				OriginalPrice:       originalPrice,
-				SalesPrice:          salesPrice,
-				CurrencyType:        domain.CurrencyEUR,
-				Source:              source,
-				ProductID:           productIdForDb,
-				ProductName:         productNameForDb,
-				ProductUrl:          productUrl,
+			addRequest := &product.AddMetaInfoRequest{
+				AlloffName:      productNameForDb,
+				ProductID:       productIdForDb,
+				ProductUrl:      productUrl,
+				ProductType:     []domain.AlloffProductType{domain.Female},
+				OriginalPrice:   originalPrice,
+				DiscountedPrice: salesPrice,
+				CurrencyType:    domain.CurrencyEUR,
+				Brand:           brand,
+				Source:          source,
+				// AlloffCategory:  nil,
+				Images:      images,
+				Colors:      nil,
+				Sizes:       sizes,
+				Inventory:   inventories,
+				Information: description,
+				DescriptionImages: []string{
+					"https://alloff.s3.ap-northeast-2.amazonaws.com/description/size_guide.png",
+				},
+				IsForeignDelivery:   true,
 				IsTranslateRequired: true,
+				ModuleName:          source.CrawlModuleName,
 			}
+
 			totalProducts += 1
-			product.AddProductInCrawling(addRequest)
+			product.ProcessAddProductInfoRequests(addRequest)
 		}
 	})
 

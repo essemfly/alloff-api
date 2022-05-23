@@ -61,16 +61,6 @@ func (pgDao *ProductGroupDAO) AppendProduct(priorityDao *ProductPriorityDAO) boo
 	return false
 }
 
-func (pgDao *ProductGroupDAO) RemoveProduct(productID string) {
-	newPds := []*ProductPriorityDAO{}
-	for _, pd := range pgDao.Products {
-		if pd.ProductID.Hex() != productID {
-			newPds = append(newPds, pd)
-		}
-	}
-	pgDao.Products = newPds
-}
-
 func (pgDao *ProductGroupDAO) IsLive() bool {
 	now := time.Now()
 	if now.After(pgDao.StartTime) && now.Before(pgDao.FinishTime) {

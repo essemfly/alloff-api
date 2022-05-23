@@ -18,15 +18,7 @@ type productRepo struct {
 	col *mongo.Collection
 }
 
-type productDiffRepo struct {
-	col *mongo.Collection
-}
-
 type productMetaInfoRepo struct {
-	col *mongo.Collection
-}
-
-type productLikeRepo struct {
 	col *mongo.Collection
 }
 
@@ -43,19 +35,24 @@ func (repo *productRepo) Get(ID string) (*domain.ProductDAO, error) {
 	return product, nil
 }
 
-func (repo *productRepo) GetByMetaID(MetaID string) (*domain.ProductDAO, error) {
+func (repo *productRepo) ListByMetaID(metaID string) ([]*domain.ProductDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	productObjectId, _ := primitive.ObjectIDFromHex(MetaID)
+	productObjectId, _ := primitive.ObjectIDFromHex(metaID)
 	filter := bson.M{"productinfo._id": productObjectId}
-	var oldProduct domain.ProductDAO
-	err := repo.col.FindOne(ctx, filter).Decode(&oldProduct)
+	cursor, err := repo.col.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
 
-	return &oldProduct, nil
+	var products []*domain.ProductDAO
+	err = cursor.All(ctx, &products)
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }
 
 func (repo *productRepo) List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error) {
@@ -199,6 +196,19 @@ func MongoProductsRepo(conn *MongoDB) repository.ProductsRepository {
 	}
 }
 
+func (repo *productMetaInfoRepo) Get(ID string) (*domain.ProductMetaInfoDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	productObjectId, _ := primitive.ObjectIDFromHex(ID)
+	filter := bson.M{"_id": productObjectId}
+	var product *domain.ProductMetaInfoDAO
+	if err := repo.col.FindOne(ctx, filter).Decode(&product); err != nil {
+		return nil, err
+	}
+	return product, nil
+}
+
 func (repo *productMetaInfoRepo) GetByProductID(brandKeyname string, productID string) (*domain.ProductMetaInfoDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -211,6 +221,30 @@ func (repo *productMetaInfoRepo) GetByProductID(brandKeyname string, productID s
 	}
 
 	return &oldProduct, nil
+}
+
+func (repo *productMetaInfoRepo) List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductMetaInfoDAO, int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	options := options.Find()
+	options.SetSort(sortingOptions)
+	options.SetSkip(int64(offset))
+	options.SetLimit(int64(limit))
+
+	totalCount, _ := repo.col.CountDocuments(ctx, filter)
+	cursor, err := repo.col.Find(ctx, filter, options)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var productInfos []*domain.ProductMetaInfoDAO
+	err = cursor.All(ctx, &productInfos)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return productInfos, int(totalCount), nil
 }
 
 func (repo *productMetaInfoRepo) Insert(pd *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error) {
