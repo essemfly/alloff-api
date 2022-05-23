@@ -51,25 +51,29 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 		mobileUrl := strings.Replace(productUrl, "https://lounge-b.co.kr", "https://m.lounge-b.co.kr", 1)
 
-		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:               brand,
-			Source:              source,
-			ProductID:           productID,
-			ProductName:         title,
-			ProductUrl:          mobileUrl,
+		addRequest := &product.AddMetaInfoRequest{
+			AlloffName:      title,
+			ProductID:       productID,
+			ProductUrl:      mobileUrl,
+			ProductType:     []domain.AlloffProductType{domain.Female},
+			OriginalPrice:   float32(originalPrice),
+			DiscountedPrice: float32(discountedPrice),
+			CurrencyType:    domain.CurrencyKRW,
+			Brand:           brand,
+			Source:          source,
+			// AlloffCategory:  nil,
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         nil,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         nil,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
 		}
 
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		product.ProcessAddProductInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".xans-product-normalpaging a:nth-last-child(2)", func(e *colly.HTMLElement) {

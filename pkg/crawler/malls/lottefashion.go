@@ -157,25 +157,30 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 
 		c.Visit(url)
 
-		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:               brand,
-			Source:              source,
-			ProductID:           pd.LotteFashionID,
-			ProductName:         pd.Name,
-			ProductUrl:          url,
+		addRequest := &product.AddMetaInfoRequest{
+			AlloffName:      pd.Name,
+			ProductID:       pd.LotteFashionID,
+			ProductUrl:      url,
+			ProductType:     []domain.AlloffProductType{domain.Female},
+			OriginalPrice:   float32(pd.OriginalPrice),
+			DiscountedPrice: float32(pd.SalePrice),
+			CurrencyType:    domain.CurrencyKRW,
+			Brand:           brand,
+			Source:          source,
+			// AlloffCategory:  nil,
 			Images:              images,
-			Sizes:               newSizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(pd.OriginalPrice),
-			SalesPrice:          float32(pd.SalePrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               newSizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
 		}
 
 		numProducts += 1
-		product.AddProductInCrawling(addRequest)
+		product.ProcessAddProductInfoRequests(addRequest)
+
 	}
 
 	return numProducts

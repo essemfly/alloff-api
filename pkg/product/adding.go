@@ -14,8 +14,9 @@ type AddMetaInfoRequest struct {
 	AlloffName           string
 	ProductID            string
 	ProductUrl           string
-	OriginalPrice        int
-	DiscountedPrice      int
+	ProductType          []domain.AlloffProductType
+	OriginalPrice        float32
+	DiscountedPrice      float32
 	CurrencyType         domain.CurrencyType
 	Brand                *domain.BrandDAO
 	Source               *domain.CrawlSourceDAO
@@ -35,6 +36,7 @@ type AddMetaInfoRequest struct {
 	IsRefundPossible     bool
 	RefundFee            int
 	ModuleName           string
+	IsTranslateRequired  bool
 }
 
 func AddProductInfo(request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {

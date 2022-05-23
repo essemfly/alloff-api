@@ -24,9 +24,7 @@ func UpdateAlloffInventory(exhibitionDao *domain.ExhibitionDAO) {
 	for _, pd := range pds {
 		if len(exhibitionInventories) == 0 {
 			// 상품군의 첫 인벤토리 > 무조건 추가
-			for _, pdInv := range pd.ProductInfo.AlloffInventory {
-				exhibitionInventories = append(exhibitionInventories, pdInv)
-			}
+			exhibitionInventories = append(exhibitionInventories, pd.ProductInfo.AlloffInventory...)
 		} else {
 			// 상품군의 두번째 인벤토리부터는 기존 인벤토리와 비교해서 수량만 올릴지, 인벤토리 자체를 추가할지 결정한다.
 			for _, pdInv := range pd.ProductInfo.AlloffInventory {

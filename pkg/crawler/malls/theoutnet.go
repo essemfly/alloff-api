@@ -178,25 +178,30 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			images = newImages
 		}
 
-		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:               brand,
-			Source:              source,
-			ProductID:           pd.ProductID,
-			ProductName:         pd.Name,
-			ProductUrl:          urlPrefix + pd.Seo.SeoUrl,
+		addRequest := &product.AddMetaInfoRequest{
+			AlloffName:      pd.Name,
+			ProductID:       pd.ProductID,
+			ProductUrl:      urlPrefix + pd.Seo.SeoUrl,
+			ProductType:     []domain.AlloffProductType{domain.Female},
+			OriginalPrice:   float32(pd.Price.WasPrice.Amount) / float32(pd.Price.WasPrice.Divisor),
+			DiscountedPrice: float32(pd.Price.SellingPrice.Amount) / float32(pd.Price.SellingPrice.Divisor),
+			CurrencyType:    domain.CurrencyEUR,
+			Brand:           brand,
+			Source:          source,
+			// AlloffCategory:  nil,
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(pd.Price.WasPrice.Amount) / float32(pd.Price.WasPrice.Divisor),
-			SalesPrice:          float32(pd.Price.SellingPrice.Amount) / float32(pd.Price.SellingPrice.Divisor),
-			CurrencyType:        domain.CurrencyEUR,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
+			ModuleName:          source.CrawlModuleName,
 		}
 
 		numProducts += 1
-		product.AddProductInCrawling(addRequest)
+		product.ProcessAddProductInfoRequests(addRequest)
+
 	}
 	return numProducts
 }

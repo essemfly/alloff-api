@@ -67,25 +67,29 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			productUrl := "https://benettonmall.com/product/view?productcode=" + pd.ProductCode
 			images, sizes, colors, inventories, description := CrawlBenettonDetail(productUrl)
 
-			addRequest := &product.ProductCrawlingAddRequest{
-				Brand:               brand,
-				Source:              source,
-				ProductID:           pd.ProductCode,
-				ProductName:         pd.ProductName,
-				ProductUrl:          productUrl,
+			addRequest := &product.AddMetaInfoRequest{
+				AlloffName:      pd.ProductName,
+				ProductID:       pd.ProductCode,
+				ProductUrl:      productUrl,
+				ProductType:     []domain.AlloffProductType{domain.Female},
+				OriginalPrice:   float32(originalPriceInt),
+				DiscountedPrice: float32(discountedPriceInt),
+				CurrencyType:    domain.CurrencyKRW,
+				Brand:           brand,
+				Source:          source,
+				// AlloffCategory:  nil,
 				Images:              images,
-				Sizes:               sizes,
-				Inventories:         inventories,
 				Colors:              colors,
-				Description:         description,
-				OriginalPrice:       float32(originalPriceInt),
-				SalesPrice:          float32(discountedPriceInt),
-				CurrencyType:        domain.CurrencyKRW,
+				Sizes:               sizes,
+				Inventory:           inventories,
+				Information:         description,
+				IsForeignDelivery:   false,
 				IsTranslateRequired: false,
+				ModuleName:          source.CrawlModuleName,
 			}
 
 			totalProducts += 1
-			product.AddProductInCrawling(addRequest)
+			product.ProcessAddProductInfoRequests(addRequest)
 		}
 
 		pageInt, _ := strconv.Atoi(crawlResponse.Page)

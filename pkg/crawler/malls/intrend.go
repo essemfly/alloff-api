@@ -70,25 +70,34 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			log.Println("err in translater", err)
 		}
 
-		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:               brand,
-			Source:              source,
-			ProductID:           productID,
-			ProductName:         title,
-			ProductUrl:          productUrl,
-			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
-			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyEUR,
+		addRequest := &product.AddMetaInfoRequest{
+			AlloffName:      title,
+			ProductID:       productID,
+			ProductUrl:      productUrl,
+			ProductType:     []domain.AlloffProductType{domain.Female},
+			OriginalPrice:   float32(originalPrice),
+			DiscountedPrice: float32(discountedPrice),
+			CurrencyType:    domain.CurrencyEUR,
+			Brand:           brand,
+			Source:          source,
+			// AlloffCategory:  nil,
+			Images:      images,
+			Colors:      colors,
+			Sizes:       sizes,
+			Inventory:   inventories,
+			Information: description,
+			DescriptionImages: []string{
+				"https://alloff.s3.ap-northeast-2.amazonaws.com/description/Intrend_info.png",
+				"https://alloff.s3.ap-northeast-2.amazonaws.com/description/size_guide.png",
+			},
+			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
+			ModuleName:          source.CrawlModuleName,
 		}
 
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		product.ProcessAddProductInfoRequests(addRequest)
+
 	})
 
 	c.OnHTML(".js-pager .container-fluid ul", func(e *colly.HTMLElement) {
