@@ -11,7 +11,6 @@ type AlloffSizeDAO struct {
 	ID             primitive.ObjectID `bson:"_id, omitempty"`
 	AlloffCategory *AlloffCategoryDAO
 	SizeName       string
-	GuideImage     string
 }
 
 type AlloffInventoryDAO struct {

@@ -49,11 +49,11 @@ type ExhibitionDAO struct {
 }
 
 type ExhibitionMetaInfoDAO struct {
-	ProductTypes     []*AlloffProductType
-	Brands           []*BrandDAO
-	AlloffCategories []*AlloffCategoryDAO
-	AlloffSizes      []*AlloffSizeDAO
-	MaxDiscounts     int
+	ProductTypes      []*AlloffProductType
+	Brands            []*BrandDAO
+	AlloffCategories  []*AlloffCategoryDAO
+	AlloffInventories []*AlloffInventoryDAO
+	MaxDiscounts      int
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {

@@ -47,7 +47,7 @@ func UpdateAlloffInventory(exhibitionDao *domain.ExhibitionDAO) {
 		}
 	}
 
-	exhibitionDao.AlloffInventory = exhibitionInventories
+	exhibitionDao.MetaInfos.AlloffInventories = exhibitionInventories
 	_, err = ioc.Repo.Exhibitions.Upsert(exhibitionDao)
 	if err != nil {
 		log.Println("err occurred on upsert exhibition : ", err)

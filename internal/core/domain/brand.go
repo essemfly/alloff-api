@@ -61,8 +61,9 @@ type BrandDAO struct {
 }
 
 type InventoryMappingPolicy struct {
-	BrandSize  string
-	AlloffSize AlloffSizeDAO
+	BrandSize      string
+	AlloffSize     AlloffSizeDAO
+	AlloffCategory AlloffCategoryDAO
 }
 
 type SizeGuideDAO struct {
