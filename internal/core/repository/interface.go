@@ -3,8 +3,6 @@ package repository
 import (
 	"time"
 
-	"github.com/lessbutter/alloff-api/internal/core/dto"
-
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
@@ -30,12 +28,6 @@ type ProductMetaInfoRepository interface {
 	GetByProductID(brandKeyname string, productID string) (*domain.ProductMetaInfoDAO, error)
 	Insert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
 	Upsert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
-}
-
-type ProductDiffsRepository interface {
-	Insert(*domain.ProductDiffDAO) error
-	List(filter interface{}) ([]*domain.ProductDiffDAO, error)
-	Update(*domain.ProductDiffDAO) (*domain.ProductDiffDAO, error)
 }
 
 type CrawlSourcesRepository interface {
@@ -132,13 +124,6 @@ type LikeBrandsRepository interface {
 	List(userID string) (*domain.LikeBrandDAO, error)
 }
 
-type LikeProductsRepository interface {
-	Like(userID, productID string) (bool, error)
-	List(userID string) ([]*domain.LikeProductDAO, error)
-	ListProductsLike(productId string) ([]*domain.LikeProductDAO, error)
-	Update(*domain.LikeProductDAO) (*domain.LikeProductDAO, error)
-}
-
 type RefundItemsRepository interface {
 	Insert(*domain.RefundItemDAO) (*domain.RefundItemDAO, error)
 }
@@ -148,45 +133,6 @@ type NotificationsRepository interface {
 	Get(notiID string) ([]*domain.NotificationDAO, error)
 	List(offset, limit int, notiTypes []domain.NotificationType, onlyReady bool) ([]*domain.NotificationDAO, error)
 	Update(*domain.NotificationDAO) (*domain.NotificationDAO, error)
-}
-
-type TopBannersRepository interface {
-	Insert(*domain.TopBannerDAO) (*domain.TopBannerDAO, error)
-	Get(itemID string) (*domain.TopBannerDAO, error)
-	List(offset, limit int, onlyLive bool) ([]*domain.TopBannerDAO, int, error)
-	Update(*domain.TopBannerDAO) (*domain.TopBannerDAO, error)
-}
-
-type BestProductsRepository interface {
-	Insert(*domain.BestProductDAO) (*domain.BestProductDAO, error)
-	GetLatest(alloffCategoryID string) (*domain.BestProductDAO, error)
-}
-
-type BestBrandRepository interface {
-	Insert(dao *domain.BestBrandDAO) (*domain.BestBrandDAO, error)
-	GetLatest() (*domain.BestBrandDAO, error)
-}
-
-type GroupRepository interface {
-	Insert(*domain.GroupDAO) (*domain.GroupDAO, error)
-	Get(ID string) (*domain.GroupDAO, error)
-	GetByDetail(userId, exhibitionId string) (*domain.GroupDAO, error)
-	ListByUserId(userId string) ([]*domain.GroupDAO, error)
-	Update(dao *domain.GroupDAO) (*domain.GroupDAO, error)
-}
-
-type GroupRequestRepository interface {
-	Insert(*domain.GroupRequestDAO) (*domain.GroupRequestDAO, error)
-	Update(*domain.GroupRequestDAO) (*domain.GroupRequestDAO, error)
-	List(params domain.GroupRequestParams, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error)
-	ListByGroupID(groupID string, status []domain.GroupRequestStatus) ([]*domain.GroupRequestDAO, error)
-	Get(params domain.GroupRequestParams) (*domain.GroupRequestDAO, error)
-}
-
-type GroupdealTicketRepository interface {
-	Insert(dao *domain.GroupdealTicketDAO) (*domain.GroupdealTicketDAO, error)
-	GetByDetail(userID, exhibitionID string) (*domain.GroupdealTicketDAO, error)
-	ListByDetail(userID, exhibitionID string) ([]*domain.GroupdealTicketDAO, error)
 }
 
 type OrderCountsRepository interface {
@@ -199,25 +145,4 @@ type AlloffSizeRepository interface {
 	Get(alloffSizeID string) (*domain.AlloffSizeDAO, error)
 	Upsert(dao *domain.AlloffSizeDAO) (*domain.AlloffSizeDAO, error)
 	List(offset, limit int) ([]*domain.AlloffSizeDAO, int, error)
-}
-
-type AccessLogRepository interface {
-	Index(*domain.AccessLogDAO) (int, error)
-	List(limit int, from, to time.Time, order string) (*dto.AccessLogDTO, error)
-	GetLatest(limit int) (*dto.AccessLogDTO, error)
-}
-
-type ProductLogRepository interface {
-	Index(*domain.ProductDAO, domain.LogType) (int, error)
-	GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error)
-	GetRankByCatId(limit int, from time.Time, to time.Time, catId string) (*dto.DocumentCountDTO, error)
-}
-
-type BrandLogRepository interface {
-	Index(*domain.BrandDAO) (int, error)
-	GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error)
-}
-
-type SearchLogRepository interface {
-	Index(string) (int, error)
 }

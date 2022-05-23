@@ -68,7 +68,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	query := product.ProductListInput{
 		Offset:                    int(req.Offset),
 		Limit:                     int(req.Limit),
-		BrandID:                   brandID,
+		BrandID:                   "",
 		CategoryID:                categoryID,
 		AlloffCategoryID:          alloffCategoryID,
 		Keyword:                   searchKeyword,
@@ -107,10 +107,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	if req.OriginalPrice != nil {
 		originalPrice = int(*req.OriginalPrice)
 	}
-	specialPrice := discountedPrice
-	if req.SpecialPrice != nil {
-		specialPrice = int(*req.SpecialPrice)
-	}
+
 	moduleName := "manual"
 	if req.ModuleName != nil {
 		moduleName = *req.ModuleName
@@ -134,11 +131,6 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		productUrl = *req.ProductUrl
 	}
 
-	alloffCatID := ""
-	if req.AlloffCategoryId != nil {
-		alloffCatID = *req.AlloffCategoryId
-	}
-
 	var descInfos, pdInfos map[string]string
 	if req.DescriptionInfos != nil {
 		descInfos = req.DescriptionInfos
@@ -151,42 +143,42 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		thumbnailImage = *req.ThumbnailImage
 	}
 
-	isSpecial := false
-	if req.IsSpecial != nil {
-		isSpecial = *req.IsSpecial
-	}
+	brand, _ := ioc.Repo.Brands.GetByKeyname(req.BrandKeyName)
+	alloffcat, _ := ioc.Repo.AlloffCategories.Get(*req.AlloffCategoryId)
 
-	addRequest := &product.ProductManualAddRequest{
+	addRequest := &product.AddMetaInfoRequest{
 		AlloffName:           req.AlloffName,
-		IsForeignDelivery:    req.IsForeignDelivery,
 		ProductID:            productID,
 		ProductUrl:           productUrl,
 		OriginalPrice:        originalPrice,
 		DiscountedPrice:      discountedPrice,
-		SpecialPrice:         specialPrice,
-		BrandKeyName:         req.BrandKeyName,
-		Inventory:            invDaos,
+		CurrencyType:         domain.CurrencyKRW,
+		Brand:                brand,
+		Source:               &domain.CrawlSourceDAO{CrawlModuleName: "manual"},
+		AlloffCategory:       alloffcat,
+		Images:               req.Images,
+		ThumbnailImage:       thumbnailImage,
+		Colors:               []string{},
+		Sizes:                []string{},
 		Description:          req.Description,
+		DescriptionImages:    req.DescriptionImages,
+		DescriptionInfos:     descInfos,
+		Information:          pdInfos,
+		IsForeignDelivery:    req.IsForeignDelivery,
 		EarliestDeliveryDays: int(req.EarliestDeliveryDays),
 		LatestDeliveryDays:   int(req.LatestDeliveryDays),
 		IsRefundPossible:     req.IsRefundPossible,
 		RefundFee:            int(req.RefundFee),
-		Images:               req.Images,
-		DescriptionImages:    req.DescriptionImages,
+		Inventory:            invDaos,
 		ModuleName:           moduleName,
-		AlloffCategoryID:     alloffCatID,
-		DescriptionInfos:     descInfos,
-		ProductInfos:         pdInfos,
-		ThumbnailImage:       thumbnailImage,
-		IsSpecial:            isSpecial,
 	}
 
-	pdDao, err := product.AddProductManually(addRequest)
+	pdInfoDao, err := product.AddProductInfo(addRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	pdMessage := mapper.ProductMapper(pdDao)
+	pdMessage := mapper.ProductMapper(pdInfoDao)
 
 	return &grpcServer.CreateProductResponse{
 		Product: pdMessage,

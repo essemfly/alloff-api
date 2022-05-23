@@ -170,4 +170,8 @@ func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
 // Mutation returns apiServer.MutationResolver implementation.
 func (r *Resolver) Mutation() apiServer.MutationResolver { return &mutationResolver{r} }
 
+// Query returns apiServer.QueryResolver implementation.
+func (r *Resolver) Query() apiServer.QueryResolver { return &queryResolver{r} }
+
 type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }

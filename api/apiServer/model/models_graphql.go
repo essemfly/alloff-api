@@ -8,17 +8,6 @@ import (
 	"strconv"
 )
 
-type AddMockGroupdealInput struct {
-	Title            string          `json:"title"`
-	Subtitle         string          `json:"subtitle"`
-	Description      string          `json:"description"`
-	NumUsersRequired int             `json:"numUsersRequired"`
-	AllowOldUser     bool            `json:"allowOldUser"`
-	BannerImage      string          `json:"bannerImage"`
-	ThumbnailImage   string          `json:"thumbnailImage"`
-	GroupdealStatus  GroupdealStatus `json:"groupdealStatus"`
-}
-
 type AlloffCategory struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
@@ -26,32 +15,6 @@ type AlloffCategory struct {
 	Level    int    `json:"level"`
 	ParentID string `json:"parentId"`
 	ImgURL   string `json:"imgUrl"`
-}
-
-type AlloffCategoryID struct {
-	ID string `json:"id"`
-}
-
-type AlloffCategoryInput struct {
-	ParentID *string `json:"parentId"`
-}
-
-type AlloffCategoryProducts struct {
-	Alloffcategory *AlloffCategory `json:"alloffcategory"`
-	Products       []*Product      `json:"products"`
-	AllBrands      []*Brand        `json:"allBrands"`
-	SelectedBrands []string        `json:"selectedBrands"`
-	TotalCount     int             `json:"totalCount"`
-	Offset         int             `json:"offset"`
-	Limit          int             `json:"limit"`
-}
-
-type AlloffCategoryProductsInput struct {
-	Offset           int           `json:"offset"`
-	Limit            int           `json:"limit"`
-	AlloffcategoryID string        `json:"alloffcategoryId"`
-	BrandIds         []string      `json:"brandIds"`
-	Sorting          []SortingType `json:"sorting"`
 }
 
 type AlloffInventory struct {
@@ -111,11 +74,6 @@ type Category struct {
 	Name    string `json:"name"`
 }
 
-type CategoryClassifier struct {
-	Name    string `json:"name"`
-	KeyName string `json:"keyName"`
-}
-
 type DeliveryDescription struct {
 	DeliveryType         DeliveryType `json:"deliveryType"`
 	DeliveryFee          int          `json:"deliveryFee"`
@@ -132,57 +90,38 @@ type Device struct {
 }
 
 type Exhibition struct {
-	ID                    string                `json:"id"`
-	BannerImage           string                `json:"bannerImage"`
-	ThumbnailImage        string                `json:"thumbnailImage"`
-	Title                 string                `json:"title"`
-	SubTitle              string                `json:"subTitle"`
-	Description           string                `json:"description"`
-	ProductGroups         []*ProductGroup       `json:"productGroups"`
-	StartTime             string                `json:"startTime"`
-	FinishTime            string                `json:"finishTime"`
-	RecruitStartTime      string                `json:"recruitStartTime"`
-	TargetSales           int                   `json:"targetSales"`
-	CurrentSales          int                   `json:"currentSales"`
-	ExhibitionType        ExhibitionType        `json:"exhibitionType"`
-	Banners               []*ExhibitionBanner   `json:"banners"`
-	Classifier            *ExhibitionClassifier `json:"classifier"`
-	AlloffInventory       []*AlloffInventory    `json:"alloffInventory"`
-	TotalProducts         int                   `json:"totalProducts"`
-	TotalProductGroups    int                   `json:"totalProductGroups"`
-	TotalParticipants     int                   `json:"totalParticipants"`
-	NumUsersRequired      int                   `json:"numUsersRequired"`
-	TotalUserGroups       int                   `json:"totalUserGroups"`
-	CheapestPrice         int                   `json:"cheapestPrice"`
-	UserGroup             *UserGroup            `json:"userGroup"`
-	LatestPurchase        []*OrderItem          `json:"latestPurchase"`
-	AllowOldUser          bool                  `json:"allowOldUser"`
-	TotalGroupdealTickets int                   `json:"totalGroupdealTickets"`
+	ID             string            `json:"id"`
+	ExhibitionType ExhibitionType    `json:"exhibitionType"`
+	Title          string            `json:"title"`
+	SubTitle       string            `json:"subTitle"`
+	Description    string            `json:"description"`
+	Tags           []string          `json:"tags"`
+	BannerImage    string            `json:"bannerImage"`
+	ThumbnailImage string            `json:"thumbnailImage"`
+	ProductGroups  []*ProductGroup   `json:"productGroups"`
+	StartTime      string            `json:"startTime"`
+	FinishTime     string            `json:"finishTime"`
+	NumAlarms      int               `json:"numAlarms"`
+	MetaInfos      []*ExhibitionInfo `json:"metaInfos"`
 }
 
-type ExhibitionBanner struct {
-	ImgURL         string `json:"imgUrl"`
-	ProductGroupID string `json:"productGroupId"`
-	Title          string `json:"title"`
-	Subtitle       string `json:"subtitle"`
+type ExhibitionInfo struct {
+	ProductTypes     []AlloffProductType `json:"productTypes"`
+	Brands           []*Brand            `json:"brands"`
+	AlloffCategories []*AlloffCategory   `json:"alloffCategories"`
+	AlloffSizes      []*AlloffSize       `json:"alloffSizes"`
+	MaxDisctounts    int                 `json:"maxDisctounts"`
 }
 
-type ExhibitionClassifier struct {
-	Classifier []AlloffClassifier    `json:"classifier"`
-	First      []*CategoryClassifier `json:"first"`
-	Second     []*CategoryClassifier `json:"second"`
+type ExhibitionsInput struct {
+	Status ExhibitionStatus `json:"status"`
 }
 
-type Group struct {
-	ID               string  `json:"id"`
-	ExhibitionID     string  `json:"exhibitionId"`
-	NumUsersRequired int     `json:"numUsersRequired"`
-	Users            []*User `json:"users"`
-}
-
-type Inventory struct {
-	Size     string `json:"size"`
-	Quantity int    `json:"quantity"`
+type ExhibitionsOutput struct {
+	Exhibitions   []*Exhibition    `json:"exhibitions"`
+	Status        ExhibitionStatus `json:"status"`
+	LiveCounts    int              `json:"liveCounts"`
+	NotOpenCounts int              `json:"notOpenCounts"`
 }
 
 type InventoryInput struct {
@@ -199,24 +138,9 @@ type LikeBrandInput struct {
 	BrandID string `json:"brandId"`
 }
 
-type LikeProductInput struct {
-	ProductID string `json:"productId"`
-}
-
-type LikeProductOutput struct {
-	OldProduct *Product `json:"oldProduct"`
-	NewProduct *Product `json:"newProduct"`
-}
-
 type Login struct {
 	UUID   string `json:"uuid"`
 	Mobile string `json:"mobile"`
-}
-
-type MyGroupDeal struct {
-	User              *User `json:"user"`
-	NumParticipates   int   `json:"numParticipates"`
-	NumLiveGroupdeals int   `json:"numLiveGroupdeals"`
 }
 
 type NewUser struct {
@@ -364,36 +288,20 @@ type PaymentStatus struct {
 
 type Product struct {
 	ID                  string               `json:"id"`
-	Category            *Category            `json:"category"`
 	Brand               *Brand               `json:"brand"`
+	AlloffCategory      *AlloffCategory      `json:"alloffCategory"`
 	Name                string               `json:"name"`
-	ProductGroupID      string               `json:"productGroupId"`
 	OriginalPrice       int                  `json:"originalPrice"`
-	Soldout             bool                 `json:"soldout"`
-	Images              []string             `json:"images"`
 	DiscountedPrice     int                  `json:"discountedPrice"`
 	DiscountRate        int                  `json:"discountRate"`
-	SpecialPrice        *int                 `json:"specialPrice"`
-	SpecialDiscountRate *int                 `json:"specialDiscountRate"`
-	ProductURL          string               `json:"productUrl"`
-	Inventory           []*Inventory         `json:"inventory"`
-	IsUpdated           bool                 `json:"isUpdated"`
-	IsNewProduct        bool                 `json:"isNewProduct"`
-	Removed             bool                 `json:"removed"`
-	Information         []*KeyValueInfo      `json:"information"`
-	Description         *ProductDescription  `json:"description"`
-	CancelDescription   *CancelDescription   `json:"cancelDescription"`
-	DeliveryDescription *DeliveryDescription `json:"deliveryDescription"`
+	Images              []string             `json:"images"`
 	ThumbnailImage      string               `json:"thumbnailImage"`
-	AlloffInventory     []*AlloffInventory   `json:"alloffInventory"`
-	IsInventoryMapped   bool                 `json:"IsInventoryMapped"`
-	ProductClassifier   *ProductClassifier   `json:"productClassifier"`
-}
-
-type ProductClassifier struct {
-	Classifier []AlloffClassifier  `json:"classifier"`
-	First      *CategoryClassifier `json:"first"`
-	Second     *CategoryClassifier `json:"second"`
+	Inventory           []*AlloffInventory   `json:"inventory"`
+	IsSoldout           bool                 `json:"isSoldout"`
+	Description         *ProductDescription  `json:"description"`
+	DeliveryDescription *DeliveryDescription `json:"deliveryDescription"`
+	CancelDescription   *CancelDescription   `json:"cancelDescription"`
+	Information         []*KeyValueInfo      `json:"information"`
 }
 
 type ProductDescription struct {
@@ -404,45 +312,31 @@ type ProductDescription struct {
 
 type ProductGroup struct {
 	ID            string     `json:"id"`
+	Brand         *Brand     `json:"brand"`
 	Title         string     `json:"title"`
 	ShortTitle    string     `json:"shortTitle"`
-	Instruction   []string   `json:"instruction"`
 	ImgURL        string     `json:"imgUrl"`
 	Products      []*Product `json:"products"`
-	StartTime     string     `json:"startTime"`
-	FinishTime    string     `json:"finishTime"`
-	NumAlarms     int        `json:"numAlarms"`
-	SetAlarm      bool       `json:"setAlarm"`
-	Brand         *Brand     `json:"brand"`
 	TotalProducts int        `json:"totalProducts"`
 }
 
-type ProductQueryInput struct {
-	Offset  int           `json:"offset"`
-	Limit   int           `json:"limit"`
-	Keyword string        `json:"keyword"`
-	Sorting []SortingType `json:"sorting"`
-}
-
 type ProductsInput struct {
-	Offset                int                `json:"offset"`
-	Limit                 int                `json:"limit"`
-	Category              *string            `json:"category"`
-	Sorting               []SortingType      `json:"sorting"`
-	ProductGroupID        *string            `json:"productGroupId"`
-	ExhibitionID          *string            `json:"exhibitionId"`
-	AlloffClassifier      []AlloffClassifier `json:"alloffClassifier"`
-	BrandID               []string           `json:"brandId"`
-	AlloffSizeID          []string           `json:"alloffSizeId"`
-	CategoryClassifier    *string            `json:"categoryClassifier"`
-	OnlyProductClassified *bool              `json:"onlyProductClassified"`
+	Offset           int                   `json:"offset"`
+	Limit            int                   `json:"limit"`
+	ProductType      string                `json:"productType"`
+	ExhibitionID     string                `json:"exhibitionId"`
+	AlloffCategoryID *string               `json:"alloffCategoryId"`
+	BrandIds         []string              `json:"brandIds"`
+	AlloffSizeIds    []string              `json:"alloffSizeIds"`
+	Sorting          []ProductsSortingType `json:"sorting"`
 }
 
 type ProductsOutput struct {
-	TotalCount int        `json:"totalCount"`
-	Offset     int        `json:"offset"`
-	Limit      int        `json:"limit"`
-	Products   []*Product `json:"products"`
+	TotalCount   int        `json:"totalCount"`
+	Offset       int        `json:"offset"`
+	Limit        int        `json:"limit"`
+	ExhibitionID string     `json:"exhibitionId"`
+	Products     []*Product `json:"products"`
 }
 
 type RefreshTokenInput struct {
@@ -473,12 +367,6 @@ type User struct {
 	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
 }
 
-type UserGroup struct {
-	MyInfo  *User   `json:"myInfo"`
-	GroupID string  `json:"groupId"`
-	Users   []*User `json:"users"`
-}
-
 type UserInfoInput struct {
 	UUID                  *string `json:"uuid"`
 	Name                  *string `json:"name"`
@@ -490,48 +378,48 @@ type UserInfoInput struct {
 	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
 }
 
-type AlloffClassifier string
+type AlloffProductType string
 
 const (
-	AlloffClassifierMale   AlloffClassifier = "MALE"
-	AlloffClassifierFemale AlloffClassifier = "FEMALE"
-	AlloffClassifierKids   AlloffClassifier = "KIDS"
-	AlloffClassifierSports AlloffClassifier = "SPORTS"
+	AlloffProductTypeMale   AlloffProductType = "MALE"
+	AlloffProductTypeFemale AlloffProductType = "FEMALE"
+	AlloffProductTypeKids   AlloffProductType = "KIDS"
+	AlloffProductTypeSports AlloffProductType = "SPORTS"
 )
 
-var AllAlloffClassifier = []AlloffClassifier{
-	AlloffClassifierMale,
-	AlloffClassifierFemale,
-	AlloffClassifierKids,
-	AlloffClassifierSports,
+var AllAlloffProductType = []AlloffProductType{
+	AlloffProductTypeMale,
+	AlloffProductTypeFemale,
+	AlloffProductTypeKids,
+	AlloffProductTypeSports,
 }
 
-func (e AlloffClassifier) IsValid() bool {
+func (e AlloffProductType) IsValid() bool {
 	switch e {
-	case AlloffClassifierMale, AlloffClassifierFemale, AlloffClassifierKids, AlloffClassifierSports:
+	case AlloffProductTypeMale, AlloffProductTypeFemale, AlloffProductTypeKids, AlloffProductTypeSports:
 		return true
 	}
 	return false
 }
 
-func (e AlloffClassifier) String() string {
+func (e AlloffProductType) String() string {
 	return string(e)
 }
 
-func (e *AlloffClassifier) UnmarshalGQL(v interface{}) error {
+func (e *AlloffProductType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = AlloffClassifier(str)
+	*e = AlloffProductType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid AlloffClassifier", str)
+		return fmt.Errorf("%s is not a valid AlloffProductType", str)
 	}
 	return nil
 }
 
-func (e AlloffClassifier) MarshalGQL(w io.Writer) {
+func (e AlloffProductType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -576,25 +464,66 @@ func (e DeliveryType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type ExhibitionStatus string
+
+const (
+	ExhibitionStatusLive    ExhibitionStatus = "LIVE"
+	ExhibitionStatusNotOpen ExhibitionStatus = "NOT_OPEN"
+	ExhibitionStatusClosed  ExhibitionStatus = "CLOSED"
+)
+
+var AllExhibitionStatus = []ExhibitionStatus{
+	ExhibitionStatusLive,
+	ExhibitionStatusNotOpen,
+	ExhibitionStatusClosed,
+}
+
+func (e ExhibitionStatus) IsValid() bool {
+	switch e {
+	case ExhibitionStatusLive, ExhibitionStatusNotOpen, ExhibitionStatusClosed:
+		return true
+	}
+	return false
+}
+
+func (e ExhibitionStatus) String() string {
+	return string(e)
+}
+
+func (e *ExhibitionStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ExhibitionStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ExhibitionStatus", str)
+	}
+	return nil
+}
+
+func (e ExhibitionStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type ExhibitionType string
 
 const (
-	ExhibitionTypeGroupdeal     ExhibitionType = "GROUPDEAL"
-	ExhibitionTypeTimedeal      ExhibitionType = "TIMEDEAL"
-	ExhibitionTypeNormal        ExhibitionType = "NORMAL"
-	ExhibitionTypeBrandTimedeal ExhibitionType = "BRAND_TIMEDEAL"
+	ExhibitionTypeNormal    ExhibitionType = "NORMAL"
+	ExhibitionTypeGroupdeal ExhibitionType = "GROUPDEAL"
+	ExhibitionTypeTimedeal  ExhibitionType = "TIMEDEAL"
 )
 
 var AllExhibitionType = []ExhibitionType{
+	ExhibitionTypeNormal,
 	ExhibitionTypeGroupdeal,
 	ExhibitionTypeTimedeal,
-	ExhibitionTypeNormal,
-	ExhibitionTypeBrandTimedeal,
 }
 
 func (e ExhibitionType) IsValid() bool {
 	switch e {
-	case ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal, ExhibitionTypeNormal, ExhibitionTypeBrandTimedeal:
+	case ExhibitionTypeNormal, ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal:
 		return true
 	}
 	return false
@@ -618,49 +547,6 @@ func (e *ExhibitionType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ExhibitionType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type GroupdealStatus string
-
-const (
-	GroupdealStatusPending GroupdealStatus = "PENDING"
-	GroupdealStatusOpen    GroupdealStatus = "OPEN"
-	GroupdealStatusClosed  GroupdealStatus = "CLOSED"
-)
-
-var AllGroupdealStatus = []GroupdealStatus{
-	GroupdealStatusPending,
-	GroupdealStatusOpen,
-	GroupdealStatusClosed,
-}
-
-func (e GroupdealStatus) IsValid() bool {
-	switch e {
-	case GroupdealStatusPending, GroupdealStatusOpen, GroupdealStatusClosed:
-		return true
-	}
-	return false
-}
-
-func (e GroupdealStatus) String() string {
-	return string(e)
-}
-
-func (e *GroupdealStatus) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = GroupdealStatus(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid GroupdealStatus", str)
-	}
-	return nil
-}
-
-func (e GroupdealStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -882,55 +768,59 @@ func (e PaymentStatusEnum) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type SortingType string
+type ProductsSortingType string
 
 const (
-	SortingTypePriceAscending         SortingType = "PRICE_ASCENDING"
-	SortingTypePriceDescending        SortingType = "PRICE_DESCENDING"
-	SortingTypeDiscount0_30           SortingType = "DISCOUNT_0_30"
-	SortingTypeDiscount30_50          SortingType = "DISCOUNT_30_50"
-	SortingTypeDiscount50_70          SortingType = "DISCOUNT_50_70"
-	SortingTypeDiscount70_100         SortingType = "DISCOUNT_70_100"
-	SortingTypeDiscountrateAscending  SortingType = "DISCOUNTRATE_ASCENDING"
-	SortingTypeDiscountrateDescending SortingType = "DISCOUNTRATE_DESCENDING"
+	ProductsSortingTypePriceAscending         ProductsSortingType = "PRICE_ASCENDING"
+	ProductsSortingTypePriceDescending        ProductsSortingType = "PRICE_DESCENDING"
+	ProductsSortingTypeDiscount0_30           ProductsSortingType = "DISCOUNT_0_30"
+	ProductsSortingTypeDiscount30_50          ProductsSortingType = "DISCOUNT_30_50"
+	ProductsSortingTypeDiscount50_70          ProductsSortingType = "DISCOUNT_50_70"
+	ProductsSortingTypeDiscount70_100         ProductsSortingType = "DISCOUNT_70_100"
+	ProductsSortingTypeDiscountrateAscending  ProductsSortingType = "DISCOUNTRATE_ASCENDING"
+	ProductsSortingTypeDiscountrateDescending ProductsSortingType = "DISCOUNTRATE_DESCENDING"
+	ProductsSortingTypeInventoryAscending     ProductsSortingType = "INVENTORY_ASCENDING"
+	ProductsSortingTypeInventoryDescending    ProductsSortingType = "INVENTORY_DESCENDING"
 )
 
-var AllSortingType = []SortingType{
-	SortingTypePriceAscending,
-	SortingTypePriceDescending,
-	SortingTypeDiscount0_30,
-	SortingTypeDiscount30_50,
-	SortingTypeDiscount50_70,
-	SortingTypeDiscount70_100,
-	SortingTypeDiscountrateAscending,
-	SortingTypeDiscountrateDescending,
+var AllProductsSortingType = []ProductsSortingType{
+	ProductsSortingTypePriceAscending,
+	ProductsSortingTypePriceDescending,
+	ProductsSortingTypeDiscount0_30,
+	ProductsSortingTypeDiscount30_50,
+	ProductsSortingTypeDiscount50_70,
+	ProductsSortingTypeDiscount70_100,
+	ProductsSortingTypeDiscountrateAscending,
+	ProductsSortingTypeDiscountrateDescending,
+	ProductsSortingTypeInventoryAscending,
+	ProductsSortingTypeInventoryDescending,
 }
 
-func (e SortingType) IsValid() bool {
+func (e ProductsSortingType) IsValid() bool {
 	switch e {
-	case SortingTypePriceAscending, SortingTypePriceDescending, SortingTypeDiscount0_30, SortingTypeDiscount30_50, SortingTypeDiscount50_70, SortingTypeDiscount70_100, SortingTypeDiscountrateAscending, SortingTypeDiscountrateDescending:
+	case ProductsSortingTypePriceAscending, ProductsSortingTypePriceDescending, ProductsSortingTypeDiscount0_30, ProductsSortingTypeDiscount30_50, ProductsSortingTypeDiscount50_70, ProductsSortingTypeDiscount70_100, ProductsSortingTypeDiscountrateAscending, ProductsSortingTypeDiscountrateDescending, ProductsSortingTypeInventoryAscending, ProductsSortingTypeInventoryDescending:
 		return true
 	}
 	return false
 }
 
-func (e SortingType) String() string {
+func (e ProductsSortingType) String() string {
 	return string(e)
 }
 
-func (e *SortingType) UnmarshalGQL(v interface{}) error {
+func (e *ProductsSortingType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = SortingType(str)
+	*e = ProductsSortingType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid SortingType", str)
+		return fmt.Errorf("%s is not a valid ProductsSortingType", str)
 	}
 	return nil
 }
 
-func (e SortingType) MarshalGQL(w io.Writer) {
+func (e ProductsSortingType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

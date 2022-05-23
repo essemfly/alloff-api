@@ -10,10 +10,14 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 )
 
-func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product, error) {
+func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhibition, error) {
 	panic(fmt.Errorf("not implemented"))
 }
 
-func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error) {
+func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionsInput) (*model.ExhibitionsOutput, error) {
+	panic(fmt.Errorf("not implemented"))
+}
+
+func (r *queryResolver) SetAlarm(ctx context.Context, id string) (bool, error) {
 	panic(fmt.Errorf("not implemented"))
 }

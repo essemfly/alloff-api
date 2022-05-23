@@ -89,10 +89,6 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	if req.Description != nil {
 		exDao.Description = *req.Description
 	}
-	if req.RecruitStartTime != nil {
-		recruitStartTimeObj, _ := time.Parse(layout, *req.RecruitStartTime)
-		exDao.RecruitStartTime = recruitStartTimeObj
-	}
 	if req.StartTime != nil {
 		startTimeObj, _ := time.Parse(layout, *req.StartTime)
 		exDao.StartTime = startTimeObj
@@ -103,27 +99,6 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	}
 	if req.IsLive != nil {
 		exDao.IsLive = *req.IsLive
-	}
-
-	if req.NumUsersRequired != nil {
-		exDao.NumUsersRequired = int(*req.NumUsersRequired)
-	}
-	if req.AllowOldUser != nil {
-		exDao.AllowOldUser = *req.AllowOldUser
-	}
-
-	banners := []domain.ExhibitionBanner{}
-	if req.Banners != nil {
-		for _, banner := range req.Banners {
-			bannerDao := domain.ExhibitionBanner{
-				ImgUrl:         banner.ImgUrl,
-				Title:          banner.Title,
-				Subtitle:       banner.Subtitle,
-				ProductGroupId: banner.ProductGroupId,
-			}
-			banners = append(banners, bannerDao)
-		}
-		exDao.Banners = banners
 	}
 
 	pgType := domain.PRODUCT_GROUP_EXHIBITION
@@ -173,7 +148,6 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServer.CreateExhibitionRequest) (*grpcServer.CreateExhibitionResponse, error) {
 	layout := "2006-01-02T15:04:05Z07:00"
 
-	recruitStartTimeObj, _ := time.Parse(layout, req.RecruitStartTime)
 	startTimeObj, _ := time.Parse(layout, req.StartTime)
 	finishTimeObj, _ := time.Parse(layout, req.FinishTime)
 
@@ -197,28 +171,18 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		}
 	}
 
-	numUsersRequired := 0
-	if req.NumUsersRequired != nil {
-		numUsersRequired = int(*req.NumUsersRequired)
-	}
-
 	exDao := &domain.ExhibitionDAO{
-		ID:               primitive.NewObjectID(),
-		BannerImage:      req.BannerImage,
-		ThumbnailImage:   req.ThumbnailImage,
-		Title:            req.Title,
-		SubTitle:         req.Subtitle,
-		Description:      req.Description,
-		RecruitStartTime: recruitStartTimeObj,
-		StartTime:        startTimeObj,
-		FinishTime:       finishTimeObj,
-		IsLive:           false,
-		ExhibitionType:   exhibitionGroupType,
-		TargetSales:      int(req.TargetSales),
-		Banners:          banners,
-		CreatedAt:        time.Now(),
-		NumUsersRequired: numUsersRequired,
-		AllowOldUser:     req.AllowOldUser,
+		ID:             primitive.NewObjectID(),
+		BannerImage:    req.BannerImage,
+		ThumbnailImage: req.ThumbnailImage,
+		Title:          req.Title,
+		SubTitle:       req.Subtitle,
+		Description:    req.Description,
+		StartTime:      startTimeObj,
+		FinishTime:     finishTimeObj,
+		IsLive:         false,
+		ExhibitionType: exhibitionGroupType,
+		CreatedAt:      time.Now(),
 	}
 
 	pgs := []*domain.ProductGroupDAO{}

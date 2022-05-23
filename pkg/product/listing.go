@@ -51,7 +51,6 @@ type ProductListInput struct {
 	AlloffCategoryID          string
 	ExhibitionID              string
 	ProductGroupID            string
-	AlloffClassifier          []domain.AlloffClassifier
 	CategoryClassifierName    string
 	Modulename                string
 	Keyword                   string
@@ -60,8 +59,8 @@ type ProductListInput struct {
 	PriceRanges               []PriceRangeType
 	PriceSorting              PriceSortingType
 	OnlyProductClassified     bool
-	AlloffSizeIds             []string
-	BrandIds                  []string
+	AlloffSizeIDs             []string
+	BrandIDs                  []string
 }
 
 func (input *ProductListInput) BuildFilter() (bson.M, error) {
@@ -87,13 +86,13 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 		}
 	}
 
-	if len(input.AlloffClassifier) != 0 {
-		query := []domain.AlloffClassifier{}
-		for _, alloffClassifier := range input.AlloffClassifier {
-			query = append(query, alloffClassifier)
-		}
-		filter["productclassifier.classifier"] = bson.M{"$all": query}
-	}
+	// if len(input.AlloffClassifier) != 0 {
+	// 	query := []domain.AlloffClassifier{}
+	// 	for _, alloffClassifier := range input.AlloffClassifier {
+	// 		query = append(query, alloffClassifier)
+	// 	}
+	// 	filter["productclassifier.classifier"] = bson.M{"$all": query}
+	// }
 
 	// alloffCategory 와 다르게 각 카테고리가 objectID를 갖지 않는 구조라 db에 인덱싱 필요할듯?..
 	// lv2 카테고리 검색하는건 추후 추가 지금은 lv1 까지만
@@ -129,9 +128,9 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 		filter["isproductclassified"] = true
 	}
 
-	if len(input.AlloffSizeIds) > 0 {
+	if len(input.AlloffSizeIDs) > 0 {
 		query := []bson.M{}
-		for _, id := range input.AlloffSizeIds {
+		for _, id := range input.AlloffSizeIDs {
 			oid, err := primitive.ObjectIDFromHex(id)
 			if err != nil {
 				continue
@@ -141,9 +140,9 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 		filter["$or"] = query
 	}
 
-	if len(input.BrandIds) > 0 {
+	if len(input.BrandIDs) > 0 {
 		query := []bson.M{}
-		for _, id := range input.BrandIds {
+		for _, id := range input.BrandIDs {
 			oid, err := primitive.ObjectIDFromHex(id)
 			if err != nil {
 				continue

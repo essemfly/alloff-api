@@ -1,0 +1,83 @@
+package product
+
+import (
+	"time"
+
+	"github.com/lessbutter/alloff-api/config"
+	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
+)
+
+type AddMetaInfoRequest struct {
+	AlloffName           string
+	ProductID            string
+	ProductUrl           string
+	OriginalPrice        int
+	DiscountedPrice      int
+	CurrencyType         domain.CurrencyType
+	Brand                *domain.BrandDAO
+	Source               *domain.CrawlSourceDAO
+	AlloffCategory       *domain.AlloffCategoryDAO
+	Images               []string
+	ThumbnailImage       string
+	Colors               []string
+	Sizes                []string
+	Inventory            []domain.InventoryDAO
+	Description          []string
+	DescriptionImages    []string
+	DescriptionInfos     map[string]string
+	Information          map[string]string
+	IsForeignDelivery    bool
+	EarliestDeliveryDays int
+	LatestDeliveryDays   int
+	IsRefundPossible     bool
+	RefundFee            int
+	ModuleName           string
+}
+
+func AddProductInfo(request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {
+	_, err := ioc.Repo.ProductMetaInfos.GetByProductID(request.Brand.KeyName, request.ProductID)
+	if err != mongo.ErrNoDocuments {
+		config.Logger.Error("already registered products", zap.Error(err))
+		return nil, err
+	}
+
+	pdInfo := makeBaseProductInfo(request)
+	pdInfo, err = ioc.Repo.ProductMetaInfos.Insert(pdInfo)
+	if err != nil {
+		config.Logger.Error("error on adding product infos", zap.Error(err))
+	}
+	return pdInfo, nil
+}
+
+func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO {
+	pdInfo := &domain.ProductMetaInfoDAO{
+		Created: time.Now(),
+		Updated: time.Now(),
+	}
+
+	pdInfo.SetBrandAndCategory(request.Brand, request.Source)
+	pdInfo.SetGeneralInfo(request.AlloffName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Information)
+	alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
+	pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
+
+	descImages := append(request.DescriptionImages, request.Images...)
+	if request.ModuleName == "intrend" {
+		descImages = append([]string{
+			"https://alloff.s3.ap-northeast-2.amazonaws.com/description/Intrend_info.png",
+		}, descImages...)
+	}
+	if request.ModuleName == "theoutnet" || request.ModuleName == "sandro" || request.ModuleName == "maje" || request.ModuleName == "intrend" {
+		descImages = append(descImages, "https://alloff.s3.ap-northeast-2.amazonaws.com/description/size_guide.png")
+	}
+
+	pdInfo.SetDesc(descImages, request.Description, request.DescriptionInfos)
+	pdInfo.SetDeliveryDesc(request.IsForeignDelivery, 0, request.EarliestDeliveryDays, request.LatestDeliveryDays)
+	pdInfo.SetCancelDesc(request.IsRefundPossible, request.RefundFee)
+
+	pdInfo.SetAlloffInventory(request.Inventory)
+
+	return pdInfo
+}

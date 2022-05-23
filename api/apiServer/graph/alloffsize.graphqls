@@ -1,9 +1,0 @@
-type AlloffSize {
-    id: ID!
-    sizeName: String!
-    guideImage: String!
-}
-
-extend type Query {
-    alloffSizes: [AlloffSize!]!
-}

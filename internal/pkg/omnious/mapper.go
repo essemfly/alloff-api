@@ -2,12 +2,12 @@ package omnious
 
 import (
 	"fmt"
+
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/internal/core/dto"
 )
 
-func mapPostResponseToResult(pr *dto.PostResponse) (*dto.OmniousResult, error) {
+func mapPostResponseToResult(pr *PostResponse) (*OmniousResult, error) {
 	if len(pr.Data.Objects) > 1 {
 		return nil, fmt.Errorf("ERR500:image has two more items")
 	}
@@ -16,7 +16,7 @@ func mapPostResponseToResult(pr *dto.PostResponse) (*dto.OmniousResult, error) {
 	}
 	omniousData := pr.Data.Objects[0].Tags[0]
 
-	taggingResult := dto.TaggingResult{
+	taggingResult := TaggingResult{
 		Item:         omniousData.Item,
 		Colors:       omniousData.Colors,
 		ColorDetails: omniousData.ColorDetails,
@@ -31,7 +31,7 @@ func mapPostResponseToResult(pr *dto.PostResponse) (*dto.OmniousResult, error) {
 		Shape:        omniousData.Shape,
 	}
 
-	res := &dto.OmniousResult{
+	res := &OmniousResult{
 		Category:      omniousData.Category,
 		TaggingResult: taggingResult,
 	}

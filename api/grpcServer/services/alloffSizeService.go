@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -14,7 +15,7 @@ type AlloffSizeService struct {
 }
 
 func (s *AlloffSizeService) ListAlloffSize(ctx context.Context, req *grpcServer.ListAlloffSizeRequest) (*grpcServer.ListAlloffSizeResponse, error) {
-	alloffSizeDaos, _, _ := ioc.Repo.AlloffSize.List(0, 10000)
+	alloffSizeDaos, _, _ := ioc.Repo.AlloffSizes.List(0, 10000)
 
 	sizes := []*grpcServer.AlloffSizeMessage{}
 	for _, alloffSizeDao := range alloffSizeDaos {
@@ -29,7 +30,7 @@ func (s *AlloffSizeService) ListAlloffSize(ctx context.Context, req *grpcServer.
 }
 
 func (s *AlloffSizeService) EditAlloffSize(ctx context.Context, req *grpcServer.EditAlloffSizeRequest) (*grpcServer.AlloffSizeMessage, error) {
-	alloffSizeDao, err := ioc.Repo.AlloffSize.Get(req.AlloffSizeId)
+	alloffSizeDao, err := ioc.Repo.AlloffSizes.Get(req.AlloffSizeId)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +42,7 @@ func (s *AlloffSizeService) EditAlloffSize(ctx context.Context, req *grpcServer.
 		alloffSizeDao.GuideImage = *req.GuideImage
 	}
 
-	newAlloffSizeDao, err := ioc.Repo.AlloffSize.Upsert(alloffSizeDao)
+	newAlloffSizeDao, err := ioc.Repo.AlloffSizes.Upsert(alloffSizeDao)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +57,7 @@ func (s *AlloffSizeService) CreateAlloffSize(ctx context.Context, req *grpcServe
 		GuideImage: req.GuideImage,
 	}
 
-	newAlloffSize, err := ioc.Repo.AlloffSize.Upsert(alloffSizeDao)
+	newAlloffSize, err := ioc.Repo.AlloffSizes.Upsert(alloffSizeDao)
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +66,7 @@ func (s *AlloffSizeService) CreateAlloffSize(ctx context.Context, req *grpcServe
 }
 
 func (s *AlloffSizeService) GetAlloffSize(ctx context.Context, req *grpcServer.GetAlloffSizeRequest) (*grpcServer.AlloffSizeMessage, error) {
-	alloffSizeDao, err := ioc.Repo.AlloffSize.Get(req.AlloffSizeId)
+	alloffSizeDao, err := ioc.Repo.AlloffSizes.Get(req.AlloffSizeId)
 	if err != nil {
 		return nil, err
 	}

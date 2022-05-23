@@ -7,7 +7,6 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
-	"github.com/lessbutter/alloff-api/pkg/product"
 	"github.com/rs/xid"
 )
 
@@ -28,7 +27,7 @@ func (basket *Basket) IsValid() []error {
 	totalPrices := 0
 
 	for _, item := range basket.Items {
-		currentPrice := product.GetCurrentPrice(item.Product)
+		currentPrice := item.Product.DiscountedPrice
 		totalPrices += currentPrice * item.Quantity
 
 		if item.ProductGroup != nil {
@@ -39,7 +38,7 @@ func (basket *Basket) IsValid() []error {
 
 		isValidSize, isValidQuantity := false, false
 		for _, inv := range item.Product.Inventory {
-			if inv.Size == item.Size {
+			if inv.AlloffSize.SizeName == item.Size {
 				isValidSize = true
 				if inv.Quantity >= item.Quantity {
 					isValidQuantity = true
@@ -84,7 +83,7 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 	totalProductPrice := 0
 	for _, item := range basket.Items {
 		orderItemType := domain.NORMAL_ORDER
-		productPrice := product.GetCurrentPrice(item.Product)
+		productPrice := item.Product.DiscountedPrice
 		if item.ProductGroup != nil {
 			if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
 				orderItemType = domain.EXHIBITION_ORDER

@@ -8,7 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
-func GetAlloffCategory(product *domain.ProductDAO) *domain.ProductAlloffCategoryDAO {
+func GetAlloffCategory(product *domain.ProductMetaInfoDAO) *domain.ProductAlloffCategoryDAO {
 	category1, category2, done := categoryClassifier(product)
 	return &domain.ProductAlloffCategoryDAO{
 		First:   category1,
@@ -18,7 +18,7 @@ func GetAlloffCategory(product *domain.ProductDAO) *domain.ProductAlloffCategory
 	}
 }
 
-func categoryClassifier(product *domain.ProductDAO) (category1, category2 *domain.AlloffCategoryDAO, done bool) {
+func categoryClassifier(product *domain.ProductMetaInfoDAO) (category1, category2 *domain.AlloffCategoryDAO, done bool) {
 	//  1. brand + category 보고 분류1 실행
 	//  만약 티셔츠, 원피스, 스커트인경우에는 카테고리2 분류 필요 없음
 	//  2. product name보고 분류2실행

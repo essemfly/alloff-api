@@ -8,7 +8,6 @@ type iocRepo struct {
 	Brands           repository.BrandsRepository
 	Products         repository.ProductsRepository
 	ProductMetaInfos repository.ProductMetaInfoRepository
-	ProductDiffs     repository.ProductDiffsRepository
 	ProductGroups    repository.ProductGroupsRepository
 	CrawlSources     repository.CrawlSourcesRepository
 	CrawlRecords     repository.CrawlRecordsRepository
@@ -23,21 +22,10 @@ type iocRepo struct {
 	Notifications    repository.NotificationsRepository
 	Alimtalks        repository.AlimtalksRepository
 	LikeBrands       repository.LikeBrandsRepository
-	LikeProducts     repository.LikeProductsRepository
 	Exhibitions      repository.ExhibitionsRepository
 	Refunds          repository.RefundItemsRepository
-	TopBanners       repository.TopBannersRepository
-	BestProducts     repository.BestProductsRepository
-	BestBrands       repository.BestBrandRepository
 	OrderCounts      repository.OrderCountsRepository
-	Groups           repository.GroupRepository
-	GroupRequest     repository.GroupRequestRepository
-	GroupdealTickets repository.GroupdealTicketRepository
-	AccessLog        repository.AccessLogRepository
-	ProductLog       repository.ProductLogRepository
-	BrandLog         repository.BrandLogRepository
-	SearchLog        repository.SearchLogRepository
-	AlloffSize       repository.AlloffSizeRepository
+	AlloffSizes      repository.AlloffSizeRepository
 }
 
 var Repo iocRepo

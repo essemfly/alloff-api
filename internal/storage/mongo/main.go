@@ -52,26 +52,19 @@ func NewMongoDB() *MongoDB {
 		brandCol:           db.Collection("brands"),
 		productCol:         db.Collection("products"),
 		productMetaInfoCol: db.Collection("product_infos"),
-		productDiffCol:     db.Collection("product_diffs"),
 		productGroupCol:    db.Collection("productgroups"),
 		crawlSourceCol:     db.Collection("sources"),
 		crawlRecordCol:     db.Collection("crawling_records"),
 		categoryCol:        db.Collection("categories"),
 		alloffCategoryCol:  db.Collection("alloffcategories"),
 		classifyRuleCol:    db.Collection("classifier"),
-		featuredCol:        db.Collection("featured"),
-		homeitemCol:        db.Collection("homeitems"),
 		userCol:            db.Collection("users"),
 		deviceCol:          db.Collection("devices"),
 		notificationCol:    db.Collection("notifications"),
 		alimtalkCol:        db.Collection("alimtalks"),
 		likeBrandsCol:      db.Collection("likes_brands"),
-		likeProductsCol:    db.Collection("likes_products"),
 		exhibitionCol:      db.Collection("exhibitions"),
-		topBannersCol:      db.Collection("top_banners"),
-		bestProductsCol:    db.Collection("best_products"),
-		bestBrandsCol:      db.Collection("best_brands"),
-		alloffSizeCol:      db.Collection("alloff_size"),
+		alloffSizeCol:      db.Collection("alloff_sizes"),
 	}
 }
 
@@ -84,19 +77,14 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.Categories = MongoCategoriesRepo(conn)
 	ioc.Repo.AlloffCategories = MongoAlloffCategoriesRepo(conn)
 	ioc.Repo.ClassifyRules = MongoClassifyRulesRepo(conn)
-	ioc.Repo.ProductDiffs = MongoProductDiffsRepo(conn)
 	ioc.Repo.LikeBrands = MongoBrandLikesRepo(conn)
-	ioc.Repo.LikeProducts = MongoProductLikesRepo(conn)
 	ioc.Repo.Users = MongoUsersRepo(conn)
 	ioc.Repo.Devices = MongoDevicesRepo(conn)
 	ioc.Repo.Alimtalks = MongoAlimtalksRepo(conn)
 	ioc.Repo.ProductGroups = MongoProductGroupsRepo(conn)
 	ioc.Repo.Exhibitions = MongoExhibitionsRepo(conn)
 	ioc.Repo.Notifications = MongoNotificationsRepo(conn)
-	ioc.Repo.TopBanners = MongoTopBannersRepo(conn)
-	ioc.Repo.BestProducts = MongoBestProductsRepo(conn)
-	ioc.Repo.BestBrands = MongoBestBrandsRepo(conn)
-	ioc.Repo.AlloffSize = MongoAlloffSizeRepo(conn)
+	ioc.Repo.AlloffSizes = MongoAlloffSizeRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context) (*mongo.Client, error) {

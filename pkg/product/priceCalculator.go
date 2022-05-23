@@ -1,9 +1,10 @@
 package product
 
 import (
+	"math"
+
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
-	"math"
 )
 
 const (
@@ -11,53 +12,51 @@ const (
 	DOLLAR_EXCHANGE_RATE = 1200
 )
 
-func GetProductPrice(pd *domain.ProductDAO) (int, int) {
-	origPrice, discPrice := pd.ProductInfo.Price.OriginalPrice, pd.ProductInfo.Price.CurrentPrice
-
-	if pd.ProductInfo.Price.CurrencyType == domain.CurrencyEUR {
+func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyType, marginPolicy string) (int, int) {
+	if currencyType == domain.CurrencyEUR {
 		origPrice *= EURO_EXCHANGE_RATE
 		discPrice *= EURO_EXCHANGE_RATE
-	} else if pd.ProductInfo.Price.CurrencyType == domain.CurrencyUSD {
+	} else if currencyType == domain.CurrencyUSD {
 		origPrice *= DOLLAR_EXCHANGE_RATE
 		discPrice *= DOLLAR_EXCHANGE_RATE
 	}
 
-	if pd.ProductInfo.Source.PriceMarginPolicy == "INTREND" {
+	if marginPolicy == "INTREND" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateIntrendPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
-	} else if pd.ProductInfo.Source.PriceMarginPolicy == "THEOUTNET" {
+	} else if marginPolicy == "THEOUTNET" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateTheoutnetPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
-	} else if pd.ProductInfo.Source.PriceMarginPolicy == "SANDRO" {
+	} else if marginPolicy == "SANDRO" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateSandroPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
-	} else if pd.ProductInfo.Source.PriceMarginPolicy == "MAJE" {
+	} else if marginPolicy == "MAJE" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateMajuPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
-	} else if pd.ProductInfo.Source.PriceMarginPolicy == "THEORY" {
+	} else if marginPolicy == "THEORY" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateTheoryPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
-	} else if pd.ProductInfo.Source.PriceMarginPolicy == "CLAUDIEPIERLOT" {
+	} else if marginPolicy == "CLAUDIEPIERLOT" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateClaudiePierlotPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)

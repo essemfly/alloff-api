@@ -3,17 +3,17 @@ package omnious
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/lessbutter/alloff-api/config"
-	"github.com/lessbutter/alloff-api/internal/core/dto"
-	"github.com/lessbutter/alloff-api/internal/utils"
 	"io/ioutil"
+
+	"github.com/lessbutter/alloff-api/config"
+	"github.com/lessbutter/alloff-api/internal/utils"
 )
 
 const (
 	PostTaggerURL = "https://api.omnious.com/tagger/v2.12/tags"
 )
 
-func GetOmniousData(imgUrl string) (*dto.OmniousResult, error) {
+func GetOmniousData(imgUrl string) (*OmniousResult, error) {
 	omniousKey := config.OmniousKey
 	method := utils.REQUEST_POST
 	header := utils.GetOmniousHeader(omniousKey)
@@ -37,7 +37,7 @@ func GetOmniousData(imgUrl string) (*dto.OmniousResult, error) {
 		return nil, err
 	}
 
-	var result dto.PostResponse
+	var result PostResponse
 	if err := json.Unmarshal(respBody, &result); err != nil {
 		return nil, err
 	}

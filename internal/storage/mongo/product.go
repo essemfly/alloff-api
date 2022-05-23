@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"errors"
 	"log"
 	"time"
 
@@ -200,53 +199,6 @@ func MongoProductsRepo(conn *MongoDB) repository.ProductsRepository {
 	}
 }
 
-func (repo *productDiffRepo) Insert(diff *domain.ProductDiffDAO) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	_, err := repo.col.InsertOne(ctx, diff)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (repo *productDiffRepo) List(filter interface{}) ([]*domain.ProductDiffDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	cursor, err := repo.col.Find(ctx, filter)
-	if err != nil {
-		return nil, err
-	}
-
-	var diffs []*domain.ProductDiffDAO
-	err = cursor.All(ctx, &diffs)
-	if err != nil {
-		return nil, err
-	}
-	return diffs, nil
-}
-
-func (repo *productDiffRepo) Update(diffDao *domain.ProductDiffDAO) (*domain.ProductDiffDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": diffDao.ID}, bson.M{"$set": &diffDao})
-	if err != nil {
-		return nil, err
-	}
-
-	return diffDao, nil
-}
-
-func MongoProductDiffsRepo(conn *MongoDB) repository.ProductDiffsRepository {
-	return &productDiffRepo{
-		col: conn.productDiffCol,
-	}
-}
-
 func (repo *productMetaInfoRepo) GetByProductID(brandKeyname string, productID string) (*domain.ProductMetaInfoDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -301,87 +253,5 @@ func (repo *productMetaInfoRepo) Upsert(product *domain.ProductMetaInfoDAO) (*do
 func MongoProductMetaInfosRepo(conn *MongoDB) repository.ProductMetaInfoRepository {
 	return &productMetaInfoRepo{
 		col: conn.productMetaInfoCol,
-	}
-}
-
-func (repo *productLikeRepo) Like(userID, productID string) (bool, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	product, err := ioc.Repo.Products.Get(productID)
-	if err != nil {
-		return false, err
-	}
-
-	var likes *domain.LikeProductDAO
-	if err := repo.col.FindOne(ctx, bson.M{"userid": userID, "productid": productID, "removed": false}).Decode(&likes); err != nil {
-		repo.col.InsertOne(
-			ctx,
-			bson.M{"userid": userID, "created": time.Now(), "updated": time.Now(), "productid": productID, "product": product, "removed": false, "ispushed": false, "lastprice": product.DiscountedPrice},
-		)
-		return true, nil
-	}
-
-	repo.col.FindOneAndUpdate(ctx, bson.M{"userid": userID, "productid": productID, "removed": false}, bson.M{"$set": bson.M{"removed": true, "updated": time.Now()}})
-
-	return false, nil
-}
-
-func (repo *productLikeRepo) List(userID string) ([]*domain.LikeProductDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	filter := bson.M{"userid": userID, "removed": false}
-	cursor, err := repo.col.Find(ctx, filter)
-	if err != nil {
-		return nil, err
-	}
-
-	var likes []*domain.LikeProductDAO
-	err = cursor.All(ctx, &likes)
-	if err != nil {
-		return nil, err
-	}
-
-	return likes, nil
-}
-
-func (repo *productLikeRepo) ListProductsLike(productId string) ([]*domain.LikeProductDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	productOID, _ := primitive.ObjectIDFromHex(productId)
-	filter := bson.M{"product._id": productOID, "removed": false, "ispushed": false}
-	cursor, err := repo.col.Find(ctx, filter)
-	if err != nil {
-		log.Println(err, "List Like Products error: Repository - ListProductsLike")
-		return nil, errors.New("list like products error")
-	}
-
-	var likes []*domain.LikeProductDAO
-	err = cursor.All(ctx, &likes)
-	if err != nil {
-		log.Println("err in decoding likes", err)
-		return nil, err
-	}
-
-	return likes, nil
-}
-
-func (repo *productLikeRepo) Update(likeProductDao *domain.LikeProductDAO) (*domain.LikeProductDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": likeProductDao.ID}, bson.M{"$set": &likeProductDao})
-	if err != nil {
-		return nil, err
-	}
-
-	return likeProductDao, nil
-}
-
-func MongoProductLikesRepo(conn *MongoDB) repository.LikeProductsRepository {
-	return &productLikeRepo{
-		col: conn.likeProductsCol,
 	}
 }
