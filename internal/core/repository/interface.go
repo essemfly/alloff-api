@@ -135,12 +135,6 @@ type NotificationsRepository interface {
 	Update(*domain.NotificationDAO) (*domain.NotificationDAO, error)
 }
 
-type OrderCountsRepository interface {
-	Get(exhibitionID string) (int, error)
-	Push(exhibitionID string) (int, error)
-	Cancel(exhibitionID string) (int, error)
-}
-
 type AlloffSizeRepository interface {
 	Get(alloffSizeID string) (*domain.AlloffSizeDAO, error)
 	Upsert(dao *domain.AlloffSizeDAO) (*domain.AlloffSizeDAO, error)

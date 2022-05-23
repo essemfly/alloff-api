@@ -24,7 +24,6 @@ type iocRepo struct {
 	LikeBrands       repository.LikeBrandsRepository
 	Exhibitions      repository.ExhibitionsRepository
 	Refunds          repository.RefundItemsRepository
-	OrderCounts      repository.OrderCountsRepository
 	AlloffSizes      repository.AlloffSizeRepository
 }
 

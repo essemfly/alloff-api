@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/spf13/viper"
 )
 
@@ -33,5 +32,4 @@ func NewRedis() *RedisDB {
 }
 
 func (conn *RedisDB) RegisterRepos() {
-	ioc.Repo.OrderCounts = RedisOrderRepo(conn)
 }
