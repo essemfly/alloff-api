@@ -33,7 +33,6 @@ func main() {
 	pb.RegisterBrandServer(grpcServer, &services.BrandService{})
 	pb.RegisterNotificationServer(grpcServer, &services.NotiService{})
 	pb.RegisterExhibitionServer(grpcServer, &services.ExhibitionService{})
-	pb.RegisterTopBannerServer(grpcServer, &services.TopBannerService{})
 	pb.RegisterAlloffCategoryServer(grpcServer, &services.AlloffCategoryService{})
 	pb.RegisterAlloffSizeServer(grpcServer, &services.AlloffSizeService{})
 
