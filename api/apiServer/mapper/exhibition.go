@@ -67,7 +67,7 @@ func MapExhibitionMetaInfo(info *domain.ExhibitionMetaInfoDAO) *model.Exhibition
 		Brands:            brands,
 		AlloffCategories:  cats,
 		AlloffInventories: invs,
-		MaxDisctounts:     info.MaxDiscounts,
+		MaxDiscounts:      info.MaxDiscounts,
 	}
 }
 

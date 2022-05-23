@@ -6,6 +6,7 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )
@@ -56,8 +57,33 @@ func AddProductInfo(request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, er
 
 func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO {
 	pdInfo := &domain.ProductMetaInfoDAO{
-		Created: time.Now(),
-		Updated: time.Now(),
+		ID:                   primitive.NewObjectID(),
+		Brand:                &domain.BrandDAO{},
+		Source:               &domain.CrawlSourceDAO{},
+		Category:             &domain.CategoryDAO{},
+		AlloffCategory:       &domain.ProductAlloffCategoryDAO{},
+		ProductType:          []*domain.AlloffProductType{},
+		OriginalName:         "",
+		AlloffName:           "",
+		ProductID:            "",
+		ProductUrl:           "",
+		Price:                &domain.PriceDAO{},
+		Images:               []string{},
+		CachedImages:         []string{},
+		ThumbnailImage:       "",
+		Colors:               []string{},
+		Sizes:                []string{},
+		Inventory:            []*domain.InventoryDAO{},
+		AlloffInventory:      []*domain.AlloffInventoryDAO{},
+		SalesInstruction:     &domain.AlloffInstructionDAO{},
+		IsImageCached:        false,
+		IsInventoryMapped:    false,
+		IsTranslateRequired:  false,
+		IsCategoryClassified: false,
+		IsSoldout:            false,
+		IsRemoved:            false,
+		Created:              time.Now(),
+		Updated:              time.Now(),
 	}
 
 	pdInfo.SetBrandAndCategory(request.Brand, request.Source)
