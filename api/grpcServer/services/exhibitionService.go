@@ -46,7 +46,7 @@ func (s *ExhibitionService) ListExhibitions(ctx context.Context, req *grpcServer
 		query = *req.Query
 	}
 
-	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive, groupType, query)
+	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive, domain.EXHIBITION_STATUS_ALL, groupType, query)
 	if err != nil {
 		return nil, err
 	}

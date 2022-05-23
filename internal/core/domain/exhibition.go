@@ -18,9 +18,10 @@ const (
 type ExhibitionStatus string
 
 const (
-	EXHIBITION_LIVE    ExhibitionStatus = "LIVE"
-	EXHIBITION_NOTOPEN ExhibitionStatus = "NOT_OPEN"
-	EXHIBITION_CLOSED  ExhibitionStatus = "CLOSED"
+	EXHIBITION_LIVE       ExhibitionStatus = "LIVE"
+	EXHIBITION_NOTOPEN    ExhibitionStatus = "NOT_OPEN"
+	EXHIBITION_CLOSED     ExhibitionStatus = "CLOSED"
+	EXHIBITION_STATUS_ALL ExhibitionStatus = "ALL"
 )
 
 type GroupdealStatus string
