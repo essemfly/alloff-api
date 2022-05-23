@@ -8,12 +8,6 @@ import (
 func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.ExhibitionMessage {
 	pgs := []*grpcServer.ProductGroupMessage{}
 
-	if !brief {
-		for _, pg := range exDao.ProductGroups {
-			pgs = append(pgs, ProductGroupMapper(pg))
-		}
-	}
-
 	return &grpcServer.ExhibitionMessage{
 		ExhibitionId: exDao.ID.Hex(),
 		// MetaInfos

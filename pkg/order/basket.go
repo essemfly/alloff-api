@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/rs/xid"
+	"go.uber.org/zap"
 )
 
 type Basket struct {
@@ -16,10 +18,11 @@ type Basket struct {
 }
 
 type BasketItem struct {
-	Product      *domain.ProductDAO
-	ProductGroup *domain.ProductGroupDAO
-	Size         string
-	Quantity     int
+	Product        *domain.ProductDAO
+	ProductGroupID string
+	ExhibitionID   string
+	Size           string
+	Quantity       int
 }
 
 func (basket *Basket) IsValid() []error {
@@ -30,10 +33,8 @@ func (basket *Basket) IsValid() []error {
 		currentPrice := item.Product.ProductInfo.Price.CurrentPrice
 		totalPrices += currentPrice * item.Quantity
 
-		if item.ProductGroup != nil {
-			if !item.ProductGroup.IsLive() {
-				errs = append(errs, fmt.Errorf("ERR200:productgroup timeout"+item.Product.ID.Hex()))
-			}
+		if item.Product.IsNotSale {
+			errs = append(errs, fmt.Errorf("ERR200:productgroup timeout"+item.Product.ID.Hex()))
 		}
 
 		isValidSize, isValidQuantity := false, false
@@ -66,7 +67,6 @@ func (basket *Basket) IsValid() []error {
 		if !isValidQuantity {
 			errs = append(errs, fmt.Errorf("ERR103:invalid product option quantity"+item.Product.ID.Hex()))
 		}
-
 	}
 
 	if basket.ProductPrice != totalPrices {
@@ -84,27 +84,27 @@ func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error)
 	for _, item := range basket.Items {
 		orderItemType := domain.NORMAL_ORDER
 		productPrice := item.Product.ProductInfo.Price.CurrentPrice
-		if item.ProductGroup != nil {
-			if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
-				orderItemType = domain.EXHIBITION_ORDER
-			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_TIMEDEAL {
-				orderItemType = domain.TIMEDEAL_ORDER
-			} else if item.ProductGroup.GroupType == domain.PRODUCT_GROUP_GROUPDEAL {
-				orderItemType = domain.GROUPDEAL_ORDER
-			}
+		pg, err := ioc.Repo.ProductGroups.Get(item.ProductGroupID)
+		if err != nil {
+			config.Logger.Error("pg not found in build order", zap.Error(err))
+			return nil, err
+		}
+		if pg.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
+			orderItemType = domain.EXHIBITION_ORDER
+		} else if pg.GroupType == domain.PRODUCT_GROUP_TIMEDEAL {
+			orderItemType = domain.TIMEDEAL_ORDER
+		} else if pg.GroupType == domain.PRODUCT_GROUP_GROUPDEAL {
+			orderItemType = domain.GROUPDEAL_ORDER
 		}
 
 		itemCode := utils.CreateShortUUID()
 
-		_, err := ioc.Repo.OrderItems.GetByCode(itemCode)
+		_, err = ioc.Repo.OrderItems.GetByCode(itemCode)
 		for err == nil {
 			itemCode = utils.CreateShortUUID()
 		}
 
-		exhibitionID := ""
-		if item.ProductGroup != nil {
-			exhibitionID = item.ProductGroup.ExhibitionID
-		}
+		exhibitionID := item.ExhibitionID
 
 		orderItems = append(orderItems, &domain.OrderItemDAO{
 			OrderItemCode:          itemCode,

@@ -1,30 +1,17 @@
 package mapper
 
 import (
-	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
-func ProductGroupMapper(pg *domain.ProductGroupDAO) *grpcServer.ProductGroupMessage {
+func ProductGroupMapper(pg *domain.ProductGroupDAO, pds []*domain.ProductDAO) *grpcServer.ProductGroupMessage {
 	products := []*grpcServer.ProductInGroupMessage{}
-	for _, pd := range pg.Products {
-		if pd.Product != nil {
-			// 이 부분 productgroup에서 어떤 products들을 보내줘야할지에 대해서 고민이 필요하다.
-			products = append(products, &grpcServer.ProductInGroupMessage{
-				Priority: int32(pd.Priority),
-				Product:  ProductInfoMapper(pd.Product.ProductInfo),
-			})
-		} else {
-			pdInfoDao, err := ioc.Repo.ProductMetaInfos.Get(pd.ProductID.Hex())
-			if err != nil {
-				continue
-			}
-			products = append(products, &grpcServer.ProductInGroupMessage{
-				Priority: int32(pd.Priority),
-				Product:  ProductInfoMapper(pdInfoDao),
-			})
-		}
+	for _, pd := range pds {
+		products = append(products, &grpcServer.ProductInGroupMessage{
+			Priority: int32(pd.Weight),
+			Product:  ProductInfoMapper(pd.ProductInfo),
+		})
 	}
 
 	brand := &grpcServer.BrandMessage{}

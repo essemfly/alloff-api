@@ -1,8 +1,6 @@
 package resolver
 
 import (
-	"time"
-
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -18,25 +16,12 @@ func BuildBasketItems(input *model.OrderInput) ([]*order.BasketItem, error) {
 		}
 
 		basketItem := &order.BasketItem{
-			Product:      pd,
-			ProductGroup: nil,
-			Size:         item.Selectsize,
-			Quantity:     item.Quantity,
+			Product:        pd,
+			ProductGroupID: pd.ProductGroupID,
+			Size:           item.Selectsize,
+			Quantity:       item.Quantity,
 		}
 
-		if item.ProductGroupID != "" {
-			pg, _ := ioc.Repo.ProductGroups.Get(item.ProductGroupID)
-			now := time.Now()
-			if pg.FinishTime.Before(now) {
-				pg.RemoveProduct(pd.ID.Hex())
-				ioc.Repo.ProductGroups.Upsert(pg)
-				pd.ProductGroupID = ""
-				pd.ExhibitionID = ""
-				ioc.Repo.Products.Upsert(pd)
-			} else {
-				basketItem.ProductGroup = pg
-			}
-		}
 		basketItems = append(basketItems, basketItem)
 	}
 	return basketItems, nil
