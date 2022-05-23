@@ -16,7 +16,7 @@ func mapPostResponseToResult(pr *PostResponse) (*OmniousResult, error) {
 	}
 	omniousData := pr.Data.Objects[0].Tags[0]
 
-	taggingResult := TaggingResult{
+	taggingResult := domain.TaggingResultDAO{
 		Item:         omniousData.Item,
 		Colors:       omniousData.Colors,
 		ColorDetails: omniousData.ColorDetails,
@@ -32,15 +32,15 @@ func mapPostResponseToResult(pr *PostResponse) (*OmniousResult, error) {
 	}
 
 	res := &OmniousResult{
-		Category:      omniousData.Category,
-		TaggingResult: taggingResult,
+		Category:         omniousData.Category,
+		TaggingResultDAO: taggingResult,
 	}
 
 	return res, nil
 }
 
 // TODO 옴니어스 분석결과 <> alloff 카테고리 어떻게 나눌지 결정되면 수정 필요
-func MapOmniousCategoryToCategoryClassifier(omniousCat string) *domain.CategoryClassifier {
+func MapOmniousCategoryToCategoryClassifier(omniousCat string) *domain.AlloffCategoryDAO {
 	catMap := map[string]string{
 		"베스트":     "1_outer",
 		"코트":      "1_outer",
@@ -81,7 +81,7 @@ func MapOmniousCategoryToCategoryClassifier(omniousCat string) *domain.CategoryC
 	if err != nil {
 		return nil
 	}
-	return &domain.CategoryClassifier{
+	return &domain.AlloffCategoryDAO{
 		KeyName: alloffCat.KeyName,
 		Name:    alloffCat.Name,
 	}

@@ -9,6 +9,5 @@ func AlloffSizeMapper(alloffSize *domain.AlloffSizeDAO) *grpcServer.AlloffSizeMe
 	return &grpcServer.AlloffSizeMessage{
 		AlloffSizeId: alloffSize.ID.Hex(),
 		SizeName:     alloffSize.SizeName,
-		GuideImage:   alloffSize.GuideImage,
 	}
 }
