@@ -13,6 +13,7 @@ const (
 	DELIVERY_START_TRACK = "deliveryStartedTrack"
 	PAYMENT_CANCEL       = "paymentCanceled"
 	PAYMENT_OK           = "paymentOk"
+	EXHIBITION_ALARM     = "exhibitionAlarmOk"
 )
 
 const (
@@ -29,7 +30,7 @@ type AlimtalkDAO struct {
 	UserID         string
 	Mobile         string
 	TemplateCode   string
-	ReferenceID    string
+	ReferenceID    string // 알림톡이 참조하는 무언가의 id (Payment id 같은것)
 	ToastRequestID string
 	TemplateParams map[string]string
 	Status         AlimtalkStatus

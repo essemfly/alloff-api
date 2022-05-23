@@ -12,6 +12,15 @@ const (
 	EXHIBITION_TIMEDEAL  ExhibitionType = "TIMEDEAL"
 	EXHIBITION_NORMAL    ExhibitionType = "NORMAL"
 	EXHIBITION_GROUPDEAL ExhibitionType = "GROUPDEAL"
+	EXHIBITION_ALL       ExhibitionType = "ALL"
+)
+
+type ExhibitionStatus string
+
+const (
+	EXHIBITION_LIVE    ExhibitionStatus = "LIVE"
+	EXHIBITION_NOTOPEN ExhibitionStatus = "NOT_OPEN"
+	EXHIBITION_CLOSED  ExhibitionStatus = "CLOSED"
 )
 
 type GroupdealStatus string
