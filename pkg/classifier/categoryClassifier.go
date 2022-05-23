@@ -18,21 +18,21 @@ func GetAlloffCategory(product *domain.ProductMetaInfoDAO) *domain.ProductAlloff
 	}
 }
 
-func categoryClassifier(product *domain.ProductMetaInfoDAO) (category1, category2 *domain.AlloffCategoryDAO, done bool) {
+func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) (category1, category2 *domain.AlloffCategoryDAO, done bool) {
 	//  1. brand + category 보고 분류1 실행
 	//  만약 티셔츠, 원피스, 스커트인경우에는 카테고리2 분류 필요 없음
 	//  2. product name보고 분류2실행
 
 	// 향후 두개 합쳐서 Keyname으로 query하면 좋겠다, 하지만 지금은 keyname이 틀리는 게 있을 확률이 높으니
 	possibleCat2 := []string{}
-	classifier, err := ioc.Repo.ClassifyRules.GetByKeyname(product.ProductInfo.Brand.KeyName, product.ProductInfo.Category.Name)
+	classifier, err := ioc.Repo.ClassifyRules.GetByKeyname(pdInfo.Brand.KeyName, pdInfo.Category.Name)
 	if err != nil {
-		log.Println("Brand key Category Key find no rules:", product.ProductInfo.Brand.KeyName, product.ProductInfo.Category.Name)
+		log.Println("Brand key Category Key find no rules:", pdInfo.Brand.KeyName, pdInfo.Category.Name)
 		return
 	}
 
 	for k, v := range classifier.HeuristicRules {
-		loweredName := strings.ToLower(product.ProductInfo.OriginalName)
+		loweredName := strings.ToLower(pdInfo.OriginalName)
 		if strings.Contains(loweredName, k) {
 			possibleCat2 = append(possibleCat2, v)
 		}

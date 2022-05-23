@@ -14,7 +14,7 @@ func UpdateAlloffInventory(exhibitionDao *domain.ExhibitionDAO) {
 		Limit:        10000,
 		ExhibitionID: exhibitionDao.ID.Hex(),
 	}
-	pds, _, err := product.Listing(filter)
+	pds, _, err := product.ListProducts(filter)
 	if err != nil {
 		log.Println("err occurred on get product list : ", err)
 	}
