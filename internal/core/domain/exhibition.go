@@ -31,6 +31,7 @@ type ExhibitionBanner struct {
 
 type ExhibitionDAO struct {
 	ID             primitive.ObjectID `bson:"_id, omitempty"`
+	MetaInfos      *ExhibitionMetaInfoDAO
 	ExhibitionType ExhibitionType
 	Title          string
 	SubTitle       string
@@ -45,6 +46,14 @@ type ExhibitionDAO struct {
 	NumAlarms      int
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
+}
+
+type ExhibitionMetaInfoDAO struct {
+	ProductTypes     []*AlloffProductType
+	Brands           []*BrandDAO
+	AlloffCategories []*AlloffCategoryDAO
+	AlloffSizes      []*AlloffSizeDAO
+	MaxDiscounts     int
 }
 
 func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {
