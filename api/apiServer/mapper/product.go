@@ -4,10 +4,14 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/internal/utils"
+	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 func MapProduct(pdDao *domain.ProductDAO) *model.Product {
+	if pdDao.IsNotSale {
+		return nil
+	}
+
 	deliveryDesc := MapDeliveryDescription(pdDao.ProductInfo.SalesInstruction.DeliveryDescription)
 	switch pdDao.ProductInfo.Source.IsForeignDelivery {
 	case true:
@@ -16,10 +20,8 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 		deliveryDesc.DeliveryType = model.DeliveryTypeDomesticDelivery
 	}
 
-	alloffPriceDiscountRate := utils.CalculateDiscountRate(pdDao.ProductInfo.Price.OriginalPrice, pdDao.ProductInfo.Price.CurrentPrice)
-
 	isSoldOut := true
-	for _, inv := range pdDao.ProductInfo.Inventory {
+	for _, inv := range pdDao.ProductInfo.AlloffInventory {
 		if inv.Quantity > 0 {
 			isSoldOut = false
 		}
@@ -27,7 +29,7 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 
 	if isSoldOut && !pdDao.ProductInfo.IsSoldout {
 		pdDao.ProductInfo.IsSoldout = true
-		go ioc.Repo.ProductMetaInfos.Upsert(pdDao.ProductInfo)
+		go ioc.Repo.Products.Upsert(pdDao)
 	}
 
 	if pdDao.ProductInfo.IsSoldout {
@@ -42,14 +44,23 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 		}
 	}
 
+	var information []*model.KeyValueInfo
+	for k, v := range pdDao.ProductInfo.SalesInstruction.Information {
+		var newInfo model.KeyValueInfo
+		newInfo.Key = k
+		newInfo.Value = v
+		information = append(information, &newInfo)
+	}
+
 	return &model.Product{
 		ID:                  pdDao.ID.Hex(),
+		IsNotSale:           pdDao.IsNotSale,
 		Brand:               MapBrandDaoToBrand(pdDao.ProductInfo.Brand, false),
 		AlloffCategory:      MapAlloffCatDaoToAlloffCat(pdDao.ProductInfo.AlloffCategory.First),
 		Name:                pdDao.ProductInfo.AlloffName,
 		OriginalPrice:       pdDao.ProductInfo.Price.OriginalPrice,
 		DiscountedPrice:     pdDao.ProductInfo.Price.CurrentPrice,
-		DiscountRate:        alloffPriceDiscountRate,
+		DiscountRate:        pdDao.ProductInfo.Price.DiscountRate,
 		Images:              pdDao.ProductInfo.Images,
 		ThumbnailImage:      thumbnailImage,
 		Inventory:           MapAlloffInventory(pdDao.ProductInfo.AlloffInventory),
@@ -57,6 +68,7 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 		Description:         MapDescription(pdDao.ProductInfo.SalesInstruction.Description),
 		DeliveryDescription: deliveryDesc,
 		CancelDescription:   MapCancelDescription(pdDao.ProductInfo.SalesInstruction.CancelDescription),
+		Information:         information,
 	}
 }
 
@@ -109,4 +121,30 @@ func MapCancelDescription(cancelDesc *domain.CancelDescriptionDAO) *model.Cancel
 		ChangeFee:       cancelDesc.ChangeFee,
 		RefundFee:       cancelDesc.RefundFee,
 	}
+}
+
+func MapProductSortingAndRanges(sortings []model.ProductsSortingType) (priceRanges []product.PriceRangeType, priceSorting product.PriceSortingType) {
+	for _, sorting := range sortings {
+		if sorting == model.ProductsSortingTypePriceAscending {
+			priceSorting = product.PRICE_ASCENDING
+		} else if sorting == model.ProductsSortingTypePriceDescending {
+			priceSorting = product.PRICE_DESCENDING
+		} else if sorting == model.ProductsSortingTypeDiscountrateAscending {
+			priceSorting = product.DISCOUNTRATE_ASCENDING
+		} else if sorting == model.ProductsSortingTypeDiscountrateDescending {
+			priceSorting = product.DISCOUNTRATE_DESCENDING
+		} else {
+			if sorting == model.ProductsSortingTypeDiscount0_30 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_30)
+			} else if sorting == model.ProductsSortingTypeDiscount30_50 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_50)
+			} else if sorting == model.ProductsSortingTypeDiscount50_70 {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_70)
+			} else {
+				priceRanges = append(priceRanges, product.PRICE_RANGE_100)
+			}
+		}
+	}
+
+	return
 }

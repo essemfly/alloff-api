@@ -13,18 +13,21 @@ import (
 type ProductListInput struct {
 	Offset           int
 	Limit            int
-	AlloffCategoryID string
+	ProductType      string
 	ExhibitionID     string
-	ProductGroupID   string
-	Modulename       string
-	AlloffSizeIDs    []string
+	AlloffCategoryID string
 	BrandIDs         []string
+	AlloffSizeIDs    []string
 	PriceRanges      []PriceRangeType
 	PriceSorting     PriceSortingType
 }
 
 func (input *ProductListInput) BuildFilter() (bson.M, error) {
 	filter := bson.M{"isnotsale": false}
+
+	if input.ProductType != "" {
+		filter["productinfo.producttype"] = input.ProductType
+	}
 
 	if input.AlloffCategoryID != "" {
 		alloffcat, err := ioc.Repo.AlloffCategories.Get(input.AlloffCategoryID)
@@ -40,13 +43,6 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 	if input.ExhibitionID != "" {
 		filter["exhibitionid"] = input.ExhibitionID
 
-	}
-	if input.ProductGroupID != "" {
-		filter["productgroupid"] = input.ProductGroupID
-	}
-
-	if input.Modulename != "" {
-		filter["productinfo.source.crawlmodulename"] = input.Modulename
 	}
 
 	if len(input.AlloffSizeIDs) > 0 {

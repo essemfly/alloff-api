@@ -287,6 +287,7 @@ type PaymentStatus struct {
 
 type Product struct {
 	ID                  string               `json:"id"`
+	IsNotSale           bool                 `json:"isNotSale"`
 	Brand               *Brand               `json:"brand"`
 	AlloffCategory      *AlloffCategory      `json:"alloffCategory"`
 	Name                string               `json:"name"`
