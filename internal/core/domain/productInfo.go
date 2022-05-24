@@ -120,7 +120,7 @@ type ProductMetaInfoDAO struct {
 	Source               *CrawlSourceDAO
 	Category             *CategoryDAO
 	AlloffCategory       *ProductAlloffCategoryDAO
-	ProductType          []*AlloffProductType
+	ProductType          []AlloffProductType
 	OriginalName         string
 	AlloffName           string
 	ProductID            string
@@ -249,7 +249,7 @@ func (pdInfo *ProductMetaInfoDAO) SetAlloffInventory(inventories []*InventoryDAO
 	pdInfo.AlloffInventory = alloffInventory
 }
 
-func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory() {
+func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory(catID string) {
 	// if pdInfo.AlloffCategory == nil || !pdInfo.AlloffCategory.Done {
 	// 	alloffCat := classifier.GetAlloffCategory(pdInfo)
 	// 	pdInfo.UpdateAlloffCategory(alloffCat)

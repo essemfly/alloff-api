@@ -2531,7 +2531,7 @@ type KeyValueInfo {
 input ProductsInput {
   offset: Int!
   limit: Int!
-  productType: String!
+  productType: AlloffProductType!
   exhibitionId: String!
   alloffCategoryId: String
   brandIds: [String!]
@@ -12160,7 +12160,7 @@ func (ec *executionContext) unmarshalInputProductsInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productType"))
-			it.ProductType, err = ec.unmarshalNString2string(ctx, v)
+			it.ProductType, err = ec.unmarshalNAlloffProductType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductType(ctx, v)
 			if err != nil {
 				return it, err
 			}

@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
+	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"github.com/lessbutter/alloff-api/pkg/product"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
@@ -272,10 +273,9 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		pdInfoDao.IsRemoved = *req.IsRemoved
 	}
 
-	// TODO: Update Alloff Category should be modified
 	if req.AlloffCategoryId != nil {
-		// productCatDao := classifier.ClassifyProducts(*req.AlloffCategoryId)
-		// pdInfoDao.UpdateAlloffCategory(productCatDao)
+		productCatDao := classifier.ClassifyProducts(*req.AlloffCategoryId)
+		pdInfoDao.AlloffCategory = productCatDao
 		pdInfoDao.AlloffCategory.Touched = true
 	}
 

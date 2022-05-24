@@ -97,7 +97,7 @@ type KeyValueInfo {
 input ProductsInput {
   offset: Int!
   limit: Int!
-  productType: String!
+  productType: AlloffProductType!
   exhibitionId: String!
   alloffCategoryId: String
   brandIds: [String!]

@@ -64,7 +64,7 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 		Source:               &domain.CrawlSourceDAO{},
 		Category:             &domain.CategoryDAO{},
 		AlloffCategory:       &domain.ProductAlloffCategoryDAO{},
-		ProductType:          []*domain.AlloffProductType{},
+		ProductType:          []domain.AlloffProductType{},
 		OriginalName:         "",
 		AlloffName:           "",
 		ProductID:            "",
@@ -92,6 +92,7 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	pdInfo.SetGeneralInfo(request.AlloffName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Information)
 	alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
 	pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
+	pdInfo.ProductType = request.ProductType
 
 	descImages := append(request.DescriptionImages, request.Images...)
 	if request.ModuleName == "intrend" {

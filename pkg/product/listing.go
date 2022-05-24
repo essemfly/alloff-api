@@ -13,7 +13,7 @@ import (
 type ProductListInput struct {
 	Offset           int
 	Limit            int
-	ProductType      string
+	ProductType      domain.AlloffProductType
 	ProductGroupID   string
 	ExhibitionID     string
 	AlloffCategoryID string

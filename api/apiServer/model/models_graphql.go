@@ -324,7 +324,7 @@ type ProductGroup struct {
 type ProductsInput struct {
 	Offset           int                   `json:"offset"`
 	Limit            int                   `json:"limit"`
-	ProductType      string                `json:"productType"`
+	ProductType      AlloffProductType     `json:"productType"`
 	ExhibitionID     string                `json:"exhibitionId"`
 	AlloffCategoryID *string               `json:"alloffCategoryId"`
 	BrandIds         []string              `json:"brandIds"`
