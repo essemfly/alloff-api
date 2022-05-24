@@ -1,11 +1,10 @@
 package classifier
 
 import (
-	"log"
-	"strings"
-
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"log"
+	"strings"
 )
 
 func GetAlloffCategory(product *domain.ProductMetaInfoDAO) *domain.ProductAlloffCategoryDAO {

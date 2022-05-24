@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -250,10 +251,15 @@ func (pdInfo *ProductMetaInfoDAO) SetAlloffInventory(inventories []*InventoryDAO
 }
 
 func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory(catID string) {
-	// if pdInfo.AlloffCategory == nil || !pdInfo.AlloffCategory.Done {
-	// 	alloffCat := classifier.GetAlloffCategory(pdInfo)
-	// 	pdInfo.UpdateAlloffCategory(alloffCat)
-	// }
+	if pdInfo.AlloffCategory == nil {
+		alloffCat := classifier.GetAlloffCategory(pdInfo)
+		pdInfo.AlloffCategory = alloffCat
+		pdInfo.IsCategoryClassified = true
+	} else if pdInfo.AlloffCategory == nil || !pdInfo.AlloffCategory.Done {
+		alloffCat := classifier.GetOmniousClassifier(pdInfo)
+		pdInfo.AlloffCategory = alloffCat
+		pdInfo.IsCategoryClassified = true
+	}
 }
 
 func (pdInfo *ProductMetaInfoDAO) Release(size string, quantity int) error {
@@ -287,7 +293,13 @@ func (pdInfo *ProductMetaInfoDAO) Revert(size string, quantity int) error {
 	return errors.New("no matched product size option")
 }
 
-// TODO: Check soldout should be written
 func (pdInfo *ProductMetaInfoDAO) CheckSoldout() {
+	invCnt := 0
+	for _, inv := range pdInfo.AlloffInventory {
+		invCnt += inv.Quantity
+	}
 
+	if invCnt == 0 {
+		pdInfo.IsSoldout = true
+	}
 }
