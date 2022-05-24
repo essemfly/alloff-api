@@ -81,7 +81,7 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 	done <- true
 }
 
-func getNiceClaupDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getNiceClaupDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.niceclaup.co.kr"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
@@ -103,7 +103,7 @@ func getNiceClaupDetail(productUrl string) (imageUrls, colors, sizes []string, i
 			disabled := el.ChildAttr("label input", "disabled")
 			sizes = append(sizes, size)
 			if disabled != "disabled" {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     size,
 					Quantity: 10,
 				})

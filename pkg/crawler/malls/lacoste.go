@@ -75,7 +75,7 @@ func CrawlLacoste(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 	done <- true
 }
 
-func getLacosteDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getLacosteDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.lacoste.com"),
 	)
@@ -98,7 +98,7 @@ func getLacosteDetail(productUrl string) (imageUrls, colors, sizes []string, inv
 			attrs := el.ChildAttr("button", "class")
 			sizes = append(sizes, size)
 			if !strings.Contains(attrs, "is-disabled") {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Quantity: 10,
 					Size:     size,
 				})

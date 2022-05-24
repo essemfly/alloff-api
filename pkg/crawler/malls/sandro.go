@@ -119,7 +119,7 @@ func getSandroDetail(productUrl string) (
 	productName string,
 	images []string,
 	sizes []string,
-	inventories []domain.InventoryDAO,
+	inventories []*domain.InventoryDAO,
 	description map[string]string,
 	originalPrice float32,
 	salesPrice float32,
@@ -145,7 +145,7 @@ func getSandroDetail(productUrl string) (
 				stock = 0
 			}
 			sizes = append(sizes, size)
-			inventories = append(inventories, domain.InventoryDAO{
+			inventories = append(inventories, &domain.InventoryDAO{
 				Size:     size,
 				Quantity: stock,
 			})

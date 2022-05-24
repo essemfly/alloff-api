@@ -123,7 +123,7 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 	done <- true
 }
 
-func getDaehyunDetailInfo(producturl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getDaehyunDetailInfo(producturl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.daehyuninside.com"),
 	)
@@ -210,7 +210,7 @@ func getDaehyunDetailInfo(producturl string) (imageUrls, colors, sizes []string,
 		}
 		if !isSoldout {
 			sizes = append(sizes, value)
-			inventories = append(inventories, domain.InventoryDAO{
+			inventories = append(inventories, &domain.InventoryDAO{
 				Quantity: 10,
 				Size:     value,
 			})

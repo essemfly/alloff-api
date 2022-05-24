@@ -9,19 +9,19 @@ func ExhibitionMapper(exDao *domain.ExhibitionDAO, brief bool) *grpcServer.Exhib
 	pgs := []*grpcServer.ProductGroupMessage{}
 
 	return &grpcServer.ExhibitionMessage{
-		ExhibitionId: exDao.ID.Hex(),
-		// MetaInfos
-		ExhibitionType: ExhibitionGroupTypeMapper(exDao.ExhibitionType),
+		ExhibitionId:   exDao.ID.Hex(),
+		BannerImage:    exDao.BannerImage,
+		ThumbnailImage: exDao.ThumbnailImage,
 		Title:          exDao.Title,
 		Subtitle:       exDao.SubTitle,
 		Description:    exDao.Description,
-		// Tags
-		BannerImage:    exDao.BannerImage,
-		ThumbnailImage: exDao.ThumbnailImage,
-		Pgs:            pgs,
+		Tags:           exDao.Tags,
 		StartTime:      exDao.StartTime.String(),
 		FinishTime:     exDao.FinishTime.String(),
+		Pgs:            pgs,
 		IsLive:         exDao.IsLive,
+		ExhibitionType: ExhibitionGroupTypeMapper(exDao.ExhibitionType),
+		// MetaInfos
 		// NumAlarms
 	}
 }

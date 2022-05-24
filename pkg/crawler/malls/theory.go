@@ -101,7 +101,7 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 	done <- true
 }
 
-func getTheoryDetail(productUrl, productCode string) (imageUrls, sizes, colors []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getTheoryDetail(productUrl, productCode string) (imageUrls, sizes, colors []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("outlet.theory.com"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
@@ -123,7 +123,7 @@ func getTheoryDetail(productUrl, productCode string) (imageUrls, sizes, colors [
 			unselectableSize := el.ChildText(".unselectable")
 			// 해당 사이즈가 선택 불가능한 사이즈가 아닐 경우 재고가 있는 걸로 판단
 			if size != unselectableSize {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Quantity: 10,
 					Size:     size,
 				})

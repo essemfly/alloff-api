@@ -115,7 +115,7 @@ type BylynnStock struct {
 	STOCKQTY int    `json:"STOCKQTY"`
 }
 
-func getBylynnDetail(productUrl string) (title string, imageUrls []string, sizes, colors []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getBylynnDetail(productUrl string) (title string, imageUrls []string, sizes, colors []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("bylynn.shop"),
 	)
@@ -142,7 +142,7 @@ func getBylynnDetail(productUrl string) (title string, imageUrls []string, sizes
 
 	c.OnHTML("#contents100", func(e *colly.HTMLElement) {
 		colors := map[string]string{}
-		sizeInventories := []domain.InventoryDAO{}
+		sizeInventories := []*domain.InventoryDAO{}
 
 		e.ForEach(".options dl", func(_ int, el *colly.HTMLElement) {
 			if el.ChildText("dt") == "COLOR" {
@@ -161,7 +161,7 @@ func getBylynnDetail(productUrl string) (title string, imageUrls []string, sizes
 		for _, stock := range *stockCrawlResponse {
 			sizes = append(sizes, stock.SIZECDNM)
 			if stock.STOCKQTY > 0 {
-				sizeInventories = append(inventories, domain.InventoryDAO{
+				sizeInventories = append(inventories, &domain.InventoryDAO{
 					Quantity: stock.STOCKQTY,
 					Size:     stock.SIZECDNM,
 				})
@@ -172,7 +172,7 @@ func getBylynnDetail(productUrl string) (title string, imageUrls []string, sizes
 		// Colors 별로 inventory가 맞는지는 모르겠다.
 		for _, inv := range sizeInventories {
 			for _, name := range colors {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Quantity: inv.Quantity,
 					Size:     name + " - " + inv.Size,
 				})

@@ -129,7 +129,7 @@ func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.Cra
 	return numProducts
 }
 
-func getSSFDetailInfo(productUrl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getSSFDetailInfo(productUrl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.ssfshop.com"),
 	)
@@ -153,7 +153,7 @@ func getSSFDetailInfo(productUrl string) (imageUrls, colors, sizes []string, inv
 				sizes = append(sizes, size)
 				stockInStr := el.Attr("onlineusefulinvqty")
 				stock, _ := strconv.Atoi(stockInStr)
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     size,
 					Quantity: stock,
 				})

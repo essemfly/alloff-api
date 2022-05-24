@@ -161,7 +161,7 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 
 		if len(sizes) == 0 && len(colors) > 0 {
 			for _, color := range colors {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Quantity: 10,
 					Size:     color,
 				})
@@ -206,7 +206,7 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 	return numProducts
 }
 
-func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []domain.InventoryDAO, description map[string]string, images []string) {
+func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []*domain.InventoryDAO, description map[string]string, images []string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.theoutnet.com", "www.theoutnet.com:443"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
@@ -230,7 +230,7 @@ func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []doma
 			unavailable := el.ChildAttr(".GridSelect11__optionBox", "aria-label")
 			sizes = append(sizes, size)
 			if !strings.Contains(unavailable, "sold out") {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     size,
 					Quantity: 10,
 				})

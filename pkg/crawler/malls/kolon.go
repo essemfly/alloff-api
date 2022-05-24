@@ -78,7 +78,7 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 		images := []string{}
 		sizes := []string{}
 		colors := []string{}
-		inventories := []domain.InventoryDAO{}
+		inventories := []*domain.InventoryDAO{}
 		description := map[string]string{}
 
 		errorMessage := "Crawl Failed: Product Detail" + source.Category.KeyName + " - " + productUrl
@@ -109,7 +109,7 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 					for _, size := range result.Options {
 						sizes = append(sizes, size.Size)
 						if size.Stock.Level != "outOfStock" {
-							inventories = append(inventories, domain.InventoryDAO{
+							inventories = append(inventories, &domain.InventoryDAO{
 								Size:     size.Size,
 								Quantity: 10,
 							})

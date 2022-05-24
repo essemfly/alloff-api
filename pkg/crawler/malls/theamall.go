@@ -71,7 +71,7 @@ func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			sizes := []string{}
 			colors := []string{}
 			images := []string{}
-			inventories := []domain.InventoryDAO{}
+			inventories := []*domain.InventoryDAO{}
 
 			if len(strings.Split(mainImgTag, "'")) > 1 {
 				val := strings.Split(mainImgTag, "'")[1]
@@ -147,7 +147,7 @@ func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceD
 									colors = append(colors, val.Opt1)
 									sizes = append(sizes, val.Opt1+" - "+val.Opt2)
 									stock, _ := strconv.Atoi(val.Totstock)
-									inventories = append(inventories, domain.InventoryDAO{
+									inventories = append(inventories, &domain.InventoryDAO{
 										Size:     val.Opt1 + " - " + val.Opt2,
 										Quantity: stock,
 									})

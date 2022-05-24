@@ -103,11 +103,12 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	if req.ModuleName != nil {
 		moduleName = *req.ModuleName
 	}
-	invDaos := []domain.InventoryDAO{}
+	invDaos := []*domain.AlloffInventoryDAO{}
 	for _, inv := range req.Inventory {
-		invDaos = append(invDaos, domain.InventoryDAO{
-			Size:     inv.Size,
-			Quantity: int(inv.Quantity),
+		size, _ := ioc.Repo.AlloffSizes.Get(inv.AlloffSize.AlloffSizeId)
+		invDaos = append(invDaos, &domain.AlloffInventoryDAO{
+			AlloffSize: *size,
+			Quantity:   int(inv.Quantity),
 		})
 	}
 	productID := ""
@@ -160,8 +161,10 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		LatestDeliveryDays:   int(req.LatestDeliveryDays),
 		IsRefundPossible:     req.IsRefundPossible,
 		RefundFee:            int(req.RefundFee),
-		Inventory:            invDaos,
+		Inventory:            nil,
+		AlloffInventory:      invDaos,
 		ModuleName:           moduleName,
+		IsInventoryMapped:    true,
 	}
 
 	pdInfoDao, err := product.AddProductInfo(addRequest)
@@ -220,14 +223,15 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 
 	// TODO: AlloffInventory를 바꿔주는 작업이 되어야한다.
 	if req.Inventory != nil {
-		invDaos := []*domain.InventoryDAO{}
+		invDaos := []*domain.AlloffInventoryDAO{}
 		for _, inv := range req.Inventory {
-			invDaos = append(invDaos, &domain.InventoryDAO{
-				Size:     inv.Size,
-				Quantity: int(inv.Quantity),
+			size, _ := ioc.Repo.AlloffSizes.Get(inv.AlloffSize.AlloffSizeId)
+			invDaos = append(invDaos, &domain.AlloffInventoryDAO{
+				AlloffSize: *size,
+				Quantity:   int(inv.Quantity),
 			})
 		}
-		pdInfoDao.Inventory = invDaos
+		pdInfoDao.AlloffInventory = invDaos
 	}
 
 	if req.Description != nil {

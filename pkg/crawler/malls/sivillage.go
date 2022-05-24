@@ -92,7 +92,7 @@ func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSource
 	done <- true
 }
 
-func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.sivillage.com"),
 	)
@@ -121,7 +121,7 @@ func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inv
 						sizeFound = true
 						sizes = append(sizes, size)
 						if !strings.Contains(sizeInClass, "disabled") {
-							inventories = append(inventories, domain.InventoryDAO{
+							inventories = append(inventories, &domain.InventoryDAO{
 								Size:     size,
 								Quantity: 10,
 							})
@@ -134,7 +134,7 @@ func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inv
 						size = strings.Trim(size, " ")
 						sizes = append(sizes, size)
 						if ele.Attr("class") != "ee_disabled" {
-							inventories = append(inventories, domain.InventoryDAO{
+							inventories = append(inventories, &domain.InventoryDAO{
 								Size:     size,
 								Quantity: 10,
 							})

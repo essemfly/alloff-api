@@ -101,7 +101,7 @@ type StockInfo struct {
 	// Option별로 가격이 다를 가능성이있음
 }
 
-func getLoungebDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO) {
+func getLoungebDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO) {
 	colors = nil
 	c := colly.NewCollector(
 		colly.AllowedDomains("lounge-b.co.kr"),
@@ -127,7 +127,7 @@ func getLoungebDetail(productUrl string) (imageUrls, colors, sizes []string, inv
 			for _, val := range stockCrawlRseponse.Instances {
 				sizes = append(sizes, val.OptionValue)
 				if val.StockNumber > 0 {
-					inventories = append(inventories, domain.InventoryDAO{
+					inventories = append(inventories, &domain.InventoryDAO{
 						Size:     val.OptionValue,
 						Quantity: val.StockNumber,
 					})

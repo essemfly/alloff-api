@@ -105,7 +105,7 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 	done <- true
 }
 
-func CrawlSisleyDetail(productUrl string) (images, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func CrawlSisleyDetail(productUrl string) (images, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.sisleymall.com", "www.sisleymall.com:443"),
 	)
@@ -127,7 +127,7 @@ func CrawlSisleyDetail(productUrl string) (images, colors, sizes []string, inven
 			sizeInClass := el.Attr("class")
 			sizes = append(sizes, el.ChildText("label span"))
 			if !strings.Contains(sizeInClass, "disabled") {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     el.ChildText("label span"),
 					Quantity: 10,
 				})

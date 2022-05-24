@@ -106,7 +106,7 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 	done <- true
 }
 
-func CrawlBenettonDetail(productUrl string) (images, sizes, colors []string, inventories []domain.InventoryDAO, description map[string]string) {
+func CrawlBenettonDetail(productUrl string) (images, sizes, colors []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("benettonmall.com", "benettonmall.com:443"),
 	)
@@ -128,7 +128,7 @@ func CrawlBenettonDetail(productUrl string) (images, sizes, colors []string, inv
 			sizeInClass := el.Attr("class")
 			sizes = append(sizes, el.ChildText("label span"))
 			if !strings.Contains(sizeInClass, "disabled") {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     el.ChildText("label span"),
 					Quantity: 10, // default value
 				})

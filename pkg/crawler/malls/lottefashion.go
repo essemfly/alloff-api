@@ -131,13 +131,13 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 
 		colors := []string{}
 		newSizes := []string{}
-		inventories := []domain.InventoryDAO{}
+		inventories := []*domain.InventoryDAO{}
 		for _, sizeOption := range pd.Sizes {
 			if !utils.ItemExists(newSizes, sizeOption.Size) {
 				newSizes = append(newSizes, sizeOption.Size)
 
 				if sizeOption.Stock > 0 {
-					inventories = append(inventories, domain.InventoryDAO{
+					inventories = append(inventories, &domain.InventoryDAO{
 						Size:     sizeOption.Size,
 						Quantity: sizeOption.Stock,
 					})

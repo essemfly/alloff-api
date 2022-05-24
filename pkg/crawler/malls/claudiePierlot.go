@@ -90,7 +90,7 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 }
 
 func getClaudiePierlotDetail(productUrl string) (
-	sizes []string, inventories []domain.InventoryDAO, description map[string]string, colors []string,
+	sizes []string, inventories []*domain.InventoryDAO, description map[string]string, colors []string,
 ) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("de.claudiepierlot.com"),
@@ -98,7 +98,7 @@ func getClaudiePierlotDetail(productUrl string) (
 	)
 	sizes = []string{}
 	description = map[string]string{}
-	inventories = []domain.InventoryDAO{}
+	inventories = []*domain.InventoryDAO{}
 	colors = []string{}
 
 	// 설명
@@ -179,7 +179,7 @@ func getClaudiePierlotDetail(productUrl string) (
 			if size != "Größe" {
 				if isSize {
 					sizes = append(sizes, size)
-					inventories = append(inventories, domain.InventoryDAO{
+					inventories = append(inventories, &domain.InventoryDAO{
 						Size:     size,
 						Quantity: stock,
 					})

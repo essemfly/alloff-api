@@ -111,7 +111,7 @@ func CrawlIDFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 	done <- true
 }
 
-func getIdfDetailInfo(producturl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getIdfDetailInfo(producturl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.idfmall.co.kr"),
 	)
@@ -189,7 +189,7 @@ func getIdfDetailInfo(producturl string) (imageUrls, colors, sizes []string, inv
 				}
 			}
 			if !isSoludout {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     colorItem + " - " + sizeOption,
 					Quantity: 10,
 				})

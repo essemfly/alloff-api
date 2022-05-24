@@ -158,19 +158,6 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		exhibitionGroupType = domain.EXHIBITION_GROUPDEAL
 	}
 
-	banners := []domain.ExhibitionBanner{}
-	if req.Banners != nil {
-		for _, banner := range req.Banners {
-			bannerDao := domain.ExhibitionBanner{
-				ImgUrl:         banner.ImgUrl,
-				Title:          banner.Title,
-				Subtitle:       banner.Subtitle,
-				ProductGroupId: banner.ProductGroupId,
-			}
-			banners = append(banners, bannerDao)
-		}
-	}
-
 	exDao := &domain.ExhibitionDAO{
 		ID:             primitive.NewObjectID(),
 		BannerImage:    req.BannerImage,

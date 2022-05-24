@@ -93,7 +93,7 @@ func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 	done <- true
 }
 
-func getIdLookDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getIdLookDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("idlookmall.com"),
 	)
@@ -116,7 +116,7 @@ func getIdLookDetail(productUrl string) (imageUrls, colors, sizes []string, inve
 			attrs := el.Attr("class")
 			sizes = append(sizes, size)
 			if !strings.Contains(attrs, "disabled") {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     size,
 					Quantity: 10,
 				})

@@ -118,7 +118,7 @@ func ParseHtml(s *goquery.Selection) (productName, productID, productUrl string,
 	return
 }
 
-func CrawlBabatheDetail(productUrl, productId string, source *domain.CrawlSourceDAO) (images, sizes, colors []string, inventories []domain.InventoryDAO, description map[string]string) {
+func CrawlBabatheDetail(productUrl, productId string, source *domain.CrawlSourceDAO) (images, sizes, colors []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	description = map[string]string{}
 
 	stockUrl := "https://pc.babathe.com/goods/includeGoodsDtlItemStockQtyList"
@@ -157,7 +157,7 @@ func CrawlBabatheDetail(productUrl, productId string, source *domain.CrawlSource
 	for _, val := range stockCrawlResponse.Wrapper {
 		sizes = append(sizes, val.Size)
 		if val.Quantity > 0 {
-			inventories = append(inventories, domain.InventoryDAO{
+			inventories = append(inventories, &domain.InventoryDAO{
 				Size:     val.Size,
 				Quantity: val.Quantity,
 			})

@@ -227,7 +227,7 @@ func (pdInfo *ProductMetaInfoDAO) SetCancelDesc(isRefundPossible bool, refundFee
 	}
 }
 
-func (pdInfo *ProductMetaInfoDAO) SetAlloffInventory(inventories []InventoryDAO) {
+func (pdInfo *ProductMetaInfoDAO) SetAlloffInventory(inventories []*InventoryDAO) {
 	mappingPolicies := pdInfo.Brand.InventoryMappingPolicies
 	alloffInventory := []*AlloffInventoryDAO{}
 

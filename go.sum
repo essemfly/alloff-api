@@ -388,6 +388,8 @@ github.com/labstack/echo/v4 v4.5.0/go.mod h1:czIriw4a0C1dFun+ObrXp7ok03xON0N1awS
 github.com/labstack/gommon v0.3.0/go.mod h1:MULnywXg0yavhxWKc+lOruYdAhDwPK9wf0OL7NoOu+k=
 github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220517080939-078401305ef0 h1:fakeBjjz11C6BJynOJ9l5aZb1DAv8kWNPAkODaS4AEA=
 github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220517080939-078401305ef0/go.mod h1:YNUTDezx6zOBfeXXiQN+w3kzhqIKfv4wssYnbgBdLy8=
+github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220524045758-5370a3664770 h1:0JeI/9bRz+9+BMectGFB6vNkQUNfLr1zVfvPPXazk50=
+github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220524045758-5370a3664770/go.mod h1:YNUTDezx6zOBfeXXiQN+w3kzhqIKfv4wssYnbgBdLy8=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.6 h1:5ibWZ6iY0NctNGWo87LalDlEZ6R41TqbbDamhfG/Qzo=

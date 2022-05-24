@@ -26,7 +26,8 @@ type AddMetaInfoRequest struct {
 	ThumbnailImage       string
 	Colors               []string
 	Sizes                []string
-	Inventory            []domain.InventoryDAO
+	Inventory            []*domain.InventoryDAO
+	AlloffInventory      []*domain.AlloffInventoryDAO
 	Description          []string
 	DescriptionImages    []string
 	DescriptionInfos     map[string]string
@@ -38,6 +39,7 @@ type AddMetaInfoRequest struct {
 	RefundFee            int
 	ModuleName           string
 	IsTranslateRequired  bool
+	IsInventoryMapped    bool
 }
 
 func AddProductInfo(request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {
@@ -105,7 +107,13 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	pdInfo.SetDeliveryDesc(request.IsForeignDelivery, 0, request.EarliestDeliveryDays, request.LatestDeliveryDays)
 	pdInfo.SetCancelDesc(request.IsRefundPossible, request.RefundFee)
 
-	pdInfo.SetAlloffInventory(request.Inventory)
+	if request.IsInventoryMapped {
+		pdInfo.AlloffInventory = request.AlloffInventory
+	} else {
+		pdInfo.SetAlloffInventory(request.Inventory)
+	}
+
+	pdInfo.IsInventoryMapped = true
 
 	return pdInfo
 }
