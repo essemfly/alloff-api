@@ -250,7 +250,7 @@ func (pdInfo *ProductMetaInfoDAO) SetAlloffInventory(inventories []*InventoryDAO
 	pdInfo.AlloffInventory = alloffInventory
 }
 
-func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory(catID string) {
+func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory() {
 	if pdInfo.AlloffCategory == nil {
 		alloffCat := classifier.GetAlloffCategory(pdInfo)
 		pdInfo.AlloffCategory = alloffCat
