@@ -49,16 +49,7 @@ func MapExhibitionMetaInfo(info *domain.ExhibitionMetaInfoDAO) *model.Exhibition
 		cats = append(cats, MapAlloffCatDaoToAlloffCat(catDao))
 	}
 
-	invs := []*model.AlloffInventory{}
-	for _, invDao := range info.AlloffInventories {
-		invs = append(invs, &model.AlloffInventory{
-			AlloffSize: &model.AlloffSize{
-				SizeName:       invDao.AlloffSize.AlloffSizeName,
-				AlloffCategory: MapAlloffCatDaoToAlloffCat(invDao.AlloffSize.AlloffCategory),
-			},
-			Quantity: invDao.Quantity,
-		})
-	}
+	invs := MapAlloffInventory(info.AlloffInventories)
 
 	productTypes := MapProductTypes(info.ProductTypes)
 
