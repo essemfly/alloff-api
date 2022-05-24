@@ -224,39 +224,41 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 
 	// Must be fixed
 	for _, productPriority := range req.ProductPriorities {
-		productObjId, _ := primitive.ObjectIDFromHex(productPriority.ProductId)
-		pdDao, err := ioc.Repo.Products.Get(productPriority.ProductId)
+		pdInfoDao, err := ioc.Repo.ProductMetaInfos.Get(productPriority.ProductId)
 		if err != nil {
-			log.Println("err occured in pd not found : ", productPriority.ProductId, err)
+			config.Logger.Error("err occured in pdinfo not found: "+productPriority.ProductId, zap.Error(err))
 			continue
 		}
-		pgDao.Products = append(pgDao.Products, &domain.ProductPriorityDAO{
-			Priority:  int(productPriority.Priority),
-			ProductID: productObjId,
-			Product:   pdDao,
-		})
-	}
-	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
-	if err != nil {
-		return nil, err
-	}
 
-	updatedPgDao, err := broker.ProductGroupSyncer(newPgDao)
-	if err != nil {
-		log.Println("product group syncing error", err)
-	}
+		newPdDao := &domain.ProductDAO{
+			ID:             primitive.NewObjectID(),
+			ProductInfo:    pdInfoDao,
+			ProductGroupID: pgDao.ID.Hex(),
+			ExhibitionID:   pgDao.ExhibitionID,
+			Weight:         int(productPriority.Priority),
+			IsNotSale:      false,
+			Created:        time.Now(),
+			Updated:        time.Now(),
+		}
 
-	if newPgDao.ExhibitionID != "" {
-		exDao, err := ioc.Repo.Exhibitions.Get(newPgDao.ExhibitionID)
+		_, err = ioc.Repo.Products.Insert(newPdDao)
 		if err != nil {
-			log.Println("exhibbition find error", err)
-		} else {
-			go broker.ExhibitionSyncer(exDao)
+			config.Logger.Error("err occured on products insert on pg : "+productPriority.ProductId, zap.Error(err))
 		}
 	}
 
+	// TODO: Exhibition 의 Meta Info들 업데이트 시켜줘야한다.
+	// if pgDao.ExhibitionID != "" {
+	// 	exDao, err := ioc.Repo.Exhibitions.Get(pgDao.ExhibitionID)
+	// 	if err != nil {
+	// 		log.Println("exhibbition find error", err)
+	// 	} else {
+	// 		go broker.ExhibitionSyncer(exDao)
+	// 	}
+	// }
+
 	productListInput := product.ProductListInput{
-		ProductGroupID: newPgDao.ID.Hex(),
+		ProductGroupID: pgDao.ID.Hex(),
 	}
 
 	pds, _, err := product.ListProducts(productListInput)
@@ -265,7 +267,7 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		return nil, err
 	}
 
-	return mapper.ProductGroupMapper(updatedPgDao, pds), nil
+	return mapper.ProductGroupMapper(pgDao, pds), nil
 }
 
 func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, req *grpcServer.ProductsInPgRequest) (*grpcServer.ProductGroupMessage, error) {

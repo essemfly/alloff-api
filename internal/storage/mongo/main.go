@@ -50,9 +50,9 @@ func NewMongoDB() *MongoDB {
 
 	return &MongoDB{
 		brandCol:           db.Collection("brands"),
-		productCol:         db.Collection("products"),
-		productMetaInfoCol: db.Collection("product_infos"),
-		productGroupCol:    db.Collection("productgroups"),
+		productCol:         db.Collection("products_test"),
+		productMetaInfoCol: db.Collection("product_infos_test"),
+		productGroupCol:    db.Collection("productgroups_test"),
 		crawlSourceCol:     db.Collection("sources"),
 		crawlRecordCol:     db.Collection("crawling_records"),
 		categoryCol:        db.Collection("categories"),
@@ -63,8 +63,8 @@ func NewMongoDB() *MongoDB {
 		notificationCol:    db.Collection("notifications"),
 		alimtalkCol:        db.Collection("alimtalks"),
 		likeBrandsCol:      db.Collection("likes_brands"),
-		exhibitionCol:      db.Collection("exhibitions"),
-		alloffSizeCol:      db.Collection("alloff_sizes"),
+		exhibitionCol:      db.Collection("exhibitions_test"),
+		alloffSizeCol:      db.Collection("alloff_sizes_test"),
 	}
 }
 
