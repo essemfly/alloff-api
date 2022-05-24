@@ -58,6 +58,11 @@ type BrandInput struct {
 	BrandID string `json:"brandId"`
 }
 
+type BrandOutput struct {
+	Brand       *Brand `json:"brand"`
+	NumProducts int    `json:"numProducts"`
+}
+
 type BrandsInput struct {
 	OnlyLikes *bool `json:"onlyLikes"`
 }
@@ -91,26 +96,19 @@ type Device struct {
 }
 
 type Exhibition struct {
-	ID             string          `json:"id"`
-	ExhibitionType ExhibitionType  `json:"exhibitionType"`
-	Title          string          `json:"title"`
-	SubTitle       string          `json:"subTitle"`
-	Description    string          `json:"description"`
-	Tags           []string        `json:"tags"`
-	BannerImage    string          `json:"bannerImage"`
-	ThumbnailImage string          `json:"thumbnailImage"`
-	StartTime      string          `json:"startTime"`
-	FinishTime     string          `json:"finishTime"`
-	NumAlarms      int             `json:"numAlarms"`
-	MetaInfos      *ExhibitionInfo `json:"metaInfos"`
-}
-
-type ExhibitionInfo struct {
-	ProductTypes      []AlloffProductType `json:"productTypes"`
-	Brands            []*Brand            `json:"brands"`
-	AlloffCategories  []*AlloffCategory   `json:"alloffCategories"`
-	AlloffInventories []*AlloffInventory  `json:"alloffInventories"`
-	MaxDiscounts      int                 `json:"maxDiscounts"`
+	ID             string              `json:"id"`
+	ProductTypes   []AlloffProductType `json:"productTypes"`
+	ExhibitionType ExhibitionType      `json:"exhibitionType"`
+	Title          string              `json:"title"`
+	SubTitle       string              `json:"subTitle"`
+	Description    string              `json:"description"`
+	Tags           []string            `json:"tags"`
+	BannerImage    string              `json:"bannerImage"`
+	ThumbnailImage string              `json:"thumbnailImage"`
+	StartTime      string              `json:"startTime"`
+	FinishTime     string              `json:"finishTime"`
+	NumAlarms      int                 `json:"numAlarms"`
+	MaxDiscounts   int                 `json:"maxDiscounts"`
 }
 
 type ExhibitionInput struct {
@@ -141,6 +139,19 @@ type LikeBrandInput struct {
 type Login struct {
 	UUID   string `json:"uuid"`
 	Mobile string `json:"mobile"`
+}
+
+type MetaInfoInput struct {
+	ExhibitionID     string            `json:"exhibitionId"`
+	ProductType      AlloffProductType `json:"productType"`
+	AlloffCategoryID *string           `json:"alloffCategoryId"`
+	BrandIds         []string          `json:"brandIds"`
+}
+
+type MetaInfoOutput struct {
+	Brands           []*BrandOutput    `json:"brands"`
+	AlloffCategories []*AlloffCategory `json:"alloffCategories"`
+	AlloffSizes      []*AlloffSize     `json:"alloffSizes"`
 }
 
 type NewUser struct {

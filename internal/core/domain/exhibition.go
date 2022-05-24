@@ -41,7 +41,7 @@ type ExhibitionBanner struct {
 
 type ExhibitionDAO struct {
 	ID             primitive.ObjectID `bson:"_id, omitempty"`
-	MetaInfos      *ExhibitionMetaInfoDAO
+	ProductTypes   []AlloffProductType
 	ExhibitionType ExhibitionType
 	Title          string
 	SubTitle       string
@@ -54,32 +54,9 @@ type ExhibitionDAO struct {
 	FinishTime     time.Time
 	IsLive         bool
 	NumAlarms      int
+	MaxDiscounts   int
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
-}
-
-type ExhibitionMetaInfoDAO struct {
-	ProductTypes      []AlloffProductType
-	Brands            []*BrandDAO
-	AlloffCategories  []*AlloffCategoryDAO
-	AlloffInventories []*AlloffInventoryDAO
-	MaxDiscounts      int
-}
-
-func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {
-	numProductsToShow := 10
-	products := []*ProductDAO{}
-	if len(exDao.ProductGroups) > 0 {
-		if len(exDao.ProductGroups[0].Products) > 0 {
-			for idx, productPriority := range exDao.ProductGroups[0].Products {
-				if idx >= numProductsToShow {
-					break
-				}
-				products = append(products, productPriority.Product)
-			}
-		}
-	}
-	return products
 }
 
 func (exDao *ExhibitionDAO) IsSales() bool {

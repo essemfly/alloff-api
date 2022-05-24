@@ -6,7 +6,6 @@ package resolver
 import (
 	"context"
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
@@ -14,7 +13,6 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/pkg/amplitude"
-	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 	"github.com/lessbutter/alloff-api/pkg/order"
 )
 
@@ -223,17 +221,6 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 
 	amplitude.LogOrderRecord(user, orderDao, paymentDao)
 
-	for _, item := range orderDao.OrderItems {
-		if item.ExhibitionID != "" {
-			exDao, err := ioc.Repo.Exhibitions.Get(item.ExhibitionID)
-			if err != nil {
-				log.Println("exhibition update failed", err)
-				continue
-			}
-			go broker.ExhibitionSyncer(exDao)
-		}
-	}
-
 	return &model.PaymentResult{
 		Success:     true,
 		ErrorMsg:    "",
@@ -277,17 +264,6 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 	}
 
 	amplitude.LogCancelOrderItemRecord(user, orderItemDao, paymentDao)
-
-	for _, item := range orderDao.OrderItems {
-		if item.ExhibitionID != "" {
-			exDao, err := ioc.Repo.Exhibitions.Get(item.ExhibitionID)
-			if err != nil {
-				log.Println("exhibition update failed", err)
-				continue
-			}
-			go broker.ExhibitionSyncer(exDao)
-		}
-	}
 
 	result.Success = true
 	return result, nil

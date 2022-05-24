@@ -10,9 +10,12 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/alimtalk"
+	"github.com/lessbutter/alloff-api/pkg/product"
+	"go.uber.org/zap"
 )
 
 func (r *mutationResolver) SetAlarm(ctx context.Context, id string) (bool, error) {
@@ -89,5 +92,61 @@ func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionI
 		Status:        input.Status,
 		LiveCounts:    liveCnt,
 		NotOpenCounts: notOpenCnt,
+	}, nil
+}
+
+func (r *queryResolver) ExhibitionInfo(ctx context.Context, input model.MetaInfoInput) (*model.MetaInfoOutput, error) {
+	pdType := domain.Female
+	if input.ProductType == model.AlloffProductTypeKids {
+		pdType = domain.Kids
+	} else if input.ProductType == model.AlloffProductTypeMale {
+		pdType = domain.Male
+	} else if input.ProductType == model.AlloffProductTypeSports {
+		pdType = domain.Sports
+	}
+
+	brandIds := []string{}
+	if len(input.BrandIds) > 0 {
+		brandIds = input.BrandIds
+	}
+	alloffcatID := ""
+	if input.AlloffCategoryID != nil {
+		alloffcatID = *input.AlloffCategoryID
+	}
+
+	query := product.ProductListInput{
+		ProductType:      pdType,
+		ExhibitionID:     input.ExhibitionID,
+		BrandIDs:         brandIds,
+		AlloffCategoryID: alloffcatID,
+	}
+
+	filter, err := query.BuildFilter()
+	if err != nil {
+		config.Logger.Error("build filter err on exhibition info", zap.Error(err))
+	}
+
+	brandData, alloffcatData, sizeData := ioc.Repo.Products.ListDistinctInfos(filter)
+
+	brandOutputs := []*model.BrandOutput{}
+	for _, brandCount := range brandData {
+		brandOutputs = append(brandOutputs, &model.BrandOutput{
+			Brand:       mapper.MapBrandDaoToBrand(brandCount.Brand, false),
+			NumProducts: brandCount.Counts,
+		})
+	}
+	alloffcats := []*model.AlloffCategory{}
+	for _, cat := range alloffcatData {
+		alloffcats = append(alloffcats, mapper.MapAlloffCatDaoToAlloffCat(cat))
+	}
+	sizes := []*model.AlloffSize{}
+	for _, size := range sizeData {
+		sizes = append(sizes, mapper.MapAlloffSizeDaoToAlloffSize(size))
+	}
+
+	return &model.MetaInfoOutput{
+		Brands:           nil,
+		AlloffCategories: alloffcats,
+		AlloffSizes:      sizes,
 	}, nil
 }

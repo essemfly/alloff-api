@@ -60,6 +60,11 @@ type BrandDAO struct {
 	InventoryMappingPolicies []InventoryMappingPolicy
 }
 
+type BrandCountsData struct {
+	Brand  *BrandDAO
+	Counts int
+}
+
 type InventoryMappingPolicy struct {
 	BrandSize      string
 	AlloffSize     AlloffSizeDAO

@@ -18,6 +18,7 @@ type ProductsRepository interface {
 	ListByMetaID(metaID string) ([]*domain.ProductDAO, error)
 	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
 	ListDistinctBrands(alloffCategoryID string) ([]*domain.BrandDAO, error)
+	ListDistinctInfos(filter interface{}) ([]*domain.BrandCountsData, []*domain.AlloffCategoryDAO, []*domain.AlloffSizeDAO)
 	Insert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	Upsert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	CountNewProducts([]string) int

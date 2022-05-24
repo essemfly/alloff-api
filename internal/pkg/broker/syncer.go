@@ -44,60 +44,6 @@ func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) (*domain.ProductGroupDAO,
 	return newPg, err
 }
 
-// Exhibition안에 들어있는 섹션들에 대해서, 색션들의 PG상태를 업데이트 시켜줌
-// Exhibition이 갖고 있는 PG와 PG들이 갖고 있는 EXID들 사이에서 맞춰줘야하는데
-// Ex가 갖고 있는 ProductGROUPS가 우선임
-func ExhibitionSyncer(exDao *domain.ExhibitionDAO) {
-	newPgs := []*domain.ProductGroupDAO{}
-	for _, pg := range exDao.ProductGroups {
-		pgDao, err := ioc.Repo.ProductGroups.Get(pg.ID.Hex())
-		if err != nil {
-			log.Println("Update exhibition not found pgID: "+pg.ID.Hex(), err)
-			continue
-		}
-
-		newPgDao, err := ProductGroupSyncer(pgDao)
-		if err != nil {
-			log.Println("product group syncing failed:" + pgDao.ID.Hex())
-		}
-
-		pgType := domain.PRODUCT_GROUP_EXHIBITION
-		if exDao.ExhibitionType == domain.EXHIBITION_TIMEDEAL {
-			pgType = domain.PRODUCT_GROUP_TIMEDEAL
-		} else if exDao.ExhibitionType == domain.EXHIBITION_GROUPDEAL {
-			pgType = domain.PRODUCT_GROUP_GROUPDEAL
-		}
-
-		if pg.Brand != nil {
-			pgType = domain.PRODUCT_GROUP_BRAND_TIMEDEAL
-		}
-		newPgDao.StartTime = exDao.StartTime
-		newPgDao.FinishTime = exDao.FinishTime
-		newPgDao.ExhibitionID = exDao.ID.Hex()
-		newPgDao.GroupType = pgType
-		updatedPgDao, err := ioc.Repo.ProductGroups.Upsert(newPgDao)
-		if err != nil {
-			log.Println("product group update failed", newPgDao.ID.Hex())
-		}
-		newPgs = append(newPgs, updatedPgDao)
-	}
-
-	exDao.ProductGroups = newPgs
-	// TODO ExhibitionDAO의 metainfos들이 추가되어야한다.
-	exDao.MetaInfos = &domain.ExhibitionMetaInfoDAO{
-		ProductTypes:      []domain.AlloffProductType{},
-		Brands:            []*domain.BrandDAO{},
-		AlloffCategories:  []*domain.AlloffCategoryDAO{},
-		AlloffInventories: []*domain.AlloffInventoryDAO{},
-		MaxDiscounts:      0,
-	}
-
-	_, err := ioc.Repo.Exhibitions.Upsert(exDao)
-	if err != nil {
-		log.Println("failed in upsert exhibition", err)
-	}
-}
-
 func BrandSyncer(brandKeyname string) {
 	offset, limit := 0, 20000
 

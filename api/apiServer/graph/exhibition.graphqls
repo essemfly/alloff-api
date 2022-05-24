@@ -23,6 +23,7 @@ enum ExhibitionStatus {
 
 type Exhibition {
   id: ID!
+  productTypes: [AlloffProductType!]!
   exhibitionType: ExhibitionType!
   title: String!
   subTitle: String!
@@ -33,14 +34,6 @@ type Exhibition {
   startTime: Date!
   finishTime: Date!  
   numAlarms: Int!
-  metaInfos: ExhibitionInfo!
-}
-
-type ExhibitionInfo {
-  productTypes: [AlloffProductType!]!
-  brands: [Brand!]!
-  alloffCategories: [AlloffCategory!]!
-  alloffInventories: [AlloffInventory!]!
   maxDiscounts: Int!
 }
 
@@ -55,9 +48,28 @@ type ExhibitionOutput {
   notOpenCounts: Int!
 }
 
+type BrandOutput {
+  brand: Brand!
+  numProducts: Int!
+}
+
+input MetaInfoInput {
+  exhibitionId: String!
+  productType: AlloffProductType!
+  alloffCategoryId: String
+  brandIds: [String!]
+}
+
+type MetaInfoOutput {
+  brands: [BrandOutput!]!
+  alloffCategories: [AlloffCategory!]!
+  alloffSizes: [AlloffSize!]!
+}
+
 extend type Query {
   exhibition(id: String!): Exhibition!
   exhibitions(input: ExhibitionInput!): ExhibitionOutput!
+  exhibitionInfo(input: MetaInfoInput! ): MetaInfoOutput!
 }
 
 extend type Mutation {

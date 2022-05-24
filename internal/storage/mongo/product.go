@@ -190,6 +190,40 @@ func (repo *productRepo) MakeOutdateProducts(brandModules []string, lastUpdatedD
 	return int(outProducts.ModifiedCount)
 }
 
+func (repo *productRepo) ListDistinctInfos(filter interface{}) (brands []*domain.BrandCountsData, cats []*domain.AlloffCategoryDAO, sizes []*domain.AlloffSizeDAO) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	brandRows, _ := repo.col.Distinct(ctx, "productinfo.brand", filter)
+	for _, row := range brandRows {
+		var brand *domain.BrandDAO
+		data, _ := bson.Marshal(row)
+		bson.Unmarshal(data, &brand)
+		brands = append(brands, &domain.BrandCountsData{
+			Brand:  brand,
+			Counts: 1882,
+		})
+	}
+
+	catRows, _ := repo.col.Distinct(ctx, "productinfo.alloffcategory.first", filter)
+	for _, row := range catRows {
+		var cat *domain.AlloffCategoryDAO
+		data, _ := bson.Marshal(row)
+		bson.Unmarshal(data, &cat)
+		cats = append(cats, cat)
+	}
+
+	sizeRows, _ := repo.col.Distinct(ctx, "productinfo.alloffinventory.alloffsize.alloffsizename", filter)
+	for _, row := range sizeRows {
+		var size *domain.AlloffSizeDAO
+		data, _ := bson.Marshal(row)
+		bson.Unmarshal(data, &size)
+		sizes = append(sizes, size)
+	}
+
+	return
+}
+
 func MongoProductsRepo(conn *MongoDB) repository.ProductsRepository {
 	return &productRepo{
 		col: conn.productCol,

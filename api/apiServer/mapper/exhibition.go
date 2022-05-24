@@ -8,9 +8,9 @@ import (
 )
 
 func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
-	info := MapExhibitionMetaInfo(exDao.MetaInfos)
 	return &model.Exhibition{
 		ID:             exDao.ID.Hex(),
+		ProductTypes:   MapProductTypes(exDao.ProductTypes),
 		ExhibitionType: MapExhibitionType(exDao.ExhibitionType),
 		Title:          exDao.Title,
 		SubTitle:       exDao.SubTitle,
@@ -21,7 +21,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		StartTime:      exDao.StartTime.Add(9 * time.Hour).String(),
 		FinishTime:     exDao.FinishTime.Add(9 * time.Hour).String(),
 		NumAlarms:      exDao.NumAlarms,
-		MetaInfos:      info,
+		MaxDiscounts:   exDao.MaxDiscounts,
 	}
 }
 
@@ -36,30 +36,6 @@ func MapExhibitionType(exhibitionType domain.ExhibitionType) model.ExhibitionTyp
 		res = model.ExhibitionTypeGroupdeal
 	}
 	return res
-}
-
-func MapExhibitionMetaInfo(info *domain.ExhibitionMetaInfoDAO) *model.ExhibitionInfo {
-	brands := []*model.Brand{}
-	for _, brandDao := range info.Brands {
-		brands = append(brands, MapBrandDaoToBrand(brandDao, false))
-	}
-
-	cats := []*model.AlloffCategory{}
-	for _, catDao := range info.AlloffCategories {
-		cats = append(cats, MapAlloffCatDaoToAlloffCat(catDao))
-	}
-
-	invs := MapAlloffInventory(info.AlloffInventories)
-
-	productTypes := MapProductTypes(info.ProductTypes)
-
-	return &model.ExhibitionInfo{
-		ProductTypes:      productTypes,
-		Brands:            brands,
-		AlloffCategories:  cats,
-		AlloffInventories: invs,
-		MaxDiscounts:      info.MaxDiscounts,
-	}
 }
 
 func MapProductTypes(types []domain.AlloffProductType) []model.AlloffProductType {

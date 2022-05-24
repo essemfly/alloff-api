@@ -194,15 +194,6 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 		log.Println("product group syncing error", err)
 	}
 
-	if newPgDao.ExhibitionID != "" {
-		exDao, err := ioc.Repo.Exhibitions.Get(newPgDao.ExhibitionID)
-		if err != nil {
-			log.Println("exhibbition find error", err)
-		} else {
-			go broker.ExhibitionSyncer(exDao)
-		}
-	}
-
 	productListInput := product.ProductListInput{
 		ProductGroupID: updatedPgDao.ID.Hex(),
 	}
@@ -302,15 +293,6 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 		log.Println("product group syncing error", err)
 	}
 
-	if newPgDao.ExhibitionID != "" {
-		exDao, err := ioc.Repo.Exhibitions.Get(newPgDao.ExhibitionID)
-		if err != nil {
-			log.Println("exhibbition find error", err)
-		} else {
-			go broker.ExhibitionSyncer(exDao)
-		}
-	}
-
 	productListInput := product.ProductListInput{
 		ProductGroupID: newPgDao.ID.Hex(),
 	}
@@ -349,15 +331,6 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 	updatedPgDao, err := broker.ProductGroupSyncer(newPgDao)
 	if err != nil {
 		log.Println("product group syncing error", err)
-	}
-
-	if newPgDao.ExhibitionID != "" {
-		exDao, err := ioc.Repo.Exhibitions.Get(newPgDao.ExhibitionID)
-		if err != nil {
-			log.Println("exhibbition find error", err)
-		} else {
-			go broker.ExhibitionSyncer(exDao)
-		}
 	}
 
 	productListInput := product.ProductListInput{
