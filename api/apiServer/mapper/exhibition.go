@@ -53,7 +53,7 @@ func MapExhibitionMetaInfo(info *domain.ExhibitionMetaInfoDAO) *model.Exhibition
 	for _, invDao := range info.AlloffInventories {
 		invs = append(invs, &model.AlloffInventory{
 			AlloffSize: &model.AlloffSize{
-				SizeName:       invDao.AlloffSize.SizeName,
+				SizeName:       invDao.AlloffSize.AlloffSizeName,
 				AlloffCategory: MapAlloffCatDaoToAlloffCat(invDao.AlloffSize.AlloffCategory),
 			},
 			Quantity: invDao.Quantity,

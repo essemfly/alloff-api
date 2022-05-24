@@ -258,7 +258,7 @@ func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory() {
 
 func (pdInfo *ProductMetaInfoDAO) Release(size string, quantity int) error {
 	for idx, option := range pdInfo.AlloffInventory {
-		if option.AlloffSize.SizeName == size {
+		if option.AlloffSize.AlloffSizeName == size {
 			if option.Quantity < quantity {
 				return errors.New("insufficient product quantity")
 			}
@@ -275,7 +275,7 @@ func (pdInfo *ProductMetaInfoDAO) Release(size string, quantity int) error {
 
 func (pdInfo *ProductMetaInfoDAO) Revert(size string, quantity int) error {
 	for idx, option := range pdInfo.AlloffInventory {
-		if option.AlloffSize.SizeName == size {
+		if option.AlloffSize.AlloffSizeName == size {
 			if option.Quantity == 0 {
 				pdInfo.IsSoldout = false
 			}

@@ -7,9 +7,10 @@ import (
 )
 
 type AlloffSizeDAO struct {
-	ID             primitive.ObjectID `bson:"_id, omitempty"`
-	AlloffCategory *AlloffCategoryDAO
-	SizeName       string
+	ID               primitive.ObjectID `bson:"_id, omitempty"`
+	AlloffCategory   *AlloffCategoryDAO
+	AlloffSizeName   string
+	OriginalSizeName string
 }
 
 type AlloffInventoryDAO struct {

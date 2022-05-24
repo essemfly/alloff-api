@@ -62,7 +62,7 @@ func InventoryMapper(pd *domain.ProductMetaInfoDAO) []*grpcServer.ProductInvento
 	invMessages := []*grpcServer.ProductInventoryMessage{}
 	for _, inv := range pd.AlloffInventory {
 		invMessages = append(invMessages, &grpcServer.ProductInventoryMessage{
-			Size:     inv.AlloffSize.SizeName,
+			Size:     inv.AlloffSize.AlloffSizeName,
 			Quantity: int32(inv.Quantity),
 		})
 	}

@@ -39,7 +39,7 @@ func (basket *Basket) IsValid() []error {
 
 		isValidSize, isValidQuantity := false, false
 		for _, inv := range item.Product.ProductInfo.AlloffInventory {
-			if inv.AlloffSize.SizeName == item.Size {
+			if inv.AlloffSize.AlloffSizeName == item.Size {
 				isValidSize = true
 				if inv.Quantity >= item.Quantity {
 					isValidQuantity = true
