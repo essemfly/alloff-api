@@ -2,6 +2,7 @@ package classifier
 
 import (
 	"fmt"
+
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/omnious"

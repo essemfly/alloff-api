@@ -2,7 +2,6 @@ package domain
 
 import (
 	"errors"
-	"github.com/lessbutter/alloff-api/pkg/classifier"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -251,15 +250,15 @@ func (pdInfo *ProductMetaInfoDAO) SetAlloffInventory(inventories []*InventoryDAO
 }
 
 func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory() {
-	if pdInfo.AlloffCategory == nil {
-		alloffCat := classifier.GetAlloffCategory(pdInfo)
-		pdInfo.AlloffCategory = alloffCat
-		pdInfo.IsCategoryClassified = true
-	} else if pdInfo.AlloffCategory == nil || !pdInfo.AlloffCategory.Done {
-		alloffCat := classifier.GetOmniousClassifier(pdInfo)
-		pdInfo.AlloffCategory = alloffCat
-		pdInfo.IsCategoryClassified = true
-	}
+	// if pdInfo.AlloffCategory == nil {
+	// 	alloffCat := classifier.GetAlloffCategory(pdInfo)
+	// 	pdInfo.AlloffCategory = alloffCat
+	// 	pdInfo.IsCategoryClassified = true
+	// } else if pdInfo.AlloffCategory == nil || !pdInfo.AlloffCategory.Done {
+	// 	alloffCat := classifier.GetOmniousClassifier(pdInfo)
+	// 	pdInfo.AlloffCategory = alloffCat
+	// 	pdInfo.IsCategoryClassified = true
+	// }
 }
 
 func (pdInfo *ProductMetaInfoDAO) Release(size string, quantity int) error {
