@@ -14,6 +14,7 @@ type ProductListInput struct {
 	Offset           int
 	Limit            int
 	ProductType      string
+	ProductGroupID   string
 	ExhibitionID     string
 	AlloffCategoryID string
 	BrandIDs         []string
@@ -42,7 +43,10 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 
 	if input.ExhibitionID != "" {
 		filter["exhibitionid"] = input.ExhibitionID
+	}
 
+	if input.ProductGroupID != "" {
+		filter["productgroupid"] = input.ProductGroupID
 	}
 
 	if len(input.AlloffSizeIDs) > 0 {

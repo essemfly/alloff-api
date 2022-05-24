@@ -60,7 +60,7 @@ func (s *AlloffSizeService) CreateAlloffSize(ctx context.Context, req *grpcServe
 	cat, _ := ioc.Repo.AlloffCategories.Get(req.AlloffCategoryId)
 	alloffSizeDao := &domain.AlloffSizeDAO{
 		ID:               primitive.NewObjectID(),
-		AlloffSizeName:   req.SizeName,
+		AlloffSizeName:   req.AlloffSizeName,
 		OriginalSizeName: req.OriginalSizeName,
 		AlloffCategory:   cat,
 	}
