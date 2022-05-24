@@ -58,9 +58,10 @@ type ComplexityRoot struct {
 	}
 
 	AlloffSize struct {
-		AlloffCategory func(childComplexity int) int
-		ID             func(childComplexity int) int
-		SizeName       func(childComplexity int) int
+		AlloffCategory   func(childComplexity int) int
+		AlloffSizeName   func(childComplexity int) int
+		ID               func(childComplexity int) int
+		OriginalSizeName func(childComplexity int) int
 	}
 
 	AppVersion struct {
@@ -456,6 +457,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AlloffSize.AlloffCategory(childComplexity), true
 
+	case "AlloffSize.alloffSizeName":
+		if e.complexity.AlloffSize.AlloffSizeName == nil {
+			break
+		}
+
+		return e.complexity.AlloffSize.AlloffSizeName(childComplexity), true
+
 	case "AlloffSize.id":
 		if e.complexity.AlloffSize.ID == nil {
 			break
@@ -463,12 +471,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AlloffSize.ID(childComplexity), true
 
-	case "AlloffSize.sizeName":
-		if e.complexity.AlloffSize.SizeName == nil {
+	case "AlloffSize.originalSizeName":
+		if e.complexity.AlloffSize.OriginalSizeName == nil {
 			break
 		}
 
-		return e.complexity.AlloffSize.SizeName(childComplexity), true
+		return e.complexity.AlloffSize.OriginalSizeName(childComplexity), true
 
 	case "AppVersion.isMaintenance":
 		if e.complexity.AppVersion.IsMaintenance == nil {
@@ -2459,9 +2467,10 @@ type AlloffCategory {
 }
 
 type AlloffSize {
-    id: ID!
-    sizeName: String!
-    alloffCategory: AlloffCategory!
+  id: ID!
+  alloffCategory: AlloffCategory!
+  alloffSizeName: String!
+  originalSizeName: String!
 }
 
 type Product {
@@ -3280,41 +3289,6 @@ func (ec *executionContext) _AlloffSize_id(ctx context.Context, field graphql.Co
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _AlloffSize_sizeName(ctx context.Context, field graphql.CollectedField, obj *model.AlloffSize) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AlloffSize",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SizeName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
 func (ec *executionContext) _AlloffSize_alloffCategory(ctx context.Context, field graphql.CollectedField, obj *model.AlloffSize) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -3348,6 +3322,76 @@ func (ec *executionContext) _AlloffSize_alloffCategory(ctx context.Context, fiel
 	res := resTmp.(*model.AlloffCategory)
 	fc.Result = res
 	return ec.marshalNAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlloffSize_alloffSizeName(ctx context.Context, field graphql.CollectedField, obj *model.AlloffSize) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlloffSize",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AlloffSizeName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _AlloffSize_originalSizeName(ctx context.Context, field graphql.CollectedField, obj *model.AlloffSize) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "AlloffSize",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OriginalSizeName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _AppVersion_latestVersion(ctx context.Context, field graphql.CollectedField, obj *model.AppVersion) (ret graphql.Marshaler) {
@@ -12376,13 +12420,18 @@ func (ec *executionContext) _AlloffSize(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "sizeName":
-			out.Values[i] = ec._AlloffSize_sizeName(ctx, field, obj)
+		case "alloffCategory":
+			out.Values[i] = ec._AlloffSize_alloffCategory(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "alloffCategory":
-			out.Values[i] = ec._AlloffSize_alloffCategory(ctx, field, obj)
+		case "alloffSizeName":
+			out.Values[i] = ec._AlloffSize_alloffSizeName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "originalSizeName":
+			out.Values[i] = ec._AlloffSize_originalSizeName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

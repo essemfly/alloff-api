@@ -23,9 +23,10 @@ type AlloffInventory struct {
 }
 
 type AlloffSize struct {
-	ID             string          `json:"id"`
-	SizeName       string          `json:"sizeName"`
-	AlloffCategory *AlloffCategory `json:"alloffCategory"`
+	ID               string          `json:"id"`
+	AlloffCategory   *AlloffCategory `json:"alloffCategory"`
+	AlloffSizeName   string          `json:"alloffSizeName"`
+	OriginalSizeName string          `json:"originalSizeName"`
 }
 
 type AppVersion struct {

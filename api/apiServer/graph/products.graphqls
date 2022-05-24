@@ -33,9 +33,10 @@ type AlloffCategory {
 }
 
 type AlloffSize {
-    id: ID!
-    sizeName: String!
-    alloffCategory: AlloffCategory!
+  id: ID!
+  alloffCategory: AlloffCategory!
+  alloffSizeName: String!
+  originalSizeName: String!
 }
 
 type Product {
