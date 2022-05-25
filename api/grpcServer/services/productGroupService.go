@@ -2,14 +2,12 @@ package services
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 	"github.com/lessbutter/alloff-api/pkg/product"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -64,12 +62,12 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 		imageUrl = *req.ImageUrl
 	}
 
-	brand := &domain.BrandDAO{}
+	var brand *domain.BrandDAO
 	if req.BrandId != nil {
-		brandDao, err := ioc.Repo.Brands.Get(*req.BrandId)
+		brandDao, err := ioc.Repo.Brands.GetByKeyname(*req.BrandId)
 		brand = brandDao
 		if err != nil {
-			log.Println("Error on get brand for create product group : ", err)
+			config.Logger.Error("Error on get brand for create product group : "+*req.BrandId, zap.Error(err))
 			return nil, err
 		}
 	} else {
@@ -176,9 +174,9 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 	}
 
 	if req.BrandId != nil {
-		brand, err := ioc.Repo.Brands.Get(*req.BrandId)
+		brand, err := ioc.Repo.Brands.GetByKeyname(*req.BrandId)
 		if err != nil {
-			log.Println("Error on get brand for create product group : ", err)
+			config.Logger.Error("Error on get brand for edit product group : "+*req.BrandId, zap.Error(err))
 			return nil, err
 		}
 		pgDao.Brand = brand
@@ -189,13 +187,8 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 		return nil, err
 	}
 
-	updatedPgDao, err := broker.ProductGroupSyncer(newPgDao)
-	if err != nil {
-		log.Println("product group syncing error", err)
-	}
-
 	productListInput := product.ProductListInput{
-		ProductGroupID: updatedPgDao.ID.Hex(),
+		ProductGroupID: newPgDao.ID.Hex(),
 	}
 
 	pds, _, err := product.ListProducts(productListInput)
@@ -204,7 +197,7 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 		return nil, err
 	}
 
-	return mapper.ProductGroupMapper(updatedPgDao, pds), nil
+	return mapper.ProductGroupMapper(newPgDao, pds), nil
 }
 
 func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, req *grpcServer.ProductsInPgRequest) (*grpcServer.ProductGroupMessage, error) {
@@ -222,14 +215,16 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		}
 
 		newPdDao := &domain.ProductDAO{
-			ID:             primitive.NewObjectID(),
-			ProductInfo:    pdInfoDao,
-			ProductGroupID: pgDao.ID.Hex(),
-			ExhibitionID:   pgDao.ExhibitionID,
-			Weight:         int(productPriority.Priority),
-			IsNotSale:      false,
-			Created:        time.Now(),
-			Updated:        time.Now(),
+			ID:                   primitive.NewObjectID(),
+			ProductInfo:          pdInfoDao,
+			ProductGroupID:       pgDao.ID.Hex(),
+			ExhibitionID:         pgDao.ExhibitionID,
+			Weight:               int(productPriority.Priority),
+			IsNotSale:            false,
+			ExhibitionStartTime:  pgDao.StartTime,
+			ExhibitionFinishTime: pgDao.FinishTime,
+			Created:              time.Now(),
+			Updated:              time.Now(),
 		}
 
 		_, err = ioc.Repo.Products.Insert(newPdDao)
@@ -288,11 +283,6 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 		return nil, err
 	}
 
-	updatedPgDao, err := broker.ProductGroupSyncer(newPgDao)
-	if err != nil {
-		log.Println("product group syncing error", err)
-	}
-
 	productListInput := product.ProductListInput{
 		ProductGroupID: newPgDao.ID.Hex(),
 	}
@@ -303,7 +293,7 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 		return nil, err
 	}
 
-	return mapper.ProductGroupMapper(updatedPgDao, pdDaos), nil
+	return mapper.ProductGroupMapper(newPgDao, pdDaos), nil
 }
 
 func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, req *grpcServer.RemoveProductInPgRequest) (*grpcServer.ProductGroupMessage, error) {
@@ -317,20 +307,17 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 		return nil, err
 	}
 
-	pd, err := ioc.Repo.Products.Get(req.ProductId)
+	pds, err := ioc.Repo.Products.ListByMetaID(req.ProductId)
 	if err != nil {
 		return nil, err
 	}
 
-	pd.IsNotSale = true
-	_, err = ioc.Repo.Products.Upsert(pd)
-	if err != nil {
-		return nil, err
-	}
-
-	updatedPgDao, err := broker.ProductGroupSyncer(newPgDao)
-	if err != nil {
-		log.Println("product group syncing error", err)
+	for _, pd := range pds {
+		pd.IsNotSale = true
+		_, err = ioc.Repo.Products.Upsert(pd)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	productListInput := product.ProductListInput{
@@ -343,5 +330,5 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 		return nil, err
 	}
 
-	return mapper.ProductGroupMapper(updatedPgDao, pdDaos), nil
+	return mapper.ProductGroupMapper(pgDao, pdDaos), nil
 }
