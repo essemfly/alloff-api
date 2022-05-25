@@ -15,7 +15,7 @@ input AddCartItemInput {
 }
 
 extend type Query {
-  getCart(id: String!): Cart!
+  cart(id: String!): Cart!
 }
 
 extend type Mutation {

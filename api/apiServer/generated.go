@@ -328,10 +328,10 @@ type ComplexityRoot struct {
 	Query struct {
 		Brand           func(childComplexity int, input *model.BrandInput) int
 		Brands          func(childComplexity int, input *model.BrandsInput) int
+		Cart            func(childComplexity int, id string) int
 		Exhibition      func(childComplexity int, id string) int
 		ExhibitionInfo  func(childComplexity int, input model.MetaInfoInput) int
 		Exhibitions     func(childComplexity int, input model.ExhibitionInput) int
-		GetCart         func(childComplexity int, id string) int
 		Order           func(childComplexity int, id string) int
 		OrderItemStatus func(childComplexity int) int
 		Orders          func(childComplexity int) int
@@ -388,7 +388,7 @@ type QueryResolver interface {
 	User(ctx context.Context) (*model.User, error)
 	Brand(ctx context.Context, input *model.BrandInput) (*model.Brand, error)
 	Brands(ctx context.Context, input *model.BrandsInput) ([]*model.Brand, error)
-	GetCart(ctx context.Context, id string) (*model.Cart, error)
+	Cart(ctx context.Context, id string) (*model.Cart, error)
 	Exhibition(ctx context.Context, id string) (*model.Exhibition, error)
 	Exhibitions(ctx context.Context, input model.ExhibitionInput) (*model.ExhibitionOutput, error)
 	ExhibitionInfo(ctx context.Context, input model.MetaInfoInput) (*model.MetaInfoOutput, error)
@@ -1863,6 +1863,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Brands(childComplexity, args["input"].(*model.BrandsInput)), true
 
+	case "Query.cart":
+		if e.complexity.Query.Cart == nil {
+			break
+		}
+
+		args, err := ec.field_Query_cart_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Cart(childComplexity, args["id"].(string)), true
+
 	case "Query.exhibition":
 		if e.complexity.Query.Exhibition == nil {
 			break
@@ -1898,18 +1910,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Exhibitions(childComplexity, args["input"].(model.ExhibitionInput)), true
-
-	case "Query.getCart":
-		if e.complexity.Query.GetCart == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getCart_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetCart(childComplexity, args["id"].(string)), true
 
 	case "Query.order":
 		if e.complexity.Query.Order == nil {
@@ -2276,7 +2276,7 @@ input AddCartItemInput {
 }
 
 extend type Query {
-  getCart(id: String!): Cart!
+  cart(id: String!): Cart!
 }
 
 extend type Mutation {
@@ -3034,6 +3034,21 @@ func (ec *executionContext) field_Query_brands_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_cart_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_exhibitionInfo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3076,21 +3091,6 @@ func (ec *executionContext) field_Query_exhibitions_args(ctx context.Context, ra
 		}
 	}
 	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_getCart_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["id"] = arg0
 	return args, nil
 }
 
@@ -10074,7 +10074,7 @@ func (ec *executionContext) _Query_brands(ctx context.Context, field graphql.Col
 	return ec.marshalNBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_getCart(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_cart(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10091,7 +10091,7 @@ func (ec *executionContext) _Query_getCart(ctx context.Context, field graphql.Co
 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Query_getCart_args(ctx, rawArgs)
+	args, err := ec.field_Query_cart_args(ctx, rawArgs)
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
@@ -10099,7 +10099,7 @@ func (ec *executionContext) _Query_getCart(ctx context.Context, field graphql.Co
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetCart(rctx, args["id"].(string))
+		return ec.resolvers.Query().Cart(rctx, args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14552,7 +14552,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "getCart":
+		case "cart":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -14560,7 +14560,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getCart(ctx, field)
+				res = ec._Query_cart(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}

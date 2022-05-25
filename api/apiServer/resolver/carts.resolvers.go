@@ -62,7 +62,7 @@ func (r *mutationResolver) RemoveCartItem(ctx context.Context, cartID string, pr
 	return mapper.MapCart(newCart), nil
 }
 
-func (r *queryResolver) GetCart(ctx context.Context, id string) (*model.Cart, error) {
+func (r *queryResolver) Cart(ctx context.Context, id string) (*model.Cart, error) {
 	if id == "" {
 		newCartDAO := &domain.Basket{
 			ID:           primitive.NewObjectID(),
