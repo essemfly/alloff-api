@@ -236,6 +236,11 @@ func (pdInfo *ProductMetaInfoDAO) SetCancelDesc(isRefundPossible bool, refundFee
 	}
 }
 
+func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory(cat *ProductAlloffCategoryDAO) {
+	pdInfo.AlloffCategory = cat
+	pdInfo.IsCategoryClassified = true
+}
+
 func (pdInfo *ProductMetaInfoDAO) SetAlloffInventory(inventories []*InventoryDAO) {
 	mappingPolicies := pdInfo.Brand.InventoryMappingPolicies
 	alloffInventory := []*AlloffInventoryDAO{}
