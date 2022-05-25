@@ -5,21 +5,76 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func (r *mutationResolver) AddCartItem(ctx context.Context, input *model.AddCartItemInput) (*model.Cart, error) {
-	panic(fmt.Errorf("not implemented"))
+	cart, err := ioc.Repo.Carts.Get(input.CartID)
+	if err != nil {
+		return nil, err
+	}
+
+	product, err := ioc.Repo.Products.Get(input.ProductID)
+	if err != nil {
+		return nil, err
+	}
+
+	cart.Items = append(cart.Items, &domain.BasketItem{
+		Product:        product,
+		ProductGroupID: product.ProductGroupID,
+		ExhibitionID:   product.ExhibitionID,
+		Size:           input.Selectsize,
+		Quantity:       input.Quantity,
+	})
+
+	newCart, err := ioc.Repo.Carts.Upsert(cart)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.MapCart(newCart), nil
 }
 
-func (r *mutationResolver) RemoveCartItem(ctx context.Context, productID string) (*model.Cart, error) {
-	panic(fmt.Errorf("not implemented"))
+func (r *mutationResolver) RemoveCartItem(ctx context.Context, cartID string, productID string) (*model.Cart, error) {
+	cart, err := ioc.Repo.Carts.Get(cartID)
+	if err != nil {
+		return nil, err
+	}
+
+	newItems := []*domain.BasketItem{}
+	for _, item := range cart.Items {
+		if item.Product.ID.Hex() != productID {
+			newItems = append(newItems, item)
+		}
+	}
+
+	cart.Items = newItems
+	newCart, err := ioc.Repo.Carts.Upsert(cart)
+	if err != nil {
+		return nil, err
+	}
+
+	return mapper.MapCart(newCart), nil
 }
 
 func (r *queryResolver) GetCart(ctx context.Context, id string) (*model.Cart, error) {
 	if id == "" {
+		newCartDAO := &domain.Basket{
+			ID:           primitive.NewObjectID(),
+			Items:        []*domain.BasketItem{},
+			ProductPrice: 0,
+		}
+		return mapper.MapCart(newCartDAO), nil
 	}
-	panic(fmt.Errorf("not implemented"))
+
+	cart, err := ioc.Repo.Carts.Get(id)
+	if err != nil {
+		return nil, err
+	}
+	return mapper.MapCart(cart), nil
 }

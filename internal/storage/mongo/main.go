@@ -16,26 +16,20 @@ type MongoDB struct {
 	brandCol           *mongo.Collection
 	productCol         *mongo.Collection
 	productMetaInfoCol *mongo.Collection
-	productDiffCol     *mongo.Collection
 	productGroupCol    *mongo.Collection
 	crawlSourceCol     *mongo.Collection
 	crawlRecordCol     *mongo.Collection
 	categoryCol        *mongo.Collection
 	alloffCategoryCol  *mongo.Collection
 	classifyRuleCol    *mongo.Collection
-	featuredCol        *mongo.Collection
-	homeitemCol        *mongo.Collection
 	userCol            *mongo.Collection
 	deviceCol          *mongo.Collection
 	notificationCol    *mongo.Collection
 	alimtalkCol        *mongo.Collection
 	likeBrandsCol      *mongo.Collection
-	likeProductsCol    *mongo.Collection
 	exhibitionCol      *mongo.Collection
-	topBannersCol      *mongo.Collection
-	bestProductsCol    *mongo.Collection
-	bestBrandsCol      *mongo.Collection
 	alloffSizeCol      *mongo.Collection
+	cartCol            *mongo.Collection
 }
 
 func NewMongoDB() *MongoDB {
@@ -65,6 +59,7 @@ func NewMongoDB() *MongoDB {
 		likeBrandsCol:      db.Collection("likes_brands"),
 		exhibitionCol:      db.Collection("exhibitions_test"),
 		alloffSizeCol:      db.Collection("alloff_sizes_test"),
+		cartCol:            db.Collection("carts"),
 	}
 }
 
@@ -85,6 +80,7 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.Exhibitions = MongoExhibitionsRepo(conn)
 	ioc.Repo.Notifications = MongoNotificationsRepo(conn)
 	ioc.Repo.AlloffSizes = MongoAlloffSizeRepo(conn)
+	ioc.Repo.Carts = MongoCartsRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context) (*mongo.Client, error) {

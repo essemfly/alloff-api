@@ -8,6 +8,7 @@ type CartItem {
 }
 
 input AddCartItemInput {
+  cartId: String!
   productId: String!
   selectsize: String!
   quantity: Int!
@@ -19,5 +20,5 @@ extend type Query {
 
 extend type Mutation {
   addCartItem(input: AddCartItemInput): Cart!
-  removeCartItem(productId: String!): Cart!
+  removeCartItem(cartId: String!, productId: String!): Cart!
 }

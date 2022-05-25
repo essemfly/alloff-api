@@ -9,6 +9,7 @@ import (
 )
 
 type AddCartItemInput struct {
+	CartID     string `json:"cartId"`
 	ProductID  string `json:"productId"`
 	Selectsize string `json:"selectsize"`
 	Quantity   int    `json:"quantity"`
@@ -86,8 +87,7 @@ type Cart struct {
 }
 
 type CartItem struct {
-	Product    *Product    `json:"product"`
-	Exhibition *Exhibition `json:"exhibition"`
+	Product *Product `json:"product"`
 }
 
 type Category struct {
