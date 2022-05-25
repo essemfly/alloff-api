@@ -258,18 +258,6 @@ func (pdInfo *ProductMetaInfoDAO) SetAlloffInventory(inventories []*InventoryDAO
 	pdInfo.AlloffInventory = alloffInventory
 }
 
-func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory() {
-	// if pdInfo.AlloffCategory == nil {
-	// 	alloffCat := classifier.GetAlloffCategory(pdInfo)
-	// 	pdInfo.AlloffCategory = alloffCat
-	// 	pdInfo.IsCategoryClassified = true
-	// } else if pdInfo.AlloffCategory == nil || !pdInfo.AlloffCategory.Done {
-	// 	alloffCat := classifier.GetOmniousClassifier(pdInfo)
-	// 	pdInfo.AlloffCategory = alloffCat
-	// 	pdInfo.IsCategoryClassified = true
-	// }
-}
-
 func (pdInfo *ProductMetaInfoDAO) Release(size string, quantity int) error {
 	for idx, option := range pdInfo.AlloffInventory {
 		if option.AlloffSize.AlloffSizeName == size {
@@ -302,12 +290,9 @@ func (pdInfo *ProductMetaInfoDAO) Revert(size string, quantity int) error {
 }
 
 func (pdInfo *ProductMetaInfoDAO) CheckSoldout() {
-	invCnt := 0
 	for _, inv := range pdInfo.AlloffInventory {
-		invCnt += inv.Quantity
-	}
-
-	if invCnt == 0 {
-		pdInfo.IsSoldout = true
+		if inv.Quantity > 0 {
+			pdInfo.IsSoldout = true
+		}
 	}
 }

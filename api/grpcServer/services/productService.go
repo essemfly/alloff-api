@@ -169,6 +169,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	}
 
 	pdInfoDao, err := product.AddProductInfo(addRequest)
+	pdInfoDao = classifier.SetProductAlloffCategory(pdInfoDao)
 	if err != nil {
 		return nil, err
 	}
