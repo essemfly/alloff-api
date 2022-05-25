@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"errors"
-
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -226,16 +225,29 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 
 	// TODO: AlloffInventory를 바꿔주는 작업이 되어야한다.
 	if req.Inventory != nil {
-		invDaos := []*domain.AlloffInventoryDAO{}
+		invDaos := []*domain.InventoryDAO{}
 		for _, inv := range req.Inventory {
-			size, _ := ioc.Repo.AlloffSizes.Get(inv.AlloffSize.AlloffSizeId)
-			invDaos = append(invDaos, &domain.AlloffInventoryDAO{
-				AlloffSize: *size,
+			sizeMappingPolicy, _ := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, pdInfoDao.ProductType, pdInfoDao.AlloffCategory.First.ID.Hex())
+			invDaos = append(invDaos, &domain.InventoryDAO{
+				AlloffSize: sizeMappingPolicy.AlloffSize,
 				Quantity:   int(inv.Quantity),
+				Size:       inv.Size,
 			})
 		}
-		pdInfoDao.AlloffInventory = invDaos
+		pdInfoDao.Inventory = invDaos
 	}
+
+	//if req.Inventory != nil {
+	//	invDaos := []*domain.AlloffInventoryDAO{}
+	//	for _, inv := range req.Inventory {
+	//		size, _ := ioc.Repo.AlloffSizes.Get(inv.AlloffSize.AlloffSizeId)
+	//		invDaos = append(invDaos, &domain.AlloffInventoryDAO{
+	//			AlloffSize: *size,
+	//			Quantity:   int(inv.Quantity),
+	//		})
+	//	}
+	//	pdInfoDao.AlloffInventory = invDaos
+	//}
 
 	if req.Description != nil {
 		pdInfoDao.SalesInstruction.Description.Texts = req.Description

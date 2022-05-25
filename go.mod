@@ -15,7 +15,7 @@ require (
 	github.com/gocolly/colly v1.2.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/iamport/interface v0.0.15
-	github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220524053831-026a1871358a
+	github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220525122423-c3f2b8a2b452
 	github.com/renatoaf/amplitude-go v1.0.0
 	github.com/rs/cors v1.6.0
 	github.com/rs/xid v1.3.0

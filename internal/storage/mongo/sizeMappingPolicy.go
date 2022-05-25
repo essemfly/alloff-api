@@ -32,6 +32,26 @@ func (repo *sizeMappingPolicyRepo) Get(ID string) (*domain.SizeMappingPolicyDAO,
 	return sizeMappingPolicy, nil
 }
 
+// 카테고리, 타입, 사이즈명으로 찾는다. 그친구의 AlloffSize 를 찾는다.
+func (repo *sizeMappingPolicyRepo) GetByDetail(size string, productTypes []domain.AlloffProductType, alloffCategoryID string) (*domain.SizeMappingPolicyDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	alloffCategoryOid, _ := primitive.ObjectIDFromHex(alloffCategoryID)
+	filter := bson.M{
+		"sizes":              size,
+		"alloffcategory._id": alloffCategoryOid,
+		"alloffproducttype":  bson.M{"$all": productTypes},
+	}
+
+	var sizeMappingPolicy *domain.SizeMappingPolicyDAO
+	if err := repo.col.FindOne(ctx, filter).Decode(&sizeMappingPolicy); err != nil {
+		return nil, err
+	}
+
+	return sizeMappingPolicy, nil
+}
+
 func (repo *sizeMappingPolicyRepo) List() ([]*domain.SizeMappingPolicyDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()

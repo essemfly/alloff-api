@@ -154,6 +154,7 @@ type CartsRepository interface {
 type SizeMappingPolicyRepository interface {
 	Insert(dao *domain.SizeMappingPolicyDAO) (*domain.SizeMappingPolicyDAO, error)
 	Get(id string) (*domain.SizeMappingPolicyDAO, error)
+	GetByDetail(size string, productTypes []domain.AlloffProductType, alloffCategoryID string) (*domain.SizeMappingPolicyDAO, error)
 	List() ([]*domain.SizeMappingPolicyDAO, error)
 	Update(dao *domain.SizeMappingPolicyDAO) (*domain.SizeMappingPolicyDAO, error)
 }
