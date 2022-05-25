@@ -148,3 +148,10 @@ type CartsRepository interface {
 	Get(cartID string) (*domain.Basket, error)
 	Upsert(cartDao *domain.Basket) (*domain.Basket, error)
 }
+
+type SizeMappingPolicyRepository interface {
+	Insert(dao *domain.SizeMappingPolicyDAO) (*domain.SizeMappingPolicyDAO, error)
+	Get(id string) (*domain.SizeMappingPolicyDAO, error)
+	List() ([]*domain.SizeMappingPolicyDAO, error)
+	Update(dao *domain.SizeMappingPolicyDAO) (*domain.SizeMappingPolicyDAO, error)
+}

@@ -13,23 +13,24 @@ import (
 )
 
 type MongoDB struct {
-	brandCol           *mongo.Collection
-	productCol         *mongo.Collection
-	productMetaInfoCol *mongo.Collection
-	productGroupCol    *mongo.Collection
-	crawlSourceCol     *mongo.Collection
-	crawlRecordCol     *mongo.Collection
-	categoryCol        *mongo.Collection
-	alloffCategoryCol  *mongo.Collection
-	classifyRuleCol    *mongo.Collection
-	userCol            *mongo.Collection
-	deviceCol          *mongo.Collection
-	notificationCol    *mongo.Collection
-	alimtalkCol        *mongo.Collection
-	likeBrandsCol      *mongo.Collection
-	exhibitionCol      *mongo.Collection
-	alloffSizeCol      *mongo.Collection
-	cartCol            *mongo.Collection
+	brandCol             *mongo.Collection
+	productCol           *mongo.Collection
+	productMetaInfoCol   *mongo.Collection
+	productGroupCol      *mongo.Collection
+	crawlSourceCol       *mongo.Collection
+	crawlRecordCol       *mongo.Collection
+	categoryCol          *mongo.Collection
+	alloffCategoryCol    *mongo.Collection
+	classifyRuleCol      *mongo.Collection
+	userCol              *mongo.Collection
+	deviceCol            *mongo.Collection
+	notificationCol      *mongo.Collection
+	alimtalkCol          *mongo.Collection
+	likeBrandsCol        *mongo.Collection
+	exhibitionCol        *mongo.Collection
+	alloffSizeCol        *mongo.Collection
+	cartCol              *mongo.Collection
+	sizeMappingPolicyCol *mongo.Collection
 }
 
 func NewMongoDB() *MongoDB {
@@ -43,23 +44,24 @@ func NewMongoDB() *MongoDB {
 	db := mongoClient.Database(viper.GetString("MONGO_DB_NAME"))
 
 	return &MongoDB{
-		brandCol:           db.Collection("brands"),
-		productCol:         db.Collection("products_test"),
-		productMetaInfoCol: db.Collection("product_infos_test"),
-		productGroupCol:    db.Collection("productgroups_test"),
-		crawlSourceCol:     db.Collection("sources"),
-		crawlRecordCol:     db.Collection("crawling_records"),
-		categoryCol:        db.Collection("categories"),
-		alloffCategoryCol:  db.Collection("alloffcategories"),
-		classifyRuleCol:    db.Collection("classifier"),
-		userCol:            db.Collection("users"),
-		deviceCol:          db.Collection("devices"),
-		notificationCol:    db.Collection("notifications"),
-		alimtalkCol:        db.Collection("alimtalks"),
-		likeBrandsCol:      db.Collection("likes_brands"),
-		exhibitionCol:      db.Collection("exhibitions_test"),
-		alloffSizeCol:      db.Collection("alloff_sizes_test"),
-		cartCol:            db.Collection("carts"),
+		brandCol:             db.Collection("brands"),
+		productCol:           db.Collection("products_test"),
+		productMetaInfoCol:   db.Collection("product_infos_test"),
+		productGroupCol:      db.Collection("productgroups_test"),
+		crawlSourceCol:       db.Collection("sources"),
+		crawlRecordCol:       db.Collection("crawling_records"),
+		categoryCol:          db.Collection("categories"),
+		alloffCategoryCol:    db.Collection("alloffcategories"),
+		classifyRuleCol:      db.Collection("classifier"),
+		userCol:              db.Collection("users"),
+		deviceCol:            db.Collection("devices"),
+		notificationCol:      db.Collection("notifications"),
+		alimtalkCol:          db.Collection("alimtalks"),
+		likeBrandsCol:        db.Collection("likes_brands"),
+		exhibitionCol:        db.Collection("exhibitions_test"),
+		alloffSizeCol:        db.Collection("alloff_sizes_test"),
+		cartCol:              db.Collection("carts"),
+		sizeMappingPolicyCol: db.Collection("size_mapping_policy"),
 	}
 }
 
@@ -81,6 +83,7 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.Notifications = MongoNotificationsRepo(conn)
 	ioc.Repo.AlloffSizes = MongoAlloffSizeRepo(conn)
 	ioc.Repo.Carts = MongoCartsRepo(conn)
+	ioc.Repo.SizeMappingPolicy = MongoSizeMappingPolicyRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context) (*mongo.Client, error) {
