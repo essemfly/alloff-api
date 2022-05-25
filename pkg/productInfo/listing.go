@@ -1,4 +1,4 @@
-package product
+package productinfo
 
 import (
 	"log"
@@ -7,32 +7,6 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-)
-
-type CategoryClassifiedType string
-
-const (
-	CLASSIFIED_DONE      CategoryClassifiedType = "CLASSIFIED_DONE"
-	NOT_CLASSIFIED       CategoryClassifiedType = "NOT_CLASSIFIED"
-	NO_MATTER_CLASSIFIED CategoryClassifiedType = "NO_MATTER_CLASSIFIED"
-)
-
-type PriceSortingType string
-
-const (
-	PRICE_ASCENDING         PriceSortingType = "ascending"
-	PRICE_DESCENDING        PriceSortingType = "descending"
-	DISCOUNTRATE_ASCENDING  PriceSortingType = "discountrateAscending"
-	DISCOUNTRATE_DESCENDING PriceSortingType = "discountrateDescending"
-)
-
-type PriceRangeType string
-
-const (
-	PRICE_RANGE_30  PriceRangeType = "30"
-	PRICE_RANGE_50  PriceRangeType = "50"
-	PRICE_RANGE_70  PriceRangeType = "70"
-	PRICE_RANGE_100 PriceRangeType = "100"
 )
 
 // For Backoffice Servers
@@ -45,9 +19,9 @@ type ProductInfoListInput struct {
 	CategoryClassifierName string
 	Modulename             string
 	Keyword                string
-	IncludeClassifiedType  CategoryClassifiedType
-	PriceRanges            []PriceRangeType
-	PriceSorting           PriceSortingType
+	IncludeClassifiedType  domain.CategoryClassifiedType
+	PriceRanges            []domain.PriceRangeType
+	PriceSorting           domain.PriceSortingType
 	OnlyCategoryClassified bool
 }
 
@@ -77,8 +51,8 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 		filter["alloffname"] = primitive.Regex{Pattern: input.Keyword, Options: "i"}
 	}
 
-	if input.IncludeClassifiedType != NO_MATTER_CLASSIFIED {
-		if input.IncludeClassifiedType == CLASSIFIED_DONE {
+	if input.IncludeClassifiedType != domain.NO_MATTER_CLASSIFIED {
+		if input.IncludeClassifiedType == domain.CLASSIFIED_DONE {
 			filter["alloffcategory.done"] = true
 		} else {
 			filter["alloffcategory.done"] = false
@@ -137,13 +111,13 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 
 func (input *ProductInfoListInput) BuildSorting() (bson.D, error) {
 	options := bson.D{{Key: "issoldout", Value: 1}}
-	if input.PriceSorting == PRICE_ASCENDING {
+	if input.PriceSorting == domain.PRICE_ASCENDING {
 		options = bson.D{{Key: "issoldout", Value: 1}, {Key: "price.currentprice", Value: 1}, {Key: "_id", Value: 1}}
-	} else if input.PriceSorting == PRICE_DESCENDING {
+	} else if input.PriceSorting == domain.PRICE_DESCENDING {
 		options = bson.D{{Key: "issoldout", Value: 1}, {Key: "price.currentprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if input.PriceSorting == DISCOUNTRATE_ASCENDING {
+	} else if input.PriceSorting == domain.DISCOUNTRATE_ASCENDING {
 		options = bson.D{{Key: "issoldout", Value: 1}, {Key: "price.discountrate", Value: 1}, {Key: "_id", Value: 1}}
-	} else if input.PriceSorting == DISCOUNTRATE_DESCENDING {
+	} else if input.PriceSorting == domain.DISCOUNTRATE_DESCENDING {
 		options = bson.D{{Key: "issoldout", Value: 1}, {Key: "price.discountrate", Value: -1}, {Key: "_id", Value: 1}}
 	}
 

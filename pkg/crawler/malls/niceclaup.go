@@ -10,7 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -40,7 +40,7 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 
 		images, colors, sizes, inventories, description := getNiceClaupDetail(productUrl)
 
-		addRequest := &product.AddMetaInfoRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:      title,
 			ProductID:       productID,
 			ProductUrl:      productUrl,
@@ -62,7 +62,7 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 		}
 
 		totalProducts += 1
-		product.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessAddProductInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {

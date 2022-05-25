@@ -9,7 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -70,7 +70,7 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			log.Println("err in translater", err)
 		}
 
-		addRequest := &product.AddMetaInfoRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:      title,
 			ProductID:       productID,
 			ProductUrl:      productUrl,
@@ -96,7 +96,7 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		}
 
 		totalProducts += 1
-		product.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessAddProductInfoRequests(addRequest)
 
 	})
 

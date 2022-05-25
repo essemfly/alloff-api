@@ -11,7 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type OptionParser struct {
@@ -166,7 +166,7 @@ func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceD
 				})
 			})
 
-			addRequest := &product.AddMetaInfoRequest{
+			addRequest := &productinfo.AddMetaInfoRequest{
 				AlloffName:      title,
 				ProductID:       productID,
 				ProductUrl:      productUrl,
@@ -188,7 +188,7 @@ func CrawlTheamall(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			}
 
 			totalProducts += 1
-			product.ProcessAddProductInfoRequests(addRequest)
+			productinfo.ProcessAddProductInfoRequests(addRequest)
 
 		})
 

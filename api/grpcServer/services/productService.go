@@ -9,7 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/classifier"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
@@ -44,22 +44,22 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		searchKeyword = *req.Query.SearchQuery
 	}
 
-	classifiedType := product.NO_MATTER_CLASSIFIED
+	classifiedType := domain.NO_MATTER_CLASSIFIED
 	if req.Query.IsClassifiedDone != nil {
 		if *req.Query.IsClassifiedDone {
-			classifiedType = product.CLASSIFIED_DONE
+			classifiedType = domain.CLASSIFIED_DONE
 		} else {
-			classifiedType = product.NOT_CLASSIFIED
+			classifiedType = domain.NOT_CLASSIFIED
 		}
 	}
 
-	var priceSorting product.PriceSortingType
-	priceRanges := []product.PriceRangeType{}
+	var priceSorting domain.PriceSortingType
+	priceRanges := []domain.PriceRangeType{}
 	if req.Query.Options != nil {
 		priceRanges, priceSorting = mapper.ProductSortingAndRangesMapper(req.Query.Options)
 	}
 
-	query := product.ProductInfoListInput{
+	query := productinfo.ProductInfoListInput{
 		Offset:                int(req.Offset),
 		Limit:                 int(req.Limit),
 		BrandID:               "",
@@ -71,7 +71,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		PriceSorting:          priceSorting,
 	}
 
-	products, cnt, err := product.ListProductInfos(query)
+	products, cnt, err := productinfo.ListProductInfos(query)
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	brand, _ := ioc.Repo.Brands.GetByKeyname(req.BrandKeyName)
 	alloffcat, _ := ioc.Repo.AlloffCategories.Get(*req.AlloffCategoryId)
 
-	addRequest := &product.AddMetaInfoRequest{
+	addRequest := &productinfo.AddMetaInfoRequest{
 		AlloffName:           req.AlloffName,
 		ProductID:            productID,
 		ProductUrl:           productUrl,
@@ -168,11 +168,10 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		IsInventoryMapped:    true,
 	}
 
-	pdInfoDao, err := product.AddProductInfo(addRequest)
+	pdInfoDao, err := productinfo.AddProductInfo(addRequest)
 	if err != nil {
 		return nil, err
 	}
-
 	pdInfoDao, err = classifier.SetProductAlloffCategory(pdInfoDao)
 	if err != nil {
 		return nil, err

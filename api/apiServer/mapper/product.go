@@ -4,7 +4,6 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
 func MapProduct(pdDao *domain.ProductDAO) *model.Product {
@@ -123,25 +122,25 @@ func MapCancelDescription(cancelDesc *domain.CancelDescriptionDAO) *model.Cancel
 	}
 }
 
-func MapProductSortingAndRanges(sortings []model.ProductsSortingType) (priceRanges []product.PriceRangeType, priceSorting product.PriceSortingType) {
+func MapProductSortingAndRanges(sortings []model.ProductsSortingType) (priceRanges []domain.PriceRangeType, priceSorting domain.PriceSortingType) {
 	for _, sorting := range sortings {
 		if sorting == model.ProductsSortingTypePriceAscending {
-			priceSorting = product.PRICE_ASCENDING
+			priceSorting = domain.PRICE_ASCENDING
 		} else if sorting == model.ProductsSortingTypePriceDescending {
-			priceSorting = product.PRICE_DESCENDING
+			priceSorting = domain.PRICE_DESCENDING
 		} else if sorting == model.ProductsSortingTypeDiscountrateAscending {
-			priceSorting = product.DISCOUNTRATE_ASCENDING
+			priceSorting = domain.DISCOUNTRATE_ASCENDING
 		} else if sorting == model.ProductsSortingTypeDiscountrateDescending {
-			priceSorting = product.DISCOUNTRATE_DESCENDING
+			priceSorting = domain.DISCOUNTRATE_DESCENDING
 		} else {
 			if sorting == model.ProductsSortingTypeDiscount0_30 {
-				priceRanges = append(priceRanges, product.PRICE_RANGE_30)
+				priceRanges = append(priceRanges, domain.PRICE_RANGE_30)
 			} else if sorting == model.ProductsSortingTypeDiscount30_50 {
-				priceRanges = append(priceRanges, product.PRICE_RANGE_50)
+				priceRanges = append(priceRanges, domain.PRICE_RANGE_50)
 			} else if sorting == model.ProductsSortingTypeDiscount50_70 {
-				priceRanges = append(priceRanges, product.PRICE_RANGE_70)
+				priceRanges = append(priceRanges, domain.PRICE_RANGE_70)
 			} else {
-				priceRanges = append(priceRanges, product.PRICE_RANGE_100)
+				priceRanges = append(priceRanges, domain.PRICE_RANGE_100)
 			}
 		}
 	}

@@ -12,20 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type Basket struct {
-	Items        []*BasketItem
-	ProductPrice int
-}
-
-type BasketItem struct {
-	Product        *domain.ProductDAO
-	ProductGroupID string
-	ExhibitionID   string
-	Size           string
-	Quantity       int
-}
-
-func (basket *Basket) IsValid() []error {
+func IsValid(basket *domain.Basket) []error {
 	errs := []error{}
 	totalPrices := 0
 
@@ -76,7 +63,7 @@ func (basket *Basket) IsValid() []error {
 	return errs
 }
 
-func (basket *Basket) BuildOrder(user *domain.UserDAO) (*domain.OrderDAO, error) {
+func BuildOrder(user *domain.UserDAO, basket *domain.Basket) (*domain.OrderDAO, error) {
 	orderItems := []*domain.OrderItemDAO{}
 	orderAlloffID := xid.New().String()
 

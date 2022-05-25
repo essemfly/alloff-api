@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type BenettonResponseParser struct {
@@ -67,7 +67,7 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			productUrl := "https://benettonmall.com/product/view?productcode=" + pd.ProductCode
 			images, sizes, colors, inventories, description := CrawlBenettonDetail(productUrl)
 
-			addRequest := &product.AddMetaInfoRequest{
+			addRequest := &productinfo.AddMetaInfoRequest{
 				AlloffName:      pd.ProductName,
 				ProductID:       pd.ProductCode,
 				ProductUrl:      productUrl,
@@ -89,7 +89,7 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			}
 
 			totalProducts += 1
-			product.ProcessAddProductInfoRequests(addRequest)
+			productinfo.ProcessAddProductInfoRequests(addRequest)
 		}
 
 		pageInt, _ := strconv.Atoi(crawlResponse.Page)

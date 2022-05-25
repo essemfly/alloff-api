@@ -9,7 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 const (
@@ -65,7 +65,7 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 				productIdForDb += "-" + colorName
 				productNameForDb += " - " + colorName
 			}
-			addRequest := &product.AddMetaInfoRequest{
+			addRequest := &productinfo.AddMetaInfoRequest{
 				AlloffName:      productNameForDb,
 				ProductID:       productIdForDb,
 				ProductUrl:      productUrl,
@@ -90,7 +90,7 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			}
 
 			totalProducts += 1
-			product.ProcessAddProductInfoRequests(addRequest)
+			productinfo.ProcessAddProductInfoRequests(addRequest)
 		}
 	})
 

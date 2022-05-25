@@ -11,7 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type SSFResponseParser struct {
@@ -102,7 +102,7 @@ func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.Cra
 		productUrl := "https://www.ssfshop.com/" + source.BrandKeyname + "/" + pd.ProductId + "/good"
 		images, colors, sizes, inventories, description := getSSFDetailInfo(productUrl)
 
-		addRequest := &product.AddMetaInfoRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:      pd.God.Name,
 			ProductID:       pd.ProductId,
 			ProductUrl:      productUrl,
@@ -124,7 +124,7 @@ func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.Cra
 		}
 
 		numProducts += 1
-		product.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessAddProductInfoRequests(addRequest)
 	}
 	return numProducts
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type BabatheStokPostData struct {
@@ -60,7 +60,7 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			productName, productID, productUrl, origPrice, curPrice := ParseHtml(s)
 			images, sizes, colors, inventories, description := CrawlBabatheDetail(productUrl, productID, source)
 
-			addRequest := &product.AddMetaInfoRequest{
+			addRequest := &productinfo.AddMetaInfoRequest{
 				AlloffName:      productName,
 				ProductID:       productID,
 				ProductUrl:      productUrl,
@@ -82,7 +82,7 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			}
 
 			totalProducts += 1
-			product.ProcessAddProductInfoRequests(addRequest)
+			productinfo.ProcessAddProductInfoRequests(addRequest)
 		})
 
 		if numProducts > 0 {

@@ -9,7 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -64,7 +64,7 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		productName := e.ChildText(".link")
 		images, sizes, colors, inventories, description := getTheoryDetail(productUrl, productCode)
 
-		addRequest := &product.AddMetaInfoRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:      productName,
 			ProductID:       productId,
 			ProductUrl:      productUrl,
@@ -86,7 +86,7 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		}
 
 		totalProducts += 1
-		product.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessAddProductInfoRequests(addRequest)
 
 	})
 

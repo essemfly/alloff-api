@@ -10,7 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -51,7 +51,7 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 		mobileUrl := strings.Replace(productUrl, "https://lounge-b.co.kr", "https://m.lounge-b.co.kr", 1)
 
-		addRequest := &product.AddMetaInfoRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:      title,
 			ProductID:       productID,
 			ProductUrl:      mobileUrl,
@@ -73,7 +73,7 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		}
 
 		totalProducts += 1
-		product.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessAddProductInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".xans-product-normalpaging a:nth-last-child(2)", func(e *colly.HTMLElement) {

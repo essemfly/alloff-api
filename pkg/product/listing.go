@@ -19,8 +19,8 @@ type ProductListInput struct {
 	AlloffCategoryID string
 	BrandIDs         []string
 	AlloffSizeIDs    []string
-	PriceRanges      []PriceRangeType
-	PriceSorting     PriceSortingType
+	PriceRanges      []domain.PriceRangeType
+	PriceSorting     domain.PriceSortingType
 }
 
 func (input *ProductListInput) BuildFilter() (bson.M, error) {
@@ -109,13 +109,13 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 
 func (input *ProductListInput) BuildSorting() (bson.D, error) {
 	options := bson.D{{Key: "productinfo.issoldout", Value: 1}}
-	if input.PriceSorting == PRICE_ASCENDING {
+	if input.PriceSorting == domain.PRICE_ASCENDING {
 		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.currentprice", Value: 1}, {Key: "_id", Value: 1}}
-	} else if input.PriceSorting == PRICE_DESCENDING {
+	} else if input.PriceSorting == domain.PRICE_DESCENDING {
 		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.currentprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if input.PriceSorting == DISCOUNTRATE_ASCENDING {
+	} else if input.PriceSorting == domain.DISCOUNTRATE_ASCENDING {
 		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: 1}, {Key: "_id", Value: 1}}
-	} else if input.PriceSorting == DISCOUNTRATE_DESCENDING {
+	} else if input.PriceSorting == domain.DISCOUNTRATE_DESCENDING {
 		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: -1}, {Key: "_id", Value: 1}}
 	}
 

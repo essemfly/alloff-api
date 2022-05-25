@@ -4,18 +4,17 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/pkg/order"
 )
 
-func BuildBasketItems(input *model.OrderInput) ([]*order.BasketItem, error) {
-	basketItems := []*order.BasketItem{}
+func BuildBasketItems(input *model.OrderInput) ([]*domain.BasketItem, error) {
+	basketItems := []*domain.BasketItem{}
 	for _, item := range input.Orders {
 		pd, err := ioc.Repo.Products.Get(item.ProductID)
 		if err != nil {
 			return nil, err
 		}
 
-		basketItem := &order.BasketItem{
+		basketItem := &domain.BasketItem{
 			Product:        pd,
 			ProductGroupID: pd.ProductGroupID,
 			Size:           item.Selectsize,

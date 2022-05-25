@@ -11,7 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -55,7 +55,7 @@ func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 		title, images, sizes, colors, inventories, description := getBylynnDetail(productUrl)
 
-		addRequest := &product.AddMetaInfoRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:      title,
 			ProductID:       productID,
 			ProductUrl:      mobileUrl,
@@ -77,7 +77,7 @@ func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		}
 
 		totalProducts += 1
-		product.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessAddProductInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {

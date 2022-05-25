@@ -10,7 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type ImagesURLs struct {
@@ -53,7 +53,7 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 
 		sizes, inventories, description, colors := getClaudiePierlotDetail(productUrl)
 
-		addRequest := &product.AddMetaInfoRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:      productName,
 			ProductID:       productId,
 			ProductUrl:      productUrl,
@@ -75,7 +75,7 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 		}
 
 		totalProducts += 1
-		product.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessAddProductInfoRequests(addRequest)
 
 	})
 

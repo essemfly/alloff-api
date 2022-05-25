@@ -8,6 +8,12 @@ import (
 	"strconv"
 )
 
+type AddCartItemInput struct {
+	ProductID  string `json:"productId"`
+	Selectsize string `json:"selectsize"`
+	Quantity   int    `json:"quantity"`
+}
+
 type AlloffCategory struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
@@ -72,6 +78,16 @@ type CancelDescription struct {
 	ChangeAvailable bool `json:"changeAvailable"`
 	ChangeFee       int  `json:"changeFee"`
 	RefundFee       int  `json:"refundFee"`
+}
+
+type Cart struct {
+	ID    string      `json:"id"`
+	Items []*CartItem `json:"items"`
+}
+
+type CartItem struct {
+	Product    *Product    `json:"product"`
+	Exhibition *Exhibition `json:"exhibition"`
 }
 
 type Category struct {

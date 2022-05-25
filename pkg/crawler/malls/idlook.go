@@ -10,7 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -49,7 +49,7 @@ func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 		delete(description, askey)
 
-		addRequest := &product.AddMetaInfoRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:      title,
 			ProductID:       productID,
 			ProductUrl:      productUrl,
@@ -71,7 +71,7 @@ func CrawlIdLook(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		}
 
 		totalProducts += 1
-		product.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessAddProductInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {

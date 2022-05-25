@@ -14,7 +14,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type TheOutnetResponseParser struct {
@@ -178,7 +178,7 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			images = newImages
 		}
 
-		addRequest := &product.AddMetaInfoRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:      pd.Name,
 			ProductID:       pd.ProductID,
 			ProductUrl:      urlPrefix + pd.Seo.SeoUrl,
@@ -200,7 +200,7 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 		}
 
 		numProducts += 1
-		product.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessAddProductInfoRequests(addRequest)
 
 	}
 	return numProducts

@@ -12,6 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/amplitude"
 	"github.com/lessbutter/alloff-api/pkg/order"
 )
@@ -29,14 +30,14 @@ func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInp
 		return nil, fmt.Errorf("ERR100:alloffproduct not found")
 	}
 
-	basket := &order.Basket{
+	basket := &domain.Basket{
 		Items:        basketItems,
 		ProductPrice: input.ProductPrice,
 	}
 
-	errs := basket.IsValid()
+	errs := order.IsValid(basket)
 
-	orderDao, err := basket.BuildOrder(nil)
+	orderDao, err := order.BuildOrder(nil, basket)
 	if err != nil {
 		return nil, err
 	}
@@ -77,18 +78,17 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 		return nil, err
 	}
 
-	basket := &order.Basket{
+	basket := &domain.Basket{
 		Items:        basketItems,
 		ProductPrice: input.ProductPrice,
 	}
 
-	errs := basket.IsValid()
+	errs := order.IsValid(basket)
 	if len(errs) > 0 {
 		return nil, errs[0]
 	}
 
-	orderDao, _ := basket.BuildOrder(user)
-
+	orderDao, _ := order.BuildOrder(user, basket)
 	newOrderDao, err := ioc.Repo.Orders.Insert(orderDao)
 	if err != nil {
 		return nil, fmt.Errorf("ERR300:failed to create order not found")

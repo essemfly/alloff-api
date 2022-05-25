@@ -1,4 +1,4 @@
-package product
+package productinfo
 
 import (
 	"github.com/lessbutter/alloff-api/config"
