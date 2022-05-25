@@ -30,10 +30,9 @@ type AlloffInventory struct {
 }
 
 type AlloffSize struct {
-	ID               string          `json:"id"`
-	AlloffCategory   *AlloffCategory `json:"alloffCategory"`
-	AlloffSizeName   string          `json:"alloffSizeName"`
-	OriginalSizeName string          `json:"originalSizeName"`
+	ID             string          `json:"id"`
+	AlloffCategory *AlloffCategory `json:"alloffCategory"`
+	AlloffSizeName string          `json:"alloffSizeName"`
 }
 
 type AppVersion struct {
@@ -136,6 +135,11 @@ type ExhibitionOutput struct {
 	Status        ExhibitionStatus `json:"status"`
 	LiveCounts    int              `json:"liveCounts"`
 	NotOpenCounts int              `json:"notOpenCounts"`
+}
+
+type Inventory struct {
+	Size     string `json:"size"`
+	Quantity int    `json:"quantity"`
 }
 
 type InventoryInput struct {
@@ -324,7 +328,7 @@ type Product struct {
 	DiscountRate        int                  `json:"discountRate"`
 	Images              []string             `json:"images"`
 	ThumbnailImage      string               `json:"thumbnailImage"`
-	Inventory           []*AlloffInventory   `json:"inventory"`
+	Inventory           []*Inventory         `json:"inventory"`
 	IsSoldout           bool                 `json:"isSoldout"`
 	Description         *ProductDescription  `json:"description"`
 	DeliveryDescription *DeliveryDescription `json:"deliveryDescription"`

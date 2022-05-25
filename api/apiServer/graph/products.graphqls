@@ -36,7 +36,12 @@ type AlloffSize {
   id: ID!
   alloffCategory: AlloffCategory!
   alloffSizeName: String!
-  originalSizeName: String!
+}
+
+type Inventory {
+  size: String!
+  quantity: Int!
+  alloffSize: AlloffSize!
 }
 
 type Product {
@@ -50,7 +55,7 @@ type Product {
   discountRate: Int!
   images: [String!]!
   thumbnailImage: String!
-  inventory: [AlloffInventory!]!
+  inventory: [Inventory!]!
   isSoldout: Boolean!
   description: ProductDescription!
   deliveryDescription: DeliveryDescription!

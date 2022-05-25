@@ -7,9 +7,8 @@ import (
 
 func AlloffSizeMapper(alloffSize *domain.AlloffSizeDAO) *grpcServer.AlloffSizeMessage {
 	return &grpcServer.AlloffSizeMessage{
-		AlloffSizeId:     alloffSize.ID.Hex(),
-		AlloffSizeName:   alloffSize.AlloffSizeName,
-		OriginalSizeName: alloffSize.OriginalSizeName,
-		AlloffCategory:   AlloffCategoryMapper(alloffSize.AlloffCategory),
+		AlloffSizeId:   alloffSize.ID.Hex(),
+		AlloffSizeName: alloffSize.AlloffSizeName,
+		AlloffCategory: AlloffCategoryMapper(alloffSize.AlloffCategory),
 	}
 }

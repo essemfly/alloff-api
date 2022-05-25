@@ -33,10 +33,9 @@ const (
 )
 
 type AlloffSizeDAO struct {
-	ID               primitive.ObjectID `bson:"_id, omitempty"`
-	AlloffCategory   *AlloffCategoryDAO
-	AlloffSizeName   string
-	OriginalSizeName string
+	ID             primitive.ObjectID `bson:"_id, omitempty"`
+	AlloffCategory *AlloffCategoryDAO
+	AlloffSizeName string
 }
 
 type AlloffInventoryDAO struct {

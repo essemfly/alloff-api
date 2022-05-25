@@ -44,10 +44,6 @@ func (s *AlloffSizeService) EditAlloffSize(ctx context.Context, req *grpcServer.
 		alloffSizeDao.AlloffCategory = cat
 	}
 
-	if req.OriginalSizeName != nil {
-		alloffSizeDao.OriginalSizeName = *req.OriginalSizeName
-	}
-
 	newAlloffSizeDao, err := ioc.Repo.AlloffSizes.Upsert(alloffSizeDao)
 	if err != nil {
 		return nil, err
@@ -59,10 +55,9 @@ func (s *AlloffSizeService) EditAlloffSize(ctx context.Context, req *grpcServer.
 func (s *AlloffSizeService) CreateAlloffSize(ctx context.Context, req *grpcServer.CreateAlloffSizeRequest) (*grpcServer.AlloffSizeMessage, error) {
 	cat, _ := ioc.Repo.AlloffCategories.Get(req.AlloffCategoryId)
 	alloffSizeDao := &domain.AlloffSizeDAO{
-		ID:               primitive.NewObjectID(),
-		AlloffSizeName:   req.AlloffSizeName,
-		OriginalSizeName: req.OriginalSizeName,
-		AlloffCategory:   cat,
+		ID:             primitive.NewObjectID(),
+		AlloffSizeName: req.AlloffSizeName,
+		AlloffCategory: cat,
 	}
 
 	newAlloffSize, err := ioc.Repo.AlloffSizes.Upsert(alloffSizeDao)

@@ -62,13 +62,25 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 		DiscountRate:        pdDao.ProductInfo.Price.DiscountRate,
 		Images:              pdDao.ProductInfo.Images,
 		ThumbnailImage:      thumbnailImage,
-		Inventory:           MapAlloffInventory(pdDao.ProductInfo.AlloffInventory),
+		Inventory:           MapInventory(pdDao.ProductInfo.Inventory),
 		IsSoldout:           isSoldOut,
 		Description:         MapDescription(pdDao.ProductInfo.SalesInstruction.Description),
 		DeliveryDescription: deliveryDesc,
 		CancelDescription:   MapCancelDescription(pdDao.ProductInfo.SalesInstruction.CancelDescription),
 		Information:         information,
 	}
+}
+
+func MapInventory(invs []*domain.InventoryDAO) []*model.Inventory {
+	res := []*model.Inventory{}
+	for _, inv := range invs {
+		invModel := &model.Inventory{
+			Quantity: inv.Quantity,
+			Size:     inv.Size,
+		}
+		res = append(res, invModel)
+	}
+	return res
 }
 
 func MapDeliveryDescription(deliveryDesc *domain.DeliveryDescriptionDAO) *model.DeliveryDescription {
@@ -84,18 +96,6 @@ func MapDeliveryDescription(deliveryDesc *domain.DeliveryDescriptionDAO) *model.
 		LatestDeliveryDays:   deliveryDesc.LatestDeliveryDays,
 		Texts:                deliveryDesc.Texts,
 	}
-}
-
-func MapAlloffInventory(invs []*domain.AlloffInventoryDAO) []*model.AlloffInventory {
-	res := []*model.AlloffInventory{}
-	for _, inv := range invs {
-		invModel := &model.AlloffInventory{
-			Quantity:   inv.Quantity,
-			AlloffSize: MapAlloffSizeDaoToAlloffSize(&inv.AlloffSize),
-		}
-		res = append(res, invModel)
-	}
-	return res
 }
 
 func MapDescription(desc *domain.ProductDescriptionDAO) *model.ProductDescription {

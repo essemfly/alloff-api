@@ -58,10 +58,9 @@ type ComplexityRoot struct {
 	}
 
 	AlloffSize struct {
-		AlloffCategory   func(childComplexity int) int
-		AlloffSizeName   func(childComplexity int) int
-		ID               func(childComplexity int) int
-		OriginalSizeName func(childComplexity int) int
+		AlloffCategory func(childComplexity int) int
+		AlloffSizeName func(childComplexity int) int
+		ID             func(childComplexity int) int
 	}
 
 	AppVersion struct {
@@ -152,6 +151,11 @@ type ComplexityRoot struct {
 		LiveCounts    func(childComplexity int) int
 		NotOpenCounts func(childComplexity int) int
 		Status        func(childComplexity int) int
+	}
+
+	Inventory struct {
+		Quantity func(childComplexity int) int
+		Size     func(childComplexity int) int
 	}
 
 	KeyValueInfo struct {
@@ -491,13 +495,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AlloffSize.ID(childComplexity), true
-
-	case "AlloffSize.originalSizeName":
-		if e.complexity.AlloffSize.OriginalSizeName == nil {
-			break
-		}
-
-		return e.complexity.AlloffSize.OriginalSizeName(childComplexity), true
 
 	case "AppVersion.isMaintenance":
 		if e.complexity.AppVersion.IsMaintenance == nil {
@@ -897,6 +894,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ExhibitionOutput.Status(childComplexity), true
+
+	case "Inventory.quantity":
+		if e.complexity.Inventory.Quantity == nil {
+			break
+		}
+
+		return e.complexity.Inventory.Quantity(childComplexity), true
+
+	case "Inventory.size":
+		if e.complexity.Inventory.Size == nil {
+			break
+		}
+
+		return e.complexity.Inventory.Size(childComplexity), true
 
 	case "KeyValueInfo.key":
 		if e.complexity.KeyValueInfo.Key == nil {
@@ -2604,7 +2615,11 @@ type AlloffSize {
   id: ID!
   alloffCategory: AlloffCategory!
   alloffSizeName: String!
-  originalSizeName: String!
+}
+
+type Inventory {
+  size: String!
+  quantity: Int!
 }
 
 type Product {
@@ -2618,7 +2633,7 @@ type Product {
   discountRate: Int!
   images: [String!]!
   thumbnailImage: String!
-  inventory: [AlloffInventory!]!
+  inventory: [Inventory!]!
   isSoldout: Boolean!
   description: ProductDescription!
   deliveryDescription: DeliveryDescription!
@@ -3546,41 +3561,6 @@ func (ec *executionContext) _AlloffSize_alloffSizeName(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.AlloffSizeName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _AlloffSize_originalSizeName(ctx context.Context, field graphql.CollectedField, obj *model.AlloffSize) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "AlloffSize",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   false,
-		IsResolver: false,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.OriginalSizeName, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5567,6 +5547,76 @@ func (ec *executionContext) _ExhibitionOutput_notOpenCounts(ctx context.Context,
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.NotOpenCounts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Inventory_size(ctx context.Context, field graphql.CollectedField, obj *model.Inventory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Inventory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Size, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Inventory_quantity(ctx context.Context, field graphql.CollectedField, obj *model.Inventory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Inventory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Quantity, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -9265,9 +9315,9 @@ func (ec *executionContext) _Product_inventory(ctx context.Context, field graphq
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.AlloffInventory)
+	res := resTmp.([]*model.Inventory)
 	fc.Result = res
-	return ec.marshalNAlloffInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffInventoryᚄ(ctx, field.Selections, res)
+	return ec.marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventoryᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Product_isSoldout(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
@@ -13035,11 +13085,6 @@ func (ec *executionContext) _AlloffSize(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "originalSizeName":
-			out.Values[i] = ec._AlloffSize_originalSizeName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -13555,6 +13600,38 @@ func (ec *executionContext) _ExhibitionOutput(ctx context.Context, sel ast.Selec
 			}
 		case "notOpenCounts":
 			out.Values[i] = ec._ExhibitionOutput_notOpenCounts(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var inventoryImplementors = []string{"Inventory"}
+
+func (ec *executionContext) _Inventory(ctx context.Context, sel ast.SelectionSet, obj *model.Inventory) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, inventoryImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Inventory")
+		case "size":
+			out.Values[i] = ec._Inventory_size(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "quantity":
+			out.Values[i] = ec._Inventory_quantity(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -15134,60 +15211,6 @@ func (ec *executionContext) marshalNAlloffCategory2ᚖgithubᚗcomᚋlessbutter�
 	return ec._AlloffCategory(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNAlloffInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffInventoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.AlloffInventory) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNAlloffInventory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffInventory(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNAlloffInventory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffInventory(ctx context.Context, sel ast.SelectionSet, v *model.AlloffInventory) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._AlloffInventory(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNAlloffProductType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductType(ctx context.Context, v interface{}) (model.AlloffProductType, error) {
 	var res model.AlloffProductType
 	err := res.UnmarshalGQL(v)
@@ -15764,6 +15787,60 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNInventory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Inventory) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNInventory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventory(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNInventory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐInventory(ctx context.Context, sel ast.SelectionSet, v *model.Inventory) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._Inventory(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNKeyValueInfo2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfo(ctx context.Context, sel ast.SelectionSet, v *model.KeyValueInfo) graphql.Marshaler {
