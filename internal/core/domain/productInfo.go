@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/lessbutter/alloff-api/internal/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -183,6 +184,7 @@ func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyTyp
 		OriginalPrice: origPrice,
 		CurrencyType:  currencyType,
 		CurrentPrice:  curPrice,
+		DiscountRate:  utils.CalculateDiscountRate(int(origPrice), int(curPrice)),
 		History:       newHistory,
 	}
 }
