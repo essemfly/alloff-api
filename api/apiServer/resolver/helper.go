@@ -15,10 +15,10 @@ func BuildBasketItems(input *model.OrderInput) ([]*domain.BasketItem, error) {
 		}
 
 		basketItem := &domain.BasketItem{
-			Product:        pd,
-			ProductGroupID: pd.ProductGroupID,
-			Size:           item.Selectsize,
-			Quantity:       item.Quantity,
+			Product:      pd,
+			ExhibitionID: pd.ExhibitionID,
+			Size:         item.Selectsize,
+			Quantity:     item.Quantity,
 		}
 
 		basketItems = append(basketItems, basketItem)

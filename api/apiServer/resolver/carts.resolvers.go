@@ -25,11 +25,10 @@ func (r *mutationResolver) AddCartItem(ctx context.Context, input *model.AddCart
 	}
 
 	cart.Items = append(cart.Items, &domain.BasketItem{
-		Product:        product,
-		ProductGroupID: product.ProductGroupID,
-		ExhibitionID:   product.ExhibitionID,
-		Size:           input.Selectsize,
-		Quantity:       input.Quantity,
+		Product:      product,
+		ExhibitionID: product.ExhibitionID,
+		Size:         input.Selectsize,
+		Quantity:     input.Quantity,
 	})
 
 	newCart, err := ioc.Repo.Carts.Upsert(cart)

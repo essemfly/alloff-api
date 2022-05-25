@@ -138,8 +138,9 @@ type ExhibitionOutput struct {
 }
 
 type Inventory struct {
-	Size     string `json:"size"`
-	Quantity int    `json:"quantity"`
+	Size       string      `json:"size"`
+	Quantity   int         `json:"quantity"`
+	AlloffSize *AlloffSize `json:"alloffSize"`
 }
 
 type InventoryInput struct {
@@ -234,10 +235,9 @@ type OrderItem struct {
 }
 
 type OrderItemInput struct {
-	ProductID      string `json:"productId"`
-	ProductGroupID string `json:"productGroupId"`
-	Selectsize     string `json:"selectsize"`
-	Quantity       int    `json:"quantity"`
+	ProductID  string `json:"productId"`
+	Selectsize string `json:"selectsize"`
+	Quantity   int    `json:"quantity"`
 }
 
 type OrderItemStatusDescription struct {
@@ -334,6 +334,7 @@ type Product struct {
 	DeliveryDescription *DeliveryDescription `json:"deliveryDescription"`
 	CancelDescription   *CancelDescription   `json:"cancelDescription"`
 	Information         []*KeyValueInfo      `json:"information"`
+	ExhibitionID        string               `json:"exhibitionId"`
 }
 
 type ProductDescription struct {

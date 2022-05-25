@@ -79,7 +79,6 @@ type OrderItem {
 
 input OrderItemInput {
   productId: String!
-  productGroupId: String!
   selectsize: String!
   quantity: Int!
 }

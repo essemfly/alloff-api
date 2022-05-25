@@ -16,7 +16,7 @@ enum DeliveryType {
   FOREIGN_DELIVERY
 }
 
-enum AlloffProductType{
+enum AlloffProductType {
   MALE
   FEMALE
   KIDS
@@ -61,6 +61,7 @@ type Product {
   deliveryDescription: DeliveryDescription!
   cancelDescription: CancelDescription!
   information: [KeyValueInfo!]
+  exhibitionId: String!
 }
 
 type AlloffInventory {

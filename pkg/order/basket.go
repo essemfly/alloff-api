@@ -71,16 +71,16 @@ func BuildOrder(user *domain.UserDAO, basket *domain.Basket) (*domain.OrderDAO, 
 	for _, item := range basket.Items {
 		orderItemType := domain.NORMAL_ORDER
 		productPrice := item.Product.ProductInfo.Price.CurrentPrice
-		pg, err := ioc.Repo.ProductGroups.Get(item.ProductGroupID)
+		exDao, err := ioc.Repo.Exhibitions.Get(item.ExhibitionID)
 		if err != nil {
 			config.Logger.Error("pg not found in build order", zap.Error(err))
 			return nil, err
 		}
-		if pg.GroupType == domain.PRODUCT_GROUP_EXHIBITION {
+		if exDao.ExhibitionType == domain.EXHIBITION_NORMAL {
 			orderItemType = domain.EXHIBITION_ORDER
-		} else if pg.GroupType == domain.PRODUCT_GROUP_TIMEDEAL {
+		} else if exDao.ExhibitionType == domain.EXHIBITION_TIMEDEAL {
 			orderItemType = domain.TIMEDEAL_ORDER
-		} else if pg.GroupType == domain.PRODUCT_GROUP_GROUPDEAL {
+		} else if exDao.ExhibitionType == domain.EXHIBITION_GROUPDEAL {
 			orderItemType = domain.GROUPDEAL_ORDER
 		}
 

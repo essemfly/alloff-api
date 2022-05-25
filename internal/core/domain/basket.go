@@ -9,9 +9,8 @@ type Basket struct {
 }
 
 type BasketItem struct {
-	Product        *ProductDAO
-	ProductGroupID string
-	ExhibitionID   string
-	Size           string
-	Quantity       int
+	Product      *ProductDAO
+	ExhibitionID string
+	Size         string
+	Quantity     int
 }

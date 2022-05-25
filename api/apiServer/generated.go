@@ -154,8 +154,9 @@ type ComplexityRoot struct {
 	}
 
 	Inventory struct {
-		Quantity func(childComplexity int) int
-		Size     func(childComplexity int) int
+		AlloffSize func(childComplexity int) int
+		Quantity   func(childComplexity int) int
+		Size       func(childComplexity int) int
 	}
 
 	KeyValueInfo struct {
@@ -294,6 +295,7 @@ type ComplexityRoot struct {
 		Description         func(childComplexity int) int
 		DiscountRate        func(childComplexity int) int
 		DiscountedPrice     func(childComplexity int) int
+		ExhibitionID        func(childComplexity int) int
 		ID                  func(childComplexity int) int
 		Images              func(childComplexity int) int
 		Information         func(childComplexity int) int
@@ -894,6 +896,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ExhibitionOutput.Status(childComplexity), true
+
+	case "Inventory.alloffSize":
+		if e.complexity.Inventory.AlloffSize == nil {
+			break
+		}
+
+		return e.complexity.Inventory.AlloffSize(childComplexity), true
 
 	case "Inventory.quantity":
 		if e.complexity.Inventory.Quantity == nil {
@@ -1682,6 +1691,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.DiscountedPrice(childComplexity), true
 
+	case "Product.exhibitionId":
+		if e.complexity.Product.ExhibitionID == nil {
+			break
+		}
+
+		return e.complexity.Product.ExhibitionID(childComplexity), true
+
 	case "Product.id":
 		if e.complexity.Product.ID == nil {
 			break
@@ -2453,7 +2469,6 @@ type OrderItem {
 
 input OrderItemInput {
   productId: String!
-  productGroupId: String!
   selectsize: String!
   quantity: Int!
 }
@@ -2595,7 +2610,7 @@ enum DeliveryType {
   FOREIGN_DELIVERY
 }
 
-enum AlloffProductType{
+enum AlloffProductType {
   MALE
   FEMALE
   KIDS
@@ -2620,6 +2635,7 @@ type AlloffSize {
 type Inventory {
   size: String!
   quantity: Int!
+  alloffSize: AlloffSize!
 }
 
 type Product {
@@ -2639,6 +2655,7 @@ type Product {
   deliveryDescription: DeliveryDescription!
   cancelDescription: CancelDescription!
   information: [KeyValueInfo!]
+  exhibitionId: String!
 }
 
 type AlloffInventory {
@@ -2699,7 +2716,8 @@ type ProductsOutput {
 extend type Query {
   product(id: String!): Product!
   products(input: ProductsInput!): ProductsOutput!
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "api/apiServer/graph/version.graphqls", Input: `type AppVersion {
   latestVersion: String!
   minVersion: String!
@@ -5631,6 +5649,41 @@ func (ec *executionContext) _Inventory_quantity(ctx context.Context, field graph
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Inventory_alloffSize(ctx context.Context, field graphql.CollectedField, obj *model.Inventory) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Inventory",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AlloffSize, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.AlloffSize)
+	fc.Result = res
+	return ec.marshalNAlloffSize2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffSize(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _KeyValueInfo_key(ctx context.Context, field graphql.CollectedField, obj *model.KeyValueInfo) (ret graphql.Marshaler) {
@@ -9492,6 +9545,41 @@ func (ec *executionContext) _Product_information(ctx context.Context, field grap
 	return ec.marshalOKeyValueInfo2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐKeyValueInfoᚄ(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Product_exhibitionId(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Product",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExhibitionID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ProductDescription_images(ctx context.Context, field graphql.CollectedField, obj *model.ProductDescription) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -12598,14 +12686,6 @@ func (ec *executionContext) unmarshalInputOrderItemInput(ctx context.Context, ob
 			if err != nil {
 				return it, err
 			}
-		case "productGroupId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productGroupId"))
-			it.ProductGroupID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "selectsize":
 			var err error
 
@@ -13635,6 +13715,11 @@ func (ec *executionContext) _Inventory(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "alloffSize":
+			out.Values[i] = ec._Inventory_alloffSize(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -14432,6 +14517,11 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "information":
 			out.Values[i] = ec._Product_information(ctx, field, obj)
+		case "exhibitionId":
+			out.Values[i] = ec._Product_exhibitionId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

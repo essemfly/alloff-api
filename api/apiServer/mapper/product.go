@@ -68,6 +68,7 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 		DeliveryDescription: deliveryDesc,
 		CancelDescription:   MapCancelDescription(pdDao.ProductInfo.SalesInstruction.CancelDescription),
 		Information:         information,
+		ExhibitionID:        pdDao.ExhibitionID,
 	}
 }
 

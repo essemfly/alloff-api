@@ -35,6 +35,19 @@ func (repo *productRepo) Get(ID string) (*domain.ProductDAO, error) {
 	return product, nil
 }
 
+func (repo *productRepo) GetByMetaID(metaID, exhibitionID string) (*domain.ProductDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	productObjectId, _ := primitive.ObjectIDFromHex(metaID)
+	filter := bson.M{"productinfo._id": productObjectId, "exhibitionid": exhibitionID}
+	var product *domain.ProductDAO
+	if err := repo.col.FindOne(ctx, filter).Decode(&product); err != nil {
+		return nil, err
+	}
+	return product, nil
+}
+
 func (repo *productRepo) ListByMetaID(metaID string) ([]*domain.ProductDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
