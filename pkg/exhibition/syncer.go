@@ -34,8 +34,8 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 		}
 
 		pdTypes = append(pdTypes, pd.ProductInfo.ProductType...)
-		removeDuplicateType(pdTypes)
 	}
+	pdTypes = removeDuplicateType(pdTypes)
 
 	newPgs := []*domain.ProductGroupDAO{}
 	for _, pg := range exDao.ProductGroups {
