@@ -55,7 +55,7 @@ func Reset(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest) (*dom
 	// 	}
 	// }
 
-	updatedPdInfo, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfo)
+	updatedPdInfo, err := Update(pdInfo)
 	if err != nil {
 		config.Logger.Error("error on adding product infos", zap.Error(err))
 		return nil, err

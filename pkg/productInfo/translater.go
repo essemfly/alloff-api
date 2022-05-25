@@ -1,9 +1,8 @@
-package product
+package productinfo
 
 import (
 	"log"
 
-	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/translater"
 	"golang.org/x/text/language"
@@ -45,7 +44,8 @@ func TranslateProductInfo(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductMet
 	pdInfo.AlloffName = titleInKorean
 	pdInfo.SalesInstruction.Information = informationKorean
 	pdInfo.IsTranslateRequired = false
-	newPdInfo, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfo)
+
+	newPdInfo, err := Update(pdInfo)
 	if err != nil {
 		log.Println("err", err)
 		return nil, err

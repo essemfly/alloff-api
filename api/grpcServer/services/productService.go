@@ -313,7 +313,7 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		pdInfoDao.ThumbnailImage = *req.ThumbnailImage
 	}
 
-	newPdInfoDao, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfoDao)
+	newPdInfoDao, err := productinfo.Update(pdInfoDao)
 	if err != nil {
 		return nil, err
 	}

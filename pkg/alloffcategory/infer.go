@@ -14,11 +14,9 @@ import (
 )
 
 func InferAlloffCategory(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAlloffCategoryDAO, error) {
-	if pdInfo.AlloffCategory == nil {
-		alloffCat := categoryClassifier(pdInfo)
-		if alloffCat != nil {
-			return alloffCat, nil
-		}
+	alloffCat := categoryClassifier(pdInfo)
+	if alloffCat != nil {
+		return alloffCat, nil
 	}
 
 	if pdInfo.AlloffCategory == nil || !pdInfo.AlloffCategory.Done {
