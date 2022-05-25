@@ -25,29 +25,19 @@ func (s *BrandService) CreateBrand(ctx context.Context, req *grpcServer.CreateBr
 		})
 	}
 
-	invPolicyDaos := []domain.InventoryMappingPolicy{}
-	for _, invPolicy := range req.InventoryMappingPolicies {
-		alloffSizeDao, _ := ioc.Repo.AlloffSizes.Get(invPolicy.AlloffSizeId)
-		invPolicyDaos = append(invPolicyDaos, domain.InventoryMappingPolicy{
-			BrandSize:  invPolicy.BrandSize,
-			AlloffSize: *alloffSizeDao,
-		})
-	}
-
 	brandDao := &domain.BrandDAO{
-		KorName:                  req.Korname,
-		EngName:                  req.Engname,
-		KeyName:                  req.Keyname,
-		Description:              req.Description,
-		LogoImgUrl:               req.LogoImageUrl,
-		BackImgUrl:               req.BackImageUrl,
-		Onpopular:                false,
-		Created:                  time.Now(),
-		IsOpen:                   false,
-		InMaintenance:            false,
-		IsHide:                   false,
-		SizeGuide:                sizeGuideDaos,
-		InventoryMappingPolicies: invPolicyDaos,
+		KorName:       req.Korname,
+		EngName:       req.Engname,
+		KeyName:       req.Keyname,
+		Description:   req.Description,
+		LogoImgUrl:    req.LogoImageUrl,
+		BackImgUrl:    req.BackImageUrl,
+		Onpopular:     false,
+		Created:       time.Now(),
+		IsOpen:        false,
+		InMaintenance: false,
+		IsHide:        false,
+		SizeGuide:     sizeGuideDaos,
 	}
 	newBrand, err := ioc.Repo.Brands.Upsert(brandDao)
 	if err != nil {
@@ -120,17 +110,6 @@ func (s *BrandService) EditBrand(ctx context.Context, req *grpcServer.EditBrandR
 		}
 
 		brandDao.SizeGuide = guides
-	}
-	if req.InventoryMappingPolicies != nil {
-		invPolicyDaos := []domain.InventoryMappingPolicy{}
-		for _, invPolicy := range req.InventoryMappingPolicies {
-			alloffSizeDao, _ := ioc.Repo.AlloffSizes.Get(invPolicy.AlloffSizeId)
-			invPolicyDaos = append(invPolicyDaos, domain.InventoryMappingPolicy{
-				BrandSize:  invPolicy.BrandSize,
-				AlloffSize: *alloffSizeDao,
-			})
-		}
-		brandDao.InventoryMappingPolicies = invPolicyDaos
 	}
 
 	newBrandDao, err := ioc.Repo.Brands.Upsert(brandDao)

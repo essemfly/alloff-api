@@ -20,7 +20,7 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 	}
 
 	isSoldOut := true
-	for _, inv := range pdDao.ProductInfo.AlloffInventory {
+	for _, inv := range pdDao.ProductInfo.Inventory {
 		if inv.Quantity > 0 {
 			isSoldOut = false
 		}
@@ -76,8 +76,9 @@ func MapInventory(invs []*domain.InventoryDAO) []*model.Inventory {
 	res := []*model.Inventory{}
 	for _, inv := range invs {
 		invModel := &model.Inventory{
-			Quantity: inv.Quantity,
-			Size:     inv.Size,
+			Quantity:   inv.Quantity,
+			Size:       inv.Size,
+			AlloffSize: MapAlloffSizeDaoToAlloffSize(inv.AlloffSize),
 		}
 		res = append(res, invModel)
 	}

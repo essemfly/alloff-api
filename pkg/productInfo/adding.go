@@ -28,7 +28,6 @@ type AddMetaInfoRequest struct {
 	Colors               []string
 	Sizes                []string
 	Inventory            []*domain.InventoryDAO
-	AlloffInventory      []*domain.AlloffInventoryDAO
 	Description          []string
 	DescriptionImages    []string
 	DescriptionInfos     map[string]string
@@ -77,7 +76,6 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 		Colors:               []string{},
 		Sizes:                []string{},
 		Inventory:            []*domain.InventoryDAO{},
-		AlloffInventory:      []*domain.AlloffInventoryDAO{},
 		SalesInstruction:     &domain.AlloffInstructionDAO{},
 		IsImageCached:        false,
 		IsInventoryMapped:    false,
@@ -125,13 +123,7 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 		pdInfo.SetAlloffCategory(productAlloffCat)
 	}
 
-	if request.IsInventoryMapped {
-		pdInfo.AlloffInventory = request.AlloffInventory
-	} else {
-		pdInfo.SetAlloffInventory(request.Inventory)
-	}
-
-	pdInfo.IsInventoryMapped = true
+	// TODO: Inventory Mapper가 있어야함
 
 	return pdInfo
 }

@@ -58,17 +58,6 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 	}
 }
 
-func AlloffInventoryMapper(pd *domain.ProductMetaInfoDAO) []*grpcServer.AlloffInventoryMessage {
-	invMessages := []*grpcServer.AlloffInventoryMessage{}
-	for _, inv := range pd.AlloffInventory {
-		invMessages = append(invMessages, &grpcServer.AlloffInventoryMessage{
-			AlloffSize: AlloffSizeMapper(&inv.AlloffSize),
-			Quantity:   int32(inv.Quantity),
-		})
-	}
-	return invMessages
-}
-
 func InventoryMapper(pd *domain.ProductMetaInfoDAO) []*grpcServer.ProductInventoryMessage {
 	invMessage := []*grpcServer.ProductInventoryMessage{}
 	for _, inv := range pd.Inventory {

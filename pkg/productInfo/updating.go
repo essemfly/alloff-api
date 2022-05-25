@@ -40,7 +40,7 @@ func Reset(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest) (*dom
 		pdInfo.SetAlloffCategory(productAlloffCat)
 	}
 
-	pdInfo.SetAlloffInventory(request.Inventory)
+	// TODO: Inventory Mapper가 있어야함
 
 	// if pd.IsTranslateRequired {
 	// 	_, err := TranslateProductInfo(pd)

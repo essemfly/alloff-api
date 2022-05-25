@@ -38,11 +38,6 @@ type AlloffSizeDAO struct {
 	AlloffSizeName string
 }
 
-type AlloffInventoryDAO struct {
-	AlloffSize AlloffSizeDAO
-	Quantity   int
-}
-
 type ProductDAO struct {
 	ID                   primitive.ObjectID `bson:"_id,omitempty"`
 	ProductInfo          *ProductMetaInfoDAO

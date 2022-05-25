@@ -39,36 +39,29 @@ type AlloffCategoryDAO struct {
 }
 
 type BrandDAO struct {
-	ID                       primitive.ObjectID `bson:"_id,omitempty"`
-	KorName                  string
-	EngName                  string
-	KeyName                  string
-	Description              string
-	LogoImgUrl               string
-	BackImgUrl               string
-	Category                 []*CategoryDAO
-	AlloffCategory           []*AlloffCategoryDAO
-	SizeGuide                []SizeGuideDAO
-	Created                  time.Time
-	Onpopular                bool
-	MaxDiscountRate          int
-	IsOpen                   bool
-	IsHide                   bool
-	InMaintenance            bool
-	NumNewProductsIn3days    int
-	UseAlloffCategory        bool
-	InventoryMappingPolicies []InventoryMappingPolicy
+	ID                    primitive.ObjectID `bson:"_id,omitempty"`
+	KorName               string
+	EngName               string
+	KeyName               string
+	Description           string
+	LogoImgUrl            string
+	BackImgUrl            string
+	Category              []*CategoryDAO
+	AlloffCategory        []*AlloffCategoryDAO
+	SizeGuide             []SizeGuideDAO
+	Created               time.Time
+	Onpopular             bool
+	MaxDiscountRate       int
+	IsOpen                bool
+	IsHide                bool
+	InMaintenance         bool
+	NumNewProductsIn3days int
+	UseAlloffCategory     bool
 }
 
 type BrandCountsData struct {
 	Brand  *BrandDAO
 	Counts int
-}
-
-type InventoryMappingPolicy struct {
-	BrandSize      string
-	AlloffSize     AlloffSizeDAO
-	AlloffCategory AlloffCategoryDAO
 }
 
 type SizeGuideDAO struct {

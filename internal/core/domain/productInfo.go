@@ -143,7 +143,6 @@ type ProductMetaInfoDAO struct {
 	Colors               []string
 	Sizes                []string
 	Inventory            []*InventoryDAO
-	AlloffInventory      []*AlloffInventoryDAO
 	SalesInstruction     *AlloffInstructionDAO
 	IsImageCached        bool
 	IsInventoryMapped    bool
@@ -244,36 +243,19 @@ func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory(cat *ProductAlloffCategoryDA
 	pdInfo.IsCategoryClassified = true
 }
 
-func (pdInfo *ProductMetaInfoDAO) SetAlloffInventory(inventories []*InventoryDAO) {
-	mappingPolicies := pdInfo.Brand.InventoryMappingPolicies
-	alloffInventory := []*AlloffInventoryDAO{}
-
-	for _, mappingPolicy := range mappingPolicies {
-		for _, inv := range inventories {
-			if mappingPolicy.BrandSize == inv.Size {
-				alloffInventory = append(alloffInventory, &AlloffInventoryDAO{
-					AlloffSize: mappingPolicy.AlloffSize,
-					Quantity:   inv.Quantity,
-				})
-			}
-		}
-	}
-
-	if len(alloffInventory) > 0 {
-		pdInfo.IsInventoryMapped = true
-	}
-
-	pdInfo.AlloffInventory = alloffInventory
+func (pdInfo *ProductMetaInfoDAO) SetInventory(inventories []*InventoryDAO) {
+	pdInfo.Inventory = inventories
+	pdInfo.IsInventoryMapped = true
 }
 
 func (pdInfo *ProductMetaInfoDAO) Release(size string, quantity int) error {
-	for idx, option := range pdInfo.AlloffInventory {
-		if option.AlloffSize.AlloffSizeName == size {
+	for idx, option := range pdInfo.Inventory {
+		if option.Size == size {
 			if option.Quantity < quantity {
 				return errors.New("insufficient product quantity")
 			}
-			pdInfo.AlloffInventory[idx].Quantity -= quantity
-			if pdInfo.AlloffInventory[idx].Quantity == 0 {
+			pdInfo.Inventory[idx].Quantity -= quantity
+			if pdInfo.Inventory[idx].Quantity == 0 {
 				pdInfo.IsSoldout = true
 			}
 
@@ -284,12 +266,12 @@ func (pdInfo *ProductMetaInfoDAO) Release(size string, quantity int) error {
 }
 
 func (pdInfo *ProductMetaInfoDAO) Revert(size string, quantity int) error {
-	for idx, option := range pdInfo.AlloffInventory {
-		if option.AlloffSize.AlloffSizeName == size {
+	for idx, option := range pdInfo.Inventory {
+		if option.Size == size {
 			if option.Quantity == 0 {
 				pdInfo.IsSoldout = false
 			}
-			pdInfo.AlloffInventory[idx].Quantity += quantity
+			pdInfo.Inventory[idx].Quantity += quantity
 
 			return nil
 		}
@@ -298,7 +280,7 @@ func (pdInfo *ProductMetaInfoDAO) Revert(size string, quantity int) error {
 }
 
 func (pdInfo *ProductMetaInfoDAO) CheckSoldout() {
-	for _, inv := range pdInfo.AlloffInventory {
+	for _, inv := range pdInfo.Inventory {
 		if inv.Quantity > 0 {
 			pdInfo.IsSoldout = true
 		}

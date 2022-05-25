@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -105,14 +106,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	if req.ModuleName != nil {
 		moduleName = *req.ModuleName
 	}
-	invDaos := []*domain.AlloffInventoryDAO{}
-	for _, inv := range req.Inventory {
-		size, _ := ioc.Repo.AlloffSizes.Get(inv.AlloffSize.AlloffSizeId)
-		invDaos = append(invDaos, &domain.AlloffInventoryDAO{
-			AlloffSize: *size,
-			Quantity:   int(inv.Quantity),
-		})
-	}
+
 	productID := ""
 	if req.ProductId != nil {
 		productID = *req.ProductId
@@ -140,10 +134,34 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	brand, _ := ioc.Repo.Brands.GetByKeyname(req.BrandKeyName)
 	alloffcat, _ := ioc.Repo.AlloffCategories.Get(*req.AlloffCategoryId)
 
+	// TODO: InvDaos
+	invDaos := []*domain.InventoryDAO{}
+	for _, inv := range req.Inventory {
+		// sizeMappingPolicy, _ := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, pdInfoDao.ProductType, pdInfoDao.AlloffCategory.First.ID.Hex())
+		sizeMappingPolicy, err := ioc.Repo.SizeMappingPolicy.Get("628e2804ce48a4a0c721433c")
+		if err != nil {
+			config.Logger.Error("sizemapping policy err on create product", zap.Error(err))
+		}
+		invDaos = append(invDaos, &domain.InventoryDAO{
+			AlloffSize: sizeMappingPolicy.AlloffSize,
+			Quantity:   int(inv.Quantity),
+			Size:       inv.Size,
+		})
+	}
+
+	// TODO: ProductType
+	productTypes := []domain.AlloffProductType{
+		domain.Female,
+		domain.Kids,
+		domain.Male,
+		domain.Sports,
+	}
+
 	addRequest := &productinfo.AddMetaInfoRequest{
 		AlloffName:           req.AlloffName,
 		ProductID:            productID,
 		ProductUrl:           productUrl,
+		ProductType:          productTypes,
 		OriginalPrice:        float32(originalPrice),
 		DiscountedPrice:      float32(discountedPrice),
 		CurrencyType:         domain.CurrencyKRW,
@@ -163,8 +181,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		LatestDeliveryDays:   int(req.LatestDeliveryDays),
 		IsRefundPossible:     req.IsRefundPossible,
 		RefundFee:            int(req.RefundFee),
-		Inventory:            nil,
-		AlloffInventory:      invDaos,
+		Inventory:            invDaos,
 		ModuleName:           moduleName,
 		IsInventoryMapped:    true,
 	}
@@ -223,11 +240,25 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		pdInfoDao.Brand = brand
 	}
 
+	// TODO: ProductType 만들어주는 것
+	// if req.ProductType != nil {
+	// }
+	pdInfoDao.ProductType = []domain.AlloffProductType{
+		domain.Female,
+		domain.Kids,
+		domain.Male,
+		domain.Sports,
+	}
+
 	// TODO: AlloffInventory를 바꿔주는 작업이 되어야한다.
 	if req.Inventory != nil {
 		invDaos := []*domain.InventoryDAO{}
 		for _, inv := range req.Inventory {
-			sizeMappingPolicy, _ := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, pdInfoDao.ProductType, pdInfoDao.AlloffCategory.First.ID.Hex())
+			// sizeMappingPolicy, _ := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, pdInfoDao.ProductType, pdInfoDao.AlloffCategory.First.ID.Hex())
+			sizeMappingPolicy, err := ioc.Repo.SizeMappingPolicy.Get("628e2804ce48a4a0c721433c")
+			if err != nil {
+				config.Logger.Error("sizemapping policy err on create product", zap.Error(err))
+			}
 			invDaos = append(invDaos, &domain.InventoryDAO{
 				AlloffSize: sizeMappingPolicy.AlloffSize,
 				Quantity:   int(inv.Quantity),
@@ -236,18 +267,6 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		}
 		pdInfoDao.Inventory = invDaos
 	}
-
-	//if req.Inventory != nil {
-	//	invDaos := []*domain.AlloffInventoryDAO{}
-	//	for _, inv := range req.Inventory {
-	//		size, _ := ioc.Repo.AlloffSizes.Get(inv.AlloffSize.AlloffSizeId)
-	//		invDaos = append(invDaos, &domain.AlloffInventoryDAO{
-	//			AlloffSize: *size,
-	//			Quantity:   int(inv.Quantity),
-	//		})
-	//	}
-	//	pdInfoDao.AlloffInventory = invDaos
-	//}
 
 	if req.Description != nil {
 		pdInfoDao.SalesInstruction.Description.Texts = req.Description

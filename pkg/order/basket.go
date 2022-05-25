@@ -25,8 +25,8 @@ func IsValid(basket *domain.Basket) []error {
 		}
 
 		isValidSize, isValidQuantity := false, false
-		for _, inv := range item.Product.ProductInfo.AlloffInventory {
-			if inv.AlloffSize.AlloffSizeName == item.Size {
+		for _, inv := range item.Product.ProductInfo.Inventory {
+			if inv.Size == item.Size {
 				isValidSize = true
 				if inv.Quantity >= item.Quantity {
 					isValidQuantity = true

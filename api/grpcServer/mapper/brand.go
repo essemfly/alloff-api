@@ -7,19 +7,18 @@ import (
 
 func BrandMapper(brand *domain.BrandDAO) *grpcServer.BrandMessage {
 	return &grpcServer.BrandMessage{
-		BrandId:                  brand.ID.Hex(),
-		Korname:                  brand.KorName,
-		Keyname:                  brand.KeyName,
-		Engname:                  brand.EngName,
-		Description:              brand.Description,
-		LogoImageUrl:             brand.LogoImgUrl,
-		BackImageUrl:             brand.BackImgUrl,
-		IsPopular:                brand.Onpopular,
-		IsOpen:                   brand.IsOpen,
-		InMaintenance:            brand.InMaintenance,
-		IsHide:                   brand.IsHide,
-		SizeGuide:                SizeGuideMapper(brand.SizeGuide),
-		InventoryMappingPolicies: InventoryMappingPolicyMapper(brand.InventoryMappingPolicies),
+		BrandId:       brand.ID.Hex(),
+		Korname:       brand.KorName,
+		Keyname:       brand.KeyName,
+		Engname:       brand.EngName,
+		Description:   brand.Description,
+		LogoImageUrl:  brand.LogoImgUrl,
+		BackImageUrl:  brand.BackImgUrl,
+		IsPopular:     brand.Onpopular,
+		IsOpen:        brand.IsOpen,
+		InMaintenance: brand.InMaintenance,
+		IsHide:        brand.IsHide,
+		SizeGuide:     SizeGuideMapper(brand.SizeGuide),
 	}
 }
 
@@ -32,15 +31,4 @@ func SizeGuideMapper(sizeGuide []domain.SizeGuideDAO) []*grpcServer.SizeGuideMes
 		})
 	}
 	return guides
-}
-
-func InventoryMappingPolicyMapper(invPolicies []domain.InventoryMappingPolicy) []*grpcServer.InventoryMappingPolicyMessage {
-	policies := []*grpcServer.InventoryMappingPolicyMessage{}
-	for _, policy := range invPolicies {
-		policies = append(policies, &grpcServer.InventoryMappingPolicyMessage{
-			BrandSize:  policy.BrandSize,
-			AlloffSize: AlloffSizeMapper(&policy.AlloffSize),
-		})
-	}
-	return policies
 }
