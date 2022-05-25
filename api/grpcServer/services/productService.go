@@ -5,12 +5,14 @@ import (
 	"errors"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
-	"github.com/lessbutter/alloff-api/pkg/classifier"
+	"github.com/lessbutter/alloff-api/pkg/alloffcategory"
 	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
+	"go.uber.org/zap"
 )
 
 type ProductService struct {
@@ -172,10 +174,6 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	if err != nil {
 		return nil, err
 	}
-	pdInfoDao, err = classifier.SetProductAlloffCategory(pdInfoDao)
-	if err != nil {
-		return nil, err
-	}
 
 	pdMessage := mapper.ProductInfoMapper(pdInfoDao)
 
@@ -278,9 +276,12 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	}
 
 	if req.AlloffCategoryId != nil {
-		productCatDao := classifier.ClassifyProducts(*req.AlloffCategoryId)
+		touched := true
+		productCatDao, err := alloffcategory.BuildProductAlloffCategory(*req.AlloffCategoryId, touched)
+		if err != nil {
+			config.Logger.Error("err occured on build product alloff category : alloffcat ID"+*req.AlloffCategoryId, zap.Error(err))
+		}
 		pdInfoDao.AlloffCategory = productCatDao
-		pdInfoDao.AlloffCategory.Touched = true
 	}
 
 	if req.ProductId != nil {

@@ -4,11 +4,12 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/alloffcategory"
 	"go.uber.org/zap"
 )
 
-func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {
-
+// TODO: Crawling 다시 했을때 부분인데, Reset을 어떻게까지 정의해야할지 아직 좀 감이 안온다.
+func Reset(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {
 	pdInfo.SetBrandAndCategory(request.Brand, request.Source)
 	pdInfo.SetGeneralInfo(request.AlloffName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Information)
 	alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
@@ -22,8 +23,23 @@ func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRe
 	pdInfo.SetDeliveryDesc(request.IsForeignDelivery, 0, request.EarliestDeliveryDays, request.LatestDeliveryDays)
 	pdInfo.SetCancelDesc(request.IsRefundPossible, request.RefundFee)
 
+	if request.AlloffCategory != nil {
+		productAlloffCat, err := alloffcategory.BuildProductAlloffCategory(request.AlloffCategory.ID.Hex(), true)
+		if err != nil {
+			config.Logger.Error("err occured on build product alloff category : alloffcat ID"+request.AlloffCategory.ID.Hex(), zap.Error(err))
+		}
+		pdInfo.SetAlloffCategory(productAlloffCat)
+	}
+
+	if !pdInfo.AlloffCategory.Done {
+		productAlloffCat, err := alloffcategory.InferAlloffCategory(pdInfo)
+		if err != nil {
+			config.Logger.Error("err occured on infer alloffcategory: pdinfo "+pdInfo.ID.Hex(), zap.Error(err))
+		}
+		pdInfo.SetAlloffCategory(productAlloffCat)
+	}
+
 	pdInfo.SetAlloffInventory(request.Inventory)
-	// UpdateAlloffCategory 필요하다
 
 	// if pd.IsTranslateRequired {
 	// 	_, err := TranslateProductInfo(pd)
@@ -47,4 +63,28 @@ func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRe
 
 	return updatedPdInfo, nil
 
+}
+
+func Update(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error) {
+	updatedPdInfo, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfo)
+	if err != nil {
+		config.Logger.Error("error on adding product infos", zap.Error(err))
+		return nil, err
+	}
+
+	pds, err := ioc.Repo.Products.ListByMetaID(pdInfo.ID.Hex())
+	if err != nil {
+		config.Logger.Error("error on listing products by product infos", zap.Error(err))
+		return nil, err
+	}
+
+	for _, pd := range pds {
+		pd.ProductInfo = updatedPdInfo
+		_, err = ioc.Repo.Products.Upsert(pd)
+		if err != nil {
+			config.Logger.Error("error on updating products"+pd.ID.Hex(), zap.Error(err))
+		}
+	}
+
+	return updatedPdInfo, nil
 }

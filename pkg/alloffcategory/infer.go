@@ -1,31 +1,31 @@
-package classifier
+package alloffcategory
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/omnious"
 	"go.uber.org/zap"
-	"log"
-	"strings"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 )
 
-func SetProductAlloffCategory(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error) {
+func InferAlloffCategory(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAlloffCategoryDAO, error) {
 	if pdInfo.AlloffCategory == nil {
 		alloffCat := categoryClassifier(pdInfo)
-		pdInfo.SetAlloffCategory(alloffCat)
-		return pdInfo, nil
-	} else if !pdInfo.AlloffCategory.Done {
-		alloffCat, err := omniousClassifier(pdInfo)
-		if err != nil {
-			return nil, err
+		if alloffCat != nil {
+			return alloffCat, nil
 		}
-		pdInfo.SetAlloffCategory(alloffCat)
-		return pdInfo, nil
 	}
-	return nil, nil
+
+	if pdInfo.AlloffCategory == nil || !pdInfo.AlloffCategory.Done {
+		return omniousClassifier(pdInfo)
+	}
+
+	return pdInfo.AlloffCategory, nil
 }
 
 func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) *domain.ProductAlloffCategoryDAO {

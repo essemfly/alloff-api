@@ -19,7 +19,7 @@ func ProcessAddProductInfoRequests(request *AddMetaInfoRequest) error {
 		return err
 	}
 
-	_, err = UpdateProductInfo(pdInfo, request)
+	_, err = Reset(pdInfo, request)
 	return err
 }
 

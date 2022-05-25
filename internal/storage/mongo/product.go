@@ -40,7 +40,7 @@ func (repo *productRepo) ListByMetaID(metaID string) ([]*domain.ProductDAO, erro
 	defer cancel()
 
 	productObjectId, _ := primitive.ObjectIDFromHex(metaID)
-	filter := bson.M{"productinfo._id": productObjectId}
+	filter := bson.M{"productinfo._id": productObjectId, "isnotsale": false}
 	cursor, err := repo.col.Find(ctx, filter)
 	if err != nil {
 		return nil, err
