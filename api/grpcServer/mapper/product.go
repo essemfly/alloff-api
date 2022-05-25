@@ -28,12 +28,13 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 
 	return &grpcServer.ProductMessage{
 		AlloffProductId:      pdInfo.ID.Hex(),
-		AlloffName:           pdInfo.OriginalName,
+		AlloffName:           pdInfo.AlloffName,
 		IsForeignDelivery:    pdInfo.Source.IsForeignDelivery,
 		ProductId:            pdInfo.ProductID,
 		ProductUrl:           pdInfo.ProductUrl,
 		OriginalPrice:        int32(pdInfo.Price.OriginalPrice),
 		DiscountedPrice:      int32(pdInfo.Price.CurrentPrice),
+		SpecialPrice:         int32(pdInfo.Price.CurrentPrice),
 		BrandKorName:         pdInfo.Brand.KorName,
 		Inventory:            AlloffInventoryMapper(pdInfo),
 		Description:          pdInfo.SalesInstruction.Description.Texts,
@@ -47,13 +48,13 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 		AlloffCategoryName:   alloffCategoryName,
 		AlloffCategoryId:     alloffCategoryID,
 		IsRemoved:            pdInfo.IsRemoved,
-		// IsSoldout:            pdInfo.IsSoldout,
-		ModuleName:          pdInfo.Source.CrawlModuleName,
-		IsClassifiedDone:    IsClassifiedDone,
-		IsClassifiedTouched: IsClassifiedTouched,
-		ProductInfos:        pdInfo.SalesInstruction.Information,
-		DescriptionInfos:    pdInfo.SalesInstruction.Description.Infos,
-		// ThumbnailImage:       pd.ThumbnailImage,
+		IsSoldout:            pdInfo.IsSoldout,
+		ModuleName:           pdInfo.Source.CrawlModuleName,
+		IsClassifiedDone:     IsClassifiedDone,
+		IsClassifiedTouched:  IsClassifiedTouched,
+		ProductInfos:         pdInfo.SalesInstruction.Information,
+		DescriptionInfos:     pdInfo.SalesInstruction.Description.Infos,
+		ThumbnailImage:       pdInfo.ThumbnailImage,
 	}
 }
 
