@@ -109,7 +109,7 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	pdInfo.SetDeliveryDesc(request.IsForeignDelivery, 0, request.EarliestDeliveryDays, request.LatestDeliveryDays)
 	pdInfo.SetCancelDesc(request.IsRefundPossible, request.RefundFee)
 
-	if request.AlloffCategory != nil {
+	if request.AlloffCategory.ID != primitive.NilObjectID {
 		productAlloffCat, err := alloffcategory.BuildProductAlloffCategory(request.AlloffCategory.ID.Hex(), true)
 		if err != nil {
 			config.Logger.Error("err occured on build product alloff category : alloffcat ID"+request.AlloffCategory.ID.Hex(), zap.Error(err))
@@ -117,7 +117,7 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 		pdInfo.SetAlloffCategory(productAlloffCat)
 	}
 
-	if !pdInfo.AlloffCategory.Done {
+	if request.AlloffCategory.ID == primitive.NilObjectID || !pdInfo.AlloffCategory.Done {
 		productAlloffCat, err := alloffcategory.InferAlloffCategory(pdInfo)
 		if err != nil {
 			config.Logger.Error("err occured on infer alloffcategory: pdinfo "+pdInfo.ID.Hex(), zap.Error(err))

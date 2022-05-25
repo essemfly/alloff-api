@@ -19,9 +19,9 @@ func InferAlloffCategory(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAllo
 		return alloffCat, nil
 	}
 
-	if pdInfo.AlloffCategory == nil || !pdInfo.AlloffCategory.Done {
-		return omniousClassifier(pdInfo)
-	}
+	// if pdInfo.AlloffCategory == nil || !pdInfo.AlloffCategory.Done {
+	// 	return omniousClassifier(pdInfo)
+	// }
 
 	return pdInfo.AlloffCategory, nil
 }
@@ -121,6 +121,7 @@ func omniousClassifier(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAlloff
 	data, err := omnious.GetOmniousData(omniousTargetImg)
 	if err != nil {
 		config.Logger.Error("error occurred on getting omnious data", zap.Error(err))
+		return nil, err
 	}
 
 	category1 := omnious.MapOmniousCategoryToCategoryClassifier(data)

@@ -5,6 +5,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/alloffcategory"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/zap"
 )
 
@@ -23,7 +24,7 @@ func Reset(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest) (*dom
 	pdInfo.SetDeliveryDesc(request.IsForeignDelivery, 0, request.EarliestDeliveryDays, request.LatestDeliveryDays)
 	pdInfo.SetCancelDesc(request.IsRefundPossible, request.RefundFee)
 
-	if request.AlloffCategory != nil {
+	if request.AlloffCategory.ID != primitive.NilObjectID {
 		productAlloffCat, err := alloffcategory.BuildProductAlloffCategory(request.AlloffCategory.ID.Hex(), true)
 		if err != nil {
 			config.Logger.Error("err occured on build product alloff category : alloffcat ID"+request.AlloffCategory.ID.Hex(), zap.Error(err))
@@ -31,7 +32,7 @@ func Reset(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest) (*dom
 		pdInfo.SetAlloffCategory(productAlloffCat)
 	}
 
-	if !pdInfo.AlloffCategory.Done {
+	if request.AlloffCategory.ID == primitive.NilObjectID || !pdInfo.AlloffCategory.Done {
 		productAlloffCat, err := alloffcategory.InferAlloffCategory(pdInfo)
 		if err != nil {
 			config.Logger.Error("err occured on infer alloffcategory: pdinfo "+pdInfo.ID.Hex(), zap.Error(err))
