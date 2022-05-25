@@ -224,6 +224,71 @@ func (repo *productRepo) ListDistinctInfos(filter interface{}) (brands []*domain
 	return
 }
 
+func (repo *productRepo) ListInfos(filter interface{}) (brands []*domain.BrandCountsData, cats []*domain.AlloffCategoryDAO, sizes []*domain.AlloffSizeDAO) {
+	ctx, cancel := context.WithTimeout(context.Background(), 70*time.Second)
+	defer cancel()
+
+	cursor, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		return nil, nil, nil
+	}
+
+	var pds []*domain.ProductDAO
+	err = cursor.All(ctx, &pds)
+	if err != nil {
+		return nil, nil, nil
+	}
+
+	for _, pd := range pds {
+		// ******* mapping brands *******
+		brandExists := false
+		existAt := -1
+		for idx, bd := range brands {
+			// 이미 있는 브랜드면 그게 brands 몇번쨰인지 알려준다.
+			if pd.ProductInfo.Brand.ID == bd.Brand.ID {
+				brandExists = true
+				existAt = idx
+			}
+		}
+		// 아직 입력안된 브랜드면 brands 에 입력한다
+		if !brandExists {
+			brands = append(brands, &domain.BrandCountsData{
+				Brand:  pd.ProductInfo.Brand,
+				Counts: 1,
+			})
+		} else {
+			// 이미 입력된 브랜드면 counts 만 +1을 한다.
+			brands[existAt].Counts = brands[existAt].Counts + 1
+		}
+
+		// ******* mapping cats *******
+		catExists := false
+		for _, cat := range cats {
+			if pd.ProductInfo.AlloffCategory.First.ID == cat.ID {
+				catExists = true
+			}
+		}
+		if !catExists {
+			cats = append(cats, pd.ProductInfo.AlloffCategory.First)
+		}
+
+		// ******* mapping sizes *******
+		// 이부분 비효율적임 pd -> inventory -> sizes  3중 for 문
+		for _, inv := range pd.ProductInfo.Inventory {
+			sizeExists := false
+			for _, size := range sizes {
+				if inv.AlloffSize.ID == size.ID {
+					sizeExists = true
+				}
+			}
+			if !sizeExists {
+				sizes = append(sizes, inv.AlloffSize)
+			}
+		}
+	}
+	return
+}
+
 func MongoProductsRepo(conn *MongoDB) repository.ProductsRepository {
 	return &productRepo{
 		col: conn.productCol,

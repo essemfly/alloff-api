@@ -19,6 +19,7 @@ type ProductsRepository interface {
 	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
 	ListDistinctBrands(alloffCategoryID string) ([]*domain.BrandDAO, error)
 	ListDistinctInfos(filter interface{}) ([]*domain.BrandCountsData, []*domain.AlloffCategoryDAO, []*domain.AlloffSizeDAO)
+	ListInfos(filter interface{}) (brands []*domain.BrandCountsData, cats []*domain.AlloffCategoryDAO, sizes []*domain.AlloffSizeDAO)
 	Insert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	Upsert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	CountNewProducts([]string) int
