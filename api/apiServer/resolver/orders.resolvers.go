@@ -160,7 +160,7 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Cance
 		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
-	paymentDao, err := ioc.Repo.Payments.GetByImpUID(input.ImpUID)
+	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(input.MerchantUID, orderDao.TotalPrice)
 	if err != nil {
 		return nil, fmt.Errorf("ERR404:failed to find payment order not found")
 	}
