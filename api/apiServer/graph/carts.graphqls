@@ -5,6 +5,8 @@ type Cart {
 
 type CartItem {
   product: Product!
+  size: String!
+  quantity: Int!
 }
 
 input AddCartItemInput {

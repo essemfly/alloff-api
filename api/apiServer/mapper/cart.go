@@ -18,6 +18,8 @@ func MapCart(basket *domain.Basket) *model.Cart {
 
 func MapCartItem(basketItem *domain.BasketItem) *model.CartItem {
 	return &model.CartItem{
-		Product: MapProduct(basketItem.Product),
+		Product:  MapProduct(basketItem.Product),
+		Quantity: basketItem.Quantity,
+		Size:     basketItem.Size,
 	}
 }

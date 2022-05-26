@@ -86,7 +86,9 @@ type Cart struct {
 }
 
 type CartItem struct {
-	Product *Product `json:"product"`
+	Product  *Product `json:"product"`
+	Size     string   `json:"size"`
+	Quantity int      `json:"quantity"`
 }
 
 type Category struct {
