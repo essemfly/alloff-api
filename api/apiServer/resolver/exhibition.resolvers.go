@@ -6,7 +6,6 @@ package resolver
 import (
 	"context"
 	"fmt"
-
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
@@ -126,7 +125,8 @@ func (r *queryResolver) ExhibitionInfo(ctx context.Context, input model.MetaInfo
 		config.Logger.Error("build filter err on exhibition info", zap.Error(err))
 	}
 
-	brandData, alloffcatData, sizeData := ioc.Repo.Products.ListDistinctInfos(filter)
+	//brandData, alloffcatData, sizeData := ioc.Repo.Products.ListDistinctInfos(filter)
+	brandData, alloffcatData, sizeData := ioc.Repo.Products.ListInfos(filter)
 
 	brandOutputs := []*model.BrandOutput{}
 	for _, brandCount := range brandData {
@@ -145,7 +145,7 @@ func (r *queryResolver) ExhibitionInfo(ctx context.Context, input model.MetaInfo
 	}
 
 	return &model.MetaInfoOutput{
-		Brands:           nil,
+		Brands:           brandOutputs,
 		AlloffCategories: alloffcats,
 		AlloffSizes:      sizes,
 	}, nil
