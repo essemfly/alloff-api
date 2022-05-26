@@ -283,7 +283,7 @@ func (pdInfo *ProductMetaInfoDAO) Revert(size string, quantity int) error {
 func (pdInfo *ProductMetaInfoDAO) CheckSoldout() {
 	for _, inv := range pdInfo.Inventory {
 		if inv.Quantity > 0 {
-			pdInfo.IsSoldout = true
+			pdInfo.IsSoldout = false
 		}
 	}
 }

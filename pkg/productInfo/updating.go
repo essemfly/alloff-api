@@ -49,6 +49,8 @@ func LoadMetaInfoRequest(pdInfoDao *domain.ProductMetaInfoDAO) *AddMetaInfoReque
 		ModuleName:           pdInfoDao.Source.CrawlModuleName,
 		IsTranslateRequired:  pdInfoDao.IsTranslateRequired,
 		IsInventoryMapped:    pdInfoDao.IsInventoryMapped,
+		IsSoldout:            pdInfoDao.IsSoldout,
+		IsRemoved:            pdInfoDao.IsRemoved,
 	}
 
 }
