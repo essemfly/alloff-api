@@ -1,10 +1,11 @@
 package alimtalk
 
 import (
-	"github.com/lessbutter/alloff-api/config"
-	"go.uber.org/zap"
 	"strconv"
 	"time"
+
+	"github.com/lessbutter/alloff-api/config"
+	"go.uber.org/zap"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -48,7 +49,7 @@ func ChangeExhibitionNotifyStatus(userDao *domain.UserDAO, exhibitionDao *domain
 	uid := userDao.ID.Hex()
 	exId := exhibitionDao.ID.Hex()
 	alreadyRegistered, _ := ioc.Repo.Alimtalks.GetByDetail(uid, domain.EXHIBITION_ALARM, exId)
-	// TODO ALIMTALK_STATUS_READY 인 친구들은 메시지 보내진지 어케 알지 ?
+	// TODO: ALIMTALK_STATUS_READY 인 친구들은 메시지 보내진지 어케 알지 ?
 
 	// 이미 등록된 알림톡이 있으며, 그 알림톡이 취소되지않고 전송 대기중인 경우
 	// 메시지 발송을 취소하고, 알림톡 상태를 STATUS_CANCELED로 바꾼다음 persist

@@ -121,10 +121,12 @@ func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.Cra
 			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
 			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		numProducts += 1
-		productinfo.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 	}
 	return numProducts
 }

@@ -79,10 +79,12 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 				IsForeignDelivery:   false,
 				IsTranslateRequired: false,
 				ModuleName:          source.CrawlModuleName,
+				IsRemoved:           false,
+				IsSoldout:           false,
 			}
 
 			totalProducts += 1
-			productinfo.ProcessAddProductInfoRequests(addRequest)
+			productinfo.ProcessCrawlingInfoRequests(addRequest)
 		})
 
 		if numProducts > 0 {

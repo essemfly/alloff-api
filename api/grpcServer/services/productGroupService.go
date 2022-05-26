@@ -233,16 +233,6 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		}
 	}
 
-	// TODO: Exhibition 의 Meta Info들 업데이트 시켜줘야한다.
-	// if pgDao.ExhibitionID != "" {
-	// 	exDao, err := ioc.Repo.Exhibitions.Get(pgDao.ExhibitionID)
-	// 	if err != nil {
-	// 		log.Println("exhibbition find error", err)
-	// 	} else {
-	// 		go broker.ExhibitionSyncer(exDao)
-	// 	}
-	// }
-
 	productListInput := product.ProductListInput{
 		ProductGroupID: pgDao.ID.Hex(),
 	}

@@ -93,10 +93,12 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
 			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		totalProducts += 1
-		productinfo.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 
 	})
 

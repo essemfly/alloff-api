@@ -124,7 +124,7 @@ func BuildOrder(user *domain.UserDAO, basket *domain.Basket) (*domain.OrderDAO, 
 	if user != nil {
 		userID = user.ID.Hex()
 	}
-	// (TODO) Delivery Price는 생성시점에 만들어질 예정이다?
+
 	newOrderDao := &domain.OrderDAO{
 		AlloffOrderID: orderAlloffID,
 		OrderStatus:   domain.ORDER_CREATED,

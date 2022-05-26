@@ -9,7 +9,6 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
-	"github.com/lessbutter/alloff-api/pkg/alloffcategory"
 	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 	"go.uber.org/zap"
@@ -204,6 +203,8 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		return nil, err
 	}
 
+	updatedRequest := productinfo.LoadMetaInfoRequest(pdInfoDao)
+
 	if req.ModuleName != "" && req.ModuleName != "manual" {
 		if pdInfoDao.Source.CrawlModuleName != req.ModuleName {
 			return nil, errors.New("not authorized product for this module" + req.ModuleName)
@@ -211,43 +212,51 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	}
 
 	if req.AlloffName != nil {
-		pdInfoDao.AlloffName = *req.AlloffName
+		updatedRequest.AlloffName = *req.AlloffName
 	}
 
 	if req.IsForeignDelivery != nil {
 		if *req.IsForeignDelivery {
-			pdInfoDao.Source.IsForeignDelivery = true
+			updatedRequest.IsForeignDelivery = true
 		} else {
-			pdInfoDao.Source.IsForeignDelivery = false
+			updatedRequest.IsForeignDelivery = false
 		}
 	}
 
 	if req.OriginalPrice != nil {
-		pdInfoDao.Price.OriginalPrice = int(*req.OriginalPrice)
+		updatedRequest.OriginalPrice = float32(*req.OriginalPrice)
 	}
 
 	if req.DiscountedPrice != nil {
-		pdInfoDao.Price.CurrentPrice = int(*req.DiscountedPrice)
+		updatedRequest.DiscountedPrice = float32(*req.DiscountedPrice)
 	}
 
-	alloffPriceDiscountRate := pdInfoDao.Price.DiscountRate
-
-	if req.BrandKeyName != nil {
+	if req.BrandKeyName != nil && req.BrandKeyName != &updatedRequest.Brand.KeyName {
 		brand, err := ioc.Repo.Brands.GetByKeyname(*req.BrandKeyName)
 		if err != nil {
 			return nil, err
 		}
-		pdInfoDao.Brand = brand
+		updatedRequest.Brand = brand
 	}
 
-	// TODO: ProductType 만들어주는 것
-	// if req.ProductType != nil {
-	// }
-	pdInfoDao.ProductType = []domain.AlloffProductType{
-		domain.Female,
-		domain.Kids,
-		domain.Male,
-		domain.Sports,
+	// TODO: ProductTypes를 바꾸는 작업이 되어야한다.
+	if req.ProductTypes != nil && len(req.ProductTypes) > 0 {
+		allofftypes := []domain.AlloffProductType{
+			domain.Female,
+			domain.Female,
+			domain.Kids,
+			domain.Sports,
+		}
+		for _, reqPdType := range req.ProductTypes {
+			if reqPdType == grpcServer.ProductType_FEMALE {
+				allofftypes = append(allofftypes, domain.Female)
+			} else if reqPdType == grpcServer.ProductType_MALE {
+				allofftypes = append(allofftypes, domain.Male)
+			} else if reqPdType == grpcServer.ProductType_KIDS {
+				allofftypes = append(allofftypes, domain.Kids)
+			}
+		}
+		updatedRequest.ProductType = allofftypes
 	}
 
 	// TODO: AlloffInventory를 바꿔주는 작업이 되어야한다.
@@ -265,107 +274,77 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 				Size:       inv.Size,
 			})
 		}
-		pdInfoDao.Inventory = invDaos
+		updatedRequest.Inventory = invDaos
 	}
 
 	if req.Description != nil {
-		pdInfoDao.SalesInstruction.Description.Texts = req.Description
+		updatedRequest.Description = req.Description
 	}
 
 	if req.DescriptionInfos != nil {
-		pdInfoDao.SalesInstruction.Description.Infos = req.DescriptionInfos
+		updatedRequest.DescriptionInfos = req.DescriptionInfos
 	}
 
 	if req.ProductInfos != nil {
-		pdInfoDao.SalesInstruction.Information = req.ProductInfos
+		updatedRequest.Information = req.ProductInfos
 	}
 
 	if req.EarliestDeliveryDays != nil {
-		pdInfoDao.SalesInstruction.DeliveryDescription.EarliestDeliveryDays = int(*req.EarliestDeliveryDays)
+		updatedRequest.EarliestDeliveryDays = int(*req.EarliestDeliveryDays)
 	}
 
 	if req.LatestDeliveryDays != nil {
-		pdInfoDao.SalesInstruction.DeliveryDescription.LatestDeliveryDays = int(*req.LatestDeliveryDays)
+		updatedRequest.LatestDeliveryDays = int(*req.LatestDeliveryDays)
 	}
 
 	if req.IsRefundPossible != nil {
-		pdInfoDao.SalesInstruction.CancelDescription.RefundAvailable = *req.IsRefundPossible
-		pdInfoDao.SalesInstruction.CancelDescription.ChangeAvailable = *req.IsRefundPossible
+		updatedRequest.IsRefundPossible = *req.IsRefundPossible
 	}
 
 	if req.Images != nil {
-		pdInfoDao.Images = req.Images
-		pdInfoDao.CachedImages = req.Images
+		updatedRequest.Images = req.Images
 	}
 
 	if req.DescriptionImages != nil {
-		pdInfoDao.SalesInstruction.Description.Images = req.DescriptionImages
+		updatedRequest.DescriptionImages = req.DescriptionImages
 	}
 
 	if req.IsRemoved != nil {
-		pdInfoDao.IsRemoved = *req.IsRemoved
+		updatedRequest.IsRemoved = *req.IsRemoved
 	}
 
 	if req.AlloffCategoryId != nil {
-		touched := true
-		productCatDao, err := alloffcategory.BuildProductAlloffCategory(*req.AlloffCategoryId, touched)
+		alloffcat, err := ioc.Repo.AlloffCategories.Get(*req.AlloffCategoryId)
 		if err != nil {
 			config.Logger.Error("err occured on build product alloff category : alloffcat ID"+*req.AlloffCategoryId, zap.Error(err))
 		}
-		pdInfoDao.AlloffCategory = productCatDao
+		updatedRequest.AlloffCategory = alloffcat
 	}
 
 	if req.ProductId != nil {
-		pdInfoDao.ProductID = *req.ProductId
+		updatedRequest.ProductID = *req.ProductId
 	}
 
 	if req.ProductUrl != nil {
-		pdInfoDao.ProductUrl = *req.ProductUrl
+		updatedRequest.ProductUrl = *req.ProductUrl
 	}
 
 	if req.RefundFee != nil {
-		pdInfoDao.SalesInstruction.CancelDescription.ChangeFee = int(*req.RefundFee)
-		pdInfoDao.SalesInstruction.CancelDescription.RefundFee = int(*req.RefundFee)
+		updatedRequest.RefundFee = int(*req.RefundFee)
 	}
 
 	if req.IsSoldout != nil {
-		pdInfoDao.IsSoldout = *req.IsSoldout
-	}
-
-	if !pdInfoDao.IsSoldout {
-		pdInfoDao.CheckSoldout()
-	}
-
-	if alloffPriceDiscountRate > pdInfoDao.Brand.MaxDiscountRate {
-		pdInfoDao.Brand.MaxDiscountRate = alloffPriceDiscountRate
+		updatedRequest.IsSoldout = *req.IsSoldout
 	}
 
 	if req.ThumbnailImage != nil {
-		pdInfoDao.ThumbnailImage = *req.ThumbnailImage
+		updatedRequest.ThumbnailImage = *req.ThumbnailImage
 	}
 
-	newPdInfoDao, err := productinfo.Update(pdInfoDao)
+	newPdInfoDao, err := productinfo.UpdateProductInfo(pdInfoDao, updatedRequest)
 	if err != nil {
 		return nil, err
 	}
-
-	// TODO: pdInfo에 맞는 pd들을 업데이트 시키는 작업이 필요하다.
-	// if newPdDao.ProductGroupID != "" {
-	// 	pg, err := ioc.Repo.ProductGroups.Get(newPdDao.ProductGroupID)
-	// 	if err != nil {
-	// 		log.Println("err found in product group update", err)
-	// 	} else {
-	// 		go broker.ProductGroupSyncer(pg)
-	// 		if pg.ExhibitionID != "" {
-	// 			exDao, err := ioc.Repo.Exhibitions.Get(pg.ExhibitionID)
-	// 			if err != nil {
-	// 				log.Println("exhibbition find error", err)
-	// 			} else {
-	// 				go broker.ExhibitionSyncer(exDao)
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	pdMessage := mapper.ProductInfoMapper(newPdInfoDao)
 	return &grpcServer.EditProductResponse{

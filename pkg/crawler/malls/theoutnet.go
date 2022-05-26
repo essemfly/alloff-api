@@ -197,10 +197,12 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
 			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		numProducts += 1
-		productinfo.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 
 	}
 	return numProducts

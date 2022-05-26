@@ -59,10 +59,12 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
 			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		totalProducts += 1
-		productinfo.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {

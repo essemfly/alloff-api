@@ -107,10 +107,12 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 					IsForeignDelivery:   false,
 					IsTranslateRequired: false,
 					ModuleName:          source.CrawlModuleName,
+					IsRemoved:           false,
+					IsSoldout:           false,
 				}
 
 				totalProducts += 1
-				productinfo.ProcessAddProductInfoRequests(addRequest)
+				productinfo.ProcessCrawlingInfoRequests(addRequest)
 
 			}
 		})
@@ -178,7 +180,7 @@ func getDaehyunDetailInfo(producturl string) (imageUrls, colors, sizes []string,
 
 	c.Visit(producturl)
 
-	// TODO 이쪽 Color 및 상품 재고 어떻게 처리되는지 확인 필요
+	// TODO: 이쪽 Color 및 상품 재고 어떻게 처리되는지 확인 필요
 	soldoutSizes := []string{}
 	for _, option := range colorOptions {
 		stockUrl := "https://www.daehyuninside.com/main/exec.php?exec_file=shop/getAjaxData.php&exec=getOptionStock&item_no=@" + option

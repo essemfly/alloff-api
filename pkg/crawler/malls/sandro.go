@@ -87,10 +87,12 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 				IsForeignDelivery:   true,
 				IsTranslateRequired: true,
 				ModuleName:          source.CrawlModuleName,
+				IsRemoved:           false,
+				IsSoldout:           false,
 			}
 
 			totalProducts += 1
-			productinfo.ProcessAddProductInfoRequests(addRequest)
+			productinfo.ProcessCrawlingInfoRequests(addRequest)
 		}
 	})
 

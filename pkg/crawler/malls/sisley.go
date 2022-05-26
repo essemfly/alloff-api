@@ -86,10 +86,12 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 				IsForeignDelivery:   false,
 				IsTranslateRequired: false,
 				ModuleName:          source.CrawlModuleName,
+				IsRemoved:           false,
+				IsSoldout:           false,
 			}
 
 			totalProducts += 1
-			productinfo.ProcessAddProductInfoRequests(addRequest)
+			productinfo.ProcessCrawlingInfoRequests(addRequest)
 		}
 
 		pageInt, _ := strconv.Atoi(crawlResponse.Page)

@@ -40,6 +40,8 @@ type AddMetaInfoRequest struct {
 	ModuleName           string
 	IsTranslateRequired  bool
 	IsInventoryMapped    bool
+	IsRemoved            bool
+	IsSoldout            bool
 }
 
 func AddProductInfo(request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {
@@ -123,7 +125,26 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 		pdInfo.SetAlloffCategory(productAlloffCat)
 	}
 
+	pdInfo.IsRemoved = request.IsRemoved
+	pdInfo.IsSoldout = request.IsSoldout
+	if !pdInfo.IsSoldout {
+		pdInfo.CheckSoldout()
+	}
 	// TODO: Inventory Mapper가 있어야함
+
+	// if pd.IsTranslateRequired {
+	// 	_, err := TranslateProductInfo(pd)
+	// 	if err != nil {
+	// 		log.Println("Err on translate product info", err)
+	// 	}
+	// }
+
+	// if !pd.IsImageCached {
+	// 	err := CacheProductsImage(pd)
+	// 	if err != nil {
+	// 		log.Println("Err on cache products image", err)
+	// 	}
+	// }
 
 	return pdInfo
 }

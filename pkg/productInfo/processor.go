@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func ProcessAddProductInfoRequests(request *AddMetaInfoRequest) error {
+func ProcessCrawlingInfoRequests(request *AddMetaInfoRequest) error {
 	pdInfo, err := checkNewProducts(request)
 	if err != nil {
 		return err
@@ -19,7 +19,7 @@ func ProcessAddProductInfoRequests(request *AddMetaInfoRequest) error {
 		return err
 	}
 
-	_, err = Reset(pdInfo, request)
+	_, err = UpdateProductInfo(pdInfo, request)
 	return err
 }
 

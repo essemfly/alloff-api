@@ -176,10 +176,12 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
 			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		numProducts += 1
-		productinfo.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 
 	}
 

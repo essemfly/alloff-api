@@ -72,10 +72,12 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
 			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		totalProducts += 1
-		productinfo.ProcessAddProductInfoRequests(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 
 	})
 
