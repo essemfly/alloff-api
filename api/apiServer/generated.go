@@ -101,9 +101,10 @@ type ComplexityRoot struct {
 	}
 
 	CartItem struct {
-		Product  func(childComplexity int) int
-		Quantity func(childComplexity int) int
-		Size     func(childComplexity int) int
+		ErrorMsgs func(childComplexity int) int
+		Product   func(childComplexity int) int
+		Quantity  func(childComplexity int) int
+		Size      func(childComplexity int) int
 	}
 
 	Category struct {
@@ -171,7 +172,6 @@ type ComplexityRoot struct {
 		AddCartItem           func(childComplexity int, input *model.AddCartItemInput) int
 		CancelOrderItem       func(childComplexity int, orderID string, orderItemID string) int
 		CancelPayment         func(childComplexity int, input *model.CancelPaymentInput) int
-		CheckOrder            func(childComplexity int, input *model.OrderInput) int
 		ConfirmOrderItem      func(childComplexity int, orderID string, orderItemID string) int
 		CreateUser            func(childComplexity int, input model.NewUser) int
 		HandlePaymentResponse func(childComplexity int, input *model.OrderResponse) int
@@ -390,7 +390,6 @@ type MutationResolver interface {
 	AddCartItem(ctx context.Context, input *model.AddCartItemInput) (*model.Cart, error)
 	RemoveCartItem(ctx context.Context, cartID string, productID string) (*model.Cart, error)
 	SetAlarm(ctx context.Context, id string) (bool, error)
-	CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error)
 	RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error)
 	RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
 	CancelPayment(ctx context.Context, input *model.CancelPaymentInput) (*model.PaymentStatus, error)
@@ -681,6 +680,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cart.Items(childComplexity), true
+
+	case "CartItem.errorMsgs":
+		if e.complexity.CartItem.ErrorMsgs == nil {
+			break
+		}
+
+		return e.complexity.CartItem.ErrorMsgs(childComplexity), true
 
 	case "CartItem.product":
 		if e.complexity.CartItem.Product == nil {
@@ -997,18 +1003,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CancelPayment(childComplexity, args["input"].(*model.CancelPaymentInput)), true
-
-	case "Mutation.checkOrder":
-		if e.complexity.Mutation.CheckOrder == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_checkOrder_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CheckOrder(childComplexity, args["input"].(*model.OrderInput)), true
 
 	case "Mutation.confirmOrderItem":
 		if e.complexity.Mutation.ConfirmOrderItem == nil {
@@ -2360,6 +2354,7 @@ type CartItem {
   product: Product!
   size: String!
   quantity: Int!
+  errorMsgs: [String!]!
 }
 
 input AddCartItemInput {
@@ -2654,7 +2649,6 @@ input CancelPaymentInput {
 }
 
 extend type Mutation {
-  checkOrder(input: OrderInput): OrderValidityResult!
   requestOrder(input: OrderInput): OrderWithPayment!
   requestPayment(input: PaymentClientInput): PaymentStatus!
   cancelPayment(input: CancelPaymentInput): PaymentStatus!
@@ -2863,21 +2857,6 @@ func (ec *executionContext) field_Mutation_cancelPayment_args(ctx context.Contex
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalOCancelPaymentInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCancelPaymentInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["input"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_checkOrder_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *model.OrderInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOOrderInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -4652,6 +4631,41 @@ func (ec *executionContext) _CartItem_quantity(ctx context.Context, field graphq
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _CartItem_errorMsgs(ctx context.Context, field graphql.CollectedField, obj *model.CartItem) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "CartItem",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ErrorMsgs, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Category_id(ctx context.Context, field graphql.CollectedField, obj *model.Category) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6317,48 +6331,6 @@ func (ec *executionContext) _Mutation_setAlarm(ctx context.Context, field graphq
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) _Mutation_checkOrder(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	fc := &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		Args:       nil,
-		IsMethod:   true,
-		IsResolver: true,
-	}
-
-	ctx = graphql.WithFieldContext(ctx, fc)
-	rawArgs := field.ArgumentMap(ec.Variables)
-	args, err := ec.field_Mutation_checkOrder_args(ctx, rawArgs)
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	fc.Args = args
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CheckOrder(rctx, args["input"].(*model.OrderInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.OrderValidityResult)
-	fc.Result = res
-	return ec.marshalNOrderValidityResult2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderValidityResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_requestOrder(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -13803,6 +13775,11 @@ func (ec *executionContext) _CartItem(ctx context.Context, sel ast.SelectionSet,
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "errorMsgs":
+			out.Values[i] = ec._CartItem_errorMsgs(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -14226,11 +14203,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			}
 		case "setAlarm":
 			out.Values[i] = ec._Mutation_setAlarm(ctx, field)
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "checkOrder":
-			out.Values[i] = ec._Mutation_checkOrder(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -16622,20 +16594,6 @@ func (ec *executionContext) unmarshalNOrderItemTypeEnum2githubᚗcomᚋlessbutte
 
 func (ec *executionContext) marshalNOrderItemTypeEnum2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderItemTypeEnum(ctx context.Context, sel ast.SelectionSet, v model.OrderItemTypeEnum) graphql.Marshaler {
 	return v
-}
-
-func (ec *executionContext) marshalNOrderValidityResult2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderValidityResult(ctx context.Context, sel ast.SelectionSet, v model.OrderValidityResult) graphql.Marshaler {
-	return ec._OrderValidityResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNOrderValidityResult2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderValidityResult(ctx context.Context, sel ast.SelectionSet, v *model.OrderValidityResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._OrderValidityResult(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNOrderWithPayment2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐOrderWithPayment(ctx context.Context, sel ast.SelectionSet, v model.OrderWithPayment) graphql.Marshaler {

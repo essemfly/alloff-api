@@ -1,7 +1,6 @@
-package order
+package basket
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config"
@@ -12,16 +11,20 @@ import (
 	"go.uber.org/zap"
 )
 
-func IsValid(basket *domain.Basket) []error {
-	errs := []error{}
+func Refresh(cart *domain.Basket) (*domain.Basket, bool, string) {
 	totalPrices := 0
+	globalErrs := []string{}
 
-	for _, item := range basket.Items {
+	for _, item := range cart.Items {
+
+		item.Product, _ = ioc.Repo.Products.Get(item.Product.ID.Hex())
+
+		errs := []string{}
 		currentPrice := item.Product.ProductInfo.Price.CurrentPrice
 		totalPrices += currentPrice * item.Quantity
 
 		if item.Product.IsNotSale {
-			errs = append(errs, fmt.Errorf("ERR200:productgroup timeout"+item.Product.ID.Hex()))
+			errs = append(errs, "ERR200:productgroup timeout"+item.Product.ID.Hex())
 		}
 
 		isValidSize, isValidQuantity := false, false
@@ -38,29 +41,43 @@ func IsValid(basket *domain.Basket) []error {
 
 		if item.Product.ProductInfo.IsSoldout {
 			item.Quantity = 0
-			errs = append(errs, fmt.Errorf("ERR105:product soldout"))
+			errs = append(errs, "ERR105:product soldout")
 		}
 
 		if item.Product.IsNotSale {
 			item.Quantity = 0
-			errs = append(errs, fmt.Errorf("ERR102:alloffproduct is not for sale"))
+			errs = append(errs, "ERR102:alloffproduct is not for sale")
 		}
 
 		if !isValidSize {
 			item.Quantity = 0
-			errs = append(errs, fmt.Errorf("ERR104:invalid product option size"+item.Size))
+			errs = append(errs, "ERR104:invalid product option size "+item.Size)
 		}
 
 		if !isValidQuantity {
-			errs = append(errs, fmt.Errorf("ERR103:invalid product option quantity"+item.Product.ID.Hex()))
+			errs = append(errs, "ERR103:invalid product option quantity "+item.Size)
 		}
+
+		item.Errors = errs
+		globalErrs = append(globalErrs, errs...)
 	}
 
-	if basket.ProductPrice != totalPrices {
-		errs = append(errs, fmt.Errorf("ERR101:invalid total products price order amount"))
+	if cart.ProductPrice != totalPrices {
+		globalErrs = append(globalErrs, "ERR101:invalid total products price order amount")
+		cart.ProductPrice = totalPrices
 	}
 
-	return errs
+	newBasket, err := ioc.Repo.Carts.Upsert(cart)
+	if err != nil {
+		config.Logger.Error("cart update error in valid check", zap.Error(err))
+		return newBasket, false, err.Error()
+	}
+
+	if len(globalErrs) > 0 {
+		return newBasket, false, globalErrs[0]
+	}
+
+	return newBasket, true, ""
 }
 
 func BuildOrder(user *domain.UserDAO, basket *domain.Basket) (*domain.OrderDAO, error) {

@@ -197,7 +197,6 @@ input CancelPaymentInput {
 }
 
 extend type Mutation {
-  checkOrder(input: OrderInput): OrderValidityResult!
   requestOrder(input: OrderInput): OrderWithPayment!
   requestPayment(input: PaymentClientInput): PaymentStatus!
   cancelPayment(input: CancelPaymentInput): PaymentStatus!

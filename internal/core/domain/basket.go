@@ -13,4 +13,5 @@ type BasketItem struct {
 	ExhibitionID string
 	Size         string
 	Quantity     int
+	Errors       []string
 }

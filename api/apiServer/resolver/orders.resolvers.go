@@ -5,6 +5,7 @@ package resolver
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strconv"
 
@@ -15,54 +16,9 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/amplitude"
-	"github.com/lessbutter/alloff-api/pkg/order"
+	"github.com/lessbutter/alloff-api/pkg/basket"
 	"go.uber.org/zap"
 )
-
-func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error) {
-	/*
-		1. Baskets을 만든다.
-		2. Basket이 Valid한지 Check를 한다.
-		3. Errors들을 모아서 보여준다.
-		4. Order를 Create해줄 필요는 없다.
-	*/
-
-	basketItems, err := BuildBasketItems(input)
-	if err != nil {
-		return nil, fmt.Errorf("ERR100:alloffproduct not found")
-	}
-
-	basket := &domain.Basket{
-		Items:        basketItems,
-		ProductPrice: input.ProductPrice,
-	}
-
-	errs := order.IsValid(basket)
-
-	orderDao, err := order.BuildOrder(nil, basket)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(errs) > 0 {
-		var errString = []string{}
-		for _, err := range errs {
-			errString = append(errString, err.Error())
-		}
-
-		return &model.OrderValidityResult{
-			Available: false,
-			ErrorMsgs: errString,
-			Order:     mapper.MapOrder(orderDao),
-		}, nil
-	}
-
-	return &model.OrderValidityResult{
-		Available: true,
-		ErrorMsgs: nil,
-		Order:     mapper.MapOrder(orderDao),
-	}, nil
-}
 
 func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error) {
 	/*
@@ -80,17 +36,17 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 		return nil, err
 	}
 
-	basket := &domain.Basket{
+	basketDao := &domain.Basket{
 		Items:        basketItems,
 		ProductPrice: input.ProductPrice,
 	}
 
-	errs := order.IsValid(basket)
-	if len(errs) > 0 {
-		return nil, errs[0]
+	newCart, isValid, reason := basket.Refresh(basketDao)
+	if !isValid {
+		return nil, errors.New(reason)
 	}
 
-	orderDao, _ := order.BuildOrder(user, basket)
+	orderDao, _ := basket.BuildOrder(user, newCart)
 	newOrderDao, err := ioc.Repo.Orders.Insert(orderDao)
 	if err != nil {
 		config.Logger.Error("order insert fail", zap.Error(err))

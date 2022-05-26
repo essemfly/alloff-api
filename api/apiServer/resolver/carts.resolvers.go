@@ -11,6 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/basket"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/zap"
 )
@@ -21,6 +22,7 @@ func (r *mutationResolver) AddCartItem(ctx context.Context, input *model.AddCart
 		return nil, err
 	}
 
+	productPrices := 0
 	product, err := ioc.Repo.Products.Get(input.ProductID)
 	if err != nil {
 		return nil, err
@@ -33,7 +35,12 @@ func (r *mutationResolver) AddCartItem(ctx context.Context, input *model.AddCart
 		Quantity:     input.Quantity,
 	})
 
-	newCart, err := ioc.Repo.Carts.Upsert(cart)
+	for _, item := range cart.Items {
+		productPrices += item.Quantity * item.Product.ProductInfo.Price.CurrentPrice
+	}
+
+	cart.ProductPrice = productPrices
+	newCart, _, _ := basket.Refresh(cart)
 	if err != nil {
 		return nil, err
 	}
@@ -47,15 +54,18 @@ func (r *mutationResolver) RemoveCartItem(ctx context.Context, cartID string, pr
 		return nil, err
 	}
 
+	productPrices := 0
 	newItems := []*domain.BasketItem{}
 	for _, item := range cart.Items {
 		if item.Product.ID.Hex() != productID {
 			newItems = append(newItems, item)
+			productPrices += item.Quantity * item.Product.ProductInfo.Price.CurrentPrice
 		}
 	}
 
 	cart.Items = newItems
-	newCart, err := ioc.Repo.Carts.Upsert(cart)
+	cart.ProductPrice = productPrices
+	newCart, _, _ := basket.Refresh(cart)
 	if err != nil {
 		return nil, err
 	}
@@ -82,5 +92,8 @@ func (r *queryResolver) Cart(ctx context.Context, id string) (*model.Cart, error
 	if err != nil {
 		return nil, err
 	}
-	return mapper.MapCart(cart), nil
+
+	newCart, _, _ := basket.Refresh(cart)
+
+	return mapper.MapCart(newCart), nil
 }
