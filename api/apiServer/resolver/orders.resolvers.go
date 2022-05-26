@@ -94,7 +94,7 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 	newOrderDao, err := ioc.Repo.Orders.Insert(orderDao)
 	if err != nil {
 		config.Logger.Error("order insert fail", zap.Error(err))
-		return nil, fmt.Errorf("ERR300:failed to create order not found", err)
+		return nil, fmt.Errorf("ERR300:failed to create order not found" + err.Error())
 	}
 
 	basePayment := newOrderDao.GetBasePayment()
