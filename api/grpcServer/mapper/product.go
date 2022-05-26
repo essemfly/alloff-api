@@ -55,7 +55,37 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 		ProductInfos:         pdInfo.SalesInstruction.Information,
 		DescriptionInfos:     pdInfo.SalesInstruction.Description.Infos,
 		ThumbnailImage:       pdInfo.ThumbnailImage,
+		ProductTypes:         ProductTypeMapper(pdInfo.ProductType),
 	}
+}
+
+func ProductTypeMapper(pdTypes []domain.AlloffProductType) []grpcServer.ProductType {
+	pdTypes = removeDuplicateType(pdTypes)
+	productTypes := []grpcServer.ProductType{}
+	for _, pdtype := range pdTypes {
+		if pdtype == domain.Female {
+			productTypes = append(productTypes, grpcServer.ProductType_FEMALE)
+		} else if pdtype == domain.Male {
+			productTypes = append(productTypes, grpcServer.ProductType_MALE)
+		} else if pdtype == domain.Kids {
+			productTypes = append(productTypes, grpcServer.ProductType_KIDS)
+		} else if pdtype == domain.Sports {
+			productTypes = append(productTypes, grpcServer.ProductType_SPORTS)
+		}
+	}
+	return productTypes
+}
+
+func removeDuplicateType(strSlice []domain.AlloffProductType) []domain.AlloffProductType {
+	allKeys := make(map[domain.AlloffProductType]bool)
+	list := []domain.AlloffProductType{}
+	for _, item := range strSlice {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
 }
 
 func InventoryMapper(pd *domain.ProductMetaInfoDAO) []*grpcServer.ProductInventoryMessage {

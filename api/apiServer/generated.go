@@ -149,9 +149,9 @@ type ComplexityRoot struct {
 	}
 
 	Inventory struct {
-		AlloffSize func(childComplexity int) int
-		Quantity   func(childComplexity int) int
-		Size       func(childComplexity int) int
+		AlloffSizes func(childComplexity int) int
+		Quantity    func(childComplexity int) int
+		Size        func(childComplexity int) int
 	}
 
 	KeyValueInfo struct {
@@ -890,12 +890,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ExhibitionOutput.Status(childComplexity), true
 
-	case "Inventory.alloffSize":
-		if e.complexity.Inventory.AlloffSize == nil {
+	case "Inventory.alloffSizes":
+		if e.complexity.Inventory.AlloffSizes == nil {
 			break
 		}
 
-		return e.complexity.Inventory.AlloffSize(childComplexity), true
+		return e.complexity.Inventory.AlloffSizes(childComplexity), true
 
 	case "Inventory.quantity":
 		if e.complexity.Inventory.Quantity == nil {
@@ -2689,7 +2689,7 @@ type AlloffSize {
 type Inventory {
   size: String!
   quantity: Int!
-  alloffSize: [AlloffSize!]!
+  alloffSizes: [AlloffSize!]!
 }
 
 type Product {
@@ -5643,7 +5643,7 @@ func (ec *executionContext) _Inventory_quantity(ctx context.Context, field graph
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Inventory_alloffSize(ctx context.Context, field graphql.CollectedField, obj *model.Inventory) (ret graphql.Marshaler) {
+func (ec *executionContext) _Inventory_alloffSizes(ctx context.Context, field graphql.CollectedField, obj *model.Inventory) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -5661,7 +5661,7 @@ func (ec *executionContext) _Inventory_alloffSize(ctx context.Context, field gra
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.AlloffSize, nil
+		return obj.AlloffSizes, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13986,8 +13986,8 @@ func (ec *executionContext) _Inventory(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "alloffSize":
-			out.Values[i] = ec._Inventory_alloffSize(ctx, field, obj)
+		case "alloffSizes":
+			out.Values[i] = ec._Inventory_alloffSizes(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

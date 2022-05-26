@@ -105,13 +105,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		moduleName = *req.ModuleName
 	}
 
-	// TODO: ProductTypes를 바꾸는 작업이 되어야한다.
-	productTypes := []domain.AlloffProductType{
-		domain.Female,
-		domain.Female,
-		domain.Kids,
-		domain.Sports,
-	}
+	productTypes := []domain.AlloffProductType{}
 	for _, reqPdType := range req.ProductTypes {
 		if reqPdType == grpcServer.ProductType_FEMALE {
 			productTypes = append(productTypes, domain.Female)
@@ -239,24 +233,18 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		updatedRequest.Brand = brand
 	}
 
-	// TODO: ProductTypes를 바꾸는 작업이 되어야한다.
 	if req.ProductTypes != nil && len(req.ProductTypes) > 0 {
-		allofftypes := []domain.AlloffProductType{
-			domain.Female,
-			domain.Female,
-			domain.Kids,
-			domain.Sports,
-		}
+		productTypes := []domain.AlloffProductType{}
 		for _, reqPdType := range req.ProductTypes {
 			if reqPdType == grpcServer.ProductType_FEMALE {
-				allofftypes = append(allofftypes, domain.Female)
+				productTypes = append(productTypes, domain.Female)
 			} else if reqPdType == grpcServer.ProductType_MALE {
-				allofftypes = append(allofftypes, domain.Male)
+				productTypes = append(productTypes, domain.Male)
 			} else if reqPdType == grpcServer.ProductType_KIDS {
-				allofftypes = append(allofftypes, domain.Kids)
+				productTypes = append(productTypes, domain.Kids)
 			}
 		}
-		updatedRequest.ProductType = allofftypes
+		updatedRequest.ProductType = productTypes
 	}
 
 	if req.Inventory != nil {

@@ -83,9 +83,9 @@ func MapInventory(invs []*domain.InventoryDAO) []*model.Inventory {
 		}
 
 		invModel := &model.Inventory{
-			Quantity:   inv.Quantity,
-			Size:       inv.Size,
-			AlloffSize: alloffSizes,
+			Quantity:    inv.Quantity,
+			Size:        inv.Size,
+			AlloffSizes: alloffSizes,
 		}
 		res = append(res, invModel)
 	}
