@@ -62,6 +62,8 @@ type Product {
   cancelDescription: CancelDescription!
   information: [KeyValueInfo!]
   exhibitionId: String!
+  exhibitionStartTime: Date!
+  exhibitionFinishTime: Date!
 }
 
 type AlloffInventory {

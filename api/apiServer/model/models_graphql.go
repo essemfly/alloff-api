@@ -318,23 +318,25 @@ type PaymentStatus struct {
 }
 
 type Product struct {
-	ID                  string               `json:"id"`
-	IsNotSale           bool                 `json:"isNotSale"`
-	Brand               *Brand               `json:"brand"`
-	AlloffCategory      *AlloffCategory      `json:"alloffCategory"`
-	Name                string               `json:"name"`
-	OriginalPrice       int                  `json:"originalPrice"`
-	DiscountedPrice     int                  `json:"discountedPrice"`
-	DiscountRate        int                  `json:"discountRate"`
-	Images              []string             `json:"images"`
-	ThumbnailImage      string               `json:"thumbnailImage"`
-	Inventory           []*Inventory         `json:"inventory"`
-	IsSoldout           bool                 `json:"isSoldout"`
-	Description         *ProductDescription  `json:"description"`
-	DeliveryDescription *DeliveryDescription `json:"deliveryDescription"`
-	CancelDescription   *CancelDescription   `json:"cancelDescription"`
-	Information         []*KeyValueInfo      `json:"information"`
-	ExhibitionID        string               `json:"exhibitionId"`
+	ID                   string               `json:"id"`
+	IsNotSale            bool                 `json:"isNotSale"`
+	Brand                *Brand               `json:"brand"`
+	AlloffCategory       *AlloffCategory      `json:"alloffCategory"`
+	Name                 string               `json:"name"`
+	OriginalPrice        int                  `json:"originalPrice"`
+	DiscountedPrice      int                  `json:"discountedPrice"`
+	DiscountRate         int                  `json:"discountRate"`
+	Images               []string             `json:"images"`
+	ThumbnailImage       string               `json:"thumbnailImage"`
+	Inventory            []*Inventory         `json:"inventory"`
+	IsSoldout            bool                 `json:"isSoldout"`
+	Description          *ProductDescription  `json:"description"`
+	DeliveryDescription  *DeliveryDescription `json:"deliveryDescription"`
+	CancelDescription    *CancelDescription   `json:"cancelDescription"`
+	Information          []*KeyValueInfo      `json:"information"`
+	ExhibitionID         string               `json:"exhibitionId"`
+	ExhibitionStartTime  string               `json:"exhibitionStartTime"`
+	ExhibitionFinishTime string               `json:"exhibitionFinishTime"`
 }
 
 type ProductDescription struct {

@@ -288,23 +288,25 @@ type ComplexityRoot struct {
 	}
 
 	Product struct {
-		AlloffCategory      func(childComplexity int) int
-		Brand               func(childComplexity int) int
-		CancelDescription   func(childComplexity int) int
-		DeliveryDescription func(childComplexity int) int
-		Description         func(childComplexity int) int
-		DiscountRate        func(childComplexity int) int
-		DiscountedPrice     func(childComplexity int) int
-		ExhibitionID        func(childComplexity int) int
-		ID                  func(childComplexity int) int
-		Images              func(childComplexity int) int
-		Information         func(childComplexity int) int
-		Inventory           func(childComplexity int) int
-		IsNotSale           func(childComplexity int) int
-		IsSoldout           func(childComplexity int) int
-		Name                func(childComplexity int) int
-		OriginalPrice       func(childComplexity int) int
-		ThumbnailImage      func(childComplexity int) int
+		AlloffCategory       func(childComplexity int) int
+		Brand                func(childComplexity int) int
+		CancelDescription    func(childComplexity int) int
+		DeliveryDescription  func(childComplexity int) int
+		Description          func(childComplexity int) int
+		DiscountRate         func(childComplexity int) int
+		DiscountedPrice      func(childComplexity int) int
+		ExhibitionFinishTime func(childComplexity int) int
+		ExhibitionID         func(childComplexity int) int
+		ExhibitionStartTime  func(childComplexity int) int
+		ID                   func(childComplexity int) int
+		Images               func(childComplexity int) int
+		Information          func(childComplexity int) int
+		Inventory            func(childComplexity int) int
+		IsNotSale            func(childComplexity int) int
+		IsSoldout            func(childComplexity int) int
+		Name                 func(childComplexity int) int
+		OriginalPrice        func(childComplexity int) int
+		ThumbnailImage       func(childComplexity int) int
 	}
 
 	ProductDescription struct {
@@ -1691,12 +1693,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Product.DiscountedPrice(childComplexity), true
 
+	case "Product.exhibitionFinishTime":
+		if e.complexity.Product.ExhibitionFinishTime == nil {
+			break
+		}
+
+		return e.complexity.Product.ExhibitionFinishTime(childComplexity), true
+
 	case "Product.exhibitionId":
 		if e.complexity.Product.ExhibitionID == nil {
 			break
 		}
 
 		return e.complexity.Product.ExhibitionID(childComplexity), true
+
+	case "Product.exhibitionStartTime":
+		if e.complexity.Product.ExhibitionStartTime == nil {
+			break
+		}
+
+		return e.complexity.Product.ExhibitionStartTime(childComplexity), true
 
 	case "Product.id":
 		if e.complexity.Product.ID == nil {
@@ -2656,6 +2672,8 @@ type Product {
   cancelDescription: CancelDescription!
   information: [KeyValueInfo!]
   exhibitionId: String!
+  exhibitionStartTime: Date!
+  exhibitionFinishTime: Date!
 }
 
 type AlloffInventory {
@@ -9580,6 +9598,76 @@ func (ec *executionContext) _Product_exhibitionId(ctx context.Context, field gra
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Product_exhibitionStartTime(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Product",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExhibitionStartTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Product_exhibitionFinishTime(ctx context.Context, field graphql.CollectedField, obj *model.Product) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Product",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExhibitionFinishTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ProductDescription_images(ctx context.Context, field graphql.CollectedField, obj *model.ProductDescription) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -14519,6 +14607,16 @@ func (ec *executionContext) _Product(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._Product_information(ctx, field, obj)
 		case "exhibitionId":
 			out.Values[i] = ec._Product_exhibitionId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "exhibitionStartTime":
+			out.Values[i] = ec._Product_exhibitionStartTime(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "exhibitionFinishTime":
+			out.Values[i] = ec._Product_exhibitionFinishTime(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
