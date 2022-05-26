@@ -334,19 +334,20 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Brand           func(childComplexity int, input *model.BrandInput) int
-		Brands          func(childComplexity int, input *model.BrandsInput) int
-		Cart            func(childComplexity int, id string) int
-		Exhibition      func(childComplexity int, id string) int
-		ExhibitionInfo  func(childComplexity int, input model.MetaInfoInput) int
-		Exhibitions     func(childComplexity int, input model.ExhibitionInput) int
-		Order           func(childComplexity int, id string) int
-		OrderItemStatus func(childComplexity int) int
-		Orders          func(childComplexity int) int
-		Product         func(childComplexity int, id string) int
-		Products        func(childComplexity int, input model.ProductsInput) int
-		User            func(childComplexity int) int
-		Version         func(childComplexity int) int
+		Brand               func(childComplexity int, input *model.BrandInput) int
+		Brands              func(childComplexity int, input *model.BrandsInput) int
+		Cart                func(childComplexity int, id string) int
+		Exhibition          func(childComplexity int, id string) int
+		ExhibitionInfo      func(childComplexity int, input model.MetaInfoInput) int
+		Exhibitions         func(childComplexity int, input model.ExhibitionInput) int
+		Order               func(childComplexity int, id string) int
+		OrderItemStatus     func(childComplexity int) int
+		Orders              func(childComplexity int) int
+		Product             func(childComplexity int, id string) int
+		Products            func(childComplexity int, input model.ProductsInput) int
+		SizeMappingPolicies func(childComplexity int) int
+		User                func(childComplexity int) int
+		Version             func(childComplexity int) int
 	}
 
 	RefundInfo struct {
@@ -359,6 +360,14 @@ type ComplexityRoot struct {
 	SizeGuide struct {
 		ImgURL func(childComplexity int) int
 		Label  func(childComplexity int) int
+	}
+
+	SizeMappingPolicy struct {
+		AlloffCategory    func(childComplexity int) int
+		AlloffProductType func(childComplexity int) int
+		AlloffSize        func(childComplexity int) int
+		ID                func(childComplexity int) int
+		Sizes             func(childComplexity int) int
 	}
 
 	User struct {
@@ -405,6 +414,7 @@ type QueryResolver interface {
 	OrderItemStatus(ctx context.Context) ([]*model.OrderItemStatusDescription, error)
 	Product(ctx context.Context, id string) (*model.Product, error)
 	Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error)
+	SizeMappingPolicies(ctx context.Context) ([]*model.SizeMappingPolicy, error)
 	Version(ctx context.Context) (*model.AppVersion, error)
 }
 
@@ -2004,6 +2014,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Products(childComplexity, args["input"].(model.ProductsInput)), true
 
+	case "Query.sizeMappingPolicies":
+		if e.complexity.Query.SizeMappingPolicies == nil {
+			break
+		}
+
+		return e.complexity.Query.SizeMappingPolicies(childComplexity), true
+
 	case "Query.user":
 		if e.complexity.Query.User == nil {
 			break
@@ -2059,6 +2076,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SizeGuide.Label(childComplexity), true
+
+	case "SizeMappingPolicy.alloffCategory":
+		if e.complexity.SizeMappingPolicy.AlloffCategory == nil {
+			break
+		}
+
+		return e.complexity.SizeMappingPolicy.AlloffCategory(childComplexity), true
+
+	case "SizeMappingPolicy.alloffProductType":
+		if e.complexity.SizeMappingPolicy.AlloffProductType == nil {
+			break
+		}
+
+		return e.complexity.SizeMappingPolicy.AlloffProductType(childComplexity), true
+
+	case "SizeMappingPolicy.alloffSize":
+		if e.complexity.SizeMappingPolicy.AlloffSize == nil {
+			break
+		}
+
+		return e.complexity.SizeMappingPolicy.AlloffSize(childComplexity), true
+
+	case "SizeMappingPolicy.id":
+		if e.complexity.SizeMappingPolicy.ID == nil {
+			break
+		}
+
+		return e.complexity.SizeMappingPolicy.ID(childComplexity), true
+
+	case "SizeMappingPolicy.sizes":
+		if e.complexity.SizeMappingPolicy.Sizes == nil {
+			break
+		}
+
+		return e.complexity.SizeMappingPolicy.Sizes(childComplexity), true
 
 	case "User.baseAddress":
 		if e.complexity.User.BaseAddress == nil {
@@ -2736,6 +2788,17 @@ extend type Query {
   products(input: ProductsInput!): ProductsOutput!
 }
 `, BuiltIn: false},
+	{Name: "api/apiServer/graph/sizeMappingPolicy.graphqls", Input: `type SizeMappingPolicy {
+    id: ID!
+    alloffSize: AlloffSize!
+    alloffCategory: AlloffCategory!
+    sizes: [String!]!
+    alloffProductType: [AlloffProductType!]!
+}
+
+extend type Query {
+    sizeMappingPolicies: [SizeMappingPolicy!]!
+}`, BuiltIn: false},
 	{Name: "api/apiServer/graph/version.graphqls", Input: `type AppVersion {
   latestVersion: String!
   minVersion: String!
@@ -10664,6 +10727,41 @@ func (ec *executionContext) _Query_products(ctx context.Context, field graphql.C
 	return ec.marshalNProductsOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductsOutput(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_sizeMappingPolicies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().SizeMappingPolicies(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.SizeMappingPolicy)
+	fc.Result = res
+	return ec.marshalNSizeMappingPolicy2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeMappingPolicyᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_version(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -10978,6 +11076,181 @@ func (ec *executionContext) _SizeGuide_imgUrl(ctx context.Context, field graphql
 	res := resTmp.(string)
 	fc.Result = res
 	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SizeMappingPolicy_id(ctx context.Context, field graphql.CollectedField, obj *model.SizeMappingPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SizeMappingPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SizeMappingPolicy_alloffSize(ctx context.Context, field graphql.CollectedField, obj *model.SizeMappingPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SizeMappingPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AlloffSize, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.AlloffSize)
+	fc.Result = res
+	return ec.marshalNAlloffSize2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffSize(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SizeMappingPolicy_alloffCategory(ctx context.Context, field graphql.CollectedField, obj *model.SizeMappingPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SizeMappingPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AlloffCategory, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.AlloffCategory)
+	fc.Result = res
+	return ec.marshalNAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SizeMappingPolicy_sizes(ctx context.Context, field graphql.CollectedField, obj *model.SizeMappingPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SizeMappingPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Sizes, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _SizeMappingPolicy_alloffProductType(ctx context.Context, field graphql.CollectedField, obj *model.SizeMappingPolicy) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "SizeMappingPolicy",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AlloffProductType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]model.AlloffProductType)
+	fc.Result = res
+	return ec.marshalNAlloffProductType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductTypeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -14943,6 +15216,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "sizeMappingPolicies":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_sizeMappingPolicies(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "version":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -15032,6 +15319,53 @@ func (ec *executionContext) _SizeGuide(ctx context.Context, sel ast.SelectionSet
 			}
 		case "imgUrl":
 			out.Values[i] = ec._SizeGuide_imgUrl(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var sizeMappingPolicyImplementors = []string{"SizeMappingPolicy"}
+
+func (ec *executionContext) _SizeMappingPolicy(ctx context.Context, sel ast.SelectionSet, obj *model.SizeMappingPolicy) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sizeMappingPolicyImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SizeMappingPolicy")
+		case "id":
+			out.Values[i] = ec._SizeMappingPolicy_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "alloffSize":
+			out.Values[i] = ec._SizeMappingPolicy_alloffSize(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "alloffCategory":
+			out.Values[i] = ec._SizeMappingPolicy_alloffCategory(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "sizes":
+			out.Values[i] = ec._SizeMappingPolicy_sizes(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "alloffProductType":
+			out.Values[i] = ec._SizeMappingPolicy_alloffProductType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -16546,6 +16880,60 @@ func (ec *executionContext) marshalNSizeGuide2ᚖgithubᚗcomᚋlessbutterᚋall
 		return graphql.Null
 	}
 	return ec._SizeGuide(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSizeMappingPolicy2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeMappingPolicyᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SizeMappingPolicy) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSizeMappingPolicy2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeMappingPolicy(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNSizeMappingPolicy2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeMappingPolicy(ctx context.Context, sel ast.SelectionSet, v *model.SizeMappingPolicy) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._SizeMappingPolicy(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
