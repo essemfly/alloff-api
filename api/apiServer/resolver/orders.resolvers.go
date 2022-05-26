@@ -11,10 +11,12 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/amplitude"
 	"github.com/lessbutter/alloff-api/pkg/order"
+	"go.uber.org/zap"
 )
 
 func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error) {
@@ -91,7 +93,8 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 	orderDao, _ := order.BuildOrder(user, basket)
 	newOrderDao, err := ioc.Repo.Orders.Insert(orderDao)
 	if err != nil {
-		return nil, fmt.Errorf("ERR300:failed to create order not found")
+		config.Logger.Error("order insert fail", zap.Error(err))
+		return nil, fmt.Errorf("ERR300:failed to create order not found", err)
 	}
 
 	basePayment := newOrderDao.GetBasePayment()
