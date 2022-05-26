@@ -106,6 +106,23 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		moduleName = *req.ModuleName
 	}
 
+	// TODO: ProductTypes를 바꾸는 작업이 되어야한다.
+	productTypes := []domain.AlloffProductType{
+		domain.Female,
+		domain.Female,
+		domain.Kids,
+		domain.Sports,
+	}
+	for _, reqPdType := range req.ProductTypes {
+		if reqPdType == grpcServer.ProductType_FEMALE {
+			productTypes = append(productTypes, domain.Female)
+		} else if reqPdType == grpcServer.ProductType_MALE {
+			productTypes = append(productTypes, domain.Male)
+		} else if reqPdType == grpcServer.ProductType_KIDS {
+			productTypes = append(productTypes, domain.Kids)
+		}
+	}
+
 	productID := ""
 	if req.ProductId != nil {
 		productID = *req.ProductId
@@ -132,28 +149,12 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 
 	brand, _ := ioc.Repo.Brands.GetByKeyname(req.BrandKeyName)
 	alloffcat, _ := ioc.Repo.AlloffCategories.Get(*req.AlloffCategoryId)
-
-	// TODO: InvDaos
 	invDaos := []*domain.InventoryDAO{}
 	for _, inv := range req.Inventory {
-		// sizeMappingPolicy, _ := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, pdInfoDao.ProductType, pdInfoDao.AlloffCategory.First.ID.Hex())
-		sizeMappingPolicy, err := ioc.Repo.SizeMappingPolicy.Get("628e2804ce48a4a0c721433c")
-		if err != nil {
-			config.Logger.Error("sizemapping policy err on create product", zap.Error(err))
-		}
 		invDaos = append(invDaos, &domain.InventoryDAO{
-			AlloffSize: sizeMappingPolicy.AlloffSize,
-			Quantity:   int(inv.Quantity),
-			Size:       inv.Size,
+			Quantity: int(inv.Quantity),
+			Size:     inv.Size,
 		})
-	}
-
-	// TODO: ProductType
-	productTypes := []domain.AlloffProductType{
-		domain.Female,
-		domain.Kids,
-		domain.Male,
-		domain.Sports,
 	}
 
 	addRequest := &productinfo.AddMetaInfoRequest{
@@ -259,19 +260,12 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		updatedRequest.ProductType = allofftypes
 	}
 
-	// TODO: AlloffInventory를 바꿔주는 작업이 되어야한다.
 	if req.Inventory != nil {
 		invDaos := []*domain.InventoryDAO{}
 		for _, inv := range req.Inventory {
-			// sizeMappingPolicy, _ := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, pdInfoDao.ProductType, pdInfoDao.AlloffCategory.First.ID.Hex())
-			sizeMappingPolicy, err := ioc.Repo.SizeMappingPolicy.Get("628e2804ce48a4a0c721433c")
-			if err != nil {
-				config.Logger.Error("sizemapping policy err on create product", zap.Error(err))
-			}
 			invDaos = append(invDaos, &domain.InventoryDAO{
-				AlloffSize: sizeMappingPolicy.AlloffSize,
-				Quantity:   int(inv.Quantity),
-				Size:       inv.Size,
+				Quantity: int(inv.Quantity),
+				Size:     inv.Size,
 			})
 		}
 		updatedRequest.Inventory = invDaos

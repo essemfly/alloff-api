@@ -90,10 +90,9 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	}
 
 	pdInfo.SetBrandAndCategory(request.Brand, request.Source)
-	pdInfo.SetGeneralInfo(request.AlloffName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Information)
+	pdInfo.SetGeneralInfo(request.ProductType, request.AlloffName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Information)
 	alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
 	pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
-	pdInfo.ProductType = request.ProductType
 
 	descImages := append(request.DescriptionImages, request.Images...)
 	if request.ModuleName == "intrend" {
@@ -110,7 +109,8 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	pdInfo.SetCancelDesc(request.IsRefundPossible, request.RefundFee)
 
 	if request.AlloffCategory.ID != primitive.NilObjectID {
-		productAlloffCat, err := alloffcategory.BuildProductAlloffCategory(request.AlloffCategory.ID.Hex(), true)
+		alloffcat, _ := ioc.Repo.AlloffCategories.Get(request.AlloffCategory.ID.Hex())
+		productAlloffCat, err := alloffcategory.BuildProductAlloffCategory(alloffcat, true)
 		if err != nil {
 			config.Logger.Error("err occured on build product alloff category : alloffcat ID"+request.AlloffCategory.ID.Hex(), zap.Error(err))
 		}
@@ -125,12 +125,14 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 		pdInfo.SetAlloffCategory(productAlloffCat)
 	}
 
+	inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
+	pdInfo.SetInventory(inventories)
+
 	pdInfo.IsRemoved = request.IsRemoved
 	pdInfo.IsSoldout = request.IsSoldout
 	if !pdInfo.IsSoldout {
 		pdInfo.CheckSoldout()
 	}
-	// TODO: Inventory Mapper가 있어야함
 
 	// if pd.IsTranslateRequired {
 	// 	_, err := TranslateProductInfo(pd)

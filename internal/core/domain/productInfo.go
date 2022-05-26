@@ -189,13 +189,14 @@ func (pdInfo *ProductMetaInfoDAO) SetPrices(origPrice, curPrice int, currencyTyp
 	}
 }
 
-func (pdInfo *ProductMetaInfoDAO) SetGeneralInfo(productName, productID, productUrl string, images, sizes, colors []string, information map[string]string) {
+func (pdInfo *ProductMetaInfoDAO) SetGeneralInfo(productTypes []AlloffProductType, productName, productID, productUrl string, images, sizes, colors []string, information map[string]string) {
 	pdInfo.OriginalName = productName
 	pdInfo.ProductID = productID
 	pdInfo.ProductUrl = productUrl
 	pdInfo.Images = images
 	pdInfo.Sizes = sizes
 	pdInfo.Colors = colors
+	pdInfo.ProductType = productTypes
 }
 
 func (pdInfo *ProductMetaInfoDAO) SetDesc(descImages, texts []string, infos map[string]string) {

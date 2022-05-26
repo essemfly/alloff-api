@@ -1,22 +1,24 @@
 package alloffcategory
 
 import (
+	"errors"
+
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
-func BuildProductAlloffCategory(alloffCategoryID string, touched bool) (*domain.ProductAlloffCategoryDAO, error) {
-	alloffCat, err := ioc.Repo.AlloffCategories.Get(alloffCategoryID)
-	if err != nil {
-		return &domain.ProductAlloffCategoryDAO{}, err
+func BuildProductAlloffCategory(alloffCat *domain.AlloffCategoryDAO, touched bool) (*domain.ProductAlloffCategoryDAO, error) {
+	if alloffCat == nil {
+		return nil, errors.New("cannot find alloff category nil")
 	}
 
 	if alloffCat.Level == 1 {
 		return &domain.ProductAlloffCategoryDAO{
-			First:   alloffCat,
-			Second:  nil,
-			Done:    true,
-			Touched: touched,
+			TaggingResults: &domain.TaggingResultDAO{},
+			First:          alloffCat,
+			Second:         nil,
+			Done:           true,
+			Touched:        touched,
 		}, nil
 	}
 
@@ -26,9 +28,10 @@ func BuildProductAlloffCategory(alloffCategoryID string, touched bool) (*domain.
 	}
 
 	return &domain.ProductAlloffCategoryDAO{
-		First:   parentCat,
-		Second:  alloffCat,
-		Done:    true,
-		Touched: touched,
+		TaggingResults: &domain.TaggingResultDAO{},
+		First:          parentCat,
+		Second:         alloffCat,
+		Done:           true,
+		Touched:        touched,
 	}, nil
 }
