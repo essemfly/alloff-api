@@ -8,9 +8,11 @@ import (
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.uber.org/zap"
 )
 
 func (r *mutationResolver) AddCartItem(ctx context.Context, input *model.AddCartItemInput) (*model.Cart, error) {
@@ -67,6 +69,11 @@ func (r *queryResolver) Cart(ctx context.Context, id string) (*model.Cart, error
 			ID:           primitive.NewObjectID(),
 			Items:        []*domain.BasketItem{},
 			ProductPrice: 0,
+		}
+		_, err := ioc.Repo.Carts.Upsert(newCartDAO)
+		if err != nil {
+			config.Logger.Error("cart create err", zap.Error(err))
+			return nil, err
 		}
 		return mapper.MapCart(newCartDAO), nil
 	}
