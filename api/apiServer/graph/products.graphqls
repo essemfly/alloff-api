@@ -41,7 +41,7 @@ type AlloffSize {
 type Inventory {
   size: String!
   quantity: Int!
-  alloffSize: [AlloffSize!]!
+  alloffSizes: [AlloffSize!]!
 }
 
 type Product {
