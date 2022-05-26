@@ -115,6 +115,8 @@ func BuildOrder(user *domain.UserDAO, basket *domain.Basket) (*domain.OrderDAO, 
 			UpdatedAt:              time.Now(),
 			ExhibitionID:           exhibitionID,
 			CompanyKeyname:         item.Product.ProductInfo.Source.CrawlModuleName,
+			UserID:                 user.ID.Hex(),
+			User:                   user,
 		})
 
 		totalProductPrice += productPrice * item.Quantity
