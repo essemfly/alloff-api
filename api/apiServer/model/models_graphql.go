@@ -138,9 +138,9 @@ type ExhibitionOutput struct {
 }
 
 type Inventory struct {
-	Size       string      `json:"size"`
-	Quantity   int         `json:"quantity"`
-	AlloffSize *AlloffSize `json:"alloffSize"`
+	Size       string        `json:"size"`
+	Quantity   int           `json:"quantity"`
+	AlloffSize []*AlloffSize `json:"alloffSize"`
 }
 
 type InventoryInput struct {

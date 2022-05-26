@@ -226,7 +226,7 @@ func (repo *productRepo) ListDistinctInfos(filter interface{}) (brands []*domain
 		cats = append(cats, cat)
 	}
 
-	sizeRows, _ := repo.col.Distinct(ctx, "productinfo.alloffinventory.alloffsize.alloffsizename", filter)
+	sizeRows, _ := repo.col.Distinct(ctx, "productinfo.inventory.alloffsizes", filter)
 	for _, row := range sizeRows {
 		var size *domain.AlloffSizeDAO
 		data, _ := bson.Marshal(row)
@@ -286,16 +286,21 @@ func (repo *productRepo) ListInfos(filter interface{}) (brands []*domain.BrandCo
 		}
 
 		// ******* mapping sizes *******
-		// 이부분 비효율적임 pd -> inventory -> sizes  3중 for 문
+		alloffSizes := []*domain.AlloffSizeDAO{}
 		for _, inv := range pd.ProductInfo.Inventory {
-			sizeExists := false
-			for _, size := range sizes {
-				if inv.AlloffSize.ID == size.ID {
-					sizeExists = true
+			for _, alloffSize := range inv.AlloffSizes {
+				alloffSizes = append(alloffSizes, alloffSize)
+			}
+		}
+		for _, target := range alloffSizes {
+			isThere := false
+			for _, ns := range sizes {
+				if ns.ID == target.ID {
+					isThere = true
 				}
 			}
-			if !sizeExists {
-				sizes = append(sizes, inv.AlloffSize)
+			if !isThere {
+				sizes = append(sizes, target)
 			}
 		}
 	}

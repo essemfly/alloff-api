@@ -73,9 +73,9 @@ type EstimateModelType struct {
 }
 
 type InventoryDAO struct {
-	Size       string
-	Quantity   int
-	AlloffSize *AlloffSizeDAO
+	Size        string
+	Quantity    int
+	AlloffSizes []*AlloffSizeDAO
 }
 
 type ProductScoreInfoDAO struct {

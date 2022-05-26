@@ -20,7 +20,8 @@ func AssignAlloffSizesToInventories(invs []*domain.InventoryDAO, productTypes []
 }
 
 func assignAlloffSizeToInventory(inv *domain.InventoryDAO, productType []domain.AlloffProductType, catID string) *domain.InventoryDAO {
-	sizeMappingPolicy, err := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, productType, catID)
+	//sizeMappingPolicy, err := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, productType, catID)
+	sizeMappingPolicies, err := ioc.Repo.SizeMappingPolicy.ListByDetail(inv.Size, productType, catID)
 	if err != nil {
 		config.Logger.Error("sizemapping policy err on create product", zap.Error(err))
 		return &domain.InventoryDAO{
@@ -28,10 +29,16 @@ func assignAlloffSizeToInventory(inv *domain.InventoryDAO, productType []domain.
 			Size:     inv.Size,
 		}
 	}
+
+	alloffSizes := []*domain.AlloffSizeDAO{}
+	for _, policy := range sizeMappingPolicies {
+		alloffSizes = append(alloffSizes, policy.AlloffSize)
+	}
+
 	return &domain.InventoryDAO{
-		AlloffSize: sizeMappingPolicy.AlloffSize,
-		Quantity:   int(inv.Quantity),
-		Size:       inv.Size,
+		AlloffSizes: alloffSizes,
+		Quantity:    int(inv.Quantity),
+		Size:        inv.Size,
 	}
 
 }

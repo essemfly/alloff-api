@@ -156,5 +156,6 @@ type SizeMappingPolicyRepository interface {
 	Get(id string) (*domain.SizeMappingPolicyDAO, error)
 	GetByDetail(size string, productTypes []domain.AlloffProductType, alloffCategoryID string) (*domain.SizeMappingPolicyDAO, error)
 	List() ([]*domain.SizeMappingPolicyDAO, error)
+	ListByDetail(size string, productTypes []domain.AlloffProductType, alloffCategpryID string) ([]*domain.SizeMappingPolicyDAO, error)
 	Update(dao *domain.SizeMappingPolicyDAO) (*domain.SizeMappingPolicyDAO, error)
 }

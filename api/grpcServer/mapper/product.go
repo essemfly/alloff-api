@@ -60,10 +60,16 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 
 func InventoryMapper(pd *domain.ProductMetaInfoDAO) []*grpcServer.ProductInventoryMessage {
 	invMessage := []*grpcServer.ProductInventoryMessage{}
+
 	for _, inv := range pd.Inventory {
-		if inv.AlloffSize != nil {
+		if inv.AlloffSizes != nil {
+			alloffSizes := []*grpcServer.AlloffSizeMessage{}
+			for _, alloffSize := range inv.AlloffSizes {
+				alloffSizes = append(alloffSizes, AlloffSizeMapper(alloffSize))
+			}
+
 			invMessage = append(invMessage, &grpcServer.ProductInventoryMessage{
-				AlloffSize: AlloffSizeMapper(inv.AlloffSize),
+				AlloffSize: alloffSizes,
 				Quantity:   int32(inv.Quantity),
 				Size:       inv.Size,
 			})

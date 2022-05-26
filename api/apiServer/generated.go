@@ -2689,7 +2689,7 @@ type AlloffSize {
 type Inventory {
   size: String!
   quantity: Int!
-  alloffSize: AlloffSize!
+  alloffSize: [AlloffSize!]!
 }
 
 type Product {
@@ -5673,9 +5673,9 @@ func (ec *executionContext) _Inventory_alloffSize(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.AlloffSize)
+	res := resTmp.([]*model.AlloffSize)
 	fc.Result = res
-	return ec.marshalNAlloffSize2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffSize(ctx, field.Selections, res)
+	return ec.marshalNAlloffSize2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffSizeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _KeyValueInfo_key(ctx context.Context, field graphql.CollectedField, obj *model.KeyValueInfo) (ret graphql.Marshaler) {

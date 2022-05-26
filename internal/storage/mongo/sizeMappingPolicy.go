@@ -32,7 +32,7 @@ func (repo *sizeMappingPolicyRepo) Get(ID string) (*domain.SizeMappingPolicyDAO,
 	return sizeMappingPolicy, nil
 }
 
-// 카테고리, 타입, 사이즈명으로 찾는다. 그친구의 AlloffSize 를 찾는다.
+// 카테고리, 타입, 사이즈명으로 찾는다. 그친구의 AlloffSizes 를 찾는다.
 func (repo *sizeMappingPolicyRepo) GetByDetail(size string, productTypes []domain.AlloffProductType, alloffCategoryID string) (*domain.SizeMappingPolicyDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -50,6 +50,30 @@ func (repo *sizeMappingPolicyRepo) GetByDetail(size string, productTypes []domai
 	}
 
 	return sizeMappingPolicy, nil
+}
+
+func (repo *sizeMappingPolicyRepo) ListByDetail(size string, productTypes []domain.AlloffProductType, alloffCategpryID string) ([]*domain.SizeMappingPolicyDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	alloffCategpryOid, _ := primitive.ObjectIDFromHex(alloffCategpryID)
+	filter := bson.M{
+		"sizes":              size,
+		"alloffcategory._id": alloffCategpryOid,
+		"alloffproducttype":  bson.M{"$all": productTypes},
+	}
+
+	cursor, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var sizeMappingPolicies []*domain.SizeMappingPolicyDAO
+	err = cursor.All(ctx, &sizeMappingPolicies)
+	if err != nil {
+		return nil, err
+	}
+	return sizeMappingPolicies, nil
 }
 
 func (repo *sizeMappingPolicyRepo) List() ([]*domain.SizeMappingPolicyDAO, error) {

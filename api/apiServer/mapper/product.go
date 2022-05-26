@@ -77,10 +77,15 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 func MapInventory(invs []*domain.InventoryDAO) []*model.Inventory {
 	res := []*model.Inventory{}
 	for _, inv := range invs {
+		alloffSizes := []*model.AlloffSize{}
+		for _, alloffSize := range inv.AlloffSizes {
+			alloffSizes = append(alloffSizes, MapAlloffSizeDaoToAlloffSize(alloffSize))
+		}
+
 		invModel := &model.Inventory{
 			Quantity:   inv.Quantity,
 			Size:       inv.Size,
-			AlloffSize: MapAlloffSizeDaoToAlloffSize(inv.AlloffSize),
+			AlloffSize: alloffSizes,
 		}
 		res = append(res, invModel)
 	}
