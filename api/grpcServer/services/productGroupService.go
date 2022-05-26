@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"github.com/lessbutter/alloff-api/pkg/product"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -233,6 +234,9 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		}
 	}
 
+	exDao, _ := ioc.Repo.Exhibitions.Get(pgDao.ExhibitionID)
+	go exhibition.ExhibitionSyncer(exDao)
+
 	productListInput := product.ProductListInput{
 		ProductGroupID: pgDao.ID.Hex(),
 	}
@@ -273,6 +277,9 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 		return nil, err
 	}
 
+	exDao, _ := ioc.Repo.Exhibitions.Get(pgDao.ExhibitionID)
+	go exhibition.ExhibitionSyncer(exDao)
+
 	productListInput := product.ProductListInput{
 		ProductGroupID: newPgDao.ID.Hex(),
 	}
@@ -309,6 +316,9 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 			return nil, err
 		}
 	}
+
+	exDao, _ := ioc.Repo.Exhibitions.Get(pgDao.ExhibitionID)
+	go exhibition.ExhibitionSyncer(exDao)
 
 	productListInput := product.ProductListInput{
 		ProductGroupID: newPgDao.ID.Hex(),

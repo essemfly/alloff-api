@@ -64,7 +64,6 @@ func AddExhibition(req *ExhibitionRequest) (*domain.ExhibitionDAO, error) {
 	}
 
 	exDao.ProductGroups = pgs
-	ExhibitionSyncer(exDao)
 
 	newExDao, err := ioc.Repo.Exhibitions.Upsert(exDao)
 	if err != nil {

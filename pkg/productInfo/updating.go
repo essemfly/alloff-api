@@ -4,6 +4,7 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"go.uber.org/zap"
 )
 
@@ -74,6 +75,8 @@ func Update(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, erro
 		if err != nil {
 			config.Logger.Error("error on updating products"+pd.ID.Hex(), zap.Error(err))
 		}
+		exDao, _ := ioc.Repo.Exhibitions.Get(pd.ExhibitionID)
+		go exhibition.ExhibitionSyncer(exDao)
 	}
 
 	return updatedPdInfo, nil
