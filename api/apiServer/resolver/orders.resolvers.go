@@ -143,7 +143,7 @@ func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.Paym
 	return result, nil
 }
 
-func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error) {
+func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.CancelPaymentInput) (*model.PaymentStatus, error) {
 	/*
 		0. 주문창까지 넘어갔다가 취소된 경우 발생하는 API
 		1. Payment가 취소 되면서, 재고가 다시 회복됩니다.
@@ -160,7 +160,7 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Payme
 		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
-	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(input.MerchantUID, input.Amount)
+	paymentDao, err := ioc.Repo.Payments.GetByImpUID(input.ImpUID)
 	if err != nil {
 		return nil, fmt.Errorf("ERR404:failed to find payment order not found")
 	}
