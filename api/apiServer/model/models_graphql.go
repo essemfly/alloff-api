@@ -24,11 +24,6 @@ type AlloffCategory struct {
 	ImgURL   string `json:"imgUrl"`
 }
 
-type AlloffInventory struct {
-	AlloffSize *AlloffSize `json:"alloffSize"`
-	Quantity   int         `json:"quantity"`
-}
-
 type AlloffSize struct {
 	ID             string          `json:"id"`
 	AlloffCategory *AlloffCategory `json:"alloffCategory"`

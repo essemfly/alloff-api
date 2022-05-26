@@ -7,23 +7,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func AddAlloffSizeToInventory(notMatchedInvs []*domain.InventoryDAO) []*domain.InventoryDAO {
-	invDaos := []*domain.InventoryDAO{}
-	for _, inv := range notMatchedInvs {
-		// sizeMappingPolicy, _ := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, pdInfoDao.ProductType, pdInfoDao.AlloffCategory.First.ID.Hex())
-		sizeMappingPolicy, err := ioc.Repo.SizeMappingPolicy.Get("628e2804ce48a4a0c721433c")
-		if err != nil {
-			config.Logger.Error("sizemapping policy err on create product", zap.Error(err))
-		}
-		invDaos = append(invDaos, &domain.InventoryDAO{
-			AlloffSize: sizeMappingPolicy.AlloffSize,
-			Quantity:   int(inv.Quantity),
-			Size:       inv.Size,
-		})
-	}
-	return invDaos
-}
-
 func AssignAlloffSizesToInventories(invs []*domain.InventoryDAO, productTypes []domain.AlloffProductType, productCat *domain.ProductAlloffCategoryDAO) []*domain.InventoryDAO {
 	invDaos := []*domain.InventoryDAO{}
 	for _, inv := range invs {
@@ -37,8 +20,7 @@ func AssignAlloffSizesToInventories(invs []*domain.InventoryDAO, productTypes []
 }
 
 func assignAlloffSizeToInventory(inv *domain.InventoryDAO, productType []domain.AlloffProductType, catID string) *domain.InventoryDAO {
-	// sizeMappingPolicy, _ := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, productType, catID)
-	sizeMappingPolicy, err := ioc.Repo.SizeMappingPolicy.Get("628e2804ce48a4a0c721433c")
+	sizeMappingPolicy, err := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, productType, catID)
 	if err != nil {
 		config.Logger.Error("sizemapping policy err on create product", zap.Error(err))
 		return &domain.InventoryDAO{

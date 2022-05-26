@@ -5,10 +5,10 @@ package resolver
 
 import (
 	"context"
-	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
-	"github.com/lessbutter/alloff-api/config/ioc"
 
+	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/config/ioc"
 )
 
 func (r *queryResolver) SizeMappingPolicies(ctx context.Context) ([]*model.SizeMappingPolicy, error) {
