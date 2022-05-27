@@ -19,7 +19,7 @@ func AddNewAlloffCats() {
 	shoesOID := primitive.NewObjectID()
 	accessoryOID := primitive.NewObjectID()
 	jewerlyOID := primitive.NewObjectID()
-	beachWear := primitive.NewObjectID()
+	beachWearOID := primitive.NewObjectID()
 
 	cats := []*domain.AlloffCategoryDAO{
 		{
@@ -113,7 +113,7 @@ func AddNewAlloffCats() {
 			ImgURL:       "",
 		},
 		{
-			ID:           beachWear,
+			ID:           beachWearOID,
 			KeyName:      "1_beachwear",
 			Name:         "비치웨어",
 			Level:        1,
