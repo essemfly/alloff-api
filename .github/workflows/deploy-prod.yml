@@ -6,23 +6,68 @@ on:
       - prod
 
 env:
+  ENV: prod
   AWS_REGION: ap-northeast-2
-  ECR_REPOSITORY: backoffice-server-prod
-  ECS_SERVICE_OFFICE: backoffice-server-prod
-  ECS_SERVICE_COMPANY: backoffice-server-prod-company
-  ECS_CLUSTER: backoffice-server
-  ECS_TASK_DEFINITION_OFFICE: .aws/task-definition-prod.json
-  ECS_TASK_DEFINITION_COMPANY: .aws/task-definition-prod-company.json
-  CONTAINER_NAME_OFFICE: backoffice-server-prod
-  CONTAINER_NAME_COMPANY: backoffice-server-prod-company
+  ECR_REPOSITORY: alloff-api-prod
+  ECS_SERVICE: alloff-api-prod
+  ECS_CLUSTER: alloff-api
+  ECS_TASK_DEFINITION: .aws/task-definition-prod.json
+  CONTAINER_NAME: alloff-api-prod
 
 jobs:
+  codecov:
+    name: codecov
+    runs-on: ubuntu-latest
+    env:
+      GOPRIVATE: github.com/lessbutter/alloff-api
+      GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+    steps:
+      - name: Set up Go 1.18
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.18
+        id: go
+
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v3
+
+      - run: git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
+      - name: Get dependencies
+        run: |
+          go get -v -t -d ./...
+          if [ -f Gopkg.toml ]; then
+              curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+              dep ensure
+          fi
+
+      - name: Generate coverage report
+        run: |
+          go test `go list ./... | grep -v examples` -coverprofile=coverage.txt -covermode=atomic
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.txt
+          flags: unittests
+          name: codecov-umbrella
+          verbose: true
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
-    environment: production
+    environment: prod
 
     steps:
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: |
+            github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+          name: id_rsa # optional
+          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+     
       - name: Checkout
         uses: actions/checkout@v3
 
@@ -51,48 +96,32 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg ssh_prv_key="${{ secrets.SSH_KEY }}" --build-arg git_token="${{ secrets.GIT_TOKEN }}" -f .docker/Dockerfile.prod -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-      - name: Fill in the new image ID in the Amazon ECS task definition (Office)
-        id: task-def-office
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION_OFFICE }}
-          container-name: ${{ env.CONTAINER_NAME_OFFICE }}
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
-      - name: Fill in the new image ID in the Amazon ECS task definition (Company API)
-        id: task-def-company
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION_COMPANY }}
-          container-name: ${{ env.CONTAINER_NAME_COMPANY }}
-          image: ${{ steps.build-image.outputs.image }}
-
-      - name: Deploy Amazon ECS task definition (Company API)
+      - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.task-def-company.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE_COMPANY }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: false
-
-      - name: Deploy Amazon ECS task definition (Office)
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def-office.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE_OFFICE }}
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
-      - name: action-slack
-        uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          author_name: Github Action # default: 8398a7@action-slack
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: always() # Pick up events even if the job fails or is canceled.
+      # - name: action-slack
+      #   uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     author_name: Github Action # default: 8398a7@action-slack
+      #     fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+      #   env:
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      #   if: always() # Pick up events even if the job fails or is canceled.
