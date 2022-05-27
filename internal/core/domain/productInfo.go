@@ -208,6 +208,10 @@ func (pdInfo *ProductMetaInfoDAO) SetDesc(descImages, texts []string, infos map[
 	}
 }
 
+func (pdInfo *ProductMetaInfoDAO) SetInformation(information map[string]string) {
+	pdInfo.SalesInstruction.Information = information
+}
+
 func (pdInfo *ProductMetaInfoDAO) SetDeliveryDesc(isForeignDelivery bool, deliveryPrice, earliestDeliveryDays, latestDeliveryDays int) {
 	deliveryType := Domestic
 	deliveryTexts := []string{
