@@ -111,7 +111,7 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 						if size.Stock.Level != "outOfStock" {
 							inventories = append(inventories, &domain.InventoryDAO{
 								Size:     size.Size,
-								Quantity: 10,
+								Quantity: 1,
 							})
 						}
 					}

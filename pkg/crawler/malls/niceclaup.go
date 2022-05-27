@@ -107,7 +107,7 @@ func getNiceClaupDetail(productUrl string) (imageUrls, colors, sizes []string, i
 			if disabled != "disabled" {
 				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     size,
-					Quantity: 10,
+					Quantity: 1,
 				})
 			}
 		})

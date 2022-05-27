@@ -162,7 +162,7 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 		if len(sizes) == 0 && len(colors) > 0 {
 			for _, color := range colors {
 				inventories = append(inventories, &domain.InventoryDAO{
-					Quantity: 10,
+					Quantity: 1,
 					Size:     color,
 				})
 			}
@@ -234,7 +234,7 @@ func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []*dom
 			if !strings.Contains(unavailable, "sold out") {
 				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     size,
-					Quantity: 10,
+					Quantity: 1,
 				})
 			}
 		})
