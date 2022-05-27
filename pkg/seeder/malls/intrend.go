@@ -77,6 +77,11 @@ func AddIntrend() {
 				log.Println(err)
 			}
 
+			priceMarginPolicy := "INTREND"
+			if key == "SCARVES" || key == "BAGS" || key == "GLOVES HATS" || key == "JEWELERY" || key == "ACCESSORIES" || key == "BELTS" || key == "EYEGLASSES" {
+				priceMarginPolicy = "INTREND_NON_FASHION"
+			}
+
 			source := domain.CrawlSourceDAO{
 				BrandKeyname:         upsertedBrand.KeyName,
 				BrandIdentifier:      brandId,
@@ -86,7 +91,7 @@ func AddIntrend() {
 				CrawlModuleName:      modulename,
 				IsSalesProducts:      true,
 				IsForeignDelivery:    true,
-				PriceMarginPolicy:    "INTREND",
+				PriceMarginPolicy:    priceMarginPolicy,
 				DeliveryPrice:        0,
 				EarliestDeliveryDays: 14,
 				LatestDeliveryDays:   21,
