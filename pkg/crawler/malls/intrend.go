@@ -71,9 +71,11 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			})
 		}
 
-		if err != nil {
-			config.Logger.Error("err in translator : ", zap.Error(err))
+		// forbidden 403 case
+		if title == "" {
+			return
 		}
+
 		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:      title,
 			ProductID:       productID,
