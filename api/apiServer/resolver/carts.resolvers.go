@@ -67,8 +67,10 @@ func (r *mutationResolver) RemoveCartItem(ctx context.Context, input model.CartI
 	for _, item := range cart.Items {
 		if item.Product.ID.Hex() != input.ProductID && item.Size != input.Selectsize {
 			item.Quantity -= input.Quantity
-			newItems = append(newItems, item)
-			productPrices += item.Quantity * item.Product.ProductInfo.Price.CurrentPrice
+			if item.Quantity > 0 {
+				newItems = append(newItems, item)
+				productPrices += item.Quantity * item.Product.ProductInfo.Price.CurrentPrice
+			}
 		}
 	}
 
