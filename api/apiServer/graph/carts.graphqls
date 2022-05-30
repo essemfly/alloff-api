@@ -10,7 +10,7 @@ type CartItem {
   errorMsgs: [String!]!
 }
 
-input AddCartItemInput {
+input CartItemInput {
   cartId: String!
   productId: String!
   selectsize: String!
@@ -22,6 +22,6 @@ extend type Query {
 }
 
 extend type Mutation {
-  addCartItem(input: AddCartItemInput): Cart!
-  removeCartItem(cartId: String!, productId: String!): Cart!
+  addCartItem(input: CartItemInput!): Cart!
+  removeCartItem(input: CartItemInput!): Cart!
 }

@@ -16,7 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (r *mutationResolver) AddCartItem(ctx context.Context, input *model.AddCartItemInput) (*model.Cart, error) {
+func (r *mutationResolver) AddCartItem(ctx context.Context, input model.CartItemInput) (*model.Cart, error) {
 	cart, err := ioc.Repo.Carts.Get(input.CartID)
 	if err != nil {
 		return nil, err
@@ -28,15 +28,23 @@ func (r *mutationResolver) AddCartItem(ctx context.Context, input *model.AddCart
 		return nil, err
 	}
 
-	cart.Items = append(cart.Items, &domain.BasketItem{
-		Product:      product,
-		ExhibitionID: product.ExhibitionID,
-		Size:         input.Selectsize,
-		Quantity:     input.Quantity,
-	})
-
+	isNewProduct := true
 	for _, item := range cart.Items {
+		if item.Product.ID == product.ID && item.Size == input.Selectsize {
+			item.Quantity += input.Quantity
+			isNewProduct = false
+		}
 		productPrices += item.Quantity * item.Product.ProductInfo.Price.CurrentPrice
+	}
+
+	if isNewProduct {
+		cart.Items = append(cart.Items, &domain.BasketItem{
+			Product:      product,
+			ExhibitionID: product.ExhibitionID,
+			Size:         input.Selectsize,
+			Quantity:     input.Quantity,
+		})
+		productPrices += input.Quantity * product.ProductInfo.Price.CurrentPrice
 	}
 
 	cart.ProductPrice = productPrices
@@ -48,8 +56,8 @@ func (r *mutationResolver) AddCartItem(ctx context.Context, input *model.AddCart
 	return mapper.MapCart(newCart), nil
 }
 
-func (r *mutationResolver) RemoveCartItem(ctx context.Context, cartID string, productID string) (*model.Cart, error) {
-	cart, err := ioc.Repo.Carts.Get(cartID)
+func (r *mutationResolver) RemoveCartItem(ctx context.Context, input model.CartItemInput) (*model.Cart, error) {
+	cart, err := ioc.Repo.Carts.Get(input.CartID)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +65,7 @@ func (r *mutationResolver) RemoveCartItem(ctx context.Context, cartID string, pr
 	productPrices := 0
 	newItems := []*domain.BasketItem{}
 	for _, item := range cart.Items {
-		if item.Product.ID.Hex() != productID {
+		if item.Product.ID.Hex() != input.ProductID && item.Size != input.Selectsize {
 			newItems = append(newItems, item)
 			productPrices += item.Quantity * item.Product.ProductInfo.Price.CurrentPrice
 		}

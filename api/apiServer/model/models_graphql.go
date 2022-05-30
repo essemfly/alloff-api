@@ -8,13 +8,6 @@ import (
 	"strconv"
 )
 
-type AddCartItemInput struct {
-	CartID     string `json:"cartId"`
-	ProductID  string `json:"productId"`
-	Selectsize string `json:"selectsize"`
-	Quantity   int    `json:"quantity"`
-}
-
 type AlloffCategory struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
@@ -90,6 +83,13 @@ type CartItem struct {
 	Size      string   `json:"size"`
 	Quantity  int      `json:"quantity"`
 	ErrorMsgs []string `json:"errorMsgs"`
+}
+
+type CartItemInput struct {
+	CartID     string `json:"cartId"`
+	ProductID  string `json:"productId"`
+	Selectsize string `json:"selectsize"`
+	Quantity   int    `json:"quantity"`
 }
 
 type Category struct {
