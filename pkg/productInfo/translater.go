@@ -2,6 +2,8 @@ package productinfo
 
 import (
 	"github.com/lessbutter/alloff-api/config"
+	"github.com/lessbutter/alloff-api/config/ioc"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.uber.org/zap"
 	"log"
 
@@ -46,4 +48,29 @@ func TranslateProductInfo(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductMet
 	pdInfo.SalesInstruction.Information = informationKorean
 
 	return pdInfo, nil
+}
+
+// TranslateRequiredProducts : 스크립터에서 사용
+func TranslateRequiredProducts() {
+	filter := bson.M{"istranslaterequired": true}
+	pds, _, err := ioc.Repo.ProductMetaInfos.List(0, 100000, filter, bson.M{})
+	if err != nil {
+		log.Println(err)
+	}
+
+	for _, pd := range pds {
+		log.Println(pd.OriginalName, "번역중")
+		newPd, err := TranslateProductInfo(pd)
+		if err != nil {
+			log.Println(err)
+		}
+
+		newPd.IsTranslateRequired = false
+		updated, err := ioc.Repo.ProductMetaInfos.Upsert(newPd)
+		if err != nil {
+			log.Println(err)
+		}
+		log.Println(updated.SalesInstruction.Information)
+		log.Println(updated.SalesInstruction.Description.Infos)
+	}
 }
