@@ -46,6 +46,14 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 	}
 
 	c.OnHTML(".product-grid-tile--small", func(e *colly.HTMLElement) {
+		productId := e.ChildAttr(".link", "href")
+		if productId == "" {
+			return
+		}
+		productUrl := productBaseUrl + productId
+		productCode := productId[:len(productId)-9]    // 뒤에 html 이랑 색상 코드 지우고
+		productCode = productCode[len(productCode)-8:] // 앞에 카테고리 분류 지우면 순수 상품코드 추출
+
 		originalPriceStr := e.ChildText(originalPriceSelector)
 		originalPrice := 0.0
 		if originalPriceStr != "" {
@@ -76,11 +84,6 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		} else if originalPrice == 0.0 {
 			originalPrice = discountedPrice
 		}
-
-		productId := e.ChildAttr(".link", "href")
-		productUrl := productBaseUrl + productId
-		productCode := productId[:len(productId)-9]    // 뒤에 html 이랑 색상 코드 지우고
-		productCode = productCode[len(productCode)-8:] // 앞에 카테고리 분류 지우면 순수 상품코드 추출
 
 		productName := e.ChildText(".link")
 		images, sizes, productColor, composition, inventories, description := getTheoryDetail(productUrl, productCode, allowDomains)
@@ -165,9 +168,12 @@ func getTheoryDetail(productUrl, productCode string, allowDomains []string) (ima
 		})
 	})
 
+	originalColor := ""
 	// colors : 같은 디자인의 별개 색상 상품을 별개의 상품 id 로 구분하고 있음, 이때 상품 색상은 다 넣어줘야하는지 ?
-	c.OnHTML(".attributes .attribute-title-color", func(e *colly.HTMLElement) {
-		originalColor := e.ChildText(".selected-color")
+	c.OnHTML(".attributes .attribute .attribute-title-color", func(e *colly.HTMLElement) {
+		if e.ChildText(".selected-color") != "" {
+			originalColor = e.ChildText(".selected-color")
+		}
 		productColor = strings.TrimSpace(originalColor)
 	})
 
