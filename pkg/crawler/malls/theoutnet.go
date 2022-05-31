@@ -201,6 +201,7 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			IsSoldout:           false,
 		}
 
+		log.Println(urlPrefix + pd.Seo.SeoUrl)
 		numProducts += 1
 		productinfo.ProcessCrawlingInfoRequests(addRequest)
 

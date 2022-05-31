@@ -152,6 +152,7 @@ type ProductMetaInfoDAO struct {
 	IsRemoved            bool
 	Created              time.Time
 	Updated              time.Time
+	LastCrawled          time.Time
 }
 
 func (pdInfo *ProductMetaInfoDAO) SetBrandAndCategory(brand *BrandDAO, source *CrawlSourceDAO) {
@@ -208,8 +209,17 @@ func (pdInfo *ProductMetaInfoDAO) SetDesc(descImages, texts []string, infos map[
 	}
 }
 
-func (pdInfo *ProductMetaInfoDAO) SetInformation(information map[string]string) {
+func (pdInfo *ProductMetaInfoDAO) SetInformation(information, infos map[string]string) {
+	if pdInfo.SalesInstruction.Description == nil {
+		defaultModel := &ProductDescriptionDAO{
+			Images: []string{},
+			Texts:  []string{},
+			Infos:  map[string]string{"소재": "", "색상": ""},
+		}
+		pdInfo.SalesInstruction.Description = defaultModel
+	}
 	pdInfo.SalesInstruction.Information = information
+	pdInfo.SalesInstruction.Description.Infos = infos
 }
 
 func (pdInfo *ProductMetaInfoDAO) SetDeliveryDesc(isForeignDelivery bool, deliveryPrice, earliestDeliveryDays, latestDeliveryDays int) {
