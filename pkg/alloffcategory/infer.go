@@ -14,7 +14,10 @@ import (
 )
 
 func InferAlloffCategory(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAlloffCategoryDAO, error) {
-	alloffCat := categoryClassifier(pdInfo)
+	alloffCat, err := categoryClassifier(pdInfo)
+	if err != nil {
+		return nil, err
+	}
 	if alloffCat != nil {
 		return alloffCat, nil
 	}
@@ -26,7 +29,7 @@ func InferAlloffCategory(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAllo
 	return pdInfo.AlloffCategory, nil
 }
 
-func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) *domain.ProductAlloffCategoryDAO {
+func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAlloffCategoryDAO, error) {
 	//  1. brand + category 보고 분류1 실행
 	//  만약 티셔츠, 원피스, 스커트인경우에는 카테고리2 분류 필요 없음
 	//  2. product name보고 분류2실행
@@ -36,8 +39,13 @@ func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) *domain.ProductAlloff
 	possibleCat2 := []string{}
 	classifier, err := ioc.Repo.ClassifyRules.GetByKeyname(pdInfo.Brand.KeyName, pdInfo.Category.Name)
 	if err != nil {
-		log.Println("Brand key Category Key find no rules:", pdInfo.Brand.KeyName, pdInfo.Category.Name)
-		return nil
+		log.Println("Brand key Category Key find no rules:", pdInfo.Brand.KeyName, pdInfo.Category.Name, " find using ommnious")
+		alloffCat, err := omniousClassifier(pdInfo)
+		if err != nil {
+			config.Logger.Error("error occurred on get omnious data : ", zap.Error(err))
+			return nil, err
+		}
+		return alloffCat, nil
 	}
 
 	for k, v := range classifier.HeuristicRules {
@@ -49,7 +57,7 @@ func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) *domain.ProductAlloff
 
 	if classifier.AlloffCategory1 == nil {
 		if len(possibleCat2) == 0 {
-			return nil
+			return nil, fmt.Errorf("Classifying ")
 		} else if len(possibleCat2) == 1 {
 			cat2, err := ioc.Repo.AlloffCategories.GetByName(possibleCat2[0])
 			if err != nil {
@@ -59,21 +67,21 @@ func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) *domain.ProductAlloff
 				cat1, _ := ioc.Repo.AlloffCategories.Get(cat2.ParentId.Hex())
 				res.First = cat1
 				res.Done = true
-				return res
+				return res, nil
 			} else {
 				res.First = cat2
 				res.Done = true
-				return res
+				return res, nil
 			}
 		} else {
-			return nil
+			return nil, fmt.Errorf("Classifying ")
 		}
 	}
 
 	if classifier.AlloffCategory1.Name == "가방" || classifier.AlloffCategory1.Name == "원피스/세트" || classifier.AlloffCategory1.Name == "신발" || classifier.AlloffCategory1.Name == "스커트" || classifier.AlloffCategory1.Name == "라운지/언더웨어" || classifier.AlloffCategory1.Name == "패션잡화" {
 		res.First = classifier.AlloffCategory1
 		res.Done = true
-		return res
+		return res, nil
 	}
 
 	// *** Temp ignore and deactivate ProductAlloffCategory.Second ***
@@ -100,13 +108,12 @@ func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) *domain.ProductAlloff
 	res.First = classifier.AlloffCategory1
 	res.Done = true
 
-	return res
+	return res, nil
 }
 
 func omniousClassifier(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAlloffCategoryDAO, error) {
 	res := &domain.ProductAlloffCategoryDAO{}
 	omniousTargetImg := ""
-
 	// 이미지를 썸네일 > 캐시된 이미지 > 이미지 순으로 가져온다
 	if pdInfo.ThumbnailImage != "" {
 		omniousTargetImg = pdInfo.ThumbnailImage
