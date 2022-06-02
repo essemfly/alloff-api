@@ -7,17 +7,16 @@ import (
 )
 
 func MapModelProductTypeToDomain(modelPdType model.AlloffProductType) domain.AlloffProductType {
-	pdType := domain.Female
 	if modelPdType == model.AlloffProductTypeKids {
-		pdType = domain.Kids
+		return domain.Kids
 	} else if modelPdType == model.AlloffProductTypeMale {
-		pdType = domain.Male
+		return domain.Male
 	} else if modelPdType == model.AlloffProductTypeBoy {
-		pdType = domain.Boy
+		return domain.Boy
 	} else if modelPdType == model.AlloffProductTypeGirl {
-		pdType = domain.Girl
+		return domain.Girl
 	}
-	return domain.AlloffProductType(pdType)
+	return domain.Female
 }
 
 func MapProduct(pdDao *domain.ProductDAO) *model.Product {
