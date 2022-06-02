@@ -48,8 +48,10 @@ func MapProductTypes(types []domain.AlloffProductType) []model.AlloffProductType
 			productTypes = append(productTypes, model.AlloffProductTypeKids)
 		} else if productType == domain.Female {
 			productTypes = append(productTypes, model.AlloffProductTypeFemale)
-		} else if productType == domain.Sports {
-			productTypes = append(productTypes, model.AlloffProductTypeSports)
+		} else if productType == domain.Girl {
+			productTypes = append(productTypes, model.AlloffProductTypeGirl)
+		} else if productType == domain.Boy {
+			productTypes = append(productTypes, model.AlloffProductTypeBoy)
 		}
 	}
 

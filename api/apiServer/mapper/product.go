@@ -6,6 +6,20 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
+func MapModelProductTypeToDomain(modelPdType model.AlloffProductType) domain.AlloffProductType {
+	pdType := domain.Female
+	if modelPdType == model.AlloffProductTypeKids {
+		pdType = domain.Kids
+	} else if modelPdType == model.AlloffProductTypeMale {
+		pdType = domain.Male
+	} else if modelPdType == model.AlloffProductTypeBoy {
+		pdType = domain.Boy
+	} else if modelPdType == model.AlloffProductTypeGirl {
+		pdType = domain.Girl
+	}
+	return domain.AlloffProductType(pdType)
+}
+
 func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 	if pdDao.IsNotSale {
 		return nil

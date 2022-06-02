@@ -112,16 +112,18 @@ type AlloffProductType string
 const (
 	Male   = AlloffProductType("MALE")
 	Female = AlloffProductType("FEMALE")
+	Boy    = AlloffProductType("BOY")
+	Girl   = AlloffProductType("GIRL")
 	Kids   = AlloffProductType("KIDS")
-	Sports = AlloffProductType("SPROTS") // 스포츠 좀 안어울린다는 생각..?
 )
 
 func ListProductTypes() []AlloffProductType {
 	return []AlloffProductType{
 		Male,
 		Female,
+		Boy,
+		Girl,
 		Kids,
-		Sports,
 	}
 }
 
