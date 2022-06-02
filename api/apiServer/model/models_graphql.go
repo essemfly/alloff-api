@@ -86,7 +86,6 @@ type CartItem struct {
 }
 
 type CartItemInput struct {
-	CartID     string `json:"cartId"`
 	ProductID  string `json:"productId"`
 	Selectsize string `json:"selectsize"`
 	Quantity   int    `json:"quantity"`
