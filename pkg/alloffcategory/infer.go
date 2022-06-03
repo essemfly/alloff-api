@@ -57,7 +57,13 @@ func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAllof
 
 	if classifier.AlloffCategory1 == nil {
 		if len(possibleCat2) == 0 {
-			return nil, fmt.Errorf("Classifying ")
+			log.Println("Brand key Category Key find no rules:", pdInfo.Brand.KeyName, pdInfo.Category.Name, " find using ommnious")
+			alloffCat, err := omniousClassifier(pdInfo)
+			if err != nil {
+				config.Logger.Error("error occurred on get omnious data : ", zap.Error(err))
+				return nil, err
+			}
+			return alloffCat, nil
 		} else if len(possibleCat2) == 1 {
 			cat2, err := ioc.Repo.AlloffCategories.GetByName(possibleCat2[0])
 			if err != nil {
