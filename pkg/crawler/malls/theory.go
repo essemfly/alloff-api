@@ -1,6 +1,8 @@
 package malls
 
 import (
+	"github.com/lessbutter/alloff-api/config"
+	"go.uber.org/zap"
 	"log"
 	"strconv"
 	"strings"
@@ -27,7 +29,7 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 	}
 
 	c.OnHTML(".product-grid-tile--small", func(e *colly.HTMLElement) {
-		originalPriceStr := e.ChildText(".price .list .value")
+		originalPriceStr := e.ChildText(".price .product-price_compare .list .value")
 		originalPrice := 0.0
 		if originalPriceStr != "" {
 			originalPriceStr = strings.Replace(originalPriceStr, "Comparable Value:", "", -1)
@@ -43,8 +45,9 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			}
 		}
 
-		discountedPriceStr := e.ChildText(".price .sales .value")
+		discountedPriceStr := e.ChildText(".price .product-price_sales .value")
 		discountedPriceStr = strings.Replace(discountedPriceStr, "$", "", -1)
+		discountedPriceStr = strings.Replace(discountedPriceStr, ",", "", -1)
 		discountedPrice, err := strconv.ParseFloat(discountedPriceStr, 32)
 		if err != nil {
 			log.Println("err", err)
@@ -94,7 +97,7 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 	err = c.Visit(source.CrawlUrl)
 	if err != nil {
-		log.Println("err occurred in crawling theory")
+		config.Logger.Error("error occurred in crawling theory : ", zap.Error(err))
 	}
 
 	crawler.PrintCrawlResults(source, totalProducts)
@@ -126,7 +129,7 @@ func getTheoryDetail(productUrl, productCode string) (imageUrls, sizes, colors [
 			// 해당 사이즈가 선택 불가능한 사이즈가 아닐 경우 재고가 있는 걸로 판단
 			if size != unselectableSize {
 				inventories = append(inventories, &domain.InventoryDAO{
-					Quantity: 10,
+					Quantity: 1,
 					Size:     size,
 				})
 			}

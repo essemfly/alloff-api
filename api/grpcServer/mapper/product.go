@@ -99,15 +99,15 @@ func InventoryMapper(pd *domain.ProductMetaInfoDAO) []*grpcServer.ProductInvento
 			}
 
 			invMessage = append(invMessage, &grpcServer.ProductInventoryMessage{
-				AlloffSize: alloffSizes,
-				Quantity:   int32(inv.Quantity),
-				Size:       inv.Size,
+				AlloffSizes: alloffSizes,
+				Quantity:    int32(inv.Quantity),
+				Size:        inv.Size,
 			})
 		} else {
 			invMessage = append(invMessage, &grpcServer.ProductInventoryMessage{
-				AlloffSize: nil,
-				Quantity:   int32(inv.Quantity),
-				Size:       inv.Size,
+				AlloffSizes: nil,
+				Quantity:    int32(inv.Quantity),
+				Size:        inv.Size,
 			})
 		}
 

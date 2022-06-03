@@ -213,7 +213,7 @@ func getDaehyunDetailInfo(producturl string) (imageUrls, colors, sizes []string,
 		if !isSoldout {
 			sizes = append(sizes, value)
 			inventories = append(inventories, &domain.InventoryDAO{
-				Quantity: 10,
+				Quantity: 1,
 				Size:     value,
 			})
 		}

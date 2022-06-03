@@ -18,4 +18,4 @@ RUN echo "$git_token" > ${HOME}/.git-credentials
 RUN go build -o apiServer ./cmd/apiServer/main.go
 RUN go build -o grpcServer ./cmd/grpcServer/main.go
 
-EXPOSE 80
+EXPOSE 80 9000

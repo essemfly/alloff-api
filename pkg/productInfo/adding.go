@@ -52,6 +52,18 @@ func AddProductInfo(request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, er
 	}
 
 	pdInfo := makeBaseProductInfo(request)
+
+	if pdInfo.IsTranslateRequired {
+		translated, err := TranslateProductInfo(pdInfo)
+		if err != nil {
+			config.Logger.Error("err occurred on translate product info : ", zap.Error(err))
+		}
+		if translated != nil {
+			pdInfo.IsTranslateRequired = false
+			pdInfo = translated
+		}
+	}
+
 	pdInfo, err = ioc.Repo.ProductMetaInfos.Insert(pdInfo)
 	if err != nil {
 		config.Logger.Error("error on adding product infos", zap.Error(err))
@@ -81,7 +93,7 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 		SalesInstruction:     &domain.AlloffInstructionDAO{},
 		IsImageCached:        false,
 		IsInventoryMapped:    false,
-		IsTranslateRequired:  false,
+		IsTranslateRequired:  request.IsTranslateRequired,
 		IsCategoryClassified: false,
 		IsSoldout:            false,
 		IsRemoved:            false,
@@ -93,6 +105,7 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	pdInfo.SetGeneralInfo(request.ProductType, request.AlloffName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Information)
 	alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
 	pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
+	pdInfo.SetInformation(request.Information)
 
 	descImages := append(request.DescriptionImages, request.Images...)
 	if request.ModuleName == "intrend" {

@@ -120,7 +120,7 @@ func getIdLookDetail(productUrl string) (imageUrls, colors, sizes []string, inve
 			if !strings.Contains(attrs, "disabled") {
 				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     size,
-					Quantity: 10,
+					Quantity: 1,
 				})
 			}
 		})

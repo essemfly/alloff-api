@@ -183,8 +183,8 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 	return &model.PaymentResult{
 		Success:     true,
 		ErrorMsg:    "",
-		Order:       nil,
-		PaymentInfo: nil,
+		Order:       mapper.MapOrder(orderDao),
+		PaymentInfo: mapper.MapPayment(paymentDao),
 	}, nil
 }
 

@@ -1,15 +1,18 @@
 package malls
 
 import (
+	"github.com/lessbutter/alloff-api/config"
+	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/pkg/crawler"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
+	"go.uber.org/zap"
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/gocolly/colly"
-	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/pkg/crawler"
-	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -31,20 +34,22 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		originalPrice := 0.0
 		if originalPriceStr != "" {
 			originalPriceStr = strings.Split(originalPriceStr, " ")[1]
+			originalPriceStr = strings.Replace(originalPriceStr, ".", "", -1)
 			originalPriceStr = strings.Replace(originalPriceStr, ",", ".", -1)
 			originalPrice, err = strconv.ParseFloat(originalPriceStr, 32)
 			if err != nil {
-				log.Println("err ", err)
+				config.Logger.Error("err : ", zap.Error(err))
 				return
 			}
 		}
 
 		discountedPriceStr := e.ChildText(".price")
 		discountedPriceStr = strings.Split(discountedPriceStr, " ")[1]
+		discountedPriceStr = strings.Replace(discountedPriceStr, ".", "", -1)
 		discountedPriceStr = strings.Replace(discountedPriceStr, ",", ".", -1)
 		discountedPrice, err := strconv.ParseFloat(discountedPriceStr, 32)
 		if err != nil {
-			log.Println("err ", err)
+			config.Logger.Error("err : ", zap.Error(err))
 			return
 		}
 
@@ -62,12 +67,13 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		if len(sizes) == 0 {
 			inventories = append(inventories, &domain.InventoryDAO{
 				Size:     "normal",
-				Quantity: 10,
+				Quantity: 1,
 			})
 		}
 
-		if err != nil {
-			log.Println("err in translater", err)
+		// forbidden 403 case
+		if title == "" {
+			return
 		}
 
 		addRequest := &productinfo.AddMetaInfoRequest{
@@ -113,7 +119,7 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 	})
 	err = c.Visit(source.CrawlUrl)
 	if err != nil {
-		log.Println("err occured in crawling intrend", err)
+		config.Logger.Error("error occurred in crawl intrend ", zap.Error(err))
 	}
 
 	crawler.PrintCrawlResults(source, totalProducts)
@@ -137,6 +143,8 @@ func getIntrendDetail(productUrl string) (title string, imageUrls []string, size
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
 	)
 
+	isDigit := regexp.MustCompile(`^[0-9]+$`)
+
 	description = map[string]string{}
 
 	c.OnHTML(".pp_mod-prod-desc-head", func(e *colly.HTMLElement) {
@@ -152,10 +160,13 @@ func getIntrendDetail(productUrl string) (title string, imageUrls []string, size
 	c.OnHTML(".sizes .sizes-select-wrapper .sizes-select-list", func(e *colly.HTMLElement) {
 		e.ForEach(".list-inline li", func(_ int, el *colly.HTMLElement) {
 			size := el.ChildText("span .value")
+			if isDigit.MatchString(size) {
+				size = "IT" + size
+			}
 			sizes = append(sizes, size)
 			if el.Attr("class") != "li-disabled" {
 				inventories = append(inventories, &domain.InventoryDAO{
-					Quantity: 10,
+					Quantity: 1,
 					Size:     size,
 				})
 			}

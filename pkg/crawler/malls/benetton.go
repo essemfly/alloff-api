@@ -132,7 +132,7 @@ func CrawlBenettonDetail(productUrl string) (images, sizes, colors []string, inv
 			if !strings.Contains(sizeInClass, "disabled") {
 				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     el.ChildText("label span"),
-					Quantity: 10, // default value
+					Quantity: 1, // default value
 				})
 			}
 		})

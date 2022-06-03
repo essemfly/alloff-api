@@ -193,7 +193,7 @@ func getIdfDetailInfo(producturl string) (imageUrls, colors, sizes []string, inv
 			if !isSoludout {
 				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     colorItem + " - " + sizeOption,
-					Quantity: 10,
+					Quantity: 1,
 				})
 			}
 		}

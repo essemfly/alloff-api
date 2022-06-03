@@ -10,7 +10,7 @@ import (
 func AssignAlloffSizesToInventories(invs []*domain.InventoryDAO, productTypes []domain.AlloffProductType, productCat *domain.ProductAlloffCategoryDAO) []*domain.InventoryDAO {
 	invDaos := []*domain.InventoryDAO{}
 	for _, inv := range invs {
-		if productCat.Done {
+		if productCat != nil && productCat.Done {
 			invDaos = append(invDaos, assignAlloffSizeToInventory(inv, productTypes, productCat.First.ID.Hex()))
 		} else {
 			invDaos = append(invDaos, inv)

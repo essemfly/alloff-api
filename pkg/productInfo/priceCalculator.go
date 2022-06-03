@@ -1,6 +1,7 @@
 package productinfo
 
 import (
+	"log"
 	"math"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -9,7 +10,7 @@ import (
 
 const (
 	EURO_EXCHANGE_RATE   = 1350
-	DOLLAR_EXCHANGE_RATE = 1200
+	DOLLAR_EXCHANGE_RATE = 1220
 )
 
 func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyType, marginPolicy string) (int, int) {
@@ -24,6 +25,13 @@ func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyT
 	if marginPolicy == "INTREND" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateIntrendPrice(int(discPrice))
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
+		return origPriceKRW, discPriceKRW
+	} else if marginPolicy == "INTREND_NON_FASHION" {
+		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
+		discPriceKRW := CalculateIntrendNonFashionPrice(int(discPrice))
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
@@ -69,10 +77,48 @@ func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyT
 }
 
 func CalculateIntrendPrice(priceKRW int) int {
-	priceKRW = priceKRW + 35000
-	priceKRW = priceKRW * 130 / 100
-	priceKRW = priceKRW + 3000
+	floatKRW := float64(priceKRW)
+	originalPriceKRW := floatKRW
+	deliveryFeeOversea := 9000.00
+	deliveryFeeDomestic := 3000.00
+	vatRate := 0.00
+	customTaxRate := 0.00
+	if originalPriceKRW >= 180000.00 {
+		vatRate = 0.1
+		customTaxRate = 0.13
+	}
+	floatKRW = floatKRW * 112 / 100                                                        // 수수료
+	floatKRW = floatKRW + (customTaxRate * originalPriceKRW)                               // 관세
+	floatKRW = floatKRW + deliveryFeeOversea + ((floatKRW + deliveryFeeOversea) * vatRate) /// 부가세 + 해외배송
+	floatKRW = floatKRW * 110 / 100                                                        // 마진
+	floatKRW = floatKRW + deliveryFeeDomestic                                              // 국내배송
 
+	priceKRW = int(floatKRW)
+	priceKRW = priceKRW / 1000
+	priceKRW = priceKRW * 1000
+
+	return priceKRW
+}
+
+func CalculateIntrendNonFashionPrice(priceKRW int) int {
+	floatKRW := float64(priceKRW)
+	originalPriceKRW := floatKRW
+	deliveryFeeOversea := 9000.00
+	deliveryFeeDomestic := 3000.00
+	vatRate := 0.00
+	customTaxRate := 0.00
+	if originalPriceKRW >= 180000.00 {
+		vatRate = 0.1
+		customTaxRate = 0.08
+	}
+	log.Println(originalPriceKRW)
+	floatKRW = floatKRW * 112 / 100                                                        // 수수료
+	floatKRW = floatKRW + (customTaxRate * originalPriceKRW)                               // 관세
+	floatKRW = floatKRW + deliveryFeeOversea + ((floatKRW + deliveryFeeOversea) * vatRate) /// 부가세 + 해외배송
+	floatKRW = floatKRW * 110 / 100                                                        // 마진
+	floatKRW = floatKRW + deliveryFeeDomestic                                              // 국내배송
+
+	priceKRW = int(floatKRW)
 	priceKRW = priceKRW / 1000
 	priceKRW = priceKRW * 1000
 

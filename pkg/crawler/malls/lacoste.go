@@ -101,7 +101,7 @@ func getLacosteDetail(productUrl string) (imageUrls, colors, sizes []string, inv
 			sizes = append(sizes, size)
 			if !strings.Contains(attrs, "is-disabled") {
 				inventories = append(inventories, &domain.InventoryDAO{
-					Quantity: 10,
+					Quantity: 1,
 					Size:     size,
 				})
 			}

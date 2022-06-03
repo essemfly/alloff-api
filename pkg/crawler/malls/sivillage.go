@@ -125,7 +125,7 @@ func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inv
 						if !strings.Contains(sizeInClass, "disabled") {
 							inventories = append(inventories, &domain.InventoryDAO{
 								Size:     size,
-								Quantity: 10,
+								Quantity: 1,
 							})
 						}
 					}
@@ -138,7 +138,7 @@ func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inv
 						if ele.Attr("class") != "ee_disabled" {
 							inventories = append(inventories, &domain.InventoryDAO{
 								Size:     size,
-								Quantity: 10,
+								Quantity: 1,
 							})
 						}
 					})

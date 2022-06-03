@@ -16,27 +16,37 @@ import (
 	"go.uber.org/zap"
 )
 
-func (r *mutationResolver) AddCartItem(ctx context.Context, input *model.AddCartItemInput) (*model.Cart, error) {
-	cart, err := ioc.Repo.Carts.Get(input.CartID)
+func (r *mutationResolver) AddCartItem(ctx context.Context, cartID string, items []*model.CartItemInput) (*model.Cart, error) {
+	cart, err := ioc.Repo.Carts.Get(cartID)
 	if err != nil {
 		return nil, err
 	}
 
 	productPrices := 0
-	product, err := ioc.Repo.Products.Get(input.ProductID)
-	if err != nil {
-		return nil, err
-	}
+	for _, cartItem := range items {
+		product, err := ioc.Repo.Products.Get(cartItem.ProductID)
+		if err != nil {
+			return nil, err
+		}
 
-	cart.Items = append(cart.Items, &domain.BasketItem{
-		Product:      product,
-		ExhibitionID: product.ExhibitionID,
-		Size:         input.Selectsize,
-		Quantity:     input.Quantity,
-	})
+		isNewProduct := true
+		for _, item := range cart.Items {
+			if item.Product.ID == product.ID && item.Size == cartItem.Selectsize {
+				item.Quantity += cartItem.Quantity
+				isNewProduct = false
+			}
+			productPrices += item.Quantity * item.Product.ProductInfo.Price.CurrentPrice
+		}
 
-	for _, item := range cart.Items {
-		productPrices += item.Quantity * item.Product.ProductInfo.Price.CurrentPrice
+		if isNewProduct {
+			cart.Items = append(cart.Items, &domain.BasketItem{
+				Product:      product,
+				ExhibitionID: product.ExhibitionID,
+				Size:         cartItem.Selectsize,
+				Quantity:     cartItem.Quantity,
+			})
+			productPrices += cartItem.Quantity * product.ProductInfo.Price.CurrentPrice
+		}
 	}
 
 	cart.ProductPrice = productPrices
@@ -48,7 +58,7 @@ func (r *mutationResolver) AddCartItem(ctx context.Context, input *model.AddCart
 	return mapper.MapCart(newCart), nil
 }
 
-func (r *mutationResolver) RemoveCartItem(ctx context.Context, cartID string, productID string) (*model.Cart, error) {
+func (r *mutationResolver) RemoveCartItem(ctx context.Context, cartID string, items []*model.CartItemInput) (*model.Cart, error) {
 	cart, err := ioc.Repo.Carts.Get(cartID)
 	if err != nil {
 		return nil, err
@@ -57,7 +67,19 @@ func (r *mutationResolver) RemoveCartItem(ctx context.Context, cartID string, pr
 	productPrices := 0
 	newItems := []*domain.BasketItem{}
 	for _, item := range cart.Items {
-		if item.Product.ID.Hex() != productID {
+		isRemovedProduct := false
+		for _, removedItem := range items {
+			if removedItem.ProductID == item.Product.ID.Hex() && removedItem.Selectsize == item.Size {
+				isRemovedProduct = true
+				item.Quantity -= removedItem.Quantity
+				if item.Quantity > 0 {
+					newItems = append(newItems, item)
+					productPrices += item.Quantity * item.Product.ProductInfo.Price.CurrentPrice
+				}
+				break
+			}
+		}
+		if !isRemovedProduct {
 			newItems = append(newItems, item)
 			productPrices += item.Quantity * item.Product.ProductInfo.Price.CurrentPrice
 		}

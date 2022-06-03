@@ -9,10 +9,25 @@ import (
 )
 
 func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {
-	newPdInfo := makeBaseProductInfo(request)
-	newPdInfo.ID = pdInfo.ID
+	//newPdInfo := makeBaseProductInfo(request)
+	//newPdInfo.ID = pdInfo.ID
 
-	updatedPdInfo, err := Update(newPdInfo)
+	inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
+	pdInfo.SetInventory(inventories)
+	pdInfo.SetInformation(request.Information)
+
+	if pdInfo.IsTranslateRequired {
+		translated, err := TranslateProductInfo(pdInfo)
+		if err != nil {
+			config.Logger.Error("err occurred on translate product info : ", zap.Error(err))
+		}
+		if translated != nil {
+			pdInfo.IsTranslateRequired = false
+			pdInfo = translated
+		}
+	}
+
+	updatedPdInfo, err := Update(pdInfo)
 	if err != nil {
 		config.Logger.Error("error on adding product infos", zap.Error(err))
 		return nil, err
