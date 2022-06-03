@@ -429,20 +429,22 @@ type AlloffProductType string
 const (
 	AlloffProductTypeMale   AlloffProductType = "MALE"
 	AlloffProductTypeFemale AlloffProductType = "FEMALE"
+	AlloffProductTypeBoy    AlloffProductType = "BOY"
+	AlloffProductTypeGirl   AlloffProductType = "GIRL"
 	AlloffProductTypeKids   AlloffProductType = "KIDS"
-	AlloffProductTypeSports AlloffProductType = "SPORTS"
 )
 
 var AllAlloffProductType = []AlloffProductType{
 	AlloffProductTypeMale,
 	AlloffProductTypeFemale,
+	AlloffProductTypeBoy,
+	AlloffProductTypeGirl,
 	AlloffProductTypeKids,
-	AlloffProductTypeSports,
 }
 
 func (e AlloffProductType) IsValid() bool {
 	switch e {
-	case AlloffProductTypeMale, AlloffProductTypeFemale, AlloffProductTypeKids, AlloffProductTypeSports:
+	case AlloffProductTypeMale, AlloffProductTypeFemale, AlloffProductTypeBoy, AlloffProductTypeGirl, AlloffProductTypeKids:
 		return true
 	}
 	return false
