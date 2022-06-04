@@ -20,7 +20,11 @@ func (repo *alloffSizeRepo) Upsert(alloffSize *domain.AlloffSizeDAO) (*domain.Al
 	defer cancel()
 
 	opts := options.Update().SetUpsert(true)
-	filter := bson.M{"_id": alloffSize.ID}
+	filter := bson.M{
+		"alloffsizename":         alloffSize.AlloffSizeName,
+		"alloffcategory.keyname": alloffSize.AlloffCategory.KeyName,
+		"producttype":            bson.M{"$elemMatch": bson.M{"$in": alloffSize.ProductType}},
+	}
 
 	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &alloffSize}, opts); err != nil {
 		return nil, err

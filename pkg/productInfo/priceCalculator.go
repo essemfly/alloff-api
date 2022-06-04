@@ -215,7 +215,7 @@ func CalculateTheoryPrice(priceKRW int) int {
 		luxuryProduct = true
 		priceKRW = priceKRW * 113 / 100
 	}
-	priceKRW = priceKRW + 15000
+	priceKRW = priceKRW + 10000
 
 	if luxuryProduct {
 		priceKRW = priceKRW * 11 / 10

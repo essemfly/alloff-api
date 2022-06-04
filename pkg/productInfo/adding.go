@@ -26,6 +26,7 @@ type AddMetaInfoRequest struct {
 	Images               []string
 	ThumbnailImage       string
 	Colors               []string
+	Infos                map[string]string
 	Sizes                []string
 	Inventory            []*domain.InventoryDAO
 	Description          []string
@@ -52,7 +53,6 @@ func AddProductInfo(request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, er
 	}
 
 	pdInfo := makeBaseProductInfo(request)
-
 	if pdInfo.IsTranslateRequired {
 		translated, err := TranslateProductInfo(pdInfo)
 		if err != nil {
@@ -105,16 +105,12 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	pdInfo.SetGeneralInfo(request.ProductType, request.AlloffName, request.ProductID, request.ProductUrl, request.Images, request.Sizes, request.Colors, request.Information)
 	alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
 	pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
-	pdInfo.SetInformation(request.Information)
-
+	pdInfo.SetInformation(request.Information, request.Infos)
 	descImages := append(request.DescriptionImages, request.Images...)
 	if request.ModuleName == "intrend" {
 		descImages = append([]string{
 			"https://alloff.s3.ap-northeast-2.amazonaws.com/description/Intrend_info.png",
 		}, descImages...)
-	}
-	if request.ModuleName == "theoutnet" || request.ModuleName == "sandro" || request.ModuleName == "maje" || request.ModuleName == "intrend" {
-		descImages = append(descImages, "https://alloff.s3.ap-northeast-2.amazonaws.com/description/size_guide.png")
 	}
 
 	pdInfo.SetDesc(descImages, request.Description, request.DescriptionInfos)
@@ -134,8 +130,9 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 		productAlloffCat, err := alloffcategory.InferAlloffCategory(pdInfo)
 		if err != nil {
 			config.Logger.Error("err occured on infer alloffcategory: pdinfo "+pdInfo.ID.Hex(), zap.Error(err))
+		} else {
+			pdInfo.SetAlloffCategory(productAlloffCat)
 		}
-		pdInfo.SetAlloffCategory(productAlloffCat)
 	}
 
 	inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)

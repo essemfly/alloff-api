@@ -44,12 +44,12 @@ type BrandDAO struct {
 	EngName               string
 	KeyName               string
 	Description           string
-	LogoImgUrl            string
-	BackImgUrl            string
-	Category              []*CategoryDAO
-	AlloffCategory        []*AlloffCategoryDAO
-	SizeGuide             []SizeGuideDAO
-	Created               time.Time
+	LogoImgUrl            string               `bson:"logoimgurl,omitempty"`
+	BackImgUrl            string               `bson:"backimgurl,omitempty"`
+	Category              []*CategoryDAO       `bson:"category,omitempty"`
+	AlloffCategory        []*AlloffCategoryDAO `bson:"alloffcategory,omitempty"`
+	SizeGuide             []SizeGuideDAO       `bson:"sizeguide,omitempty"` // brand seeder에서 업데이트 시 기존 데이터 유지시키기 위함
+	Created               time.Time            `bson:"created,omitempty"`
 	Onpopular             bool
 	MaxDiscountRate       int
 	IsOpen                bool

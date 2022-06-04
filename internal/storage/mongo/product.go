@@ -365,7 +365,7 @@ func (repo *productMetaInfoRepo) List(offset, limit int, filter, sortingOptions 
 }
 
 func (repo *productMetaInfoRepo) Insert(pd *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	var oldProduct domain.ProductMetaInfoDAO

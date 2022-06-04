@@ -69,7 +69,9 @@ func ProductTypeMapper(pdTypes []domain.AlloffProductType) []grpcServer.ProductT
 			productTypes = append(productTypes, grpcServer.ProductType_MALE)
 		} else if pdtype == domain.Kids {
 			productTypes = append(productTypes, grpcServer.ProductType_KIDS)
-		} else if pdtype == domain.Sports {
+		} else if pdtype == domain.Boy { //TODO: To be modified with grpc
+			productTypes = append(productTypes, grpcServer.ProductType_SPORTS)
+		} else if pdtype == domain.Girl {
 			productTypes = append(productTypes, grpcServer.ProductType_SPORTS)
 		}
 	}

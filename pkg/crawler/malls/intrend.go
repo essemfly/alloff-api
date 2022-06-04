@@ -1,8 +1,11 @@
 package malls
 
 import (
+	"fmt"
+	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 	"go.uber.org/zap"
@@ -10,9 +13,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-
-	"github.com/gocolly/colly"
-	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
 func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -62,8 +62,7 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		productID := e.Attr("data-product-id")
 		productUrl := "https://it.intrend.it" + e.ChildAttr(".js-anchor", "href")
 
-		title, images, sizes, colors, inventories, description := getIntrendDetail(productUrl)
-
+		title, composition, productColor, images, sizes, colors, inventories, description := getIntrendDetail(productUrl)
 		if len(sizes) == 0 {
 			inventories = append(inventories, &domain.InventoryDAO{
 				Size:     "normal",
@@ -71,31 +70,36 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			})
 		}
 
+		infos := map[string]string{
+			"소재": composition,
+			"색상": productColor,
+		}
+
 		// forbidden 403 case
 		if title == "" {
+			msg := fmt.Sprintf("not allowed access by intrend server on : %s\n", source.CrawlUrl)
+			config.Logger.Error(msg)
 			return
 		}
 
 		addRequest := &productinfo.AddMetaInfoRequest{
-			AlloffName:      title,
-			ProductID:       productID,
-			ProductUrl:      productUrl,
-			ProductType:     []domain.AlloffProductType{domain.Female},
-			OriginalPrice:   float32(originalPrice),
-			DiscountedPrice: float32(discountedPrice),
-			CurrencyType:    domain.CurrencyEUR,
-			Brand:           brand,
-			Source:          source,
-			AlloffCategory:  &domain.AlloffCategoryDAO{},
-			Images:          images,
-			Colors:          colors,
-			Sizes:           sizes,
-			Inventory:       inventories,
-			Information:     description,
-			DescriptionImages: []string{
-				"https://alloff.s3.ap-northeast-2.amazonaws.com/description/Intrend_info.png",
-				"https://alloff.s3.ap-northeast-2.amazonaws.com/description/size_guide.png",
-			},
+			AlloffName:          title,
+			ProductID:           productID,
+			ProductUrl:          productUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(originalPrice),
+			DiscountedPrice:     float32(discountedPrice),
+			CurrencyType:        domain.CurrencyEUR,
+			Brand:               brand,
+			Source:              source,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
+			Images:              images,
+			Colors:              colors,
+			Infos:               infos,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			DescriptionImages:   []string{},
 			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
 			ModuleName:          source.CrawlModuleName,
@@ -105,7 +109,6 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 		totalProducts += 1
 		productinfo.ProcessCrawlingInfoRequests(addRequest)
-
 	})
 
 	c.OnHTML(".js-pager .container-fluid ul", func(e *colly.HTMLElement) {
@@ -137,13 +140,13 @@ type IntrendStock struct {
 	STOCKQTY int    `json:"STOCKQTY"`
 }
 
-func getIntrendDetail(productUrl string) (title string, imageUrls []string, sizes, colors []string, inventories []*domain.InventoryDAO, description map[string]string) {
+func getIntrendDetail(productUrl string) (title, composition, productColor string, imageUrls []string, sizes, colors []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("it.intrend.it"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
 	)
 
-	isDigit := regexp.MustCompile(`^[0-9]+$`)
+	isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
 
 	description = map[string]string{}
 
@@ -180,6 +183,10 @@ func getIntrendDetail(productUrl string) (title string, imageUrls []string, size
 		})
 	})
 
+	c.OnHTML(".swatches .title", func(e *colly.HTMLElement) {
+		productColor = e.ChildText(".value")
+	})
+
 	c.OnHTML("#description .details-tab-content", func(e *colly.HTMLElement) {
 		description["설명"] = e.ChildText("p")
 	})
@@ -189,7 +196,7 @@ func getIntrendDetail(productUrl string) (title string, imageUrls []string, size
 		e.ForEach("ul li", func(idx int, el *colly.HTMLElement) {
 			texts += el.Text
 		})
-		description["소재"] = texts
+		composition = texts
 	})
 
 	c.OnHTML("#fitting .details-tab-content", func(e *colly.HTMLElement) {

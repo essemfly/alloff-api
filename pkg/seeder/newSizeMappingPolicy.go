@@ -1,9 +1,12 @@
 package seeder
 
 import (
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.uber.org/zap"
 	"log"
 )
 
@@ -18,13 +21,13 @@ func NewSizeMappingPolicy() {
 		sizes := []string{}
 		switch alloffSize.AlloffSizeName {
 		case "44":
-			sizes = []string{"P", "XXS", "XS", "DE32", "IT36", "FR34", "US32", "US0", "US2", "UK4", "EU32", "EU34"}
+			sizes = []string{"XP", "P/S", "P", "XXS", "XS", "DE32", "IT36", "FR34", "US32", "US0", "US2", "UK4", "EU32", "EU34"}
 		case "55":
-			sizes = []string{"S", "DE34", "DE36", "IT38", "IT40", "FR36", "FR38", "US34", "US36", "US4", "US6", "UK6", "UK8", "EU36", "EU38"}
+			sizes = []string{"P/S", "S", "DE34", "DE36", "IT38", "IT40", "FR36", "FR38", "US34", "US36", "US4", "US6", "UK6", "UK8", "EU36", "EU38"}
 		case "66":
-			sizes = []string{"M", "DE36", "DE38", "DE40", "IT40", "IT42", "IT44", "FR38", "FR40", "FR42", "US36", "US38", "US40", "US6", "US8", "US10", "UK8", "UK10", "UK12", "EU38", "EU40", "EU42"}
+			sizes = []string{"M/L", "M", "DE36", "DE38", "DE40", "IT40", "IT42", "IT44", "FR38", "FR40", "FR42", "US36", "US38", "US40", "US6", "US8", "US10", "UK8", "UK10", "UK12", "EU38", "EU40", "EU42"}
 		case "77":
-			sizes = []string{"L", "DE40", "DE42", "DE44", "IT44", "IT46", "IT48", "FR42", "FR44", "FR46", "US40", "US42", "US44", "US10", "US12", "US14", "UK12", "UK14", "UK16", "EU42", "EU44", "EU46"}
+			sizes = []string{"M/L", "L", "DE40", "DE42", "DE44", "IT44", "IT46", "IT48", "FR42", "FR44", "FR46", "US40", "US42", "US44", "US10", "US12", "US14", "UK12", "UK14", "UK16", "EU42", "EU44", "EU46"}
 		case "88":
 			sizes = []string{"XL", "XXL", "DE44", "DE46", "DE48", "IT48", "IT50", "IT52", "FR46", "FR48", "FR50", "US44", "US46", "US48", "US14", "US16", "US18", "UK16", "UK18", "UK20", "EU46", "EU48", "EU50"}
 		case "99(이상)":
@@ -135,19 +138,42 @@ func NewSizeMappingPolicy() {
 			sizes = []string{"US14.5", "UK14", "EU33"}
 		case "210(이상)":
 			sizes = []string{"US15", "UK14.5", "EU33.5"}
+		case "FREE":
+			sizes = []string{"-", "Uni", "Unica", "one size"}
 		}
 
-		sizeMappingPolicyDao := &domain.SizeMappingPolicyDAO{
-			ID:                primitive.NewObjectID(),
+		sizeMappingPolicyDao := domain.SizeMappingPolicyDAO{
 			AlloffSize:        alloffSize,
 			AlloffCategory:    alloffSize.AlloffCategory,
 			Sizes:             sizes,
 			AlloffProductType: alloffSize.ProductType,
 		}
-		inserted, err := ioc.Repo.SizeMappingPolicy.Insert(sizeMappingPolicyDao)
+		_, err := ioc.Repo.SizeMappingPolicy.Upsert(&sizeMappingPolicyDao)
 		if err != nil {
-			log.Panic(alloffSize)
+			log.Panic(err)
 		}
-		log.Println(inserted)
+	}
+
+	// 새로 추가한 사이즈들을 여기다 넣어줘야함
+	newlyAddedSizes := []string{"XP", "P/S", "M/L"}
+	AssignProdcutsInventoryOfNewSizes(newlyAddedSizes)
+}
+
+func AssignProdcutsInventoryOfNewSizes(sizes []string) {
+	sizeQueries := []bson.M{}
+	for _, size := range sizes {
+		sizeQueries = append(sizeQueries, bson.M{"sizes": size})
+	}
+	filter := bson.M{
+		"$or": sizeQueries,
+	}
+
+	pds, _, err := ioc.Repo.ProductMetaInfos.List(0, 100000, filter, bson.M{})
+	if err != nil {
+		config.Logger.Error("error occurred on get list of products : ", zap.Error(err))
+	}
+
+	for _, pd := range pds {
+		productinfo.AssignProductsInventory(pd)
 	}
 }

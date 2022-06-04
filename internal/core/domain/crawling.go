@@ -24,6 +24,8 @@ type CrawlSourceDAO struct {
 	IsSalesProducts bool
 	// 해외배송 마크
 	IsForeignDelivery bool
+	// ProductType
+	ProductType []AlloffProductType
 
 	// 배송비 및 가격 추가에 대한 내용 (TODO) 가격정책이 확정되어야함
 	DeliveryPrice     int

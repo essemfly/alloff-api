@@ -9,16 +9,14 @@ import (
 )
 
 func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {
-	//newPdInfo := makeBaseProductInfo(request)
-	//newPdInfo.ID = pdInfo.ID
-
 	inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
 	pdInfo.SetInventory(inventories)
-	pdInfo.SetInformation(request.Information)
+	pdInfo.SetInformation(request.Information, request.Infos)
 
 	if pdInfo.IsTranslateRequired {
 		translated, err := TranslateProductInfo(pdInfo)
 		if err != nil {
+			// 번역에 실패해도 인벤토리와 인포메이션은 업데이트 되도록 여기서 return 하지 않는다.
 			config.Logger.Error("err occurred on translate product info : ", zap.Error(err))
 		}
 		if translated != nil {

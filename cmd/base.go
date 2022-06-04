@@ -20,4 +20,5 @@ func SetBaseConfig() {
 	config.InitNotification()
 	config.InitSentry()
 	config.InitAmplitude()
+	config.InitOmnious()
 }
