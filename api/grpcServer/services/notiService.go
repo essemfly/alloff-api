@@ -33,15 +33,15 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 			ReferenceID:      req.ReferenceId,
 			NavigateTo:       "/",
 		}
-	} else if req.NotiType == string(domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION) {
+	} else if req.NotiType == string(domain.NOTIFICATION_PRODUCT_DIFF_NOTIFICATION) {
 		notiDao = &domain.NotificationDAO{
 			Status:           domain.NOTIFICATION_READY,
-			NotificationType: domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION,
+			NotificationType: domain.NOTIFICATION_PRODUCT_DIFF_NOTIFICATION,
 			Title:            req.Title,
 			Message:          req.Message,
-			Notificationid:   "/exhibition" + req.ReferenceId,
+			Notificationid:   "/products" + req.ReferenceId,
 			ReferenceID:      "/" + req.ReferenceId,
-			NavigateTo:       "/exhibition",
+			NavigateTo:       "/products",
 		}
 	} else if req.NotiType == string(domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION) {
 		notiDao = &domain.NotificationDAO{
@@ -49,9 +49,9 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 			NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
 			Title:            req.Title,
 			Message:          req.Message,
-			Notificationid:   "/products_group" + req.ReferenceId,
+			Notificationid:   "/deals" + req.ReferenceId,
 			ReferenceID:      "/" + req.ReferenceId,
-			NavigateTo:       "/products_group",
+			NavigateTo:       "/deals",
 		}
 	} else {
 		return nil, errors.New("invalid notification type")
