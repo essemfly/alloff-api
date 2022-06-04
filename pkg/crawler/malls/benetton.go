@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type BenettonResponseParser struct {
@@ -67,25 +67,31 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 			productUrl := "https://benettonmall.com/product/view?productcode=" + pd.ProductCode
 			images, sizes, colors, inventories, description := CrawlBenettonDetail(productUrl)
 
-			addRequest := &product.ProductCrawlingAddRequest{
+			addRequest := &productinfo.AddMetaInfoRequest{
+				AlloffName:          pd.ProductName,
+				ProductID:           pd.ProductCode,
+				ProductUrl:          productUrl,
+				ProductType:         []domain.AlloffProductType{domain.Female},
+				OriginalPrice:       float32(originalPriceInt),
+				DiscountedPrice:     float32(discountedPriceInt),
+				CurrencyType:        domain.CurrencyKRW,
 				Brand:               brand,
 				Source:              source,
-				ProductID:           pd.ProductCode,
-				ProductName:         pd.ProductName,
-				ProductUrl:          productUrl,
+				AlloffCategory:      &domain.AlloffCategoryDAO{},
 				Images:              images,
-				Sizes:               sizes,
-				Inventories:         inventories,
 				Colors:              colors,
-				Description:         description,
-				OriginalPrice:       float32(originalPriceInt),
-				SalesPrice:          float32(discountedPriceInt),
-				CurrencyType:        domain.CurrencyKRW,
+				Sizes:               sizes,
+				Inventory:           inventories,
+				Information:         description,
+				IsForeignDelivery:   false,
 				IsTranslateRequired: false,
+				ModuleName:          source.CrawlModuleName,
+				IsRemoved:           false,
+				IsSoldout:           false,
 			}
 
 			totalProducts += 1
-			product.AddProductInCrawling(addRequest)
+			productinfo.ProcessCrawlingInfoRequests(addRequest)
 		}
 
 		pageInt, _ := strconv.Atoi(crawlResponse.Page)
@@ -102,7 +108,7 @@ func CrawlBenetton(worker chan bool, done chan bool, source *domain.CrawlSourceD
 	done <- true
 }
 
-func CrawlBenettonDetail(productUrl string) (images, sizes, colors []string, inventories []domain.InventoryDAO, description map[string]string) {
+func CrawlBenettonDetail(productUrl string) (images, sizes, colors []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("benettonmall.com", "benettonmall.com:443"),
 	)
@@ -124,9 +130,9 @@ func CrawlBenettonDetail(productUrl string) (images, sizes, colors []string, inv
 			sizeInClass := el.Attr("class")
 			sizes = append(sizes, el.ChildText("label span"))
 			if !strings.Contains(sizeInClass, "disabled") {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     el.ChildText("label span"),
-					Quantity: 10, // default value
+					Quantity: 1, // default value
 				})
 			}
 		})

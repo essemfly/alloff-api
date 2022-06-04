@@ -1,4 +1,4 @@
-enum SortingType {
+enum ProductsSortingType {
   PRICE_ASCENDING
   PRICE_DESCENDING
   DISCOUNT_0_30
@@ -7,6 +7,8 @@ enum SortingType {
   DISCOUNT_70_100
   DISCOUNTRATE_ASCENDING
   DISCOUNTRATE_DESCENDING
+  INVENTORY_ASCENDING
+  INVENTORY_DESCENDING
 }
 
 enum DeliveryType {
@@ -14,34 +16,55 @@ enum DeliveryType {
   FOREIGN_DELIVERY
 }
 
-type Product {
+enum AlloffProductType {
+  MALE
+  FEMALE
+  BOY
+  GIRL
+  KIDS
+}
+
+type AlloffCategory {
   id: ID!
-  category: Category!
-  brand: Brand!
   name: String!
-  productGroupId: String!
-  originalPrice: Int!
-  soldout: Boolean!
-  images: [String!]!
-  discountedPrice: Int!
-  discountRate: Int!
-  specialPrice: Int
-  specialDiscountRate: Int
-  productUrl: String!
-  inventory: [Inventory!]!
-  isUpdated: Boolean!
-  isNewProduct: Boolean!
-  removed: Boolean!
-  information: [KeyValueInfo!]
-  description: ProductDescription
-  cancelDescription: CancelDescription!
-  deliveryDescription: DeliveryDescription!
-  thumbnailImage: String!
+  keyName: String!
+  level: Int!
+  parentId: ID!
+  imgUrl: String!
+}
+
+type AlloffSize {
+  id: ID!
+  alloffCategory: AlloffCategory!
+  alloffSizeName: String!
 }
 
 type Inventory {
   size: String!
   quantity: Int!
+  alloffSizes: [AlloffSize!]!
+}
+
+type Product {
+  id: ID!
+  isNotSale: Boolean!
+  brand: Brand!
+  alloffCategory: AlloffCategory!
+  name: String!
+  originalPrice: Int!
+  discountedPrice: Int!
+  discountRate: Int!
+  images: [String!]!
+  thumbnailImage: String!
+  inventory: [Inventory!]!
+  isSoldout: Boolean!
+  description: ProductDescription!
+  deliveryDescription: DeliveryDescription!
+  cancelDescription: CancelDescription!
+  information: [KeyValueInfo!]
+  exhibitionId: String!
+  exhibitionStartTime: Date!
+  exhibitionFinishTime: Date!
 }
 
 type ProductDescription {
@@ -78,63 +101,23 @@ type KeyValueInfo {
 input ProductsInput {
   offset: Int!
   limit: Int!
-  brand: String
-  category: String
-  sorting: [SortingType!]
-  productGroupId: String
-}
-
-input AlloffCategoryProductsInput {
-  offset: Int!
-  limit: Int!
-  alloffcategoryId: String!
+  productType: AlloffProductType!
+  exhibitionId: String!
+  alloffCategoryId: String
   brandIds: [String!]
-  sorting: [SortingType!]
-}
-
-input LikeProductInput {
-  productId: String!
+  alloffSizeIds: [String!]
+  sorting: [ProductsSortingType!]
 }
 
 type ProductsOutput {
   totalCount: Int!
   offset: Int!
   limit: Int!
+  exhibitionId: String!
   products: [Product!]!
 }
 
-type AlloffCategoryProducts {
-  alloffcategory: AlloffCategory!
-  products: [Product!]
-  allBrands: [Brand!]
-  selectedBrands: [String!]
-  totalCount: Int!
-  offset: Int!
-  limit: Int!
-}
-
-type LikeProductOutput {
-  oldProduct: Product!
-  newProduct: Product!
-}
-
-input ProductQueryInput {
-  offset: Int!
-  limit: Int!
-  keyword: String!
-  sorting: [SortingType!]
-}
-
 extend type Query {
-  find(input: ProductQueryInput!): ProductsOutput!
   product(id: String!): Product!
   products(input: ProductsInput!): ProductsOutput!
-  alloffCategoryProducts(
-    input: AlloffCategoryProductsInput!
-  ): AlloffCategoryProducts!
-  likeproducts: [LikeProductOutput!]!
-}
-
-extend type Mutation {
-  likeProduct(input: LikeProductInput): Boolean!
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type TheOutnetResponseParser struct {
@@ -161,8 +161,8 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 
 		if len(sizes) == 0 && len(colors) > 0 {
 			for _, color := range colors {
-				inventories = append(inventories, domain.InventoryDAO{
-					Quantity: 10,
+				inventories = append(inventories, &domain.InventoryDAO{
+					Quantity: 1,
 					Size:     color,
 				})
 			}
@@ -178,30 +178,38 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			images = newImages
 		}
 
-		addRequest := &product.ProductCrawlingAddRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          pd.Name,
+			ProductID:           pd.ProductID,
+			ProductUrl:          urlPrefix + pd.Seo.SeoUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(pd.Price.WasPrice.Amount) / float32(pd.Price.WasPrice.Divisor),
+			DiscountedPrice:     float32(pd.Price.SellingPrice.Amount) / float32(pd.Price.SellingPrice.Divisor),
+			CurrencyType:        domain.CurrencyEUR,
 			Brand:               brand,
 			Source:              source,
-			ProductID:           pd.ProductID,
-			ProductName:         pd.Name,
-			ProductUrl:          urlPrefix + pd.Seo.SeoUrl,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(pd.Price.WasPrice.Amount) / float32(pd.Price.WasPrice.Divisor),
-			SalesPrice:          float32(pd.Price.SellingPrice.Amount) / float32(pd.Price.SellingPrice.Divisor),
-			CurrencyType:        domain.CurrencyEUR,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
+		log.Println(urlPrefix + pd.Seo.SeoUrl)
 		numProducts += 1
-		product.AddProductInCrawling(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
+
 	}
 	return numProducts
 }
 
-func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []domain.InventoryDAO, description map[string]string, images []string) {
+func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []*domain.InventoryDAO, description map[string]string, images []string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.theoutnet.com", "www.theoutnet.com:443"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
@@ -225,9 +233,9 @@ func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []doma
 			unavailable := el.ChildAttr(".GridSelect11__optionBox", "aria-label")
 			sizes = append(sizes, size)
 			if !strings.Contains(unavailable, "sold out") {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     size,
-					Quantity: 10,
+					Quantity: 1,
 				})
 			}
 		})

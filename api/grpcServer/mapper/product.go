@@ -5,68 +5,140 @@ import (
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 )
 
-func ProductMapper(pd *domain.ProductDAO) *grpcServer.ProductMessage {
+func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMessage {
 	var alloffCategoryName, alloffCategoryID string
 	IsClassifiedDone, IsClassifiedTouched := false, false
-	if pd.AlloffCategories != nil {
-		IsClassifiedDone, IsClassifiedTouched = pd.AlloffCategories.Done, pd.AlloffCategories.Touched
-		if pd.AlloffCategories.Done {
-			if pd.AlloffCategories.Second != nil {
-				alloffCategoryName = pd.AlloffCategories.Second.Name
-				alloffCategoryID = pd.AlloffCategories.Second.ID.Hex()
-			} else if pd.AlloffCategories.First != nil {
-				alloffCategoryName = pd.AlloffCategories.First.Name
-				alloffCategoryID = pd.AlloffCategories.First.ID.Hex()
+	if pdInfo.AlloffCategory != nil {
+		IsClassifiedDone, IsClassifiedTouched = pdInfo.AlloffCategory.Done, pdInfo.AlloffCategory.Touched
+		if pdInfo.AlloffCategory.Done {
+			if pdInfo.AlloffCategory.Second != nil {
+				alloffCategoryName = pdInfo.AlloffCategory.Second.Name
+				alloffCategoryID = pdInfo.AlloffCategory.Second.ID.Hex()
+			} else if pdInfo.AlloffCategory.First != nil {
+				alloffCategoryName = pdInfo.AlloffCategory.First.Name
+				alloffCategoryID = pdInfo.AlloffCategory.First.ID.Hex()
 			}
 		}
 	}
-	totalScore := pd.Score.TotalScore
 
-	images := pd.ProductInfo.Images
-	if pd.IsImageCached {
-		images = pd.Images
+	images := pdInfo.Images
+	if pdInfo.IsImageCached {
+		images = pdInfo.CachedImages
 	}
 
 	return &grpcServer.ProductMessage{
-		AlloffProductId:      pd.ID.Hex(),
-		AlloffName:           pd.AlloffName,
-		IsForeignDelivery:    pd.ProductInfo.Source.IsForeignDelivery,
-		ProductId:            pd.ProductInfo.ProductID,
-		ProductUrl:           pd.ProductInfo.ProductUrl,
-		OriginalPrice:        int32(pd.OriginalPrice),
-		DiscountedPrice:      int32(pd.DiscountedPrice),
-		SpecialPrice:         int32(pd.SpecialPrice),
-		BrandKorName:         pd.ProductInfo.Brand.KorName,
-		Inventory:            InventoryMapper(pd),
-		Description:          pd.SalesInstruction.Description.Texts,
-		EarliestDeliveryDays: int32(pd.SalesInstruction.DeliveryDescription.EarliestDeliveryDays),
-		LatestDeliveryDays:   int32(pd.SalesInstruction.DeliveryDescription.LatestDeliveryDays),
-		RefundFee:            int32(pd.SalesInstruction.CancelDescription.RefundFee),
-		IsRefundPossible:     pd.SalesInstruction.CancelDescription.RefundAvailable,
+		AlloffProductId:      pdInfo.ID.Hex(),
+		AlloffName:           pdInfo.AlloffName,
+		IsForeignDelivery:    pdInfo.Source.IsForeignDelivery,
+		ProductId:            pdInfo.ProductID,
+		ProductUrl:           pdInfo.ProductUrl,
+		OriginalPrice:        int32(pdInfo.Price.OriginalPrice),
+		DiscountedPrice:      int32(pdInfo.Price.CurrentPrice),
+		SpecialPrice:         int32(pdInfo.Price.CurrentPrice),
+		BrandKorName:         pdInfo.Brand.KorName,
+		Inventory:            InventoryMapper(pdInfo),
+		Description:          pdInfo.SalesInstruction.Description.Texts,
+		EarliestDeliveryDays: int32(pdInfo.SalesInstruction.DeliveryDescription.EarliestDeliveryDays),
+		LatestDeliveryDays:   int32(pdInfo.SalesInstruction.DeliveryDescription.LatestDeliveryDays),
+		RefundFee:            int32(pdInfo.SalesInstruction.CancelDescription.RefundFee),
+		IsRefundPossible:     pdInfo.SalesInstruction.CancelDescription.RefundAvailable,
 		Images:               images,
-		DescriptionImages:    pd.SalesInstruction.Description.Images,
-		CategoryName:         pd.ProductInfo.Category.Name,
+		DescriptionImages:    pdInfo.SalesInstruction.Description.Images,
+		CategoryName:         pdInfo.Category.Name,
 		AlloffCategoryName:   alloffCategoryName,
 		AlloffCategoryId:     alloffCategoryID,
-		IsRemoved:            pd.Removed,
-		IsSoldout:            pd.Soldout,
-		TotalScore:           int32(totalScore),
-		ModuleName:           pd.ProductInfo.Source.CrawlModuleName,
+		IsRemoved:            pdInfo.IsRemoved,
+		IsSoldout:            pdInfo.IsSoldout,
+		ModuleName:           pdInfo.Source.CrawlModuleName,
 		IsClassifiedDone:     IsClassifiedDone,
 		IsClassifiedTouched:  IsClassifiedTouched,
-		ProductInfos:         pd.ProductInfo.Information,
-		DescriptionInfos:     pd.SalesInstruction.Description.Infos,
-		ThumbnailImage:       pd.ThumbnailImage,
+		ProductInfos:         pdInfo.SalesInstruction.Information,
+		DescriptionInfos:     pdInfo.SalesInstruction.Description.Infos,
+		ThumbnailImage:       pdInfo.ThumbnailImage,
+		ProductTypes:         ProductTypeMapper(pdInfo.ProductType),
 	}
 }
 
-func InventoryMapper(pd *domain.ProductDAO) []*grpcServer.ProductInventoryMessage {
-	invMessages := []*grpcServer.ProductInventoryMessage{}
-	for _, inv := range pd.Inventory {
-		invMessages = append(invMessages, &grpcServer.ProductInventoryMessage{
-			Size:     inv.Size,
-			Quantity: int32(inv.Quantity),
-		})
+func ProductTypeMapper(pdTypes []domain.AlloffProductType) []grpcServer.ProductType {
+	pdTypes = removeDuplicateType(pdTypes)
+	productTypes := []grpcServer.ProductType{}
+	for _, pdtype := range pdTypes {
+		if pdtype == domain.Female {
+			productTypes = append(productTypes, grpcServer.ProductType_FEMALE)
+		} else if pdtype == domain.Male {
+			productTypes = append(productTypes, grpcServer.ProductType_MALE)
+		} else if pdtype == domain.Kids {
+			productTypes = append(productTypes, grpcServer.ProductType_KIDS)
+		} else if pdtype == domain.Boy { //TODO: To be modified with grpc
+			productTypes = append(productTypes, grpcServer.ProductType_SPORTS)
+		} else if pdtype == domain.Girl {
+			productTypes = append(productTypes, grpcServer.ProductType_SPORTS)
+		}
 	}
-	return invMessages
+	return productTypes
+}
+
+func removeDuplicateType(strSlice []domain.AlloffProductType) []domain.AlloffProductType {
+	allKeys := make(map[domain.AlloffProductType]bool)
+	list := []domain.AlloffProductType{}
+	for _, item := range strSlice {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
+}
+
+func InventoryMapper(pd *domain.ProductMetaInfoDAO) []*grpcServer.ProductInventoryMessage {
+	invMessage := []*grpcServer.ProductInventoryMessage{}
+
+	for _, inv := range pd.Inventory {
+		if inv.AlloffSizes != nil {
+			alloffSizes := []*grpcServer.AlloffSizeMessage{}
+			for _, alloffSize := range inv.AlloffSizes {
+				alloffSizes = append(alloffSizes, AlloffSizeMapper(alloffSize))
+			}
+
+			invMessage = append(invMessage, &grpcServer.ProductInventoryMessage{
+				AlloffSizes: alloffSizes,
+				Quantity:    int32(inv.Quantity),
+				Size:        inv.Size,
+			})
+		} else {
+			invMessage = append(invMessage, &grpcServer.ProductInventoryMessage{
+				AlloffSizes: nil,
+				Quantity:    int32(inv.Quantity),
+				Size:        inv.Size,
+			})
+		}
+
+	}
+	return invMessage
+}
+
+func ProductSortingAndRangesMapper(sortings []grpcServer.SortingOptions) (priceRanges []domain.PriceRangeType, priceSorting domain.PriceSortingType) {
+	for _, sorting := range sortings {
+		if sorting == grpcServer.SortingOptions_PRICE_ASCENDING {
+			priceSorting = domain.PRICE_ASCENDING
+		} else if sorting == grpcServer.SortingOptions_PRICE_DESCENDING {
+			priceSorting = domain.PRICE_DESCENDING
+		} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_ASCENDING {
+			priceSorting = domain.DISCOUNTRATE_ASCENDING
+		} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_DESCENDING {
+			priceSorting = domain.DISCOUNTRATE_DESCENDING
+		} else {
+			if sorting == grpcServer.SortingOptions_DISCOUNT_0_30 {
+				priceRanges = append(priceRanges, domain.PRICE_RANGE_30)
+			} else if sorting == grpcServer.SortingOptions_DISCOUNT_30_50 {
+				priceRanges = append(priceRanges, domain.PRICE_RANGE_50)
+			} else if sorting == grpcServer.SortingOptions_DISCOUNT_50_70 {
+				priceRanges = append(priceRanges, domain.PRICE_RANGE_70)
+			} else {
+				priceRanges = append(priceRanges, domain.PRICE_RANGE_100)
+			}
+		}
+	}
+
+	return
 }

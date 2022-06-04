@@ -1,12 +1,11 @@
 package main
 
 import (
-	"fmt"
-	chimiddleware "github.com/go-chi/chi/middleware"
 	"log"
 	"net/http"
-	"os"
-	"strconv"
+
+	chimiddleware "github.com/go-chi/chi/middleware"
+	"github.com/spf13/viper"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -19,26 +18,12 @@ import (
 	"github.com/rs/cors"
 )
 
-var (
-	GitInfo   = "no info"
-	BuildTime = "no datetime"
-	Env       = "prod"
-)
-
 func main() {
-	fmt.Println("Git commit information: ", GitInfo)
-	fmt.Println("Build date, time: ", BuildTime)
-
-	conf := cmd.SetBaseConfig(Env)
-
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = strconv.Itoa(conf.PORT)
-	}
+	cmd.SetBaseConfig()
+	port := viper.GetString("PORT")
 
 	router := chi.NewRouter()
 	router.Use(chimiddleware.RequestID)
-	router.Use(middleware.ElasticSearchLogger(log.New(os.Stdout, "", 0)))
 	router.Use(middleware.Middleware())
 	router.Use(cors.AllowAll().Handler)
 

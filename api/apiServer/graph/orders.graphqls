@@ -73,11 +73,12 @@ type OrderItem {
   cancelRequestedAt: Date!
   cancelFinishedAt: Date!
   confirmedAt: Date!
+  userId: String!
+  user: User!
 }
 
 input OrderItemInput {
   productId: String!
-  productGroupId: String!
   selectsize: String!
   quantity: Int!
 }
@@ -190,11 +191,15 @@ extend type Query {
   orderItemStatus: [OrderItemStatusDescription!]!
 }
 
+input CancelPaymentInput {
+  impUID: String!
+  merchantUID: String!
+}
+
 extend type Mutation {
-  checkOrder(input: OrderInput): OrderValidityResult!
   requestOrder(input: OrderInput): OrderWithPayment!
   requestPayment(input: PaymentClientInput): PaymentStatus!
-  cancelPayment(input: PaymentClientInput): PaymentStatus!
+  cancelPayment(input: CancelPaymentInput): PaymentStatus!
   handlePaymentResponse(input: OrderResponse): PaymentResult!
 
   cancelOrderItem(orderId: String!, orderItemId: String!): PaymentStatus!

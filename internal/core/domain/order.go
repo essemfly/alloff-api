@@ -58,22 +58,6 @@ func (orderDao *OrderDAO) GetOrderName() string {
 	return orderDao.OrderItems[0].ProductName + "외 " + strconv.Itoa(len(orderDao.OrderItems)-1) + " 건"
 }
 
-func (orderDao *OrderDAO) CancelOrder() error {
-	// (TODO) Cancel Order
-	// orderDao.UpdatedAt = time.Now()
-	// if orderDao.OrderStatus == ORDER_PAYMENT_FINISHED || orderDao.OrderStatus == ORDER_PRODUCT_PREPARING {
-	// 	orderDao.OrderStatus = ORDER_CANCEL_FINISHED
-	// } else if orderDao.OrderStatus == ORDER_DELIVERY_PREPARING ||
-	// 	orderDao.OrderStatus == ORDER_DELIVERY_STARTED ||
-	// 	orderDao.OrderStatus == ORDER_DELIVERY_FINISHED {
-	// 	orderDao.OrderStatus = ORDER_CANCEL_REQUESTED
-	// } else {
-	// 	return errors.New("not availabe on order status for cancel")
-	// }
-
-	return nil
-}
-
 func (orderDao *OrderDAO) GetOrderItem(productID string) *OrderItemDAO {
 	for _, item := range orderDao.OrderItems {
 		if item.ProductID == productID {
@@ -88,15 +72,6 @@ func (orderDao *OrderDAO) GetOrderItemByID(orderItemID int) *OrderItemDAO {
 		if item.ID == orderItemID {
 			return item
 		}
-	}
-	return nil
-}
-
-func (orderDao *OrderDAO) ValidateOrder() error {
-	prices := 0
-	for _, orderItem := range orderDao.OrderItems {
-		// (TODO) Product가 Soldout이거나, removed인 경우는 어떻게 처리할 것인가?
-		prices += orderItem.SalesPrice * orderItem.Quantity
 	}
 	return nil
 }

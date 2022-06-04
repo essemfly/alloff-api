@@ -6,21 +6,21 @@ import (
 
 	"github.com/go-pg/pg/v10"
 	"github.com/go-pg/pg/v10/orm"
-	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/spf13/viper"
 )
 
 type PostgresDB struct {
 	db *pg.DB
 }
 
-func NewPostgresDB(conf config.Configuration) *PostgresDB {
+func NewPostgresDB() *PostgresDB {
 	db := pg.Connect(&pg.Options{
-		Addr:     conf.POSTGRES_URL,
-		User:     conf.POSTGRES_USER,
-		Password: conf.POSTGRES_PASSWORD,
-		Database: conf.POSTGRES_DB_NAME,
+		Addr:     viper.GetString("POSTGRES_URL"),
+		User:     viper.GetString("POSTGRES_USER"),
+		Password: viper.GetString("POSTGRES_PASSWORD"),
+		Database: viper.GetString("POSTGRES_DB_NAME"),
 	})
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)

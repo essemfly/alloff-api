@@ -13,7 +13,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type DaehyunResponseParser struct {
@@ -88,25 +88,32 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 				delete(description, askey)
 				delete(description, laundrykey)
 
-				addRequest := &product.ProductCrawlingAddRequest{
+				addRequest := &productinfo.AddMetaInfoRequest{
+					AlloffName:          productName,
+					ProductID:           productID,
+					ProductUrl:          productUrl,
+					ProductType:         []domain.AlloffProductType{domain.Female},
+					OriginalPrice:       float32(originalPrice),
+					DiscountedPrice:     float32(discountedPrice),
+					CurrencyType:        domain.CurrencyKRW,
 					Brand:               brand,
 					Source:              source,
-					ProductID:           productID,
-					ProductName:         productName,
-					ProductUrl:          productUrl,
+					AlloffCategory:      &domain.AlloffCategoryDAO{},
 					Images:              images,
-					Sizes:               sizes,
-					Inventories:         inventories,
 					Colors:              colors,
-					Description:         description,
-					OriginalPrice:       float32(originalPrice),
-					SalesPrice:          float32(discountedPrice),
-					CurrencyType:        domain.CurrencyKRW,
+					Sizes:               sizes,
+					Inventory:           inventories,
+					Information:         description,
+					IsForeignDelivery:   false,
 					IsTranslateRequired: false,
+					ModuleName:          source.CrawlModuleName,
+					IsRemoved:           false,
+					IsSoldout:           false,
 				}
 
 				totalProducts += 1
-				product.AddProductInCrawling(addRequest)
+				productinfo.ProcessCrawlingInfoRequests(addRequest)
+
 			}
 		})
 		pageNum += 1
@@ -118,7 +125,7 @@ func CrawlDaehyun(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 	done <- true
 }
 
-func getDaehyunDetailInfo(producturl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getDaehyunDetailInfo(producturl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.daehyuninside.com"),
 	)
@@ -173,7 +180,7 @@ func getDaehyunDetailInfo(producturl string) (imageUrls, colors, sizes []string,
 
 	c.Visit(producturl)
 
-	// TODO 이쪽 Color 및 상품 재고 어떻게 처리되는지 확인 필요
+	// TODO: 이쪽 Color 및 상품 재고 어떻게 처리되는지 확인 필요
 	soldoutSizes := []string{}
 	for _, option := range colorOptions {
 		stockUrl := "https://www.daehyuninside.com/main/exec.php?exec_file=shop/getAjaxData.php&exec=getOptionStock&item_no=@" + option
@@ -205,8 +212,8 @@ func getDaehyunDetailInfo(producturl string) (imageUrls, colors, sizes []string,
 		}
 		if !isSoldout {
 			sizes = append(sizes, value)
-			inventories = append(inventories, domain.InventoryDAO{
-				Quantity: 10,
+			inventories = append(inventories, &domain.InventoryDAO{
+				Quantity: 1,
 				Size:     value,
 			})
 		}

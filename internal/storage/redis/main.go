@@ -6,17 +6,16 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/lessbutter/alloff-api/config"
-	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/spf13/viper"
 )
 
 type RedisDB struct {
 	client *redis.Client
 }
 
-func NewRedis(conf config.Configuration) *RedisDB {
+func NewRedis() *RedisDB {
 	client := redis.NewClient(&redis.Options{
-		Addr:     conf.REDIS_URL,
+		Addr:     viper.GetString("REDIS_URL"),
 		Password: "", // no password set
 		DB:       0,  // use default DB
 	})
@@ -33,5 +32,4 @@ func NewRedis(conf config.Configuration) *RedisDB {
 }
 
 func (conn *RedisDB) RegisterRepos() {
-	ioc.Repo.OrderCounts = RedisOrderRepo(conn)
 }

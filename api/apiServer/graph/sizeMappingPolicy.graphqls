@@ -1,0 +1,11 @@
+type SizeMappingPolicy {
+    id: ID!
+    alloffSize: AlloffSize!
+    alloffCategory: AlloffCategory!
+    sizes: [String!]!
+    alloffProductType: [AlloffProductType!]!
+}
+
+extend type Query {
+    sizeMappingPolicies: [SizeMappingPolicy!]!
+}

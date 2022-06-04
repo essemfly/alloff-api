@@ -12,6 +12,24 @@ const (
 	EXHIBITION_TIMEDEAL  ExhibitionType = "TIMEDEAL"
 	EXHIBITION_NORMAL    ExhibitionType = "NORMAL"
 	EXHIBITION_GROUPDEAL ExhibitionType = "GROUPDEAL"
+	EXHIBITION_ALL       ExhibitionType = "ALL"
+)
+
+type ExhibitionStatus string
+
+const (
+	EXHIBITION_LIVE       ExhibitionStatus = "LIVE"
+	EXHIBITION_NOTOPEN    ExhibitionStatus = "NOT_OPEN"
+	EXHIBITION_CLOSED     ExhibitionStatus = "CLOSED"
+	EXHIBITION_STATUS_ALL ExhibitionStatus = "ALL"
+)
+
+type GroupdealStatus string
+
+const (
+	GROUPDEAL_PENDING GroupdealStatus = "PENDING"
+	GROUPDEAL_OPEN    GroupdealStatus = "OPEN"
+	GROUPDEAL_CLOSED  GroupdealStatus = "CLOSED"
 )
 
 type ExhibitionBanner struct {
@@ -23,36 +41,22 @@ type ExhibitionBanner struct {
 
 type ExhibitionDAO struct {
 	ID             primitive.ObjectID `bson:"_id, omitempty"`
-	BannerImage    string
-	ThumbnailImage string
+	ProductTypes   []AlloffProductType
+	ExhibitionType ExhibitionType
 	Title          string
 	SubTitle       string
 	Description    string
+	Tags           []string
+	BannerImage    string
+	ThumbnailImage string
+	ProductGroups  []*ProductGroupDAO
 	StartTime      time.Time
 	FinishTime     time.Time
-	ProductGroups  []*ProductGroupDAO
 	IsLive         bool
+	NumAlarms      int
+	MaxDiscounts   int
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
-	ExhibitionType ExhibitionType
-	TargetSales    int
-	Banners        []ExhibitionBanner
-}
-
-func (exDao *ExhibitionDAO) ListCheifProducts() []*ProductDAO {
-	numProductsToShow := 10
-	products := []*ProductDAO{}
-	if len(exDao.ProductGroups) > 0 {
-		if len(exDao.ProductGroups[0].Products) > 0 {
-			for idx, productPriority := range exDao.ProductGroups[0].Products {
-				if idx >= numProductsToShow {
-					break
-				}
-				products = append(products, productPriority.Product)
-			}
-		}
-	}
-	return products
 }
 
 func (exDao *ExhibitionDAO) IsSales() bool {

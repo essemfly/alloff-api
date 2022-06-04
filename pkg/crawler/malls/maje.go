@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 const (
@@ -58,8 +58,12 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 				productDetailUrl = getMajeDetailUrl(productId, colorId)
 				productUrl = getMajeProductUrl(productId, colorId)
 			}
-			productName, images, sizes, inventories, description, originalPrice, salesPrice := getMajeDetail(productDetailUrl)
+			productName, productColor, composition, images, sizes, inventories, description, originalPrice, salesPrice := getMajeDetail(productDetailUrl)
 
+			infos := map[string]string{
+				"소재": composition,
+				"색상": productColor,
+			}
 			productIdForDb := productId
 			productNameForDb := productName
 			if colorId != majeDeafultColor && colorId != "" {
@@ -67,23 +71,36 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 				productNameForDb += " - " + colorName
 			}
 
-			addRequest := &product.ProductCrawlingAddRequest{
-				Brand:               brand,
-				Images:              images,
-				Sizes:               sizes,
-				Inventories:         inventories,
-				Description:         description,
-				OriginalPrice:       originalPrice,
-				SalesPrice:          salesPrice,
-				CurrencyType:        domain.CurrencyEUR,
-				Source:              source,
-				ProductID:           productIdForDb,
-				ProductName:         productNameForDb,
-				ProductUrl:          productUrl,
+			log.Println(productUrl)
+			addRequest := &productinfo.AddMetaInfoRequest{
+				AlloffName:      productNameForDb,
+				ProductID:       productIdForDb,
+				ProductUrl:      productUrl,
+				ProductType:     []domain.AlloffProductType{domain.Female},
+				OriginalPrice:   originalPrice,
+				DiscountedPrice: salesPrice,
+				CurrencyType:    domain.CurrencyEUR,
+				Brand:           brand,
+				Source:          source,
+				AlloffCategory:  &domain.AlloffCategoryDAO{},
+				Images:          images,
+				Colors:          nil,
+				Infos:           infos,
+				Sizes:           sizes,
+				Inventory:       inventories,
+				Information:     description,
+				DescriptionImages: []string{
+					"https://alloff.s3.ap-northeast-2.amazonaws.com/description/size_guide.png",
+				},
+				IsForeignDelivery:   true,
 				IsTranslateRequired: true,
+				ModuleName:          source.CrawlModuleName,
+				IsRemoved:           false,
+				IsSoldout:           false,
 			}
+
 			totalProducts += 1
-			product.AddProductInCrawling(addRequest)
+			productinfo.ProcessCrawlingInfoRequests(addRequest)
 		}
 	})
 
@@ -108,11 +125,12 @@ func getMajeProductUrl(productId string, colorId string) string {
 	return fmt.Sprintf("https://de.maje.com/on/demandware.store/Sites-Maje-DE-Site/de/Product-Variation?pid=%s&dwvar_%s_color=%s&Quantity=1", productId, productId, colorId)
 }
 
+// 소재는 상품정보 제공 고시가 아니라 상품 설명으로 이동 220530
 func getMajeDetail(productUrl string) (
-	productName string,
+	productName, productColor, composition string,
 	images []string,
 	sizes []string,
-	inventories []domain.InventoryDAO,
+	inventories []*domain.InventoryDAO,
 	description map[string]string,
 	originalPrice float32,
 	salesPrice float32,
@@ -138,7 +156,7 @@ func getMajeDetail(productUrl string) (
 				stock = 0
 			}
 			sizes = append(sizes, size)
-			inventories = append(inventories, domain.InventoryDAO{
+			inventories = append(inventories, &domain.InventoryDAO{
 				Size:     size,
 				Quantity: stock,
 			})
@@ -217,13 +235,16 @@ func getMajeDetail(productUrl string) (
 
 			text = strings.Join(joinnableNodes, "\n")
 
-			if val, exists := description[key]; exists {
-				description[key] = val + "\n" + text
+			if key == "소재" {
+				composition = text
 			} else {
-				description[key] = text
+				if val, exists := description[key]; exists {
+					description[key] = val + "\n" + text
+				} else {
+					description[key] = text
+				}
 			}
 		})
-
 	})
 
 	// 가격
@@ -248,6 +269,13 @@ func getMajeDetail(productUrl string) (
 		}
 		imageUrl := strings.Split(src, "?")[0]
 		images = append(images, imageUrl)
+	})
+
+	// 색상
+	c.OnHTML("div.product-variations div.value ul.swatches", func(e *colly.HTMLElement) {
+		e.ForEach("li.selected", func(_ int, li *colly.HTMLElement) {
+			productColor = li.ChildText("span")
+		})
 	})
 
 	c.Visit(productUrl)

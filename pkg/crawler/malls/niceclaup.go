@@ -10,7 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -40,25 +40,31 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 
 		images, colors, sizes, inventories, description := getNiceClaupDetail(productUrl)
 
-		addRequest := &product.ProductCrawlingAddRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          title,
+			ProductID:           productID,
+			ProductUrl:          productUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(originalPrice),
+			DiscountedPrice:     float32(discountedPrice),
+			CurrencyType:        domain.CurrencyKRW,
 			Brand:               brand,
 			Source:              source,
-			ProductID:           productID,
-			ProductName:         title,
-			ProductUrl:          productUrl,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {
@@ -77,7 +83,7 @@ func CrawlNiceClaup(worker chan bool, done chan bool, source *domain.CrawlSource
 	done <- true
 }
 
-func getNiceClaupDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getNiceClaupDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.niceclaup.co.kr"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
@@ -99,9 +105,9 @@ func getNiceClaupDetail(productUrl string) (imageUrls, colors, sizes []string, i
 			disabled := el.ChildAttr("label input", "disabled")
 			sizes = append(sizes, size)
 			if disabled != "disabled" {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     size,
-					Quantity: 10,
+					Quantity: 1,
 				})
 			}
 		})

@@ -1,0 +1,77 @@
+type ProductGroup {
+  id: ID!
+  brand: Brand!
+  title: String!
+  shortTitle: String!
+  imgUrl: String!
+  products: [Product!]!
+  totalProducts: Int!
+}
+
+enum ExhibitionType {
+  NORMAL
+  GROUPDEAL
+  TIMEDEAL
+  ALL
+}
+
+enum ExhibitionStatus {
+  LIVE
+  NOT_OPEN
+  CLOSED
+}
+
+type Exhibition {
+  id: ID!
+  productTypes: [AlloffProductType!]!
+  exhibitionType: ExhibitionType!
+  title: String!
+  subTitle: String!
+  description: String!
+  tags: [String!]!
+  bannerImage: String!
+  thumbnailImage: String!
+  startTime: Date!
+  finishTime: Date!  
+  numAlarms: Int!
+  maxDiscounts: Int!
+}
+
+input ExhibitionInput {
+  status: ExhibitionStatus!
+}
+
+type ExhibitionOutput {
+  exhibitions: [Exhibition!]!
+  status: ExhibitionStatus!
+  liveCounts: Int!
+  notOpenCounts: Int!
+}
+
+type BrandOutput {
+  brand: Brand!
+  numProducts: Int!
+}
+
+input MetaInfoInput {
+  exhibitionId: String!
+  productType: AlloffProductType!
+  alloffCategoryId: String
+  brandIds: [String!]
+}
+
+type MetaInfoOutput {
+  brands: [BrandOutput!]!
+  alloffCategories: [AlloffCategory!]!
+  alloffSizes: [AlloffSize!]!
+}
+
+extend type Query {
+  exhibition(id: String!): Exhibition!
+  exhibitions(input: ExhibitionInput!): ExhibitionOutput!
+  exhibitionInfo(input: MetaInfoInput! ): MetaInfoOutput!
+}
+
+extend type Mutation {
+  setAlarm(id: String!): Boolean!
+}

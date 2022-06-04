@@ -1,15 +1,18 @@
 package malls
 
 import (
-	"log"
-	"strconv"
-	"strings"
-
+	"fmt"
 	"github.com/gocolly/colly"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
+	"go.uber.org/zap"
+	"log"
+	"regexp"
+	"strconv"
+	"strings"
 )
 
 func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -31,20 +34,22 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		originalPrice := 0.0
 		if originalPriceStr != "" {
 			originalPriceStr = strings.Split(originalPriceStr, " ")[1]
+			originalPriceStr = strings.Replace(originalPriceStr, ".", "", -1)
 			originalPriceStr = strings.Replace(originalPriceStr, ",", ".", -1)
 			originalPrice, err = strconv.ParseFloat(originalPriceStr, 32)
 			if err != nil {
-				log.Println("err ", err)
+				config.Logger.Error("err : ", zap.Error(err))
 				return
 			}
 		}
 
 		discountedPriceStr := e.ChildText(".price")
 		discountedPriceStr = strings.Split(discountedPriceStr, " ")[1]
+		discountedPriceStr = strings.Replace(discountedPriceStr, ".", "", -1)
 		discountedPriceStr = strings.Replace(discountedPriceStr, ",", ".", -1)
 		discountedPrice, err := strconv.ParseFloat(discountedPriceStr, 32)
 		if err != nil {
-			log.Println("err ", err)
+			config.Logger.Error("err : ", zap.Error(err))
 			return
 		}
 
@@ -57,38 +62,53 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		productID := e.Attr("data-product-id")
 		productUrl := "https://it.intrend.it" + e.ChildAttr(".js-anchor", "href")
 
-		title, images, sizes, colors, inventories, description := getIntrendDetail(productUrl)
-
+		title, composition, productColor, images, sizes, colors, inventories, description := getIntrendDetail(productUrl)
 		if len(sizes) == 0 {
-			inventories = append(inventories, domain.InventoryDAO{
+			inventories = append(inventories, &domain.InventoryDAO{
 				Size:     "normal",
-				Quantity: 10,
+				Quantity: 1,
 			})
 		}
 
-		if err != nil {
-			log.Println("err in translater", err)
+		infos := map[string]string{
+			"소재": composition,
+			"색상": productColor,
 		}
 
-		addRequest := &product.ProductCrawlingAddRequest{
+		// forbidden 403 case
+		if title == "" {
+			msg := fmt.Sprintf("not allowed access by intrend server on : %s\n", source.CrawlUrl)
+			config.Logger.Error(msg)
+			return
+		}
+
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          title,
+			ProductID:           productID,
+			ProductUrl:          productUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(originalPrice),
+			DiscountedPrice:     float32(discountedPrice),
+			CurrencyType:        domain.CurrencyEUR,
 			Brand:               brand,
 			Source:              source,
-			ProductID:           productID,
-			ProductName:         title,
-			ProductUrl:          productUrl,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyEUR,
+			Infos:               infos,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			DescriptionImages:   []string{},
+			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".js-pager .container-fluid ul", func(e *colly.HTMLElement) {
@@ -102,7 +122,7 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 	})
 	err = c.Visit(source.CrawlUrl)
 	if err != nil {
-		log.Println("err occured in crawling intrend", err)
+		config.Logger.Error("error occurred in crawl intrend ", zap.Error(err))
 	}
 
 	crawler.PrintCrawlResults(source, totalProducts)
@@ -120,11 +140,13 @@ type IntrendStock struct {
 	STOCKQTY int    `json:"STOCKQTY"`
 }
 
-func getIntrendDetail(productUrl string) (title string, imageUrls []string, sizes, colors []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getIntrendDetail(productUrl string) (title, composition, productColor string, imageUrls []string, sizes, colors []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("it.intrend.it"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
 	)
+
+	isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
 
 	description = map[string]string{}
 
@@ -141,10 +163,13 @@ func getIntrendDetail(productUrl string) (title string, imageUrls []string, size
 	c.OnHTML(".sizes .sizes-select-wrapper .sizes-select-list", func(e *colly.HTMLElement) {
 		e.ForEach(".list-inline li", func(_ int, el *colly.HTMLElement) {
 			size := el.ChildText("span .value")
+			if isDigit.MatchString(size) {
+				size = "IT" + size
+			}
 			sizes = append(sizes, size)
 			if el.Attr("class") != "li-disabled" {
-				inventories = append(inventories, domain.InventoryDAO{
-					Quantity: 10,
+				inventories = append(inventories, &domain.InventoryDAO{
+					Quantity: 1,
 					Size:     size,
 				})
 			}
@@ -158,6 +183,10 @@ func getIntrendDetail(productUrl string) (title string, imageUrls []string, size
 		})
 	})
 
+	c.OnHTML(".swatches .title", func(e *colly.HTMLElement) {
+		productColor = e.ChildText(".value")
+	})
+
 	c.OnHTML("#description .details-tab-content", func(e *colly.HTMLElement) {
 		description["설명"] = e.ChildText("p")
 	})
@@ -167,7 +196,7 @@ func getIntrendDetail(productUrl string) (title string, imageUrls []string, size
 		e.ForEach("ul li", func(idx int, el *colly.HTMLElement) {
 			texts += el.Text
 		})
-		description["소재"] = texts
+		composition = texts
 	})
 
 	c.OnHTML("#fitting .details-tab-content", func(e *colly.HTMLElement) {

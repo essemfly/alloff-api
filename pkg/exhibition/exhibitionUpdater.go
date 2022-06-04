@@ -7,24 +7,6 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
-func FindExhibitionInProductGroup(productGroupID string) (*domain.ExhibitionDAO, error) {
-	offset, limit := 0, 1000 // Dev code
-	onlyLive := false
-	exhibitions, _, err := ioc.Repo.Exhibitions.List(offset, limit, onlyLive, domain.EXHIBITION_NORMAL, "")
-	if err != nil {
-		log.Println("Exhibition err in find exhibition from group", err)
-	}
-
-	for _, ex := range exhibitions {
-		for _, pg := range ex.ProductGroups {
-			if pg.ID.Hex() == productGroupID {
-				return ex, nil
-			}
-		}
-	}
-	return nil, nil
-}
-
 func UpdateExhibition(exhibition *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error) {
 	newPgs := []*domain.ProductGroupDAO{}
 	for _, pg := range exhibition.ProductGroups {

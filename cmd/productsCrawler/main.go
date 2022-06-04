@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"math/rand"
 	"strings"
@@ -11,26 +10,15 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
-	"github.com/lessbutter/alloff-api/pkg/brand"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
 	"github.com/lessbutter/alloff-api/pkg/crawler/malls"
-	"github.com/lessbutter/alloff-api/pkg/product"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 const numWorkers = 20
 
-var (
-	GitInfo   = "no info"
-	BuildTime = "no datetime"
-	Env       = "prod"
-)
-
 func main() {
-	fmt.Println("Git commit information: ", GitInfo)
-	fmt.Println("Build date, time: ", BuildTime)
-
-	cmd.SetBaseConfig(Env)
+	cmd.SetBaseConfig()
 
 	crawlModules := []string{
 		"lottefashion",
@@ -56,12 +44,8 @@ func main() {
 	}
 
 	StartCrawling(crawlModules)
-	product.UpdateManuelProducts()
+	// product.UpdateManuelProducts()
 
-	brand.UpdateBrandCategory()
-	brand.UpdateBrandDiscountRate()
-	brand.MakeSnapshot()
-	product.MakeSnapshot()
 	crawler.WriteCrawlRecords(crawlModules)
 }
 
@@ -136,6 +120,8 @@ func StartCrawling(crawlModules []string) {
 				go malls.CrawlTheory(workers, done, source)
 			case "claudiePierlot":
 				go malls.CrawlClaudiePierlot(workers, done, source)
+			case "afound":
+				go malls.CrawlAfound(workers, done, source)
 			default:
 				log.Println("Empty Source")
 				<-workers

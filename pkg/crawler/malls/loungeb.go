@@ -10,7 +10,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -51,25 +51,31 @@ func CrawlLoungeB(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 		mobileUrl := strings.Replace(productUrl, "https://lounge-b.co.kr", "https://m.lounge-b.co.kr", 1)
 
-		addRequest := &product.ProductCrawlingAddRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          title,
+			ProductID:           productID,
+			ProductUrl:          mobileUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(originalPrice),
+			DiscountedPrice:     float32(discountedPrice),
+			CurrencyType:        domain.CurrencyKRW,
 			Brand:               brand,
 			Source:              source,
-			ProductID:           productID,
-			ProductName:         title,
-			ProductUrl:          mobileUrl,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         nil,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         nil,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".xans-product-normalpaging a:nth-last-child(2)", func(e *colly.HTMLElement) {
@@ -97,7 +103,7 @@ type StockInfo struct {
 	// Option별로 가격이 다를 가능성이있음
 }
 
-func getLoungebDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO) {
+func getLoungebDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO) {
 	colors = nil
 	c := colly.NewCollector(
 		colly.AllowedDomains("lounge-b.co.kr"),
@@ -123,7 +129,7 @@ func getLoungebDetail(productUrl string) (imageUrls, colors, sizes []string, inv
 			for _, val := range stockCrawlRseponse.Instances {
 				sizes = append(sizes, val.OptionValue)
 				if val.StockNumber > 0 {
-					inventories = append(inventories, domain.InventoryDAO{
+					inventories = append(inventories, &domain.InventoryDAO{
 						Size:     val.OptionValue,
 						Quantity: val.StockNumber,
 					})

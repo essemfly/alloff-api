@@ -11,7 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type LotteFashionResponseParse struct {
@@ -131,13 +131,13 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 
 		colors := []string{}
 		newSizes := []string{}
-		inventories := []domain.InventoryDAO{}
+		inventories := []*domain.InventoryDAO{}
 		for _, sizeOption := range pd.Sizes {
 			if !utils.ItemExists(newSizes, sizeOption.Size) {
 				newSizes = append(newSizes, sizeOption.Size)
 
 				if sizeOption.Stock > 0 {
-					inventories = append(inventories, domain.InventoryDAO{
+					inventories = append(inventories, &domain.InventoryDAO{
 						Size:     sizeOption.Size,
 						Quantity: sizeOption.Stock,
 					})
@@ -157,25 +157,32 @@ func MapLotteCrawlResultsToModels(products []LotteFashionProduct, source *domain
 
 		c.Visit(url)
 
-		addRequest := &product.ProductCrawlingAddRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          pd.Name,
+			ProductID:           pd.LotteFashionID,
+			ProductUrl:          url,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(pd.OriginalPrice),
+			DiscountedPrice:     float32(pd.SalePrice),
+			CurrencyType:        domain.CurrencyKRW,
 			Brand:               brand,
 			Source:              source,
-			ProductID:           pd.LotteFashionID,
-			ProductName:         pd.Name,
-			ProductUrl:          url,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
-			Sizes:               newSizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(pd.OriginalPrice),
-			SalesPrice:          float32(pd.SalePrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               newSizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		numProducts += 1
-		product.AddProductInCrawling(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
+
 	}
 
 	return numProducts

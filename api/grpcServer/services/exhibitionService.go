@@ -8,9 +8,8 @@ import (
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/internal/pkg/broker"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ExhibitionService struct {
@@ -46,7 +45,7 @@ func (s *ExhibitionService) ListExhibitions(ctx context.Context, req *grpcServer
 		query = *req.Query
 	}
 
-	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive, groupType, query)
+	exhibitionDaos, cnt, err := ioc.Repo.Exhibitions.List(int(req.Offset), int(req.Limit), onlyLive, domain.EXHIBITION_STATUS_ALL, groupType, query)
 	if err != nil {
 		return nil, err
 	}
@@ -89,6 +88,9 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	if req.Description != nil {
 		exDao.Description = *req.Description
 	}
+	if len(req.Tags) > 0 {
+		exDao.Tags = req.Tags
+	}
 	if req.StartTime != nil {
 		startTimeObj, _ := time.Parse(layout, *req.StartTime)
 		exDao.StartTime = startTimeObj
@@ -99,19 +101,6 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 	}
 	if req.IsLive != nil {
 		exDao.IsLive = *req.IsLive
-	}
-	banners := []domain.ExhibitionBanner{}
-	if req.Banners != nil {
-		for _, banner := range req.Banners {
-			bannerDao := domain.ExhibitionBanner{
-				ImgUrl:         banner.ImgUrl,
-				Title:          banner.Title,
-				Subtitle:       banner.Subtitle,
-				ProductGroupId: banner.ProductGroupId,
-			}
-			banners = append(banners, bannerDao)
-		}
-		exDao.Banners = banners
 	}
 
 	pgType := domain.PRODUCT_GROUP_EXHIBITION
@@ -142,16 +131,13 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 			}
 			pgs = append(pgs, newPg)
 		}
-
 		exDao.ProductGroups = pgs
 	}
 
-	newExhibitionDao, err := ioc.Repo.Exhibitions.Upsert(exDao)
+	newExhibitionDao, err := exhibition.ExhibitionSyncer(exDao)
 	if err != nil {
 		return nil, err
 	}
-
-	go broker.ExhibitionSyncer(newExhibitionDao)
 
 	return &grpcServer.EditExhibitionResponse{
 		Exhibition: mapper.ExhibitionMapper(newExhibitionDao, false),
@@ -171,65 +157,25 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		exhibitionGroupType = domain.EXHIBITION_GROUPDEAL
 	}
 
-	banners := []domain.ExhibitionBanner{}
-	if req.Banners != nil {
-		for _, banner := range req.Banners {
-			bannerDao := domain.ExhibitionBanner{
-				ImgUrl:         banner.ImgUrl,
-				Title:          banner.Title,
-				Subtitle:       banner.Subtitle,
-				ProductGroupId: banner.ProductGroupId,
-			}
-			banners = append(banners, bannerDao)
-		}
-	}
-	exDao := &domain.ExhibitionDAO{
-		ID:             primitive.NewObjectID(),
-		BannerImage:    req.BannerImage,
-		ThumbnailImage: req.ThumbnailImage,
-		Title:          req.Title,
-		SubTitle:       req.Subtitle,
-		Description:    req.Description,
-		StartTime:      startTimeObj,
-		FinishTime:     finishTimeObj,
-		IsLive:         false,
-		ExhibitionType: exhibitionGroupType,
-		TargetSales:    int(req.TargetSales),
-		Banners:        banners,
-		CreatedAt:      time.Now(),
+	exhibitionReq := &exhibition.ExhibitionRequest{
+		BannerImage:     req.BannerImage,
+		ThumbnailImage:  req.ThumbnailImage,
+		Title:           req.Title,
+		SubTitle:        req.Subtitle,
+		Description:     req.Description,
+		Tags:            req.Tags,
+		ProductGroupIDs: req.PgIds,
+		ExhibitionType:  exhibitionGroupType,
+		StartTime:       startTimeObj,
+		FinishTime:      finishTimeObj,
 	}
 
-	pgs := []*domain.ProductGroupDAO{}
-	for _, pgID := range req.PgIds {
-		pg, err := ioc.Repo.ProductGroups.Get(pgID)
-		if err != nil {
-			log.Println("get product group failed: "+pgID, err)
-			continue
-		}
-		productGroupType := pg.GroupType
-		pg.StartTime = startTimeObj
-		pg.FinishTime = startTimeObj
-		if pg.Brand != nil {
-			productGroupType = domain.PRODUCT_GROUP_BRAND_TIMEDEAL
-		}
-		pg.GroupType = productGroupType
-		pg.ExhibitionID = exDao.ID.Hex()
-		newPg, err := ioc.Repo.ProductGroups.Upsert(pg)
-		if err != nil {
-			log.Println("update product group failed: "+pgID, err)
-		}
-		pgs = append(pgs, newPg)
-	}
-
-	exDao.ProductGroups = pgs
-
-	newExDao, err := ioc.Repo.Exhibitions.Upsert(exDao)
+	exDao, err := exhibition.AddExhibition(exhibitionReq)
 	if err != nil {
-		log.Println("Exhibition create error", err)
 		return nil, err
 	}
 
 	return &grpcServer.CreateExhibitionResponse{
-		Exhibition: mapper.ExhibitionMapper(newExDao, false),
+		Exhibition: mapper.ExhibitionMapper(exDao, false),
 	}, nil
 }

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -9,17 +8,8 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 )
 
-var (
-	GitInfo   = "no info"
-	BuildTime = "no datetime"
-	Env       = "prod"
-)
-
 func main() {
-	fmt.Println("Git commit information: ", GitInfo)
-	fmt.Println("Build date, time: ", BuildTime)
-
-	cmd.SetBaseConfig(Env)
+	cmd.SetBaseConfig()
 
 	payments, err := ioc.Repo.Payments.ListHolding()
 	if err != nil {

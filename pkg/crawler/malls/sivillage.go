@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -41,25 +41,31 @@ func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSource
 		productUrl := "https://www.sivillage.com/goods/initDetailGoods.siv?goods_no=" + productID
 		images, colors, sizes, inventories, description := CrawlSiVillageDetail(productID)
 
-		addRequest := &product.ProductCrawlingAddRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          title,
+			ProductID:           productID,
+			ProductUrl:          productUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(originalPrice),
+			DiscountedPrice:     float32(discountedPrice),
+			CurrencyType:        domain.CurrencyKRW,
 			Brand:               brand,
 			Source:              source,
-			ProductID:           productID,
-			ProductName:         title,
-			ProductUrl:          productUrl,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".ee_paging", func(e *colly.HTMLElement) {
@@ -88,7 +94,7 @@ func CrawlSiVillage(worker chan bool, done chan bool, source *domain.CrawlSource
 	done <- true
 }
 
-func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.sivillage.com"),
 	)
@@ -117,9 +123,9 @@ func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inv
 						sizeFound = true
 						sizes = append(sizes, size)
 						if !strings.Contains(sizeInClass, "disabled") {
-							inventories = append(inventories, domain.InventoryDAO{
+							inventories = append(inventories, &domain.InventoryDAO{
 								Size:     size,
-								Quantity: 10,
+								Quantity: 1,
 							})
 						}
 					}
@@ -130,9 +136,9 @@ func CrawlSiVillageDetail(productId string) (images, colors, sizes []string, inv
 						size = strings.Trim(size, " ")
 						sizes = append(sizes, size)
 						if ele.Attr("class") != "ee_disabled" {
-							inventories = append(inventories, domain.InventoryDAO{
+							inventories = append(inventories, &domain.InventoryDAO{
 								Size:     size,
-								Quantity: 10,
+								Quantity: 1,
 							})
 						}
 					})
