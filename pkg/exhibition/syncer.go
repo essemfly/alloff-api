@@ -15,29 +15,9 @@ import (
 // Ex가 갖고 있는 ProductGROUPS가 우선임
 func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error) {
 	pdTypes := []domain.AlloffProductType{}
-
-	productListInput := product.ProductListInput{
-		Offset:       0,
-		Limit:        1000,
-		ExhibitionID: exDao.ID.Hex(),
-	}
-
-	pds, _, err := product.ListProducts(productListInput)
-	if err != nil {
-		config.Logger.Error("exhibition syncer error", zap.Error(err))
-	}
-
-	maxDiscountRates := 0
-	for _, pd := range pds {
-		if maxDiscountRates < pd.ProductInfo.Price.DiscountRate {
-			maxDiscountRates = pd.ProductInfo.Price.DiscountRate
-		}
-
-		pdTypes = append(pdTypes, pd.ProductInfo.ProductType...)
-	}
-	pdTypes = removeDuplicateType(pdTypes)
-
 	newPgs := []*domain.ProductGroupDAO{}
+	maxDiscountRates := 0
+
 	for _, pg := range exDao.ProductGroups {
 		pgDao, err := ioc.Repo.ProductGroups.Get(pg.ID.Hex())
 		if err != nil {
@@ -64,6 +44,30 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 			log.Println("product group update failed", pgDao.ID.Hex())
 		}
 		newPgs = append(newPgs, updatedPgDao)
+
+		productListInput := product.ProductListInput{
+			Offset:         0,
+			Limit:          1000,
+			ProductGroupID: pgDao.ID.Hex(),
+		}
+		pds, _, err := product.ListProducts(productListInput)
+		if err != nil {
+			config.Logger.Error("exhibition syncer error", zap.Error(err))
+		}
+		for _, pd := range pds {
+			if maxDiscountRates < pd.ProductInfo.Price.DiscountRate {
+				maxDiscountRates = pd.ProductInfo.Price.DiscountRate
+			}
+			pd.ExhibitionID = pgDao.ExhibitionID
+			pd.ExhibitionStartTime = pgDao.StartTime
+			pd.ExhibitionFinishTime = pgDao.FinishTime
+			_, err := ioc.Repo.Products.Upsert(pd)
+			if err != nil {
+				config.Logger.Error("exhibition syncer error", zap.Error(err))
+			}
+			pdTypes = append(pdTypes, pd.ProductInfo.ProductType...)
+		}
+		pdTypes = removeDuplicateType(pdTypes)
 	}
 
 	exDao.ProductGroups = newPgs
