@@ -56,7 +56,7 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 			if err != nil {
 				continue
 			}
-			query = append(query, bson.M{"alloffinventory.alloffsizes._id": oid})
+			query = append(query, bson.M{"productinfo.inventory.alloffsizes._id": oid})
 		}
 		filter["$or"] = query
 	}

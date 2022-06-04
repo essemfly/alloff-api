@@ -65,7 +65,7 @@ func (s *ProductGroupService) CreateProductGroup(ctx context.Context, req *grpcS
 
 	var brand *domain.BrandDAO
 	if req.BrandId != nil {
-		brandDao, err := ioc.Repo.Brands.GetByKeyname(*req.BrandId)
+		brandDao, err := ioc.Repo.Brands.Get(*req.BrandId)
 		brand = brandDao
 		if err != nil {
 			config.Logger.Error("Error on get brand for create product group : "+*req.BrandId, zap.Error(err))
@@ -233,9 +233,6 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 			config.Logger.Error("err occured on products insert on pg : "+productPriority.ProductId, zap.Error(err))
 		}
 	}
-
-	exDao, _ := ioc.Repo.Exhibitions.Get(pgDao.ExhibitionID)
-	go exhibition.ExhibitionSyncer(exDao)
 
 	productListInput := product.ProductListInput{
 		ProductGroupID: pgDao.ID.Hex(),

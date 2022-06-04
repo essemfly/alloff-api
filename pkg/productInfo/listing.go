@@ -48,7 +48,10 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 	}
 
 	if input.Keyword != "" {
-		filter["alloffname"] = primitive.Regex{Pattern: input.Keyword, Options: "i"}
+		filter["$or"] = []bson.M{
+			{"originalname": primitive.Regex{Pattern: input.Keyword, Options: "i"}},
+			{"alloffname": primitive.Regex{Pattern: input.Keyword, Options: "i"}},
+		}
 	}
 
 	if input.IncludeClassifiedType != domain.NO_MATTER_CLASSIFIED {
