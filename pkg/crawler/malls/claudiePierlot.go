@@ -82,7 +82,6 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 	})
 
 	err = c.Visit(source.CrawlUrl)
-	log.Println(source.CrawlUrl)
 	if err != nil {
 		log.Println("err occurred in crawling claudie pierlot : ", err)
 	}

@@ -7,6 +7,16 @@ import (
 	"go.uber.org/zap"
 )
 
+func AssignProductsInventory(pdDao *domain.ProductMetaInfoDAO) {
+	newInv := AssignAlloffSizesToInventories(pdDao.Inventory, pdDao.ProductType, pdDao.AlloffCategory)
+	pdDao.Inventory = newInv
+
+	_, err := ioc.Repo.ProductMetaInfos.Upsert(pdDao)
+	if err != nil {
+		config.Logger.Error("error occurred on upsert product-meta-info : ", zap.Error(err))
+	}
+}
+
 func AssignAlloffSizesToInventories(invs []*domain.InventoryDAO, productTypes []domain.AlloffProductType, productCat *domain.ProductAlloffCategoryDAO) []*domain.InventoryDAO {
 	invDaos := []*domain.InventoryDAO{}
 	for _, inv := range invs {
@@ -20,7 +30,6 @@ func AssignAlloffSizesToInventories(invs []*domain.InventoryDAO, productTypes []
 }
 
 func assignAlloffSizeToInventory(inv *domain.InventoryDAO, productType []domain.AlloffProductType, catID string) *domain.InventoryDAO {
-	//sizeMappingPolicy, err := ioc.Repo.SizeMappingPolicy.GetByDetail(inv.Size, productType, catID)
 	sizeMappingPolicies, err := ioc.Repo.SizeMappingPolicy.ListByDetail(inv.Size, productType, catID)
 	if err != nil {
 		config.Logger.Error("sizemapping policy err on create product", zap.Error(err))

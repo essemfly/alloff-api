@@ -9,7 +9,6 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
-	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/product"
 )
 
@@ -25,14 +24,7 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product,
 func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error) {
 	priceRanges, priceSorting := mapper.MapProductSortingAndRanges(input.Sorting)
 
-	pdType := domain.Female
-	if input.ProductType == model.AlloffProductTypeKids {
-		pdType = domain.Kids
-	} else if input.ProductType == model.AlloffProductTypeMale {
-		pdType = domain.Male
-	} else if input.ProductType == model.AlloffProductTypeSports {
-		pdType = domain.Sports
-	}
+	pdType := mapper.MapModelProductTypeToDomain(input.ProductType)
 
 	query := product.ProductListInput{
 		Offset:        input.Offset,

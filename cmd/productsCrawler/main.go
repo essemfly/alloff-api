@@ -120,6 +120,8 @@ func StartCrawling(crawlModules []string) {
 				go malls.CrawlTheory(workers, done, source)
 			case "claudiePierlot":
 				go malls.CrawlClaudiePierlot(workers, done, source)
+			case "afound":
+				go malls.CrawlAfound(workers, done, source)
 			default:
 				log.Println("Empty Source")
 				<-workers

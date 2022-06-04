@@ -2678,8 +2678,9 @@ enum DeliveryType {
 enum AlloffProductType {
   MALE
   FEMALE
+  BOY
+  GIRL
   KIDS
-  SPORTS
 }
 
 type AlloffCategory {

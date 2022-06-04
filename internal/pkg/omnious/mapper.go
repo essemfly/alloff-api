@@ -43,7 +43,7 @@ func MapOmniousCategoryToCategoryClassifier(omniousData *OmniousResult) *domain.
 	catMap := map[string]string{
 		"탑":       "1_top",
 		"블라우스":    "1_top",
-		"캐주얼 상의":  "1_top",
+		"캐주얼상의":   "1_top",
 		"니트웨어":    "1_top",
 		"셔츠":      "1_top",
 		"베스트":     "1_outer",
@@ -81,10 +81,11 @@ func MapOmniousCategoryToCategoryClassifier(omniousData *OmniousResult) *domain.
 	// Item 에서 파자마자상의 혹은 잠옷바지가 나오는 경우에는 특별히 라운지/언더웨어로 정한다.
 	omniousItem := omniousData.Item.Name
 	if omniousItem == "파자마상의" || omniousItem == "잠옷바지" {
-		return &domain.AlloffCategoryDAO{
-			KeyName: "1_underwear",
-			Name:    "라운지/언더웨어",
+		alloffCat, err := ioc.Repo.AlloffCategories.GetByKeyname("1_underwear")
+		if err != nil {
+			return nil
 		}
+		return alloffCat
 	}
 
 	// 나머지는 정해진 정책에 따라 정한다.
@@ -93,8 +94,5 @@ func MapOmniousCategoryToCategoryClassifier(omniousData *OmniousResult) *domain.
 	if err != nil {
 		return nil
 	}
-	return &domain.AlloffCategoryDAO{
-		KeyName: alloffCat.KeyName,
-		Name:    alloffCat.Name,
-	}
+	return alloffCat
 }

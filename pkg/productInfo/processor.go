@@ -13,7 +13,6 @@ func ProcessCrawlingInfoRequests(request *AddMetaInfoRequest) error {
 	if err != nil {
 		return err
 	}
-
 	if pdInfo == nil {
 		_, err := AddProductInfo(request)
 		return err

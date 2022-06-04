@@ -96,14 +96,7 @@ func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionI
 }
 
 func (r *queryResolver) ExhibitionInfo(ctx context.Context, input model.MetaInfoInput) (*model.MetaInfoOutput, error) {
-	pdType := domain.Female
-	if input.ProductType == model.AlloffProductTypeKids {
-		pdType = domain.Kids
-	} else if input.ProductType == model.AlloffProductTypeMale {
-		pdType = domain.Male
-	} else if input.ProductType == model.AlloffProductTypeSports {
-		pdType = domain.Sports
-	}
+	pdType := mapper.MapModelProductTypeToDomain(input.ProductType)
 
 	brandIds := []string{}
 	if len(input.BrandIds) > 0 {
