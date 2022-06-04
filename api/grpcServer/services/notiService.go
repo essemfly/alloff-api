@@ -43,7 +43,7 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 			ReferenceID:      "/" + req.ReferenceId,
 			NavigateTo:       "/products",
 		}
-	} else if req.NotiType == string(domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION) {
+	} else if req.NotiType == string(domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION) {
 		notiDao = &domain.NotificationDAO{
 			Status:           domain.NOTIFICATION_READY,
 			NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
