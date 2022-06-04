@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"github.com/lessbutter/alloff-api/internal/core/dto"
 	"time"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -16,9 +15,12 @@ type BrandsRepository interface {
 
 type ProductsRepository interface {
 	Get(ID string) (*domain.ProductDAO, error)
-	GetByMetaID(MetaID string) (*domain.ProductDAO, error)
+	GetByMetaID(metaID, exhibitionID string) (*domain.ProductDAO, error)
+	ListByMetaID(metaID string) ([]*domain.ProductDAO, error)
 	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
 	ListDistinctBrands(alloffCategoryID string) ([]*domain.BrandDAO, error)
+	ListDistinctInfos(filter interface{}) ([]*domain.BrandCountsData, []*domain.AlloffCategoryDAO, []*domain.AlloffSizeDAO)
+	ListInfos(filter interface{}) (brands []*domain.BrandCountsData, cats []*domain.AlloffCategoryDAO, sizes []*domain.AlloffSizeDAO)
 	Insert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	Upsert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	CountNewProducts([]string) int
@@ -26,15 +28,11 @@ type ProductsRepository interface {
 }
 
 type ProductMetaInfoRepository interface {
+	Get(ID string) (*domain.ProductMetaInfoDAO, error)
 	GetByProductID(brandKeyname string, productID string) (*domain.ProductMetaInfoDAO, error)
+	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductMetaInfoDAO, int, error)
 	Insert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
 	Upsert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
-}
-
-type ProductDiffsRepository interface {
-	Insert(*domain.ProductDiffDAO) error
-	List(filter interface{}) ([]*domain.ProductDiffDAO, error)
-	Update(*domain.ProductDiffDAO) (*domain.ProductDiffDAO, error)
 }
 
 type CrawlSourcesRepository interface {
@@ -65,17 +63,6 @@ type CrawlRecordsRepository interface {
 	Insert(*domain.CrawlRecordDAO) error
 }
 
-type FeaturedsRepository interface {
-	Insert(*domain.FeaturedDAO) error
-	List() ([]*domain.FeaturedDAO, error)
-}
-
-type HomeItemsRepository interface {
-	Insert(*domain.HomeItemDAO) error
-	Update(*domain.HomeItemDAO) error
-	List() ([]*domain.HomeItemDAO, error)
-}
-
 type ProductGroupsRepository interface {
 	Get(ID string) (*domain.ProductGroupDAO, error)
 	List(offset, limit int, groupType *domain.ProductGroupType, keyword string) ([]*domain.ProductGroupDAO, int, error)
@@ -84,7 +71,8 @@ type ProductGroupsRepository interface {
 
 type ExhibitionsRepository interface {
 	Get(ID string) (*domain.ExhibitionDAO, error)
-	List(offset, limit int, onlyLive bool, exhibitionType domain.ExhibitionType, query string) ([]*domain.ExhibitionDAO, int, error)
+	List(offset, limit int, onlyLive bool, exhibitionStatus domain.ExhibitionStatus, exhibitionType domain.ExhibitionType, query string) ([]*domain.ExhibitionDAO, int, error)
+	ListGroupDeals(offset, limit int, onlyLive bool, exhibitionStatus domain.GroupdealStatus) ([]*domain.ExhibitionDAO, int, error)
 	Upsert(*domain.ExhibitionDAO) (*domain.ExhibitionDAO, error)
 }
 
@@ -102,6 +90,7 @@ type OrderItemsRepository interface {
 	GetByCode(code string) (*domain.OrderItemDAO, error)
 	ListByProductGroupID(pgID string) ([]*domain.OrderItemDAO, int, error)
 	ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error)
+	ListByExhibitionID(exhibitionID string) ([]*domain.OrderItemDAO, error)
 	ListAllCanceled() ([]*domain.OrderItemDAO, error)
 	Update(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
 }
@@ -140,13 +129,6 @@ type LikeBrandsRepository interface {
 	List(userID string) (*domain.LikeBrandDAO, error)
 }
 
-type LikeProductsRepository interface {
-	Like(userID, productID string) (bool, error)
-	List(userID string) ([]*domain.LikeProductDAO, error)
-	ListProductsLike(productId string) ([]*domain.LikeProductDAO, error)
-	Update(*domain.LikeProductDAO) (*domain.LikeProductDAO, error)
-}
-
 type RefundItemsRepository interface {
 	Insert(*domain.RefundItemDAO) (*domain.RefundItemDAO, error)
 }
@@ -158,53 +140,21 @@ type NotificationsRepository interface {
 	Update(*domain.NotificationDAO) (*domain.NotificationDAO, error)
 }
 
-type HomeTabItemsRepository interface {
-	Insert(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
-	Get(itemID string) (*domain.HomeTabItemDAO, error)
-	List(offset, limit int, onlyLive bool) ([]*domain.HomeTabItemDAO, int, error)
-	Update(*domain.HomeTabItemDAO) (*domain.HomeTabItemDAO, error)
+type AlloffSizeRepository interface {
+	Get(alloffSizeID string) (*domain.AlloffSizeDAO, error)
+	Upsert(dao *domain.AlloffSizeDAO) (*domain.AlloffSizeDAO, error)
+	List(offset, limit int) ([]*domain.AlloffSizeDAO, int, error)
 }
 
-type TopBannersRepository interface {
-	Insert(*domain.TopBannerDAO) (*domain.TopBannerDAO, error)
-	Get(itemID string) (*domain.TopBannerDAO, error)
-	List(offset, limit int, onlyLive bool) ([]*domain.TopBannerDAO, int, error)
-	Update(*domain.TopBannerDAO) (*domain.TopBannerDAO, error)
+type CartsRepository interface {
+	Get(cartID string) (*domain.Basket, error)
+	Upsert(cartDao *domain.Basket) (*domain.Basket, error)
 }
 
-type BestProductsRepository interface {
-	Insert(*domain.BestProductDAO) (*domain.BestProductDAO, error)
-	GetLatest(alloffCategoryID string) (*domain.BestProductDAO, error)
-}
-
-type BestBrandRepository interface {
-	Insert(dao *domain.BestBrandDAO) (*domain.BestBrandDAO, error)
-	GetLatest() (*domain.BestBrandDAO, error)
-}
-
-type OrderCountsRepository interface {
-	Get(exhibitionID string) (int, error)
-	Push(exhibitionID string) (int, error)
-	Cancel(exhibitionID string) (int, error)
-}
-
-type AccessLogRepository interface {
-	Index(*domain.AccessLogDAO) (int, error)
-	List(limit int, from, to time.Time, order string) (*dto.AccessLogDTO, error)
-	GetLatest(limit int) (*dto.AccessLogDTO, error)
-}
-
-type ProductLogRepository interface {
-	Index(*domain.ProductDAO, domain.LogType) (int, error)
-	GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error)
-	GetRankByCatId(limit int, from time.Time, to time.Time, catId string) (*dto.DocumentCountDTO, error)
-}
-
-type BrandLogRepository interface {
-	Index(*domain.BrandDAO) (int, error)
-	GetRank(limit int, from time.Time, to time.Time) (*dto.DocumentCountDTO, error)
-}
-
-type SearchLogRepository interface {
-	Index(string) (int, error)
+type SizeMappingPolicyRepository interface {
+	Insert(dao *domain.SizeMappingPolicyDAO) (*domain.SizeMappingPolicyDAO, error)
+	Upsert(dao *domain.SizeMappingPolicyDAO) (*domain.SizeMappingPolicyDAO, error)
+	Get(id string) (*domain.SizeMappingPolicyDAO, error)
+	List() ([]*domain.SizeMappingPolicyDAO, error)
+	ListByDetail(size string, productTypes []domain.AlloffProductType, alloffCategpryID string) ([]*domain.SizeMappingPolicyDAO, error)
 }

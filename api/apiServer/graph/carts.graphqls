@@ -1,0 +1,27 @@
+type Cart {
+  id: ID!
+  items: [CartItem!]!
+}
+
+type CartItem {
+  product: Product!
+  size: String!
+  quantity: Int!
+  errorMsgs: [String!]!
+}
+
+input CartItemInput {
+  cartId: String!
+  productId: String!
+  selectsize: String!
+  quantity: Int!
+}
+
+extend type Query {
+  cart(id: String!): Cart!
+}
+
+extend type Mutation {
+  addCartItem(input: CartItemInput!): Cart!
+  removeCartItem(input: CartItemInput!): Cart!
+}

@@ -44,7 +44,6 @@ type PaymentDAO struct {
 }
 
 func (paymentDao *PaymentDAO) GetPaymentMethods() []*model.PaymentMethod {
-	// (TODO) To be specified in collection
 	paymentMethods := []*model.PaymentMethod{
 		{
 			Label: "다날",

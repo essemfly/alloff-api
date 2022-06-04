@@ -13,7 +13,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type IDFResponseParser struct {
@@ -76,25 +76,31 @@ func CrawlIDFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 					images, colors, sizes, inventories, description := getIdfDetailInfo(productUrl)
 
-					addRequest := &product.ProductCrawlingAddRequest{
+					addRequest := &productinfo.AddMetaInfoRequest{
+						AlloffName:          title,
+						ProductID:           productID,
+						ProductUrl:          productUrl,
+						ProductType:         []domain.AlloffProductType{domain.Female},
+						OriginalPrice:       float32(originalPrice),
+						DiscountedPrice:     float32(discountedPrice),
+						CurrencyType:        domain.CurrencyKRW,
 						Brand:               brand,
 						Source:              source,
-						ProductID:           productID,
-						ProductName:         title,
-						ProductUrl:          productUrl,
+						AlloffCategory:      &domain.AlloffCategoryDAO{},
 						Images:              images,
-						Sizes:               sizes,
-						Inventories:         inventories,
 						Colors:              colors,
-						Description:         description,
-						OriginalPrice:       float32(originalPrice),
-						SalesPrice:          float32(discountedPrice),
-						CurrencyType:        domain.CurrencyKRW,
+						Sizes:               sizes,
+						Inventory:           inventories,
+						Information:         description,
+						IsForeignDelivery:   false,
 						IsTranslateRequired: false,
+						ModuleName:          source.CrawlModuleName,
+						IsRemoved:           false,
+						IsSoldout:           false,
 					}
 
 					totalProducts += 1
-					product.AddProductInCrawling(addRequest)
+					productinfo.ProcessCrawlingInfoRequests(addRequest)
 				}
 			}
 		})
@@ -107,7 +113,7 @@ func CrawlIDFMall(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 	done <- true
 }
 
-func getIdfDetailInfo(producturl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getIdfDetailInfo(producturl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.idfmall.co.kr"),
 	)
@@ -185,9 +191,9 @@ func getIdfDetailInfo(producturl string) (imageUrls, colors, sizes []string, inv
 				}
 			}
 			if !isSoludout {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     colorItem + " - " + sizeOption,
-					Quantity: 10,
+					Quantity: 1,
 				})
 			}
 		}

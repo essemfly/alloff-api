@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type SisleyResponseParser struct {
@@ -67,25 +67,31 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			productUrl := "http://www.sisleymall.com/product/view?code=" + source.Category.CatIdentifier + "&productcode=" + pd.ProductCode
 			images, colors, sizes, inventories, description := CrawlSisleyDetail(productUrl)
 
-			addRequest := &product.ProductCrawlingAddRequest{
+			addRequest := &productinfo.AddMetaInfoRequest{
+				AlloffName:          pd.ProductName,
+				ProductID:           pd.ProductCode,
+				ProductUrl:          productUrl,
+				ProductType:         []domain.AlloffProductType{domain.Female},
+				OriginalPrice:       float32(originalPriceInt),
+				DiscountedPrice:     float32(discountedPriceInt),
+				CurrencyType:        domain.CurrencyKRW,
 				Brand:               brand,
 				Source:              source,
-				ProductID:           pd.ProductCode,
-				ProductName:         pd.ProductName,
-				ProductUrl:          productUrl,
+				AlloffCategory:      &domain.AlloffCategoryDAO{},
 				Images:              images,
-				Sizes:               sizes,
-				Inventories:         inventories,
 				Colors:              colors,
-				Description:         description,
-				OriginalPrice:       float32(originalPriceInt),
-				SalesPrice:          float32(discountedPriceInt),
-				CurrencyType:        domain.CurrencyKRW,
+				Sizes:               sizes,
+				Inventory:           inventories,
+				Information:         description,
+				IsForeignDelivery:   false,
 				IsTranslateRequired: false,
+				ModuleName:          source.CrawlModuleName,
+				IsRemoved:           false,
+				IsSoldout:           false,
 			}
 
 			totalProducts += 1
-			product.AddProductInCrawling(addRequest)
+			productinfo.ProcessCrawlingInfoRequests(addRequest)
 		}
 
 		pageInt, _ := strconv.Atoi(crawlResponse.Page)
@@ -101,7 +107,7 @@ func CrawlSisley(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 	done <- true
 }
 
-func CrawlSisleyDetail(productUrl string) (images, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func CrawlSisleyDetail(productUrl string) (images, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.sisleymall.com", "www.sisleymall.com:443"),
 	)
@@ -123,9 +129,9 @@ func CrawlSisleyDetail(productUrl string) (images, colors, sizes []string, inven
 			sizeInClass := el.Attr("class")
 			sizes = append(sizes, el.ChildText("label span"))
 			if !strings.Contains(sizeInClass, "disabled") {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     el.ChildText("label span"),
-					Quantity: 10,
+					Quantity: 1,
 				})
 			}
 		})

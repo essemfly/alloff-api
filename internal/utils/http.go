@@ -62,7 +62,7 @@ func MakeRequest(url string, method RequestType, headers map[string]string, body
 		return nil, err
 	}
 
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		return resp, nil
 	} else {
 		b, _ := ioutil.ReadAll(resp.Body)
@@ -115,5 +115,12 @@ func GetTheoutnetHeaders() map[string]string {
 		"connection":      "keep-alive",
 		"user-agent":      "PostmanRuntime/7.29.0",
 		"content-type":    "application/x-www-form-urlencoded",
+	}
+}
+
+func GetOmniousHeader(omniousKey string) map[string]string {
+	return map[string]string{
+		"x-api-key":       omniousKey,
+		"accept-language": "ko",
 	}
 }

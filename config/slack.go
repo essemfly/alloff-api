@@ -4,13 +4,14 @@ import (
 	"log"
 
 	"github.com/lessbutter/alloff-api/internal/utils"
+	"github.com/spf13/viper"
 )
 
 var OnWriteSlackMessage bool
 
-func InitSlack(conf Configuration) {
+func InitSlack() {
 	OnWriteSlackMessage = false
-	if conf.ENVIRONMENT == "prod" {
+	if viper.GetString("ENVIRONMENT") == "prod" {
 		OnWriteSlackMessage = true
 	}
 }

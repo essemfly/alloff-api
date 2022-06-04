@@ -1,79 +1,101 @@
 package product
 
 import (
+	"log"
+
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type Classified string
+// For API Servers
+type ProductListInput struct {
+	Offset           int
+	Limit            int
+	ProductType      domain.AlloffProductType
+	ProductGroupID   string
+	ExhibitionID     string
+	AlloffCategoryID string
+	BrandIDs         []string
+	AlloffSizeIDs    []string
+	PriceRanges      []domain.PriceRangeType
+	PriceSorting     domain.PriceSortingType
+}
 
-const (
-	CLASSIFIED_DONE      Classified = "CLASSIFIED_DONE"
-	NOT_CLASSIFIED       Classified = "NOT_CLASSIFIED"
-	NO_MATTER_CLASSIFIED Classified = "NO_MATTER_CLASSIFIED"
-)
+func (input *ProductListInput) BuildFilter() (bson.M, error) {
+	filter := bson.M{"isnotsale": false}
 
-func ProductsSearchListing(offset, limit int, classifiedType Classified, moduleName, brandID, categoryID, alloffCategoryID, keyword string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
-	filter := bson.M{"removed": false}
-
-	if classifiedType != NO_MATTER_CLASSIFIED {
-		if classifiedType == CLASSIFIED_DONE {
-			filter["alloffcategories.done"] = true
-		} else {
-			filter["alloffcategories.done"] = false
-		}
-	}
-	if moduleName != "" {
-		filter["productinfo.source.crawlmodulename"] = moduleName
-	}
-	brandObjID, _ := primitive.ObjectIDFromHex(brandID)
-	categoryObjID, _ := primitive.ObjectIDFromHex(categoryID)
-
-	if brandID != "" {
-		filter["productinfo.brand._id"] = brandObjID
-		if categoryID != "" {
-			filter["productinfo.category._id"] = categoryObjID
-		}
+	if input.ProductType != "" {
+		filter["productinfo.producttype"] = input.ProductType
 	}
 
-	if alloffCategoryID != "" {
-		alloffcat, err := ioc.Repo.AlloffCategories.Get(alloffCategoryID)
+	if input.AlloffCategoryID != "" {
+		alloffcat, err := ioc.Repo.AlloffCategories.Get(input.AlloffCategoryID)
 		if err == nil {
 			if alloffcat.Level == 1 {
-				filter["alloffcategories.first.keyname"] = alloffcat.KeyName
+				filter["productinfo.alloffcategory.first.keyname"] = alloffcat.KeyName
 			} else if alloffcat.Level == 2 {
-				filter["alloffcategories.second.keyname"] = alloffcat.KeyName
+				filter["productinfo.alloffcategory.second.keyname"] = alloffcat.KeyName
 			}
 		}
 	}
 
-	filter["alloffname"] = primitive.Regex{Pattern: keyword, Options: "i"}
+	if input.ExhibitionID != "" {
+		filter["exhibitionid"] = input.ExhibitionID
+	}
+
+	if input.ProductGroupID != "" {
+		filter["productgroupid"] = input.ProductGroupID
+	}
+
+	if len(input.AlloffSizeIDs) > 0 {
+		query := []bson.M{}
+		for _, id := range input.AlloffSizeIDs {
+			oid, err := primitive.ObjectIDFromHex(id)
+			if err != nil {
+				continue
+			}
+			query = append(query, bson.M{"alloffinventory.alloffsizes._id": oid})
+		}
+		filter["$or"] = query
+	}
+
+	if len(input.BrandIDs) > 0 {
+		query := []bson.M{}
+		for _, id := range input.BrandIDs {
+			oid, err := primitive.ObjectIDFromHex(id)
+			if err != nil {
+				continue
+			}
+			query = append(query, bson.M{"productinfo.brand._id": oid})
+		}
+		filter["$or"] = query
+	}
 
 	priceQueryRanges := []bson.M{}
-	for _, priceRange := range priceRanges {
+	for _, priceRange := range input.PriceRanges {
 		if priceRange == "30" {
 			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$lt": 30}},
-				bson.M{"discountrate": bson.M{"$gte": 0}},
+				bson.M{"productinfo.price.discountrate": bson.M{"$lt": 30}},
+				bson.M{"productinfo.price.discountrate": bson.M{"$gte": 0}},
 			}})
 		}
 		if priceRange == "50" {
 			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$lt": 50}},
-				bson.M{"discountrate": bson.M{"$gte": 30}},
+				bson.M{"productinfo.price.discountrate": bson.M{"$lt": 50}},
+				bson.M{"productinfo.price.discountrate": bson.M{"$gte": 30}},
 			}})
 		}
 		if priceRange == "70" {
 			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$lt": 70}},
-				bson.M{"discountrate": bson.M{"$gte": 50}},
+				bson.M{"productinfo.price.discountrate": bson.M{"$lt": 70}},
+				bson.M{"productinfo.price.discountrate": bson.M{"$gte": 50}},
 			}})
 		}
 		if priceRange == "100" {
 			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$gte": 70}},
+				bson.M{"productinfo.price.discountrate": bson.M{"$gte": 70}},
 			}})
 		}
 	}
@@ -82,149 +104,37 @@ func ProductsSearchListing(offset, limit int, classifiedType Classified, moduleN
 		filter["$or"] = priceQueryRanges
 	}
 
-	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "_id", Value: 1}, {Key: "score.totalscore", Value: -1}}
-	if priceSorting == "ascending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "descending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateAscending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: 1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateDescending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "_id", Value: 1}}
-	}
-
-	products, cnt, err := ioc.Repo.Products.List(offset, limit, filter, sortingOptions)
-	if err != nil {
-		return nil, cnt, err
-	}
-
-	return products, cnt, nil
+	return filter, nil
 }
 
-// (Future) Mongodb에 종속적인 함수: bson이 사용되었다.
-func ProductsListing(offset, limit int, brandID, categoryID, productGroupID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
-	filter := bson.M{"removed": false}
-
-	brandObjID, _ := primitive.ObjectIDFromHex(brandID)
-	categoryObjID, _ := primitive.ObjectIDFromHex(categoryID)
-
-	if brandID != "" {
-		filter["productinfo.brand._id"] = brandObjID
-		if categoryID != "" {
-			filter["productinfo.category._id"] = categoryObjID
-		}
-	}
-	if productGroupID != "" {
-		filter["productgroupid"] = productGroupID
+func (input *ProductListInput) BuildSorting() (bson.D, error) {
+	options := bson.D{{Key: "productinfo.issoldout", Value: 1}}
+	if input.PriceSorting == domain.PRICE_ASCENDING {
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.currentprice", Value: 1}, {Key: "_id", Value: 1}}
+	} else if input.PriceSorting == domain.PRICE_DESCENDING {
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.currentprice", Value: -1}, {Key: "_id", Value: 1}}
+	} else if input.PriceSorting == domain.DISCOUNTRATE_ASCENDING {
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: 1}, {Key: "_id", Value: 1}}
+	} else if input.PriceSorting == domain.DISCOUNTRATE_DESCENDING {
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: -1}, {Key: "_id", Value: 1}}
 	}
 
-	priceQueryRanges := []bson.M{}
-	for _, priceRange := range priceRanges {
-		if priceRange == "30" {
-			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$lt": 30}},
-				bson.M{"discountrate": bson.M{"$gte": 0}},
-			}})
-		}
-		if priceRange == "50" {
-			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$lt": 50}},
-				bson.M{"discountrate": bson.M{"$gte": 30}},
-			}})
-		}
-		if priceRange == "70" {
-			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$lt": 70}},
-				bson.M{"discountrate": bson.M{"$gte": 50}},
-			}})
-		}
-		if priceRange == "100" {
-			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$gte": 70}},
-			}})
-		}
-	}
-
-	if len(priceQueryRanges) > 0 {
-		filter["$or"] = priceQueryRanges
-	}
-
-	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "score.totalscore", Value: -1}}
-	if priceSorting == "ascending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "descending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateAscending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: 1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateDescending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "_id", Value: 1}}
-	}
-
-	products, cnt, err := ioc.Repo.Products.List(offset, limit, filter, sortingOptions)
-	if err != nil {
-		return nil, cnt, err
-	}
-
-	return products, cnt, nil
+	return options, nil
 }
 
-// TODO: 위의 함수와 합쳐질 필요가 있다.
-func AlloffCategoryProductsListing(offset, limit int, brandKeynames []string, alloffCategoryID string, priceSorting string, priceRanges []string) ([]*domain.ProductDAO, int, error) {
-	filter := bson.M{"removed": false, "alloffcategories.done": true}
-	if len(brandKeynames) > 0 {
-		filter["productinfo.brand.keyname"] = bson.M{"$in": brandKeynames}
+func ListProducts(input ProductListInput) ([]*domain.ProductDAO, int, error) {
+	filter, err := input.BuildFilter()
+	if err != nil {
+		log.Println("Error in getting products filter ", err)
+		return nil, 0, err
+	}
+	sortingOptions, err := input.BuildSorting()
+	if err != nil {
+		log.Println("Error in getting products sorting ", err)
+		return nil, 0, err
 	}
 
-	alloffCat, _ := ioc.Repo.AlloffCategories.Get(alloffCategoryID)
-	if alloffCat.Level == 1 {
-		filter["alloffcategories.first._id"] = alloffCat.ID
-	} else if alloffCat.Level == 2 {
-		filter["alloffcategories.second._id"] = alloffCat.ID
-	}
-
-	priceQueryRanges := []bson.M{}
-	for _, priceRange := range priceRanges {
-		if priceRange == "30" {
-			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$lt": 30}},
-				bson.M{"discountrate": bson.M{"$gt": 0}},
-			}})
-		}
-		if priceRange == "50" {
-			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$lt": 50}},
-				bson.M{"discountrate": bson.M{"$gte": 30}},
-			}})
-		}
-		if priceRange == "70" {
-			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$lt": 70}},
-				bson.M{"discountrate": bson.M{"$gte": 50}},
-			}})
-		}
-		if priceRange == "100" {
-			priceQueryRanges = append(priceQueryRanges, bson.M{"$and": []interface{}{
-				bson.M{"discountrate": bson.M{"$gte": 70}},
-			}})
-		}
-	}
-
-	if len(priceQueryRanges) > 0 {
-		filter["$or"] = priceQueryRanges
-	}
-
-	sortingOptions := bson.D{{Key: "soldout", Value: 1}, {Key: "score.isnewlycrawled", Value: -1}, {Key: "score.totalscore", Value: -1}}
-	if priceSorting == "ascending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: 1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "descending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountedprice", Value: -1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateAscending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: 1}, {Key: "_id", Value: 1}}
-	} else if priceSorting == "discountrateDescending" {
-		sortingOptions = bson.D{{Key: "soldout", Value: 1}, {Key: "discountrate", Value: -1}, {Key: "_id", Value: 1}}
-	}
-
-	products, cnt, err := ioc.Repo.Products.List(offset, limit, filter, sortingOptions)
+	products, cnt, err := ioc.Repo.Products.List(input.Offset, input.Limit, filter, sortingOptions)
 	if err != nil {
 		return nil, cnt, err
 	}

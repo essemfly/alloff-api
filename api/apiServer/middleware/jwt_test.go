@@ -1,8 +1,9 @@
 package middleware
 
 import (
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestJwt(t *testing.T) {

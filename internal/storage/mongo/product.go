@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"errors"
 	"log"
 	"time"
 
@@ -19,15 +18,7 @@ type productRepo struct {
 	col *mongo.Collection
 }
 
-type productDiffRepo struct {
-	col *mongo.Collection
-}
-
 type productMetaInfoRepo struct {
-	col *mongo.Collection
-}
-
-type productLikeRepo struct {
 	col *mongo.Collection
 }
 
@@ -44,19 +35,37 @@ func (repo *productRepo) Get(ID string) (*domain.ProductDAO, error) {
 	return product, nil
 }
 
-func (repo *productRepo) GetByMetaID(MetaID string) (*domain.ProductDAO, error) {
+func (repo *productRepo) GetByMetaID(metaID, exhibitionID string) (*domain.ProductDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	productObjectId, _ := primitive.ObjectIDFromHex(MetaID)
-	filter := bson.M{"productinfo._id": productObjectId}
-	var oldProduct domain.ProductDAO
-	err := repo.col.FindOne(ctx, filter).Decode(&oldProduct)
+	productObjectId, _ := primitive.ObjectIDFromHex(metaID)
+	filter := bson.M{"productinfo._id": productObjectId, "exhibitionid": exhibitionID}
+	var product *domain.ProductDAO
+	if err := repo.col.FindOne(ctx, filter).Decode(&product); err != nil {
+		return nil, err
+	}
+	return product, nil
+}
+
+func (repo *productRepo) ListByMetaID(metaID string) ([]*domain.ProductDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	productObjectId, _ := primitive.ObjectIDFromHex(metaID)
+	filter := bson.M{"productinfo._id": productObjectId, "isnotsale": false}
+	cursor, err := repo.col.Find(ctx, filter)
 	if err != nil {
 		return nil, err
 	}
 
-	return &oldProduct, nil
+	var products []*domain.ProductDAO
+	err = cursor.All(ctx, &products)
+	if err != nil {
+		return nil, err
+	}
+
+	return products, nil
 }
 
 func (repo *productRepo) List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error) {
@@ -194,57 +203,127 @@ func (repo *productRepo) MakeOutdateProducts(brandModules []string, lastUpdatedD
 	return int(outProducts.ModifiedCount)
 }
 
+func (repo *productRepo) ListDistinctInfos(filter interface{}) (brands []*domain.BrandCountsData, cats []*domain.AlloffCategoryDAO, sizes []*domain.AlloffSizeDAO) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	brandRows, _ := repo.col.Distinct(ctx, "productinfo.brand", filter)
+	for _, row := range brandRows {
+		var brand *domain.BrandDAO
+		data, _ := bson.Marshal(row)
+		bson.Unmarshal(data, &brand)
+		brands = append(brands, &domain.BrandCountsData{
+			Brand:  brand,
+			Counts: 1882,
+		})
+	}
+
+	catRows, _ := repo.col.Distinct(ctx, "productinfo.alloffcategory.first", filter)
+	for _, row := range catRows {
+		var cat *domain.AlloffCategoryDAO
+		data, _ := bson.Marshal(row)
+		bson.Unmarshal(data, &cat)
+		cats = append(cats, cat)
+	}
+
+	sizeRows, _ := repo.col.Distinct(ctx, "productinfo.inventory.alloffsizes", filter)
+	for _, row := range sizeRows {
+		var size *domain.AlloffSizeDAO
+		data, _ := bson.Marshal(row)
+		bson.Unmarshal(data, &size)
+		sizes = append(sizes, size)
+	}
+
+	return
+}
+
+func (repo *productRepo) ListInfos(filter interface{}) (brands []*domain.BrandCountsData, cats []*domain.AlloffCategoryDAO, sizes []*domain.AlloffSizeDAO) {
+	ctx, cancel := context.WithTimeout(context.Background(), 70*time.Second)
+	defer cancel()
+
+	cursor, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		return nil, nil, nil
+	}
+
+	var pds []*domain.ProductDAO
+	err = cursor.All(ctx, &pds)
+	if err != nil {
+		return nil, nil, nil
+	}
+
+	for _, pd := range pds {
+		// ******* mapping brands *******
+		brandExists := false
+		existAt := -1
+		for idx, bd := range brands {
+			// 이미 있는 브랜드면 그게 brands 몇번쨰인지 알려준다.
+			if pd.ProductInfo.Brand.ID == bd.Brand.ID {
+				brandExists = true
+				existAt = idx
+			}
+		}
+		// 아직 입력안된 브랜드면 brands 에 입력한다
+		if !brandExists {
+			brands = append(brands, &domain.BrandCountsData{
+				Brand:  pd.ProductInfo.Brand,
+				Counts: 1,
+			})
+		} else {
+			// 이미 입력된 브랜드면 counts 만 +1을 한다.
+			brands[existAt].Counts = brands[existAt].Counts + 1
+		}
+
+		// ******* mapping cats *******
+		catExists := false
+		for _, cat := range cats {
+			if pd.ProductInfo.AlloffCategory.First.ID == cat.ID {
+				catExists = true
+			}
+		}
+		if !catExists {
+			cats = append(cats, pd.ProductInfo.AlloffCategory.First)
+		}
+
+		// ******* mapping sizes *******
+		alloffSizes := []*domain.AlloffSizeDAO{}
+		for _, inv := range pd.ProductInfo.Inventory {
+			for _, alloffSize := range inv.AlloffSizes {
+				alloffSizes = append(alloffSizes, alloffSize)
+			}
+		}
+		for _, target := range alloffSizes {
+			isThere := false
+			for _, ns := range sizes {
+				if ns.ID == target.ID {
+					isThere = true
+				}
+			}
+			if !isThere {
+				sizes = append(sizes, target)
+			}
+		}
+	}
+	return
+}
+
 func MongoProductsRepo(conn *MongoDB) repository.ProductsRepository {
 	return &productRepo{
 		col: conn.productCol,
 	}
 }
 
-func (repo *productDiffRepo) Insert(diff *domain.ProductDiffDAO) error {
+func (repo *productMetaInfoRepo) Get(ID string) (*domain.ProductMetaInfoDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	_, err := repo.col.InsertOne(ctx, diff)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (repo *productDiffRepo) List(filter interface{}) ([]*domain.ProductDiffDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	cursor, err := repo.col.Find(ctx, filter)
-	if err != nil {
+	productObjectId, _ := primitive.ObjectIDFromHex(ID)
+	filter := bson.M{"_id": productObjectId}
+	var product *domain.ProductMetaInfoDAO
+	if err := repo.col.FindOne(ctx, filter).Decode(&product); err != nil {
 		return nil, err
 	}
-
-	var diffs []*domain.ProductDiffDAO
-	err = cursor.All(ctx, &diffs)
-	if err != nil {
-		return nil, err
-	}
-	return diffs, nil
-}
-
-func (repo *productDiffRepo) Update(diffDao *domain.ProductDiffDAO) (*domain.ProductDiffDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": diffDao.ID}, bson.M{"$set": &diffDao})
-	if err != nil {
-		return nil, err
-	}
-
-	return diffDao, nil
-}
-
-func MongoProductDiffsRepo(conn *MongoDB) repository.ProductDiffsRepository {
-	return &productDiffRepo{
-		col: conn.productDiffCol,
-	}
+	return product, nil
 }
 
 func (repo *productMetaInfoRepo) GetByProductID(brandKeyname string, productID string) (*domain.ProductMetaInfoDAO, error) {
@@ -261,8 +340,32 @@ func (repo *productMetaInfoRepo) GetByProductID(brandKeyname string, productID s
 	return &oldProduct, nil
 }
 
+func (repo *productMetaInfoRepo) List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductMetaInfoDAO, int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	options := options.Find()
+	options.SetSort(sortingOptions)
+	options.SetSkip(int64(offset))
+	options.SetLimit(int64(limit))
+
+	totalCount, _ := repo.col.CountDocuments(ctx, filter)
+	cursor, err := repo.col.Find(ctx, filter, options)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var productInfos []*domain.ProductMetaInfoDAO
+	err = cursor.All(ctx, &productInfos)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return productInfos, int(totalCount), nil
+}
+
 func (repo *productMetaInfoRepo) Insert(pd *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	var oldProduct domain.ProductMetaInfoDAO
@@ -301,87 +404,5 @@ func (repo *productMetaInfoRepo) Upsert(product *domain.ProductMetaInfoDAO) (*do
 func MongoProductMetaInfosRepo(conn *MongoDB) repository.ProductMetaInfoRepository {
 	return &productMetaInfoRepo{
 		col: conn.productMetaInfoCol,
-	}
-}
-
-func (repo *productLikeRepo) Like(userID, productID string) (bool, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	product, err := ioc.Repo.Products.Get(productID)
-	if err != nil {
-		return false, err
-	}
-
-	var likes *domain.LikeProductDAO
-	if err := repo.col.FindOne(ctx, bson.M{"userid": userID, "productid": productID, "removed": false}).Decode(&likes); err != nil {
-		repo.col.InsertOne(
-			ctx,
-			bson.M{"userid": userID, "created": time.Now(), "updated": time.Now(), "productid": productID, "product": product, "removed": false, "ispushed": false, "lastprice": product.DiscountedPrice},
-		)
-		return true, nil
-	}
-
-	repo.col.FindOneAndUpdate(ctx, bson.M{"userid": userID, "productid": productID, "removed": false}, bson.M{"$set": bson.M{"removed": true, "updated": time.Now()}})
-
-	return false, nil
-}
-
-func (repo *productLikeRepo) List(userID string) ([]*domain.LikeProductDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	filter := bson.M{"userid": userID, "removed": false}
-	cursor, err := repo.col.Find(ctx, filter)
-	if err != nil {
-		return nil, err
-	}
-
-	var likes []*domain.LikeProductDAO
-	err = cursor.All(ctx, &likes)
-	if err != nil {
-		return nil, err
-	}
-
-	return likes, nil
-}
-
-func (repo *productLikeRepo) ListProductsLike(productId string) ([]*domain.LikeProductDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	productOID, _ := primitive.ObjectIDFromHex(productId)
-	filter := bson.M{"product._id": productOID, "removed": false, "ispushed": false}
-	cursor, err := repo.col.Find(ctx, filter)
-	if err != nil {
-		log.Println(err, "List Like Products error: Repository - ListProductsLike")
-		return nil, errors.New("list like products error")
-	}
-
-	var likes []*domain.LikeProductDAO
-	err = cursor.All(ctx, &likes)
-	if err != nil {
-		log.Println("err in decoding likes", err)
-		return nil, err
-	}
-
-	return likes, nil
-}
-
-func (repo *productLikeRepo) Update(likeProductDao *domain.LikeProductDAO) (*domain.LikeProductDAO, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-
-	_, err := repo.col.UpdateOne(ctx, bson.M{"_id": likeProductDao.ID}, bson.M{"$set": &likeProductDao})
-	if err != nil {
-		return nil, err
-	}
-
-	return likeProductDao, nil
-}
-
-func MongoProductLikesRepo(conn *MongoDB) repository.LikeProductsRepository {
-	return &productLikeRepo{
-		col: conn.likeProductsCol,
 	}
 }

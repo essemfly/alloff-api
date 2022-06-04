@@ -11,7 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -55,25 +55,31 @@ func CrawlBylynn(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 		title, images, sizes, colors, inventories, description := getBylynnDetail(productUrl)
 
-		addRequest := &product.ProductCrawlingAddRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          title,
+			ProductID:           productID,
+			ProductUrl:          mobileUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(originalPrice),
+			DiscountedPrice:     float32(discountedPrice),
+			CurrencyType:        domain.CurrencyKRW,
 			Brand:               brand,
 			Source:              source,
-			ProductID:           productID,
-			ProductName:         title,
-			ProductUrl:          mobileUrl,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".paging", func(e *colly.HTMLElement) {
@@ -111,7 +117,7 @@ type BylynnStock struct {
 	STOCKQTY int    `json:"STOCKQTY"`
 }
 
-func getBylynnDetail(productUrl string) (title string, imageUrls []string, sizes, colors []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getBylynnDetail(productUrl string) (title string, imageUrls []string, sizes, colors []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("bylynn.shop"),
 	)
@@ -138,7 +144,7 @@ func getBylynnDetail(productUrl string) (title string, imageUrls []string, sizes
 
 	c.OnHTML("#contents100", func(e *colly.HTMLElement) {
 		colors := map[string]string{}
-		sizeInventories := []domain.InventoryDAO{}
+		sizeInventories := []*domain.InventoryDAO{}
 
 		e.ForEach(".options dl", func(_ int, el *colly.HTMLElement) {
 			if el.ChildText("dt") == "COLOR" {
@@ -157,7 +163,7 @@ func getBylynnDetail(productUrl string) (title string, imageUrls []string, sizes
 		for _, stock := range *stockCrawlResponse {
 			sizes = append(sizes, stock.SIZECDNM)
 			if stock.STOCKQTY > 0 {
-				sizeInventories = append(inventories, domain.InventoryDAO{
+				sizeInventories = append(inventories, &domain.InventoryDAO{
 					Quantity: stock.STOCKQTY,
 					Size:     stock.SIZECDNM,
 				})
@@ -168,7 +174,7 @@ func getBylynnDetail(productUrl string) (title string, imageUrls []string, sizes
 		// Colors 별로 inventory가 맞는지는 모르겠다.
 		for _, inv := range sizeInventories {
 			for _, name := range colors {
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Quantity: inv.Quantity,
 					Size:     name + " - " + inv.Size,
 				})

@@ -2,14 +2,15 @@ package malls
 
 import (
 	"encoding/json"
+	"log"
+	"strings"
+	"time"
+
 	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
-	"log"
-	"strings"
-	"time"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type ImagesURLs struct {
@@ -52,24 +53,32 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 
 		sizes, inventories, description, colors := getClaudiePierlotDetail(productUrl)
 
-		addRequest := &product.ProductCrawlingAddRequest{
-			Brand:               brand,
-			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
-			Description:         description,
-			OriginalPrice:       originalPrice,
-			SalesPrice:          discountedPrice,
-			CurrencyType:        domain.CurrencyEUR,
-			Colors:              colors,
-			Source:              source,
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          productName,
 			ProductID:           productId,
-			ProductName:         productName,
 			ProductUrl:          productUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(originalPrice),
+			DiscountedPrice:     float32(discountedPrice),
+			CurrencyType:        domain.CurrencyEUR,
+			Brand:               brand,
+			Source:              source,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
+			Images:              images,
+			Colors:              colors,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
+
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
+
 	})
 
 	err = c.Visit(source.CrawlUrl)
@@ -83,7 +92,7 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 }
 
 func getClaudiePierlotDetail(productUrl string) (
-	sizes []string, inventories []domain.InventoryDAO, description map[string]string, colors []string,
+	sizes []string, inventories []*domain.InventoryDAO, description map[string]string, colors []string,
 ) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("de.claudiepierlot.com"),
@@ -91,7 +100,7 @@ func getClaudiePierlotDetail(productUrl string) (
 	)
 	sizes = []string{}
 	description = map[string]string{}
-	inventories = []domain.InventoryDAO{}
+	inventories = []*domain.InventoryDAO{}
 	colors = []string{}
 
 	// 설명
@@ -172,7 +181,7 @@ func getClaudiePierlotDetail(productUrl string) (
 			if size != "Größe" {
 				if isSize {
 					sizes = append(sizes, size)
-					inventories = append(inventories, domain.InventoryDAO{
+					inventories = append(inventories, &domain.InventoryDAO{
 						Size:     size,
 						Quantity: stock,
 					})

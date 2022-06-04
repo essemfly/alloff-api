@@ -31,7 +31,7 @@ func (repo *exhibitionRepo) Get(ID string) (*domain.ExhibitionDAO, error) {
 
 }
 
-func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionType domain.ExhibitionType, query string) ([]*domain.ExhibitionDAO, int, error) {
+func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionStatus domain.ExhibitionStatus, exhibitionType domain.ExhibitionType, query string) ([]*domain.ExhibitionDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
@@ -42,6 +42,21 @@ func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionTyp
 	onGoingOptions := options.Find()
 	onGoingOptions.SetSkip(int64(offset))
 	onGoingOptions.SetLimit(int64(limit))
+	//onGoingOptions.SetSort(sortingOptions)
+
+	switch exhibitionStatus {
+	case domain.EXHIBITION_NOTOPEN:
+		filter["starttime"] = bson.M{"$gte": now}
+		filter["islive"] = true
+		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: -1}})
+	case domain.EXHIBITION_LIVE:
+		filter["finishtime"] = bson.M{"$gte": now}
+		filter["islive"] = true
+		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: -1}})
+	case domain.EXHIBITION_CLOSED:
+		filter["finishtime"] = bson.M{"$lte": now}
+		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: -1}})
+	}
 
 	if onlyLive {
 		filter["finishtime"] = bson.M{"$gte": now}
@@ -103,6 +118,53 @@ func (repo *exhibitionRepo) Upsert(exhibition *domain.ExhibitionDAO) (*domain.Ex
 
 	newPg, _ := repo.Get(newExhibitionID)
 	return newPg, nil
+}
+
+func (repo *exhibitionRepo) ListGroupDeals(offset, limit int, onlyLive bool, exhibitionStatus domain.GroupdealStatus) ([]*domain.ExhibitionDAO, int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{
+		"exhibitiontype": domain.EXHIBITION_GROUPDEAL,
+	}
+	onGoingOptions := options.Find()
+	onGoingOptions.SetSkip(int64(offset))
+	onGoingOptions.SetLimit(int64(limit))
+
+	if onlyLive {
+		filter["islive"] = true
+		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: -1}})
+	} else {
+		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: -1}})
+	}
+
+	now := primitive.NewDateTimeFromTime(time.Now())
+
+	if exhibitionStatus == domain.GROUPDEAL_PENDING {
+		filter["starttime"] = bson.M{"$gte": now}
+		filter["recruitstarttime"] = bson.M{"$lte": now}
+	} else if exhibitionStatus == domain.GROUPDEAL_OPEN {
+		filter["starttime"] = bson.M{"$lte": now}
+		filter["finishtime"] = bson.M{"$gte": now}
+	} else if exhibitionStatus == domain.GROUPDEAL_CLOSED {
+		filter["finishtime"] = bson.M{"$lte": now}
+	}
+
+	totalCount, _ := repo.col.CountDocuments(ctx, filter)
+	cur, err := repo.col.Find(ctx, filter, onGoingOptions)
+	if err != nil {
+		log.Println(err)
+		return nil, 0, err
+	}
+
+	var exhibitions []*domain.ExhibitionDAO
+	err = cur.All(ctx, &exhibitions)
+	if err != nil {
+		log.Println(err)
+		return nil, 0, err
+	}
+
+	return exhibitions, int(totalCount), nil
 }
 
 func MongoExhibitionsRepo(conn *MongoDB) repository.ExhibitionsRepository {

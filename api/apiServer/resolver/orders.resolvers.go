@@ -5,63 +5,20 @@ package resolver
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"log"
 	"strconv"
 
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/amplitude"
-	"github.com/lessbutter/alloff-api/internal/pkg/broker"
-	"github.com/lessbutter/alloff-api/pkg/order"
+	"github.com/lessbutter/alloff-api/pkg/basket"
+	"go.uber.org/zap"
 )
-
-func (r *mutationResolver) CheckOrder(ctx context.Context, input *model.OrderInput) (*model.OrderValidityResult, error) {
-	/*
-		1. Baskets을 만든다.
-		2. Basket이 Valid한지 Check를 한다.
-		3. Errors들을 모아서 보여준다.
-		4. Order를 Create해줄 필요는 없다.
-	*/
-
-	basketItems, err := BuildBasketItems(input)
-	if err != nil {
-		return nil, fmt.Errorf("ERR100:alloffproduct not found")
-	}
-
-	basket := &order.Basket{
-		Items:        basketItems,
-		ProductPrice: input.ProductPrice,
-	}
-
-	errs := basket.IsValid()
-
-	orderDao, err := basket.BuildOrder(nil)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(errs) > 0 {
-		var errString = []string{}
-		for _, err := range errs {
-			errString = append(errString, err.Error())
-		}
-
-		return &model.OrderValidityResult{
-			Available: false,
-			ErrorMsgs: errString,
-			Order:     mapper.MapOrder(orderDao),
-		}, nil
-	}
-
-	return &model.OrderValidityResult{
-		Available: true,
-		ErrorMsgs: nil,
-		Order:     mapper.MapOrder(orderDao),
-	}, nil
-}
 
 func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error) {
 	/*
@@ -79,21 +36,21 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 		return nil, err
 	}
 
-	basket := &order.Basket{
+	basketDao := &domain.Basket{
 		Items:        basketItems,
 		ProductPrice: input.ProductPrice,
 	}
 
-	errs := basket.IsValid()
-	if len(errs) > 0 {
-		return nil, errs[0]
+	newCart, isValid, reason := basket.Refresh(basketDao)
+	if !isValid {
+		return nil, errors.New(reason)
 	}
 
-	orderDao, _ := basket.BuildOrder(user)
-
+	orderDao, _ := basket.BuildOrder(user, newCart)
 	newOrderDao, err := ioc.Repo.Orders.Insert(orderDao)
 	if err != nil {
-		return nil, fmt.Errorf("ERR300:failed to create order not found")
+		config.Logger.Error("order insert fail", zap.Error(err))
+		return nil, fmt.Errorf("ERR300:failed to create order not found" + err.Error())
 	}
 
 	basePayment := newOrderDao.GetBasePayment()
@@ -142,7 +99,7 @@ func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.Paym
 	return result, nil
 }
 
-func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error) {
+func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.CancelPaymentInput) (*model.PaymentStatus, error) {
 	/*
 		0. 주문창까지 넘어갔다가 취소된 경우 발생하는 API
 		1. Payment가 취소 되면서, 재고가 다시 회복됩니다.
@@ -159,7 +116,7 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Payme
 		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
-	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(input.MerchantUID, input.Amount)
+	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(input.MerchantUID, orderDao.TotalPrice)
 	if err != nil {
 		return nil, fmt.Errorf("ERR404:failed to find payment order not found")
 	}
@@ -223,28 +180,6 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 
 	amplitude.LogOrderRecord(user, orderDao, paymentDao)
 
-	exhibitionOrder := false
-	for _, item := range orderDao.OrderItems {
-		if item.ExhibitionID != "" {
-			exhibitionOrder = true
-			_, err := ioc.Repo.OrderCounts.Push(item.ExhibitionID)
-			if err != nil {
-				log.Println("update order counts failed on groupdeal", orderDao.ID)
-			}
-
-			exDao, err := ioc.Repo.Exhibitions.Get(item.ExhibitionID)
-			if err != nil {
-				log.Println("exhibition update failed", err)
-				continue
-			}
-			go broker.ExhibitionSyncer(exDao)
-		}
-	}
-
-	if exhibitionOrder {
-		go broker.HomeTabSyncer()
-	}
-
 	return &model.PaymentResult{
 		Success:     true,
 		ErrorMsg:    "",
@@ -288,28 +223,6 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 	}
 
 	amplitude.LogCancelOrderItemRecord(user, orderItemDao, paymentDao)
-
-	exhibitionOrder := false
-	for _, item := range orderDao.OrderItems {
-		if item.ExhibitionID != "" {
-			exhibitionOrder = true
-			_, err := ioc.Repo.OrderCounts.Cancel(item.ExhibitionID)
-			if err != nil {
-				log.Println("update order counts failed on groupdeal", orderDao.ID)
-			}
-
-			exDao, err := ioc.Repo.Exhibitions.Get(item.ExhibitionID)
-			if err != nil {
-				log.Println("exhibition update failed", err)
-				continue
-			}
-			go broker.ExhibitionSyncer(exDao)
-		}
-	}
-
-	if exhibitionOrder {
-		go broker.HomeTabSyncer()
-	}
 
 	result.Success = true
 	return result, nil

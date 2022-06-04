@@ -17,30 +17,10 @@ type AlloffCategory struct {
 	ImgURL   string `json:"imgUrl"`
 }
 
-type AlloffCategoryID struct {
-	ID string `json:"id"`
-}
-
-type AlloffCategoryInput struct {
-	ParentID *string `json:"parentId"`
-}
-
-type AlloffCategoryProducts struct {
-	Alloffcategory *AlloffCategory `json:"alloffcategory"`
-	Products       []*Product      `json:"products"`
-	AllBrands      []*Brand        `json:"allBrands"`
-	SelectedBrands []string        `json:"selectedBrands"`
-	TotalCount     int             `json:"totalCount"`
-	Offset         int             `json:"offset"`
-	Limit          int             `json:"limit"`
-}
-
-type AlloffCategoryProductsInput struct {
-	Offset           int           `json:"offset"`
-	Limit            int           `json:"limit"`
-	AlloffcategoryID string        `json:"alloffcategoryId"`
-	BrandIds         []string      `json:"brandIds"`
-	Sorting          []SortingType `json:"sorting"`
+type AlloffSize struct {
+	ID             string          `json:"id"`
+	AlloffCategory *AlloffCategory `json:"alloffCategory"`
+	AlloffSizeName string          `json:"alloffSizeName"`
 }
 
 type AppVersion struct {
@@ -72,18 +52,13 @@ type BrandInput struct {
 	BrandID string `json:"brandId"`
 }
 
-type BrandItem struct {
-	ImgURL string `json:"imgUrl"`
-	Brand  *Brand `json:"brand"`
+type BrandOutput struct {
+	Brand       *Brand `json:"brand"`
+	NumProducts int    `json:"numProducts"`
 }
 
 type BrandsInput struct {
 	OnlyLikes *bool `json:"onlyLikes"`
-}
-
-type BrandsResult struct {
-	Brands      []*Brand `json:"brands"`
-	LastUpdated string   `json:"lastUpdated"`
 }
 
 type CancelDescription struct {
@@ -93,17 +68,34 @@ type CancelDescription struct {
 	RefundFee       int  `json:"refundFee"`
 }
 
+type CancelPaymentInput struct {
+	ImpUID      string `json:"impUID"`
+	MerchantUID string `json:"merchantUID"`
+}
+
+type Cart struct {
+	ID    string      `json:"id"`
+	Items []*CartItem `json:"items"`
+}
+
+type CartItem struct {
+	Product   *Product `json:"product"`
+	Size      string   `json:"size"`
+	Quantity  int      `json:"quantity"`
+	ErrorMsgs []string `json:"errorMsgs"`
+}
+
+type CartItemInput struct {
+	CartID     string `json:"cartId"`
+	ProductID  string `json:"productId"`
+	Selectsize string `json:"selectsize"`
+	Quantity   int    `json:"quantity"`
+}
+
 type Category struct {
 	ID      string `json:"id"`
 	KeyName string `json:"keyName"`
 	Name    string `json:"name"`
-}
-
-type CommunityItem struct {
-	Name       string            `json:"name"`
-	Target     string            `json:"target"`
-	TargetType CommunityItemType `json:"targetType"`
-	ImgURL     string            `json:"imgUrl"`
 }
 
 type DeliveryDescription struct {
@@ -122,79 +114,41 @@ type Device struct {
 }
 
 type Exhibition struct {
-	ID                 string              `json:"id"`
-	BannerImage        string              `json:"bannerImage"`
-	ThumbnailImage     string              `json:"thumbnailImage"`
-	Title              string              `json:"title"`
-	SubTitle           string              `json:"subTitle"`
-	Description        string              `json:"description"`
-	ProductGroups      []*ProductGroup     `json:"productGroups"`
-	StartTime          string              `json:"startTime"`
-	FinishTime         string              `json:"finishTime"`
-	TargetSales        int                 `json:"targetSales"`
-	CurrentSales       int                 `json:"currentSales"`
-	ExhibitionType     ExhibitionType      `json:"exhibitionType"`
-	Banners            []*ExhibitionBanner `json:"banners"`
-	TotalProducts      int                 `json:"totalProducts"`
-	TotalProductGroups int                 `json:"totalProductGroups"`
+	ID             string              `json:"id"`
+	ProductTypes   []AlloffProductType `json:"productTypes"`
+	ExhibitionType ExhibitionType      `json:"exhibitionType"`
+	Title          string              `json:"title"`
+	SubTitle       string              `json:"subTitle"`
+	Description    string              `json:"description"`
+	Tags           []string            `json:"tags"`
+	BannerImage    string              `json:"bannerImage"`
+	ThumbnailImage string              `json:"thumbnailImage"`
+	StartTime      string              `json:"startTime"`
+	FinishTime     string              `json:"finishTime"`
+	NumAlarms      int                 `json:"numAlarms"`
+	MaxDiscounts   int                 `json:"maxDiscounts"`
 }
 
-type ExhibitionBanner struct {
-	ImgURL         string `json:"imgUrl"`
-	ProductGroupID string `json:"productGroupId"`
-	Title          string `json:"title"`
-	Subtitle       string `json:"subtitle"`
+type ExhibitionInput struct {
+	Status ExhibitionStatus `json:"status"`
 }
 
-type FeaturedItem struct {
-	ID       string    `json:"id"`
-	Order    int       `json:"order"`
-	Brand    *Brand    `json:"brand"`
-	Img      string    `json:"img"`
-	Category *Category `json:"category"`
-}
-
-type HomeItem struct {
-	ID             string           `json:"id"`
-	Priority       int              `json:"priority"`
-	Title          string           `json:"title"`
-	ItemType       HomeItemType     `json:"itemType"`
-	TargetID       string           `json:"targetId"`
-	Sorting        []SortingType    `json:"sorting"`
-	Images         []string         `json:"images"`
-	CommunityItems []*CommunityItem `json:"communityItems"`
-	Brands         []*BrandItem     `json:"brands"`
-	Products       []*Product       `json:"products"`
-	ProductGroups  []*ProductGroup  `json:"productGroups"`
-}
-
-type HomeTabItem struct {
-	ID           string              `json:"id"`
-	Title        string              `json:"title"`
-	Description  string              `json:"description"`
-	Tags         []string            `json:"tags"`
-	BackImageURL string              `json:"backImageUrl"`
-	ItemType     HomeTabItemTypeEnum `json:"itemType"`
-	Products     []*Product          `json:"products"`
-	Brands       []*Brand            `json:"brands"`
-	Exhibitions  []*Exhibition       `json:"exhibitions"`
-	Reference    *ItemReference      `json:"reference"`
+type ExhibitionOutput struct {
+	Exhibitions   []*Exhibition    `json:"exhibitions"`
+	Status        ExhibitionStatus `json:"status"`
+	LiveCounts    int              `json:"liveCounts"`
+	NotOpenCounts int              `json:"notOpenCounts"`
 }
 
 type Inventory struct {
-	Size     string `json:"size"`
-	Quantity int    `json:"quantity"`
+	Size        string        `json:"size"`
+	Quantity    int           `json:"quantity"`
+	AlloffSizes []*AlloffSize `json:"alloffSizes"`
 }
 
 type InventoryInput struct {
 	Size     string `json:"size"`
 	Quantity int    `json:"quantity"`
-}
-
-type ItemReference struct {
-	Path    string        `json:"path"`
-	Params  string        `json:"params"`
-	Options []SortingType `json:"options"`
 }
 
 type KeyValueInfo struct {
@@ -206,18 +160,22 @@ type LikeBrandInput struct {
 	BrandID string `json:"brandId"`
 }
 
-type LikeProductInput struct {
-	ProductID string `json:"productId"`
-}
-
-type LikeProductOutput struct {
-	OldProduct *Product `json:"oldProduct"`
-	NewProduct *Product `json:"newProduct"`
-}
-
 type Login struct {
 	UUID   string `json:"uuid"`
 	Mobile string `json:"mobile"`
+}
+
+type MetaInfoInput struct {
+	ExhibitionID     string            `json:"exhibitionId"`
+	ProductType      AlloffProductType `json:"productType"`
+	AlloffCategoryID *string           `json:"alloffCategoryId"`
+	BrandIds         []string          `json:"brandIds"`
+}
+
+type MetaInfoOutput struct {
+	Brands           []*BrandOutput    `json:"brands"`
+	AlloffCategories []*AlloffCategory `json:"alloffCategories"`
+	AlloffSizes      []*AlloffSize     `json:"alloffSizes"`
 }
 
 type NewUser struct {
@@ -275,13 +233,14 @@ type OrderItem struct {
 	CancelRequestedAt      string               `json:"cancelRequestedAt"`
 	CancelFinishedAt       string               `json:"cancelFinishedAt"`
 	ConfirmedAt            string               `json:"confirmedAt"`
+	UserID                 string               `json:"userId"`
+	User                   *User                `json:"user"`
 }
 
 type OrderItemInput struct {
-	ProductID      string `json:"productId"`
-	ProductGroupID string `json:"productGroupId"`
-	Selectsize     string `json:"selectsize"`
-	Quantity       int    `json:"quantity"`
+	ProductID  string `json:"productId"`
+	Selectsize string `json:"selectsize"`
+	Quantity   int    `json:"quantity"`
 }
 
 type OrderItemStatusDescription struct {
@@ -362,28 +321,25 @@ type PaymentStatus struct {
 }
 
 type Product struct {
-	ID                  string               `json:"id"`
-	Category            *Category            `json:"category"`
-	Brand               *Brand               `json:"brand"`
-	Name                string               `json:"name"`
-	ProductGroupID      string               `json:"productGroupId"`
-	OriginalPrice       int                  `json:"originalPrice"`
-	Soldout             bool                 `json:"soldout"`
-	Images              []string             `json:"images"`
-	DiscountedPrice     int                  `json:"discountedPrice"`
-	DiscountRate        int                  `json:"discountRate"`
-	SpecialPrice        *int                 `json:"specialPrice"`
-	SpecialDiscountRate *int                 `json:"specialDiscountRate"`
-	ProductURL          string               `json:"productUrl"`
-	Inventory           []*Inventory         `json:"inventory"`
-	IsUpdated           bool                 `json:"isUpdated"`
-	IsNewProduct        bool                 `json:"isNewProduct"`
-	Removed             bool                 `json:"removed"`
-	Information         []*KeyValueInfo      `json:"information"`
-	Description         *ProductDescription  `json:"description"`
-	CancelDescription   *CancelDescription   `json:"cancelDescription"`
-	DeliveryDescription *DeliveryDescription `json:"deliveryDescription"`
-	ThumbnailImage      string               `json:"thumbnailImage"`
+	ID                   string               `json:"id"`
+	IsNotSale            bool                 `json:"isNotSale"`
+	Brand                *Brand               `json:"brand"`
+	AlloffCategory       *AlloffCategory      `json:"alloffCategory"`
+	Name                 string               `json:"name"`
+	OriginalPrice        int                  `json:"originalPrice"`
+	DiscountedPrice      int                  `json:"discountedPrice"`
+	DiscountRate         int                  `json:"discountRate"`
+	Images               []string             `json:"images"`
+	ThumbnailImage       string               `json:"thumbnailImage"`
+	Inventory            []*Inventory         `json:"inventory"`
+	IsSoldout            bool                 `json:"isSoldout"`
+	Description          *ProductDescription  `json:"description"`
+	DeliveryDescription  *DeliveryDescription `json:"deliveryDescription"`
+	CancelDescription    *CancelDescription   `json:"cancelDescription"`
+	Information          []*KeyValueInfo      `json:"information"`
+	ExhibitionID         string               `json:"exhibitionId"`
+	ExhibitionStartTime  string               `json:"exhibitionStartTime"`
+	ExhibitionFinishTime string               `json:"exhibitionFinishTime"`
 }
 
 type ProductDescription struct {
@@ -394,45 +350,31 @@ type ProductDescription struct {
 
 type ProductGroup struct {
 	ID            string     `json:"id"`
+	Brand         *Brand     `json:"brand"`
 	Title         string     `json:"title"`
 	ShortTitle    string     `json:"shortTitle"`
-	Instruction   []string   `json:"instruction"`
 	ImgURL        string     `json:"imgUrl"`
 	Products      []*Product `json:"products"`
-	StartTime     string     `json:"startTime"`
-	FinishTime    string     `json:"finishTime"`
-	NumAlarms     int        `json:"numAlarms"`
-	SetAlarm      bool       `json:"setAlarm"`
-	Brand         *Brand     `json:"brand"`
 	TotalProducts int        `json:"totalProducts"`
 }
 
-type ProductQueryInput struct {
-	Offset  int           `json:"offset"`
-	Limit   int           `json:"limit"`
-	Keyword string        `json:"keyword"`
-	Sorting []SortingType `json:"sorting"`
-}
-
 type ProductsInput struct {
-	Offset         int           `json:"offset"`
-	Limit          int           `json:"limit"`
-	Brand          *string       `json:"brand"`
-	Category       *string       `json:"category"`
-	Sorting        []SortingType `json:"sorting"`
-	ProductGroupID *string       `json:"productGroupId"`
+	Offset           int                   `json:"offset"`
+	Limit            int                   `json:"limit"`
+	ProductType      AlloffProductType     `json:"productType"`
+	ExhibitionID     string                `json:"exhibitionId"`
+	AlloffCategoryID *string               `json:"alloffCategoryId"`
+	BrandIds         []string              `json:"brandIds"`
+	AlloffSizeIds    []string              `json:"alloffSizeIds"`
+	Sorting          []ProductsSortingType `json:"sorting"`
 }
 
 type ProductsOutput struct {
-	TotalCount int        `json:"totalCount"`
-	Offset     int        `json:"offset"`
-	Limit      int        `json:"limit"`
-	Products   []*Product `json:"products"`
-}
-
-type ProductsResult struct {
-	Products    []*Product `json:"products"`
-	LastUpdated string     `json:"lastUpdated"`
+	TotalCount   int        `json:"totalCount"`
+	Offset       int        `json:"offset"`
+	Limit        int        `json:"limit"`
+	ExhibitionID string     `json:"exhibitionId"`
+	Products     []*Product `json:"products"`
 }
 
 type RefreshTokenInput struct {
@@ -451,12 +393,12 @@ type SizeGuide struct {
 	ImgURL string `json:"imgUrl"`
 }
 
-type TopBanner struct {
-	ID           string `json:"id"`
-	ImageURL     string `json:"imageUrl"`
-	ExhibitionID string `json:"exhibitionId"`
-	Title        string `json:"title"`
-	SubTitle     string `json:"subTitle"`
+type SizeMappingPolicy struct {
+	ID                string              `json:"id"`
+	AlloffSize        *AlloffSize         `json:"alloffSize"`
+	AlloffCategory    *AlloffCategory     `json:"alloffCategory"`
+	Sizes             []string            `json:"sizes"`
+	AlloffProductType []AlloffProductType `json:"alloffProductType"`
 }
 
 type User struct {
@@ -482,44 +424,50 @@ type UserInfoInput struct {
 	PersonalCustomsNumber *string `json:"personalCustomsNumber"`
 }
 
-type CommunityItemType string
+type AlloffProductType string
 
 const (
-	CommunityItemTypeOutlink  CommunityItemType = "OUTLINK"
-	CommunityItemTypeInternal CommunityItemType = "INTERNAL"
+	AlloffProductTypeMale   AlloffProductType = "MALE"
+	AlloffProductTypeFemale AlloffProductType = "FEMALE"
+	AlloffProductTypeBoy    AlloffProductType = "BOY"
+	AlloffProductTypeGirl   AlloffProductType = "GIRL"
+	AlloffProductTypeKids   AlloffProductType = "KIDS"
 )
 
-var AllCommunityItemType = []CommunityItemType{
-	CommunityItemTypeOutlink,
-	CommunityItemTypeInternal,
+var AllAlloffProductType = []AlloffProductType{
+	AlloffProductTypeMale,
+	AlloffProductTypeFemale,
+	AlloffProductTypeBoy,
+	AlloffProductTypeGirl,
+	AlloffProductTypeKids,
 }
 
-func (e CommunityItemType) IsValid() bool {
+func (e AlloffProductType) IsValid() bool {
 	switch e {
-	case CommunityItemTypeOutlink, CommunityItemTypeInternal:
+	case AlloffProductTypeMale, AlloffProductTypeFemale, AlloffProductTypeBoy, AlloffProductTypeGirl, AlloffProductTypeKids:
 		return true
 	}
 	return false
 }
 
-func (e CommunityItemType) String() string {
+func (e AlloffProductType) String() string {
 	return string(e)
 }
 
-func (e *CommunityItemType) UnmarshalGQL(v interface{}) error {
+func (e *AlloffProductType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = CommunityItemType(str)
+	*e = AlloffProductType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid CommunityItemType", str)
+		return fmt.Errorf("%s is not a valid AlloffProductType", str)
 	}
 	return nil
 }
 
-func (e CommunityItemType) MarshalGQL(w io.Writer) {
+func (e AlloffProductType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -564,25 +512,68 @@ func (e DeliveryType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+type ExhibitionStatus string
+
+const (
+	ExhibitionStatusLive    ExhibitionStatus = "LIVE"
+	ExhibitionStatusNotOpen ExhibitionStatus = "NOT_OPEN"
+	ExhibitionStatusClosed  ExhibitionStatus = "CLOSED"
+)
+
+var AllExhibitionStatus = []ExhibitionStatus{
+	ExhibitionStatusLive,
+	ExhibitionStatusNotOpen,
+	ExhibitionStatusClosed,
+}
+
+func (e ExhibitionStatus) IsValid() bool {
+	switch e {
+	case ExhibitionStatusLive, ExhibitionStatusNotOpen, ExhibitionStatusClosed:
+		return true
+	}
+	return false
+}
+
+func (e ExhibitionStatus) String() string {
+	return string(e)
+}
+
+func (e *ExhibitionStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ExhibitionStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ExhibitionStatus", str)
+	}
+	return nil
+}
+
+func (e ExhibitionStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
 type ExhibitionType string
 
 const (
-	ExhibitionTypeGroupdeal     ExhibitionType = "GROUPDEAL"
-	ExhibitionTypeTimedeal      ExhibitionType = "TIMEDEAL"
-	ExhibitionTypeNormal        ExhibitionType = "NORMAL"
-	ExhibitionTypeBrandTimedeal ExhibitionType = "BRAND_TIMEDEAL"
+	ExhibitionTypeNormal    ExhibitionType = "NORMAL"
+	ExhibitionTypeGroupdeal ExhibitionType = "GROUPDEAL"
+	ExhibitionTypeTimedeal  ExhibitionType = "TIMEDEAL"
+	ExhibitionTypeAll       ExhibitionType = "ALL"
 )
 
 var AllExhibitionType = []ExhibitionType{
+	ExhibitionTypeNormal,
 	ExhibitionTypeGroupdeal,
 	ExhibitionTypeTimedeal,
-	ExhibitionTypeNormal,
-	ExhibitionTypeBrandTimedeal,
+	ExhibitionTypeAll,
 }
 
 func (e ExhibitionType) IsValid() bool {
 	switch e {
-	case ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal, ExhibitionTypeNormal, ExhibitionTypeBrandTimedeal:
+	case ExhibitionTypeNormal, ExhibitionTypeGroupdeal, ExhibitionTypeTimedeal, ExhibitionTypeAll:
 		return true
 	}
 	return false
@@ -606,102 +597,6 @@ func (e *ExhibitionType) UnmarshalGQL(v interface{}) error {
 }
 
 func (e ExhibitionType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type HomeItemType string
-
-const (
-	HomeItemTypeCommunity HomeItemType = "COMMUNITY"
-	HomeItemTypeImage     HomeItemType = "IMAGE"
-	HomeItemTypeProduct   HomeItemType = "PRODUCT"
-	HomeItemTypeBrand     HomeItemType = "BRAND"
-	HomeItemTypeTimedeal  HomeItemType = "TIMEDEAL"
-)
-
-var AllHomeItemType = []HomeItemType{
-	HomeItemTypeCommunity,
-	HomeItemTypeImage,
-	HomeItemTypeProduct,
-	HomeItemTypeBrand,
-	HomeItemTypeTimedeal,
-}
-
-func (e HomeItemType) IsValid() bool {
-	switch e {
-	case HomeItemTypeCommunity, HomeItemTypeImage, HomeItemTypeProduct, HomeItemTypeBrand, HomeItemTypeTimedeal:
-		return true
-	}
-	return false
-}
-
-func (e HomeItemType) String() string {
-	return string(e)
-}
-
-func (e *HomeItemType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = HomeItemType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid HomeItemType", str)
-	}
-	return nil
-}
-
-func (e HomeItemType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type HomeTabItemTypeEnum string
-
-const (
-	HomeTabItemTypeEnumHometabItemBrands             HomeTabItemTypeEnum = "HOMETAB_ITEM_BRANDS"
-	HomeTabItemTypeEnumHometabItemBrandExhibition    HomeTabItemTypeEnum = "HOMETAB_ITEM_BRAND_EXHIBITION"
-	HomeTabItemTypeEnumHometabItemExhibitions        HomeTabItemTypeEnum = "HOMETAB_ITEM_EXHIBITIONS"
-	HomeTabItemTypeEnumHometabItemExhibition         HomeTabItemTypeEnum = "HOMETAB_ITEM_EXHIBITION"
-	HomeTabItemTypeEnumHometabItemProductsBrands     HomeTabItemTypeEnum = "HOMETAB_ITEM_PRODUCTS_BRANDS"
-	HomeTabItemTypeEnumHometabItemProductsCategories HomeTabItemTypeEnum = "HOMETAB_ITEM_PRODUCTS_CATEGORIES"
-)
-
-var AllHomeTabItemTypeEnum = []HomeTabItemTypeEnum{
-	HomeTabItemTypeEnumHometabItemBrands,
-	HomeTabItemTypeEnumHometabItemBrandExhibition,
-	HomeTabItemTypeEnumHometabItemExhibitions,
-	HomeTabItemTypeEnumHometabItemExhibition,
-	HomeTabItemTypeEnumHometabItemProductsBrands,
-	HomeTabItemTypeEnumHometabItemProductsCategories,
-}
-
-func (e HomeTabItemTypeEnum) IsValid() bool {
-	switch e {
-	case HomeTabItemTypeEnumHometabItemBrands, HomeTabItemTypeEnumHometabItemBrandExhibition, HomeTabItemTypeEnumHometabItemExhibitions, HomeTabItemTypeEnumHometabItemExhibition, HomeTabItemTypeEnumHometabItemProductsBrands, HomeTabItemTypeEnumHometabItemProductsCategories:
-		return true
-	}
-	return false
-}
-
-func (e HomeTabItemTypeEnum) String() string {
-	return string(e)
-}
-
-func (e *HomeTabItemTypeEnum) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = HomeTabItemTypeEnum(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid HomeTabItemTypeEnum", str)
-	}
-	return nil
-}
-
-func (e HomeTabItemTypeEnum) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
@@ -923,55 +818,59 @@ func (e PaymentStatusEnum) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type SortingType string
+type ProductsSortingType string
 
 const (
-	SortingTypePriceAscending         SortingType = "PRICE_ASCENDING"
-	SortingTypePriceDescending        SortingType = "PRICE_DESCENDING"
-	SortingTypeDiscount0_30           SortingType = "DISCOUNT_0_30"
-	SortingTypeDiscount30_50          SortingType = "DISCOUNT_30_50"
-	SortingTypeDiscount50_70          SortingType = "DISCOUNT_50_70"
-	SortingTypeDiscount70_100         SortingType = "DISCOUNT_70_100"
-	SortingTypeDiscountrateAscending  SortingType = "DISCOUNTRATE_ASCENDING"
-	SortingTypeDiscountrateDescending SortingType = "DISCOUNTRATE_DESCENDING"
+	ProductsSortingTypePriceAscending         ProductsSortingType = "PRICE_ASCENDING"
+	ProductsSortingTypePriceDescending        ProductsSortingType = "PRICE_DESCENDING"
+	ProductsSortingTypeDiscount0_30           ProductsSortingType = "DISCOUNT_0_30"
+	ProductsSortingTypeDiscount30_50          ProductsSortingType = "DISCOUNT_30_50"
+	ProductsSortingTypeDiscount50_70          ProductsSortingType = "DISCOUNT_50_70"
+	ProductsSortingTypeDiscount70_100         ProductsSortingType = "DISCOUNT_70_100"
+	ProductsSortingTypeDiscountrateAscending  ProductsSortingType = "DISCOUNTRATE_ASCENDING"
+	ProductsSortingTypeDiscountrateDescending ProductsSortingType = "DISCOUNTRATE_DESCENDING"
+	ProductsSortingTypeInventoryAscending     ProductsSortingType = "INVENTORY_ASCENDING"
+	ProductsSortingTypeInventoryDescending    ProductsSortingType = "INVENTORY_DESCENDING"
 )
 
-var AllSortingType = []SortingType{
-	SortingTypePriceAscending,
-	SortingTypePriceDescending,
-	SortingTypeDiscount0_30,
-	SortingTypeDiscount30_50,
-	SortingTypeDiscount50_70,
-	SortingTypeDiscount70_100,
-	SortingTypeDiscountrateAscending,
-	SortingTypeDiscountrateDescending,
+var AllProductsSortingType = []ProductsSortingType{
+	ProductsSortingTypePriceAscending,
+	ProductsSortingTypePriceDescending,
+	ProductsSortingTypeDiscount0_30,
+	ProductsSortingTypeDiscount30_50,
+	ProductsSortingTypeDiscount50_70,
+	ProductsSortingTypeDiscount70_100,
+	ProductsSortingTypeDiscountrateAscending,
+	ProductsSortingTypeDiscountrateDescending,
+	ProductsSortingTypeInventoryAscending,
+	ProductsSortingTypeInventoryDescending,
 }
 
-func (e SortingType) IsValid() bool {
+func (e ProductsSortingType) IsValid() bool {
 	switch e {
-	case SortingTypePriceAscending, SortingTypePriceDescending, SortingTypeDiscount0_30, SortingTypeDiscount30_50, SortingTypeDiscount50_70, SortingTypeDiscount70_100, SortingTypeDiscountrateAscending, SortingTypeDiscountrateDescending:
+	case ProductsSortingTypePriceAscending, ProductsSortingTypePriceDescending, ProductsSortingTypeDiscount0_30, ProductsSortingTypeDiscount30_50, ProductsSortingTypeDiscount50_70, ProductsSortingTypeDiscount70_100, ProductsSortingTypeDiscountrateAscending, ProductsSortingTypeDiscountrateDescending, ProductsSortingTypeInventoryAscending, ProductsSortingTypeInventoryDescending:
 		return true
 	}
 	return false
 }
 
-func (e SortingType) String() string {
+func (e ProductsSortingType) String() string {
 	return string(e)
 }
 
-func (e *SortingType) UnmarshalGQL(v interface{}) error {
+func (e *ProductsSortingType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = SortingType(str)
+	*e = ProductsSortingType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid SortingType", str)
+		return fmt.Errorf("%s is not a valid ProductsSortingType", str)
 	}
 	return nil
 }
 
-func (e SortingType) MarshalGQL(w io.Writer) {
+func (e ProductsSortingType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

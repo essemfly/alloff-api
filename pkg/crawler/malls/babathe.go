@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type BabatheStokPostData struct {
@@ -60,25 +60,31 @@ func CrawlBabathe(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			productName, productID, productUrl, origPrice, curPrice := ParseHtml(s)
 			images, sizes, colors, inventories, description := CrawlBabatheDetail(productUrl, productID, source)
 
-			addRequest := &product.ProductCrawlingAddRequest{
+			addRequest := &productinfo.AddMetaInfoRequest{
+				AlloffName:          productName,
+				ProductID:           productID,
+				ProductUrl:          productUrl,
+				ProductType:         []domain.AlloffProductType{domain.Female},
+				OriginalPrice:       float32(origPrice),
+				DiscountedPrice:     float32(curPrice),
+				CurrencyType:        domain.CurrencyKRW,
 				Brand:               brand,
 				Source:              source,
-				ProductID:           productID,
-				ProductName:         productName,
-				ProductUrl:          productUrl,
+				AlloffCategory:      &domain.AlloffCategoryDAO{},
 				Images:              images,
-				Sizes:               sizes,
-				Inventories:         inventories,
 				Colors:              colors,
-				Description:         description,
-				OriginalPrice:       float32(origPrice),
-				SalesPrice:          float32(curPrice),
-				CurrencyType:        domain.CurrencyKRW,
+				Sizes:               sizes,
+				Inventory:           inventories,
+				Information:         description,
+				IsForeignDelivery:   false,
 				IsTranslateRequired: false,
+				ModuleName:          source.CrawlModuleName,
+				IsRemoved:           false,
+				IsSoldout:           false,
 			}
 
 			totalProducts += 1
-			product.AddProductInCrawling(addRequest)
+			productinfo.ProcessCrawlingInfoRequests(addRequest)
 		})
 
 		if numProducts > 0 {
@@ -114,7 +120,7 @@ func ParseHtml(s *goquery.Selection) (productName, productID, productUrl string,
 	return
 }
 
-func CrawlBabatheDetail(productUrl, productId string, source *domain.CrawlSourceDAO) (images, sizes, colors []string, inventories []domain.InventoryDAO, description map[string]string) {
+func CrawlBabatheDetail(productUrl, productId string, source *domain.CrawlSourceDAO) (images, sizes, colors []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	description = map[string]string{}
 
 	stockUrl := "https://pc.babathe.com/goods/includeGoodsDtlItemStockQtyList"
@@ -153,7 +159,7 @@ func CrawlBabatheDetail(productUrl, productId string, source *domain.CrawlSource
 	for _, val := range stockCrawlResponse.Wrapper {
 		sizes = append(sizes, val.Size)
 		if val.Quantity > 0 {
-			inventories = append(inventories, domain.InventoryDAO{
+			inventories = append(inventories, &domain.InventoryDAO{
 				Size:     val.Size,
 				Quantity: val.Quantity,
 			})

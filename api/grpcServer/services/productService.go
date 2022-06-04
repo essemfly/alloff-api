@@ -3,16 +3,14 @@ package services
 import (
 	"context"
 	"errors"
-	"log"
-
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 	"github.com/lessbutter/alloff-api/internal/utils"
-	"github.com/lessbutter/alloff-api/pkg/classifier"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
+	"go.uber.org/zap"
 )
 
 type ProductService struct {
@@ -20,76 +18,60 @@ type ProductService struct {
 }
 
 func (s *ProductService) GetProduct(ctx context.Context, req *grpcServer.GetProductRequest) (*grpcServer.GetProductResponse, error) {
-	pdDao, err := ioc.Repo.Products.Get(req.AlloffProductId)
+	pdInfoDao, err := ioc.Repo.ProductMetaInfos.Get(req.AlloffProductId)
 	if err != nil {
 		return nil, err
 	}
 
 	return &grpcServer.GetProductResponse{
-		Product: mapper.ProductMapper(pdDao),
+		Product: mapper.ProductInfoMapper(pdInfoDao),
 	}, nil
 }
 
 func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListProductsRequest) (*grpcServer.ListProductsResponse, error) {
 	moduleName := ""
-
 	if req.ModuleName != nil {
 		moduleName = *req.ModuleName
 	}
-	brandID := ""
-	if req.Query.BrandId != nil {
-		brandID = *req.Query.BrandId
-	}
-	categoryID := ""
-	if req.Query.CategoryId != nil {
-		categoryID = *req.Query.CategoryId
-	}
+
 	alloffCategoryID := ""
 	if req.Query.AlloffCategoryId != nil {
 		alloffCategoryID = *req.Query.AlloffCategoryId
 	}
+
 	searchKeyword := ""
 	if req.Query.SearchQuery != nil {
 		searchKeyword = *req.Query.SearchQuery
 	}
 
-	classifiedType := product.NO_MATTER_CLASSIFIED
+	classifiedType := domain.NO_MATTER_CLASSIFIED
 	if req.Query.IsClassifiedDone != nil {
 		if *req.Query.IsClassifiedDone {
-			classifiedType = product.CLASSIFIED_DONE
+			classifiedType = domain.CLASSIFIED_DONE
 		} else {
-			classifiedType = product.NOT_CLASSIFIED
+			classifiedType = domain.NOT_CLASSIFIED
 		}
 	}
 
-	priceSorting := ""
-	priceRange := []string{}
+	var priceSorting domain.PriceSortingType
+	priceRanges := []domain.PriceRangeType{}
 	if req.Query.Options != nil {
-		for _, sorting := range req.Query.Options {
-			if sorting == grpcServer.SortingOptions_PRICE_ASCENDING {
-				priceSorting = "ascending"
-			} else if sorting == grpcServer.SortingOptions_PRICE_DESCENDING {
-				priceSorting = "descending"
-			} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_ASCENDING {
-				priceSorting = "discountrateAscending"
-			} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_DESCENDING {
-				priceSorting = "discountrateDescending"
-			} else {
-				if sorting == grpcServer.SortingOptions_DISCOUNT_0_30 {
-					priceRange = append(priceRange, "30")
-				} else if sorting == grpcServer.SortingOptions_DISCOUNT_30_50 {
-					priceRange = append(priceRange, "50")
-				} else if sorting == grpcServer.SortingOptions_DISCOUNT_50_70 {
-					priceRange = append(priceRange, "70")
-				} else {
-					priceRange = append(priceRange, "100")
-				}
-			}
-		}
+		priceRanges, priceSorting = mapper.ProductSortingAndRangesMapper(req.Query.Options)
 	}
 
-	// IsClassifiedDone을 어떻게 넣을것인가가 문제군
-	products, cnt, err := product.ProductsSearchListing(int(req.Offset), int(req.Limit), classifiedType, moduleName, brandID, categoryID, alloffCategoryID, searchKeyword, priceSorting, priceRange)
+	query := productinfo.ProductInfoListInput{
+		Offset:                int(req.Offset),
+		Limit:                 int(req.Limit),
+		BrandID:               "",
+		AlloffCategoryID:      alloffCategoryID,
+		Keyword:               searchKeyword,
+		Modulename:            moduleName,
+		IncludeClassifiedType: classifiedType,
+		PriceRanges:           priceRanges,
+		PriceSorting:          priceSorting,
+	}
+
+	products, cnt, err := productinfo.ListProductInfos(query)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +79,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	pds := []*grpcServer.ProductMessage{}
 
 	for _, pd := range products {
-		pds = append(pds, mapper.ProductMapper(pd))
+		pds = append(pds, mapper.ProductInfoMapper(pd))
 	}
 
 	ret := &grpcServer.ListProductsResponse{
@@ -117,21 +99,23 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	if req.OriginalPrice != nil {
 		originalPrice = int(*req.OriginalPrice)
 	}
-	specialPrice := discountedPrice
-	if req.SpecialPrice != nil {
-		specialPrice = int(*req.SpecialPrice)
-	}
+
 	moduleName := "manual"
 	if req.ModuleName != nil {
 		moduleName = *req.ModuleName
 	}
-	invDaos := []domain.InventoryDAO{}
-	for _, inv := range req.Inventory {
-		invDaos = append(invDaos, domain.InventoryDAO{
-			Size:     inv.Size,
-			Quantity: int(inv.Quantity),
-		})
+
+	productTypes := []domain.AlloffProductType{}
+	for _, reqPdType := range req.ProductTypes {
+		if reqPdType == grpcServer.ProductType_FEMALE {
+			productTypes = append(productTypes, domain.Female)
+		} else if reqPdType == grpcServer.ProductType_MALE {
+			productTypes = append(productTypes, domain.Male)
+		} else if reqPdType == grpcServer.ProductType_KIDS {
+			productTypes = append(productTypes, domain.Kids)
+		}
 	}
+
 	productID := ""
 	if req.ProductId != nil {
 		productID = *req.ProductId
@@ -142,11 +126,6 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	productUrl := ""
 	if req.ProductUrl != nil {
 		productUrl = *req.ProductUrl
-	}
-
-	alloffCatID := ""
-	if req.AlloffCategoryId != nil {
-		alloffCatID = *req.AlloffCategoryId
 	}
 
 	var descInfos, pdInfos map[string]string
@@ -161,36 +140,51 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		thumbnailImage = *req.ThumbnailImage
 	}
 
-	addRequest := &product.ProductManualAddRequest{
+	brand, _ := ioc.Repo.Brands.GetByKeyname(req.BrandKeyName)
+	alloffcat, _ := ioc.Repo.AlloffCategories.Get(*req.AlloffCategoryId)
+	invDaos := []*domain.InventoryDAO{}
+	for _, inv := range req.Inventory {
+		invDaos = append(invDaos, &domain.InventoryDAO{
+			Quantity: int(inv.Quantity),
+			Size:     inv.Size,
+		})
+	}
+
+	addRequest := &productinfo.AddMetaInfoRequest{
 		AlloffName:           req.AlloffName,
-		IsForeignDelivery:    req.IsForeignDelivery,
 		ProductID:            productID,
 		ProductUrl:           productUrl,
-		OriginalPrice:        originalPrice,
-		DiscountedPrice:      discountedPrice,
-		SpecialPrice:         specialPrice,
-		BrandKeyName:         req.BrandKeyName,
-		Inventory:            invDaos,
+		ProductType:          productTypes,
+		OriginalPrice:        float32(originalPrice),
+		DiscountedPrice:      float32(discountedPrice),
+		CurrencyType:         domain.CurrencyKRW,
+		Brand:                brand,
+		Source:               &domain.CrawlSourceDAO{CrawlModuleName: "manual"},
+		AlloffCategory:       alloffcat,
+		Images:               req.Images,
+		ThumbnailImage:       thumbnailImage,
+		Colors:               []string{},
+		Sizes:                []string{},
 		Description:          req.Description,
+		DescriptionImages:    req.DescriptionImages,
+		DescriptionInfos:     descInfos,
+		Information:          pdInfos,
+		IsForeignDelivery:    req.IsForeignDelivery,
 		EarliestDeliveryDays: int(req.EarliestDeliveryDays),
 		LatestDeliveryDays:   int(req.LatestDeliveryDays),
 		IsRefundPossible:     req.IsRefundPossible,
 		RefundFee:            int(req.RefundFee),
-		Images:               req.Images,
-		DescriptionImages:    req.DescriptionImages,
+		Inventory:            invDaos,
 		ModuleName:           moduleName,
-		AlloffCategoryID:     alloffCatID,
-		DescriptionInfos:     descInfos,
-		ProductInfos:         pdInfos,
-		ThumbnailImage:       thumbnailImage,
+		IsInventoryMapped:    true,
 	}
 
-	pdDao, err := product.AddProductManually(addRequest)
+	pdInfoDao, err := productinfo.AddProductInfo(addRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	pdMessage := mapper.ProductMapper(pdDao)
+	pdMessage := mapper.ProductInfoMapper(pdInfoDao)
 
 	return &grpcServer.CreateProductResponse{
 		Product: pdMessage,
@@ -198,164 +192,142 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 }
 
 func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditProductRequest) (*grpcServer.EditProductResponse, error) {
-
-	pdDao, err := ioc.Repo.Products.Get(req.AlloffProductId)
+	pdInfoDao, err := ioc.Repo.ProductMetaInfos.Get(req.AlloffProductId)
 	if err != nil {
 		return nil, err
 	}
 
+	updatedRequest := productinfo.LoadMetaInfoRequest(pdInfoDao)
+
 	if req.ModuleName != "" && req.ModuleName != "manual" {
-		if pdDao.ProductInfo.Source.CrawlModuleName != req.ModuleName {
+		if pdInfoDao.Source.CrawlModuleName != req.ModuleName {
 			return nil, errors.New("not authorized product for this module" + req.ModuleName)
 		}
 	}
 
 	if req.AlloffName != nil {
-		pdDao.AlloffName = *req.AlloffName
+		updatedRequest.AlloffName = *req.AlloffName
 	}
 
 	if req.IsForeignDelivery != nil {
 		if *req.IsForeignDelivery {
-			pdDao.ProductInfo.Source.IsForeignDelivery = true
+			updatedRequest.IsForeignDelivery = true
 		} else {
-			pdDao.ProductInfo.Source.IsForeignDelivery = false
+			updatedRequest.IsForeignDelivery = false
 		}
 	}
 
 	if req.OriginalPrice != nil {
-		pdDao.ProductInfo.Price.OriginalPrice = float32(*req.OriginalPrice)
-		pdDao.OriginalPrice = int(*req.OriginalPrice)
+		updatedRequest.OriginalPrice = float32(*req.OriginalPrice)
 	}
 
 	if req.DiscountedPrice != nil {
-		pdDao.DiscountedPrice = int(*req.DiscountedPrice)
+		updatedRequest.DiscountedPrice = float32(*req.DiscountedPrice)
 	}
 
-	alloffPriceDiscountRate := pdDao.DiscountRate
-
-	if req.SpecialPrice != nil {
-		pdDao.SpecialPrice = int(*req.SpecialPrice)
-		pdDao.DiscountRate = alloffPriceDiscountRate
-		alloffPriceDiscountRate = utils.CalculateDiscountRate(pdDao.OriginalPrice, pdDao.DiscountedPrice) // 스페셜프라이스의 할인율이 더 높으면 이걸로 브랜드 할인율을 적용하나?
-	} else {
-		alloffPriceDiscountRate = utils.CalculateDiscountRate(pdDao.OriginalPrice, pdDao.DiscountedPrice)
-	}
-
-	if req.BrandKeyName != nil {
+	if req.BrandKeyName != nil && req.BrandKeyName != &updatedRequest.Brand.KeyName {
 		brand, err := ioc.Repo.Brands.GetByKeyname(*req.BrandKeyName)
 		if err != nil {
 			return nil, err
 		}
-		pdDao.ProductInfo.Brand = brand
+		updatedRequest.Brand = brand
+	}
+
+	if req.ProductTypes != nil && len(req.ProductTypes) > 0 {
+		productTypes := []domain.AlloffProductType{}
+		for _, reqPdType := range req.ProductTypes {
+			if reqPdType == grpcServer.ProductType_FEMALE {
+				productTypes = append(productTypes, domain.Female)
+			} else if reqPdType == grpcServer.ProductType_MALE {
+				productTypes = append(productTypes, domain.Male)
+			} else if reqPdType == grpcServer.ProductType_KIDS {
+				productTypes = append(productTypes, domain.Kids)
+			}
+		}
+		updatedRequest.ProductType = productTypes
 	}
 
 	if req.Inventory != nil {
-		invDaos := []domain.InventoryDAO{}
+		invDaos := []*domain.InventoryDAO{}
 		for _, inv := range req.Inventory {
-			invDaos = append(invDaos, domain.InventoryDAO{
-				Size:     inv.Size,
+			invDaos = append(invDaos, &domain.InventoryDAO{
 				Quantity: int(inv.Quantity),
+				Size:     inv.Size,
 			})
 		}
-		pdDao.Inventory = invDaos
+		updatedRequest.Inventory = invDaos
 	}
 
 	if req.Description != nil {
-		pdDao.SalesInstruction.Description.Texts = req.Description
+		updatedRequest.Description = req.Description
 	}
 
 	if req.DescriptionInfos != nil {
-		pdDao.SalesInstruction.Description.Infos = req.DescriptionInfos
+		updatedRequest.DescriptionInfos = req.DescriptionInfos
 	}
 
 	if req.ProductInfos != nil {
-		pdDao.ProductInfo.Information = req.ProductInfos
+		updatedRequest.Information = req.ProductInfos
 	}
 
 	if req.EarliestDeliveryDays != nil {
-		pdDao.SalesInstruction.DeliveryDescription.EarliestDeliveryDays = int(*req.EarliestDeliveryDays)
+		updatedRequest.EarliestDeliveryDays = int(*req.EarliestDeliveryDays)
 	}
 
 	if req.LatestDeliveryDays != nil {
-		pdDao.SalesInstruction.DeliveryDescription.LatestDeliveryDays = int(*req.LatestDeliveryDays)
+		updatedRequest.LatestDeliveryDays = int(*req.LatestDeliveryDays)
 	}
 
 	if req.IsRefundPossible != nil {
-		pdDao.SalesInstruction.CancelDescription.RefundAvailable = *req.IsRefundPossible
-		pdDao.SalesInstruction.CancelDescription.ChangeAvailable = *req.IsRefundPossible
+		updatedRequest.IsRefundPossible = *req.IsRefundPossible
 	}
 
 	if req.Images != nil {
-		pdDao.ProductInfo.Images = req.Images
-		pdDao.Images = req.Images
+		updatedRequest.Images = req.Images
 	}
 
 	if req.DescriptionImages != nil {
-		pdDao.SalesInstruction.Description.Images = req.DescriptionImages
+		updatedRequest.DescriptionImages = req.DescriptionImages
 	}
 
 	if req.IsRemoved != nil {
-		pdDao.Removed = *req.IsRemoved
+		updatedRequest.IsRemoved = *req.IsRemoved
 	}
 
 	if req.AlloffCategoryId != nil {
-		productCatDao := classifier.ClassifyProducts(*req.AlloffCategoryId)
-		pdDao.UpdateAlloffCategory(productCatDao)
-		pdDao.AlloffCategories.Touched = true
+		alloffcat, err := ioc.Repo.AlloffCategories.Get(*req.AlloffCategoryId)
+		if err != nil {
+			config.Logger.Error("err occured on build product alloff category : alloffcat ID"+*req.AlloffCategoryId, zap.Error(err))
+		}
+		updatedRequest.AlloffCategory = alloffcat
 	}
 
 	if req.ProductId != nil {
-		pdDao.ProductInfo.ProductID = *req.ProductId
+		updatedRequest.ProductID = *req.ProductId
 	}
 
 	if req.ProductUrl != nil {
-		pdDao.ProductInfo.ProductUrl = *req.ProductUrl
+		updatedRequest.ProductUrl = *req.ProductUrl
 	}
 
 	if req.RefundFee != nil {
-		pdDao.SalesInstruction.CancelDescription.ChangeFee = int(*req.RefundFee)
-		pdDao.SalesInstruction.CancelDescription.RefundFee = int(*req.RefundFee)
+		updatedRequest.RefundFee = int(*req.RefundFee)
 	}
 
 	if req.IsSoldout != nil {
-		pdDao.Soldout = *req.IsSoldout
-	}
-
-	if !pdDao.Soldout {
-		pdDao.CheckSoldout()
-	}
-
-	if alloffPriceDiscountRate > pdDao.ProductInfo.Brand.MaxDiscountRate {
-		pdDao.ProductInfo.Brand.MaxDiscountRate = alloffPriceDiscountRate
+		updatedRequest.IsSoldout = *req.IsSoldout
 	}
 
 	if req.ThumbnailImage != nil {
-		pdDao.ThumbnailImage = *req.ThumbnailImage
+		updatedRequest.ThumbnailImage = *req.ThumbnailImage
 	}
 
-	newPdDao, err := ioc.Repo.Products.Upsert(pdDao)
+	newPdInfoDao, err := productinfo.UpdateProductInfo(pdInfoDao, updatedRequest)
 	if err != nil {
 		return nil, err
 	}
 
-	if newPdDao.ProductGroupId != "" {
-		pg, err := ioc.Repo.ProductGroups.Get(newPdDao.ProductGroupId)
-		if err != nil {
-			log.Println("err found in product group update", err)
-		} else {
-			go broker.ProductGroupSyncer(pg)
-			if pg.ExhibitionID != "" {
-				exDao, err := ioc.Repo.Exhibitions.Get(pg.ExhibitionID)
-				if err != nil {
-					log.Println("exhibbition find error", err)
-				} else {
-					go broker.ExhibitionSyncer(exDao)
-				}
-			}
-		}
-	}
-
-	pdMessage := mapper.ProductMapper(newPdDao)
+	pdMessage := mapper.ProductInfoMapper(newPdInfoDao)
 	return &grpcServer.EditProductResponse{
 		Product: pdMessage,
 	}, nil

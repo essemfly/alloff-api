@@ -9,7 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 const (
@@ -65,23 +65,34 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 				productIdForDb += "-" + colorName
 				productNameForDb += " - " + colorName
 			}
-			addRequest := &product.ProductCrawlingAddRequest{
-				Brand:               brand,
-				Images:              images,
-				Sizes:               sizes,
-				Inventories:         inventories,
-				Description:         description,
-				OriginalPrice:       originalPrice,
-				SalesPrice:          salesPrice,
-				CurrencyType:        domain.CurrencyEUR,
-				Source:              source,
-				ProductID:           productIdForDb,
-				ProductName:         productNameForDb,
-				ProductUrl:          productUrl,
+			addRequest := &productinfo.AddMetaInfoRequest{
+				AlloffName:      productNameForDb,
+				ProductID:       productIdForDb,
+				ProductUrl:      productUrl,
+				ProductType:     []domain.AlloffProductType{domain.Female},
+				OriginalPrice:   originalPrice,
+				DiscountedPrice: salesPrice,
+				CurrencyType:    domain.CurrencyEUR,
+				Brand:           brand,
+				Source:          source,
+				AlloffCategory:  &domain.AlloffCategoryDAO{},
+				Images:          images,
+				Colors:          nil,
+				Sizes:           sizes,
+				Inventory:       inventories,
+				Information:     description,
+				DescriptionImages: []string{
+					"https://alloff.s3.ap-northeast-2.amazonaws.com/description/size_guide.png",
+				},
+				IsForeignDelivery:   true,
 				IsTranslateRequired: true,
+				ModuleName:          source.CrawlModuleName,
+				IsRemoved:           false,
+				IsSoldout:           false,
 			}
+
 			totalProducts += 1
-			product.AddProductInCrawling(addRequest)
+			productinfo.ProcessCrawlingInfoRequests(addRequest)
 		}
 	})
 
@@ -110,7 +121,7 @@ func getSandroDetail(productUrl string) (
 	productName string,
 	images []string,
 	sizes []string,
-	inventories []domain.InventoryDAO,
+	inventories []*domain.InventoryDAO,
 	description map[string]string,
 	originalPrice float32,
 	salesPrice float32,
@@ -136,7 +147,7 @@ func getSandroDetail(productUrl string) (
 				stock = 0
 			}
 			sizes = append(sizes, size)
-			inventories = append(inventories, domain.InventoryDAO{
+			inventories = append(inventories, &domain.InventoryDAO{
 				Size:     size,
 				Quantity: stock,
 			})

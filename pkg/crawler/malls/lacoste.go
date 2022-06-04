@@ -11,7 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 func CrawlLacoste(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -36,25 +36,31 @@ func CrawlLacoste(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 
 		images, colors, sizes, inventories, description := getLacosteDetail(productUrl)
 
-		addRequest := &product.ProductCrawlingAddRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          title,
+			ProductID:           productID,
+			ProductUrl:          productUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(originalPrice),
+			DiscountedPrice:     float32(discountedPrice),
+			CurrencyType:        domain.CurrencyKRW,
 			Brand:               brand,
 			Source:              source,
-			ProductID:           productID,
-			ProductName:         title,
-			ProductUrl:          productUrl,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 	})
 
 	c.OnHTML(".pagination", func(e *colly.HTMLElement) {
@@ -71,7 +77,7 @@ func CrawlLacoste(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 	done <- true
 }
 
-func getLacosteDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getLacosteDetail(productUrl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.lacoste.com"),
 	)
@@ -94,8 +100,8 @@ func getLacosteDetail(productUrl string) (imageUrls, colors, sizes []string, inv
 			attrs := el.ChildAttr("button", "class")
 			sizes = append(sizes, size)
 			if !strings.Contains(attrs, "is-disabled") {
-				inventories = append(inventories, domain.InventoryDAO{
-					Quantity: 10,
+				inventories = append(inventories, &domain.InventoryDAO{
+					Quantity: 1,
 					Size:     size,
 				})
 			}

@@ -11,7 +11,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type SSFResponseParser struct {
@@ -102,51 +102,36 @@ func MapSSFCrawlResultsToModels(products []SSFProductWrapper, source *domain.Cra
 		productUrl := "https://www.ssfshop.com/" + source.BrandKeyname + "/" + pd.ProductId + "/good"
 		images, colors, sizes, inventories, description := getSSFDetailInfo(productUrl)
 
-		addRequest := &product.ProductCrawlingAddRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          pd.God.Name,
+			ProductID:           pd.ProductId,
+			ProductUrl:          productUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(pd.DspGodPrc.OriginalPrice),
+			DiscountedPrice:     float32(pd.DspGodPrc.DiscountedPrice),
+			CurrencyType:        domain.CurrencyKRW,
 			Brand:               brand,
 			Source:              source,
-			ProductID:           pd.ProductId,
-			ProductName:         pd.God.Name,
-			ProductUrl:          productUrl,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(pd.DspGodPrc.OriginalPrice),
-			SalesPrice:          float32(pd.DspGodPrc.DiscountedPrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		numProducts += 1
-		product.AddProductInCrawling(addRequest)
-
-		// newProduct := domain.ProductDAO{
-		// 	ProductId:       product.ProductId,
-		// 	Category:        &source.Category,
-		// 	Brand:           brand,
-		// 	Name:            product.God.Name,
-		// 	OriginalPrice:   product.DspGodPrc.OriginalPrice,
-		// 	DiscountedPrice: product.DspGodPrc.DiscountedPrice,
-		// 	DiscountRate:    utils.CalculateDiscountRate(float32(product.DspGodPrc.OriginalPrice), float32(product.DspGodPrc.DiscountedPrice)),
-		// 	Soldout:         isSoldout,
-		// 	Images:          images,
-		// 	Created:         time.Now(),
-		// 	Updated:         time.Now(),
-		// 	IsNewlyCrawled:  true,
-		// 	ProductUrl:      productUrl,
-		// 	Removed:         false,
-		// 	Description:     description,
-		// 	SizeAvailable:   sizes,
-		// 	IsImageCached:   false,
-		// }
-
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
 	}
 	return numProducts
 }
 
-func getSSFDetailInfo(productUrl string) (imageUrls, colors, sizes []string, inventories []domain.InventoryDAO, description map[string]string) {
+func getSSFDetailInfo(productUrl string) (imageUrls, colors, sizes []string, inventories []*domain.InventoryDAO, description map[string]string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.ssfshop.com"),
 	)
@@ -170,7 +155,7 @@ func getSSFDetailInfo(productUrl string) (imageUrls, colors, sizes []string, inv
 				sizes = append(sizes, size)
 				stockInStr := el.Attr("onlineusefulinvqty")
 				stock, _ := strconv.Atoi(stockInStr)
-				inventories = append(inventories, domain.InventoryDAO{
+				inventories = append(inventories, &domain.InventoryDAO{
 					Size:     size,
 					Quantity: stock,
 				})

@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net"
-	"os"
-	"strconv"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	"github.com/spf13/viper"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/services"
 	"github.com/lessbutter/alloff-api/cmd"
@@ -16,22 +14,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-var (
-	GitInfo   = "no info"
-	BuildTime = "no datetime"
-	Env       = "dev"
-)
-
 func main() {
-	fmt.Println("Git commit information: ", GitInfo)
-	fmt.Println("Build date, time: ", BuildTime)
-
-	conf := cmd.SetBaseConfig(Env)
-
-	port := os.Getenv("GRPC_PORT")
-	if port == "" {
-		port = strconv.Itoa(conf.GRPC_PORT)
-	}
+	cmd.SetBaseConfig()
+	port := viper.GetString("GRPC_PORT")
 
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
@@ -47,10 +32,9 @@ func main() {
 	pb.RegisterProductGroupServer(grpcServer, &services.ProductGroupService{})
 	pb.RegisterBrandServer(grpcServer, &services.BrandService{})
 	pb.RegisterNotificationServer(grpcServer, &services.NotiService{})
-	pb.RegisterHomeTabItemServer(grpcServer, &services.HomeTabService{})
 	pb.RegisterExhibitionServer(grpcServer, &services.ExhibitionService{})
-	pb.RegisterTopBannerServer(grpcServer, &services.TopBannerService{})
 	pb.RegisterAlloffCategoryServer(grpcServer, &services.AlloffCategoryService{})
+	pb.RegisterAlloffSizeServer(grpcServer, &services.AlloffSizeService{})
 
 	log.Printf("start gRPC server on %s port", port)
 	if err := grpcServer.Serve(lis); err != nil {

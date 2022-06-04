@@ -12,7 +12,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	"github.com/lessbutter/alloff-api/pkg/crawler"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type KolonResponseParser struct {
@@ -78,7 +78,7 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 		images := []string{}
 		sizes := []string{}
 		colors := []string{}
-		inventories := []domain.InventoryDAO{}
+		inventories := []*domain.InventoryDAO{}
 		description := map[string]string{}
 
 		errorMessage := "Crawl Failed: Product Detail" + source.Category.KeyName + " - " + productUrl
@@ -109,9 +109,9 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 					for _, size := range result.Options {
 						sizes = append(sizes, size.Size)
 						if size.Stock.Level != "outOfStock" {
-							inventories = append(inventories, domain.InventoryDAO{
+							inventories = append(inventories, &domain.InventoryDAO{
 								Size:     size.Size,
-								Quantity: 10,
+								Quantity: 1,
 							})
 						}
 					}
@@ -121,25 +121,32 @@ func CrawlKolon(worker chan bool, done chan bool, source *domain.CrawlSourceDAO)
 			}
 		})
 
-		addRequest := &product.ProductCrawlingAddRequest{
+		addRequest := &productinfo.AddMetaInfoRequest{
+			AlloffName:          productName,
+			ProductID:           productID,
+			ProductUrl:          productUrl,
+			ProductType:         []domain.AlloffProductType{domain.Female},
+			OriginalPrice:       float32(originalPrice),
+			DiscountedPrice:     float32(discountedPrice),
+			CurrencyType:        domain.CurrencyKRW,
 			Brand:               brand,
 			Source:              source,
-			ProductID:           productID,
-			ProductName:         productName,
-			ProductUrl:          productUrl,
+			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
-			Sizes:               sizes,
-			Inventories:         inventories,
 			Colors:              colors,
-			Description:         description,
-			OriginalPrice:       float32(originalPrice),
-			SalesPrice:          float32(discountedPrice),
-			CurrencyType:        domain.CurrencyKRW,
+			Sizes:               sizes,
+			Inventory:           inventories,
+			Information:         description,
+			IsForeignDelivery:   false,
 			IsTranslateRequired: false,
+			ModuleName:          source.CrawlModuleName,
+			IsRemoved:           false,
+			IsSoldout:           false,
 		}
 
 		totalProducts += 1
-		product.AddProductInCrawling(addRequest)
+		productinfo.ProcessCrawlingInfoRequests(addRequest)
+
 	})
 
 	c.OnHTML(".product-page-arrow:last-child", func(e *colly.HTMLElement) {
