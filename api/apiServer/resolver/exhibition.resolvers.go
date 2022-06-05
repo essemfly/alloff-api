@@ -36,8 +36,14 @@ func (r *mutationResolver) SetAlarm(ctx context.Context, id string) (bool, error
 
 	// 기존의 알림톡을 취소하는 경우
 	if alimtalkRegisterd == nil {
+		exhibitionDao.NumAlarms -= 1
+		ioc.Repo.Exhibitions.Upsert(exhibitionDao)
 		return false, nil
 	}
+
+	exhibitionDao.NumAlarms += 1
+	ioc.Repo.Exhibitions.Upsert(exhibitionDao)
+
 	return true, nil
 }
 
@@ -89,7 +95,7 @@ func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionI
 			if user != nil {
 				for _, ex := range exs {
 					alreadyRegistered, _ := ioc.Repo.Alimtalks.GetByDetail(user.ID.Hex(), domain.EXHIBITION_ALARM, ex.ID)
-					if alreadyRegistered != nil {
+					if alreadyRegistered != nil && alreadyRegistered.Status == domain.ALIMTALK_STATUS_READY {
 						ex.UserAlarmOn = true
 					}
 				}
