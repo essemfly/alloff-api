@@ -89,10 +89,9 @@ func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionI
 			if user != nil {
 				for _, ex := range exs {
 					alreadyRegistered, _ := ioc.Repo.Alimtalks.GetByDetail(user.ID.Hex(), domain.EXHIBITION_ALARM, ex.ID)
-					if alreadyRegistered == nil {
-						ex.UserAlarmOn = false
+					if alreadyRegistered != nil {
+						ex.UserAlarmOn = true
 					}
-					ex.UserAlarmOn = true
 				}
 			}
 		}
