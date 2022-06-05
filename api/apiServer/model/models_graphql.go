@@ -126,6 +126,7 @@ type Exhibition struct {
 	FinishTime     string              `json:"finishTime"`
 	NumAlarms      int                 `json:"numAlarms"`
 	MaxDiscounts   int                 `json:"maxDiscounts"`
+	UserAlarmOn    bool                `json:"userAlarmOn"`
 }
 
 type ExhibitionInput struct {

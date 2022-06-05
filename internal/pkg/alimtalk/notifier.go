@@ -1,10 +1,12 @@
 package alimtalk
 
 import (
+	"log"
 	"strconv"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/zap"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -54,9 +56,10 @@ func ChangeExhibitionNotifyStatus(userDao *domain.UserDAO, exhibitionDao *domain
 	// 이미 등록된 알림톡이 있으며, 그 알림톡이 취소되지않고 전송 대기중인 경우
 	// 메시지 발송을 취소하고, 알림톡 상태를 STATUS_CANCELED로 바꾼다음 persist
 	if alreadyRegistered != nil && alreadyRegistered.Status == domain.ALIMTALK_STATUS_READY {
+		// TODO: Check for delete message works
 		err := DeleteMessage(alreadyRegistered)
 		if err != nil {
-			return nil, err
+			log.Println("delete message error", err)
 		}
 		alreadyRegistered.Status = domain.ALIMTALK_STATUS_CANCLED
 		_, err = ioc.Repo.Alimtalks.Update(alreadyRegistered)
@@ -93,6 +96,7 @@ func ChangeExhibitionNotifyStatus(userDao *domain.UserDAO, exhibitionDao *domain
 	// 이미 등록된 알림톡이 있어도, 그게 취소된 상태이거나
 	// 이미 등록된 알림톡이 없으면 새로운 알림톡을 만든다.
 	newAlimtalk := &domain.AlimtalkDAO{
+		ID:           primitive.NewObjectID(),
 		UserID:       uid,
 		Mobile:       userDao.Mobile,
 		TemplateCode: domain.EXHIBITION_ALARM,

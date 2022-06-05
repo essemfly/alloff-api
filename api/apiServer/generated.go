@@ -142,6 +142,7 @@ type ComplexityRoot struct {
 		Tags           func(childComplexity int) int
 		ThumbnailImage func(childComplexity int) int
 		Title          func(childComplexity int) int
+		UserAlarmOn    func(childComplexity int) int
 	}
 
 	ExhibitionOutput struct {
@@ -883,6 +884,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exhibition.Title(childComplexity), true
+
+	case "Exhibition.userAlarmOn":
+		if e.complexity.Exhibition.UserAlarmOn == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.UserAlarmOn(childComplexity), true
 
 	case "ExhibitionOutput.exhibitions":
 		if e.complexity.ExhibitionOutput.Exhibitions == nil {
@@ -2409,6 +2417,7 @@ type Exhibition {
   finishTime: Date!  
   numAlarms: Int!
   maxDiscounts: Int!
+  userAlarmOn: Boolean!
 }
 
 input ExhibitionInput {
@@ -5542,6 +5551,41 @@ func (ec *executionContext) _Exhibition_maxDiscounts(ctx context.Context, field 
 	res := resTmp.(int)
 	fc.Result = res
 	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exhibition_userAlarmOn(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserAlarmOn, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ExhibitionOutput_exhibitions(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionOutput) (ret graphql.Marshaler) {
@@ -13985,6 +14029,11 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			}
 		case "maxDiscounts":
 			out.Values[i] = ec._Exhibition_maxDiscounts(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "userAlarmOn":
+			out.Values[i] = ec._Exhibition_userAlarmOn(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
