@@ -51,6 +51,8 @@ func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhib
 }
 
 func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionInput) (*model.ExhibitionOutput, error) {
+	user := middleware.ForContext(ctx)
+
 	offset, limit := 0, 100
 	query := ""
 
@@ -84,6 +86,15 @@ func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionI
 	} else {
 		for _, exhibitionDao := range notOpenDaos {
 			exs = append(exs, mapper.MapExhibition(exhibitionDao, true))
+			if user != nil {
+				for _, ex := range exs {
+					alreadyRegistered, _ := ioc.Repo.Alimtalks.GetByDetail(user.ID.Hex(), domain.EXHIBITION_ALARM, ex.ID)
+					if alreadyRegistered == nil {
+						ex.UserAlarmOn = false
+					}
+					ex.UserAlarmOn = true
+				}
+			}
 		}
 	}
 
