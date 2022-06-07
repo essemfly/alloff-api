@@ -105,7 +105,7 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
 			Colors:              []string{productColor},
-			Infos:               infos,
+			DescriptionInfos:    infos,
 			Sizes:               sizes,
 			Inventory:           inventories,
 			Information:         description,
