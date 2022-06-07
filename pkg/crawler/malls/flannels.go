@@ -4,24 +4,20 @@ import (
 	"encoding/json"
 	"log"
 	"net/url"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config"
+	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
+	"github.com/lessbutter/alloff-api/pkg/seeder/malls"
 	"go.uber.org/zap"
 )
-
-// type ProductInfoJson struct {
-// 	Name         string   `json:"Name"`
-// 	URL          string   `json:"Url"`
-// 	DisplayPrice float64  `json:"DisplayPrice"`
-// 	WasPrice     float64  `json:"WasPrice"`
-// 	Sizes        []string `json:"Sizes"`
-// }
 
 type FlannelsListResponse struct {
 	Products []struct {
@@ -122,8 +118,18 @@ func CrawlFlannels(worker chan bool, done chan bool, source *domain.CrawlSourceD
 		}
 	}
 
+	brand, err := ioc.Repo.Brands.GetByKeyname(source.BrandKeyname)
+	if err != nil {
+		log.Println(err)
+	}
+
 	baseUrl := strings.Replace(source.CrawlUrl, "productsPerPage=10", "productsPerPage=1000", 1)
 	productRequests := CrawlFlannelsProducts(baseUrl, typeVariations, categoryVariations)
+	for _, req := range productRequests {
+		req.Brand = brand
+		req.Source = source
+		productinfo.ProcessCrawlingInfoRequests(req)
+	}
 
 	log.Println("length of requests for brand", source.BrandKeyname, len(productRequests))
 	<-worker
@@ -171,6 +177,7 @@ func GetFlannelProductList(categoryUrl, productType, categoryName string) []*pro
 	for _, pd := range listQueryResp.Products {
 		newRequest := GetFlannelsDetail(baseURL + pd.URL)
 		newRequest.ProductType = productTypes[productType]
+		newRequest.AlloffCategory = &domain.AlloffCategoryDAO{}
 		requests = append(requests, newRequest)
 	}
 
@@ -178,106 +185,113 @@ func GetFlannelProductList(categoryUrl, productType, categoryName string) []*pro
 }
 
 func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
+	productRequest := &productinfo.AddMetaInfoRequest{
+		ProductUrl:          productURL,
+		IsForeignDelivery:   true,
+		IsTranslateRequired: true,
+		IsRemoved:           false,
+		IsSoldout:           false,
+		ModuleName:          malls.FLANNELS_MODULE_NAME,
+	}
+
+	colorSplits := strings.Split(productURL, "colcode=")
+	colorCode := ""
+	if len(colorSplits) > 1 {
+		colorCode = colorSplits[1]
+	}
+
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.flannels.com"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
 	)
 	c.SetRequestTimeout(10 * time.Second)
 
-	productRequest := &productinfo.AddMetaInfoRequest{
-		// AlloffName:          pd.ProductName,
-		// ProductID:           pd.ProductCode,
-		ProductUrl: productURL,
-		// OriginalPrice:       float32(originalPriceInt),
-		// DiscountedPrice:     float32(discountedPriceInt),
-		// CurrencyType:        domain.CurrencyKRW,
-		// Brand:               brand,
-		// Source:              source,
-		// AlloffCategory:      &domain.AlloffCategoryDAO{},
-		// Images:              images,
-		// Colors:              colors,
-		// Sizes:               sizes,
-		// Inventory:           inventories,
-		// Information:         description,
-		// IsForeignDelivery:   false,
-		// IsTranslateRequired: false,
-		// ModuleName:          source.CrawlModuleName,
-		// IsRemoved:           false,
-		// IsSoldout:           false,
-	}
+	infos := map[string]string{}
+	c.OnHTML("#lblProductName", func(e *colly.HTMLElement) {
+		log.Println("name", e.Text)
+		productRequest.AlloffName = e.Text
+	})
+	c.OnHTML(".product-detail__price", func(e *colly.HTMLElement) {
+		productRequest.OriginalPrice = parseOnlyNumbers(e.ChildText("#lblSellingPrice"))
+		productRequest.DiscountedPrice = parseOnlyNumbers(e.ChildText(".originalprice #lblTicketPrice"))
+		productRequest.CurrencyType = domain.CurrencyPOUND
+	})
+	c.OnHTML("#lblProductCode", func(e *colly.HTMLElement) {
+		productCodeDiv := e.Text
+		productCode := parseOnlyNumbers(productCodeDiv)
+		productRequest.ProductID = strconv.Itoa(int(productCode))
+		infos["제품코드"] = strconv.Itoa(int(productCode))
+	})
+	c.OnHTML("#divColour #divColourImageDropdownGroup .dropdown-images .image-dropdown #btnImageDropdown #spanDropdownSelectedText", func(e *colly.HTMLElement) {
+		color := e.Text
+		productRequest.Colors = []string{color}
+		infos["색상"] = color
+	})
+	c.OnHTML(".productImage #productRollOverPanel_"+colorCode, func(e *colly.HTMLElement) {
+		images := []string{}
+		e.ForEach(".swiper-wrapper .swiper-slide a", func(i int, el *colly.HTMLElement) {
+			images = append(images, el.Attr("href"))
+		})
+		productRequest.Images = images
+	})
+
+	sizes := []string{}
+	c.OnHTML("#divSize #spanSize", func(e *colly.HTMLElement) {
+		s := strings.TrimSpace(e.Text)
+		sizes = append(sizes, s)
+	})
+	c.OnHTML("#sizeDdl", func(e *colly.HTMLElement) {
+		e.ForEach("option", func(i int, el *colly.HTMLElement) {
+			if el.Attr("value") != "0" {
+				sizes = append(sizes, el.Attr("value"))
+			}
+		})
+	})
+
+	c.OnHTML("#DisplayAttributes", func(e *colly.HTMLElement) {
+		keys, values := []string{}, []string{}
+		e.ForEach("dt", func(i int, el *colly.HTMLElement) {
+			keys = append(keys, el.Text)
+		})
+		e.ForEach("dd", func(_ int, el *colly.HTMLElement) {
+			values = append(values, el.Text)
+		})
+
+		for i, val := range values {
+			if keys[i] == "Fabric" {
+				infos["소재"] = val
+			} else if keys[i] == "Style" {
+				infos["스타일"] = val
+			} else {
+				infos[keys[i]] = val
+			}
+		}
+	})
 
 	c.Visit(productURL)
 
+	productRequest.Information = infos
+	productRequest.DescriptionInfos = infos
+	productRequest.Sizes = sizes
+	invs := []*domain.InventoryDAO{}
+	for _, size := range sizes {
+		invs = append(invs, &domain.InventoryDAO{
+			Size:     size,
+			Quantity: 1,
+		})
+	}
+	productRequest.Inventory = invs
 	return productRequest
 }
 
-// func getFlannelsDetail(productUrl string) (images, colors []string, infos, description map[string]string, notSale bool) {
-// 	c := colly.NewCollector(
-// 		colly.AllowedDomains("www.afound.com"),
-// 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
-// 	)
-// 	c.SetRequestTimeout(10 * time.Second)
+func parseOnlyNumbers(texts string) float32 {
+	re := regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`)
+	onlyNumbers := re.FindAllString(texts, -1)
+	num, _ := strconv.ParseFloat(onlyNumbers[0], 32)
+	return float32(num)
+}
 
-// 	//isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
+func flannelsCategoryMapper(categoryKeyname string) *domain.AlloffCategoryDAO {
 
-// 	infos = map[string]string{
-// 		"소재": "",
-// 		"색상": "",
-// 	}
-// 	description = map[string]string{
-// 		"사이즈 및 핏": "",
-// 		"제품설명":    "",
-// 	}
-// 	images = []string{}
-// 	colors = []string{}
-// 	sizeAndFit := ""
-
-// 	// 상품 url에 접속했지만 상품 정보가 없는경우 리스트로 리다이렉트된다. 이떄 리스트로 리다이렉트 됐는지를 판단하여 상품 유효성을 검증한다.
-// 	c.OnHTML(".af-product-listing__category-filters__section__header--wrapper", func(e *colly.HTMLElement) {
-// 		if e.Text != "" {
-// 			notSale = true
-// 			return
-// 		}
-// 	})
-
-// 	c.OnHTML("div.product-page__grid > section.product-page__grid-col-right > div.af-accordion.pdp-accordion.spaced--xmedium > "+
-// 		"section:nth-child(1) > div > p", func(e *colly.HTMLElement) {
-// 		desc := e.Text
-// 		desc = strings.TrimSpace(desc)
-// 		description["제품설명"] = desc
-// 	})
-
-// 	c.OnHTML("div.product-page__grid > section.product-page__grid-col-right > div.af-accordion.pdp-accordion.spaced--xmedium > "+
-// 		"section:nth-child(1) > div > div > dl:nth-child(6) > dd", func(e *colly.HTMLElement) {
-// 		sizeAndFit += e.Text + ", "
-// 	})
-// 	c.OnHTML("div.product-page__grid > section.product-page__grid-col-right > div.af-accordion.pdp-accordion.spaced--xmedium > "+
-// 		"section:nth-child(1) > div > div > dl:nth-child(5) > dd", func(e *colly.HTMLElement) {
-// 		sizeAndFit += e.Text
-// 	})
-
-// 	c.OnHTML("div.product-page__grid > section.product-page__grid-col-right > div.af-accordion.pdp-accordion.spaced--xmedium > "+
-// 		"section:nth-child(1) > div > div > dl:nth-child(1) > dd", func(e *colly.HTMLElement) {
-// 		infos["소재"] = e.Text
-// 	})
-
-// 	c.OnHTML("div.product-page__grid > section.product-page__grid-col-right > div.af-accordion.pdp-accordion.spaced--xmedium > "+
-// 		"section:nth-child(1) > div > div > dl:nth-child(2) > dd", func(e *colly.HTMLElement) {
-// 		infos["색상"] = e.Text
-// 		colors = append(colors, e.Text)
-// 	})
-
-// 	c.OnHTML("div.product-page__grid > section.product-page__grid-col-left", func(e *colly.HTMLElement) {
-// 		e.ForEach("a", func(_ int, el *colly.HTMLElement) {
-// 			imgUrl := el.ChildAttr("img", "src")
-// 			imgUrl = strings.Split(imgUrl, "?")[0]
-// 			imgUrl += "?preset=product-details-desktop"
-// 			images = append(images, imgUrl)
-// 		})
-// 	})
-
-// 	c.Visit(productUrl)
-// 	description["사이즈 및 핏"] = sizeAndFit
-
-// 	return
-// }
+	return &domain.AlloffCategoryDAO{}
+}

@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-const MODULE_NAME = "flannels"
+const FLANNELS_MODULE_NAME = "flannels"
 
 func AddFlannels() {
 	// productTypes := map[string][]domain.AlloffProductType{
@@ -804,10 +804,10 @@ func AddFlannels() {
 			BrandIdentifier:      brandUrlName,
 			ProductType:          nil,
 			CrawlUrl:             getCrawlUrl(brandUrlName),
-			CrawlModuleName:      MODULE_NAME,
+			CrawlModuleName:      FLANNELS_MODULE_NAME,
 			IsSalesProducts:      true,
 			IsForeignDelivery:    true,
-			PriceMarginPolicy:    "CLAUDIEPIERLOT",
+			PriceMarginPolicy:    "FLANNELS",
 			DeliveryPrice:        0,
 			EarliestDeliveryDays: 7,
 			LatestDeliveryDays:   14,
