@@ -95,7 +95,7 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
 			Colors:              colors,
-			Infos:               infos,
+			DescriptionInfos:    infos,
 			Sizes:               sizes,
 			Inventory:           inventories,
 			Information:         description,
