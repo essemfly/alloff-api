@@ -87,12 +87,7 @@ type OrdersRepository interface {
 }
 
 type OrderItemsRepository interface {
-	Get(ID int) (*domain.OrderItemDAO, error)
 	GetByCode(code string) (*domain.OrderItemDAO, error)
-	ListByProductGroupID(pgID string) ([]*domain.OrderItemDAO, int, error)
-	ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error)
-	ListByExhibitionID(exhibitionID string) ([]*domain.OrderItemDAO, error)
-	ListAllCanceled() ([]*domain.OrderItemDAO, error)
 	Update(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
 }
 type PaymentsRepository interface {
