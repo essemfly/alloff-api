@@ -131,11 +131,12 @@ func CrawlFlannels(worker chan bool, done chan bool, source *domain.CrawlSourceD
 		productinfo.ProcessCrawlingInfoRequests(req)
 	}
 
-	log.Println("length of requests for brand", source.BrandKeyname, len(productRequests))
+	// log.Println("length of requests for brand", source.BrandKeyname, len(productRequests))
 	<-worker
 	done <- true
 }
 
+// Source 브랜드별로, categories와 productTypes들을 구해서, 그것들을 따로 크롤링 함
 func CrawlFlannelsProducts(baseUrl string, productTypes []string, categories []string) []*productinfo.AddMetaInfoRequest {
 	productRequests := []*productinfo.AddMetaInfoRequest{}
 	for _, cat := range categories {
@@ -148,6 +149,7 @@ func CrawlFlannelsProducts(baseUrl string, productTypes []string, categories []s
 	return productRequests
 }
 
+// 각각 Category와 ProductType에서 상품들 List를 크롤링하는 함수
 func GetFlannelProductList(categoryUrl, productType, categoryName string) []*productinfo.AddMetaInfoRequest {
 	productTypes := map[string][]domain.AlloffProductType{
 		"Mens":          {domain.Male},
@@ -170,20 +172,21 @@ func GetFlannelProductList(categoryUrl, productType, categoryName string) []*pro
 	listQueryResp := &FlannelsListResponse{}
 	json.NewDecoder(resp.Body).Decode(listQueryResp)
 
-	log.Println("length of products: ", categoryName+" "+productType, len(listQueryResp.Products))
-
-	baseURL := "https://www.flannels.com"
 	requests := []*productinfo.AddMetaInfoRequest{}
+	baseURL := "https://www.flannels.com"
+	alloffcat := flannelsCategoryMapper(categoryName)
 	for _, pd := range listQueryResp.Products {
 		newRequest := GetFlannelsDetail(baseURL + pd.URL)
 		newRequest.ProductType = productTypes[productType]
-		newRequest.AlloffCategory = &domain.AlloffCategoryDAO{}
+		newRequest.AlloffCategory = alloffcat
 		requests = append(requests, newRequest)
 	}
 
+	// log.Println("length of products: ", categoryName+" "+productType, len(listQueryResp.Products))
 	return requests
 }
 
+// 상품 상세 페이지에서 크롤링 하는 함수
 func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
 	productRequest := &productinfo.AddMetaInfoRequest{
 		ProductUrl:          productURL,
@@ -208,7 +211,6 @@ func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
 
 	infos := map[string]string{}
 	c.OnHTML("#lblProductName", func(e *colly.HTMLElement) {
-		log.Println("name", e.Text)
 		productRequest.AlloffName = e.Text
 	})
 	c.OnHTML(".product-detail__price", func(e *colly.HTMLElement) {
@@ -235,15 +237,25 @@ func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
 		productRequest.Images = images
 	})
 
+	isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
 	sizes := []string{}
 	c.OnHTML("#divSize #spanSize", func(e *colly.HTMLElement) {
-		s := strings.TrimSpace(e.Text)
-		sizes = append(sizes, s)
+		size := strings.TrimSpace(e.Text)
+		size = strings.Replace(size, " ", "", -1)
+		if isDigit.MatchString(size) {
+			size = "UK" + size
+		}
+		sizes = append(sizes, size)
 	})
 	c.OnHTML("#sizeDdl", func(e *colly.HTMLElement) {
 		e.ForEach("option", func(i int, el *colly.HTMLElement) {
 			if el.Attr("value") != "0" {
-				sizes = append(sizes, el.Attr("value"))
+				size := strings.TrimSpace(el.Attr("value"))
+				size = strings.Replace(size, " ", "", -1)
+				if isDigit.MatchString(size) {
+					size = "UK" + size
+				}
+				sizes = append(sizes, size)
 			}
 		})
 	})
@@ -292,6 +304,51 @@ func parseOnlyNumbers(texts string) float32 {
 }
 
 func flannelsCategoryMapper(categoryKeyname string) *domain.AlloffCategoryDAO {
+	if strings.Contains(categoryKeyname, "Coats") || strings.Contains(categoryKeyname, "Jackets") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_outer")
+		return alloffcat
+	}
+	if strings.Contains(categoryKeyname, "Knitwear") || strings.Contains(categoryKeyname, "Tops") || strings.Contains(categoryKeyname, "Shirts") || strings.Contains(categoryKeyname, "Hoodies") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_top")
+		return alloffcat
+	}
+	if strings.Contains(categoryKeyname, "Trousers") || strings.Contains(categoryKeyname, "Shorts") || strings.Contains(categoryKeyname, "Jeans") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_bottom")
+		return alloffcat
+	}
+	if strings.Contains(categoryKeyname, "Dresses") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_onePiece")
+		return alloffcat
+	}
+	if strings.Contains(categoryKeyname, "Skirts") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_skirt")
+		return alloffcat
+	}
+	if strings.Contains(categoryKeyname, "Bras") || strings.Contains(categoryKeyname, "Lingerie") || strings.Contains(categoryKeyname, "Socks") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_underwear")
+		return alloffcat
+	}
+	if strings.Contains(categoryKeyname, "Handbags") || strings.Contains(categoryKeyname, "Bags") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_bags")
+		return alloffcat
+	}
+	if strings.Contains(categoryKeyname, "Shoes") || strings.Contains(categoryKeyname, "Slippers") || strings.Contains(categoryKeyname, "Trainers") || strings.Contains(categoryKeyname, "Boots") || strings.Contains(categoryKeyname, "Sandals") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_shoes")
+		return alloffcat
+	}
+	if strings.Contains(categoryKeyname, "Gloves") || strings.Contains(categoryKeyname, "Scarves") || strings.Contains(categoryKeyname, "Accessories") || strings.Contains(categoryKeyname, "Sunglasses") || strings.Contains(categoryKeyname, "Belts") || strings.Contains(categoryKeyname, "Hats") || strings.Contains(categoryKeyname, "Wallets") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_accessory")
+		return alloffcat
+	}
+	if strings.Contains(categoryKeyname, "Rings") || strings.Contains(categoryKeyname, "Earrings") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_jewelry")
+		return alloffcat
+	}
+	if strings.Contains(categoryKeyname, "Jumpsuits") {
+		alloffcat, _ := ioc.Repo.AlloffCategories.GetByKeyname("1_beachwear")
+		return alloffcat
+	}
 
+	config.Logger.Warn("Not matched category keyname in flannels" + categoryKeyname)
 	return &domain.AlloffCategoryDAO{}
 }
