@@ -2,6 +2,8 @@ package mongo
 
 import (
 	"context"
+	"github.com/lessbutter/alloff-api/config"
+	"go.uber.org/zap"
 	"log"
 	"time"
 
@@ -86,6 +88,30 @@ func (repo *productRepo) List(offset, limit int, filter, sortingOptions interfac
 	var products []*domain.ProductDAO
 	err = cursor.All(ctx, &products)
 	if err != nil {
+		return nil, 0, err
+	}
+
+	return products, int(totalCount), nil
+}
+
+func (repo *productRepo) Aggregate(filter interface{}, pipelines []interface{}) ([]*domain.ProductDAO, int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	pipelines = append(pipelines, bson.M{"$match": filter})
+
+	totalCount, _ := repo.col.CountDocuments(ctx, filter)
+
+	cursor, err := repo.col.Aggregate(ctx, pipelines)
+	if err != nil {
+		config.Logger.Error("error on aggregating products : ", zap.Error(err))
+		return nil, 0, err
+	}
+
+	var products []*domain.ProductDAO
+	err = cursor.All(ctx, &products)
+	if err != nil {
+		config.Logger.Error("error on cursor to products : ", zap.Error(err))
 		return nil, 0, err
 	}
 
