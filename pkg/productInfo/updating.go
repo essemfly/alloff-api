@@ -9,8 +9,11 @@ import (
 )
 
 func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {
+	newPdInfo := makeBaseProductInfo(request)
+	newPdInfo.ID = pdInfo.ID
+
 	inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
-	pdInfo.SetInventory(inventories)
+	newPdInfo.SetInventory(inventories)
 
 	// 상품 크롤링시 번역은 하지 않는다.
 	//if pdInfo.IsTranslateRequired {
@@ -24,7 +27,7 @@ func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRe
 	//	}
 	//}
 
-	updatedPdInfo, err := Update(pdInfo)
+	updatedPdInfo, err := Update(newPdInfo)
 	if err != nil {
 		config.Logger.Error("error on adding product infos", zap.Error(err))
 		return nil, err
