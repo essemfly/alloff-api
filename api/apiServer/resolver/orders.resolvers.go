@@ -15,6 +15,7 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/internal/pkg/alimtalk"
 	"github.com/lessbutter/alloff-api/internal/pkg/amplitude"
 	"github.com/lessbutter/alloff-api/pkg/basket"
 	"go.uber.org/zap"
@@ -222,6 +223,7 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 		return result, fmt.Errorf("ERR308:failed to cancel order " + err.Error())
 	}
 
+	alimtalk.NotifyOrderCancelAlarm(orderItemDao)
 	amplitude.LogCancelOrderItemRecord(user, orderItemDao, paymentDao)
 
 	result.Success = true
