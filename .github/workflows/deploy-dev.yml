@@ -3,7 +3,7 @@ name: Deploy to Amazon ECS - DEV
 on:
   push:
     branches:
-      - flannels
+      - dev
 
 env:
   ENV: dev

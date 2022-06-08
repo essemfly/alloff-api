@@ -9,10 +9,13 @@ env:
   ENV: prod
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: alloff-api-prod
-  ECS_SERVICE: alloff-api-prod
-  ECS_CLUSTER: alloff-api
   ECS_TASK_DEFINITION: .aws/task-definition-prod.json
+  ECS_GRPC_TASK_DEFINITION: .aws/task-definition-prod.json
+  ECS_CLUSTER: alloff-api
+  ECS_SERVICE: alloff-api-prod
+  ECS_GRPC_SERVICE: alloff-grpc-prod
   CONTAINER_NAME: alloff-api-prod
+  CONTAINER_GRPC_NAME: alloff-grpc-prod
 
 jobs:
   codecov:
@@ -108,11 +111,27 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
+      - name: (GRPC) Fill in the new image ID in the Amazon ECS task definition
+        id: task-def-grpc
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_GRPC_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_GRPC_NAME }}
+          image: ${{ steps.build-image.outputs.image }}
+
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: (GRPC) Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def-grpc.outputs.task-definition }}
+          service: ${{ env.ECS_GRPC_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
 
