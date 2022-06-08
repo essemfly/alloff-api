@@ -142,6 +142,7 @@ type ComplexityRoot struct {
 		Tags           func(childComplexity int) int
 		ThumbnailImage func(childComplexity int) int
 		Title          func(childComplexity int) int
+		UserAlarmOn    func(childComplexity int) int
 	}
 
 	ExhibitionOutput struct {
@@ -169,9 +170,9 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AddCartItem           func(childComplexity int, input model.CartItemInput) int
+		AddCartItem           func(childComplexity int, cartID string, items []*model.CartItemInput) int
 		CancelOrderItem       func(childComplexity int, orderID string, orderItemID string) int
-		CancelPayment         func(childComplexity int, input *model.CancelPaymentInput) int
+		CancelPayment         func(childComplexity int, orderID string) int
 		ConfirmOrderItem      func(childComplexity int, orderID string, orderItemID string) int
 		CreateUser            func(childComplexity int, input model.NewUser) int
 		HandlePaymentResponse func(childComplexity int, input *model.OrderResponse) int
@@ -179,7 +180,7 @@ type ComplexityRoot struct {
 		Login                 func(childComplexity int, input model.Login) int
 		RefreshToken          func(childComplexity int, input model.RefreshTokenInput) int
 		RegisterNotification  func(childComplexity int, deviceID string, allowNotification bool, userID *string) int
-		RemoveCartItem        func(childComplexity int, input model.CartItemInput) int
+		RemoveCartItem        func(childComplexity int, cartID string, items []*model.CartItemInput) int
 		RequestOrder          func(childComplexity int, input *model.OrderInput) int
 		RequestPayment        func(childComplexity int, input *model.PaymentClientInput) int
 		SetAlarm              func(childComplexity int, id string) int
@@ -387,12 +388,12 @@ type MutationResolver interface {
 	Login(ctx context.Context, input model.Login) (string, error)
 	RefreshToken(ctx context.Context, input model.RefreshTokenInput) (string, error)
 	LikeBrand(ctx context.Context, input *model.LikeBrandInput) (bool, error)
-	AddCartItem(ctx context.Context, input model.CartItemInput) (*model.Cart, error)
-	RemoveCartItem(ctx context.Context, input model.CartItemInput) (*model.Cart, error)
+	AddCartItem(ctx context.Context, cartID string, items []*model.CartItemInput) (*model.Cart, error)
+	RemoveCartItem(ctx context.Context, cartID string, items []*model.CartItemInput) (*model.Cart, error)
 	SetAlarm(ctx context.Context, id string) (bool, error)
 	RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error)
 	RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
-	CancelPayment(ctx context.Context, input *model.CancelPaymentInput) (*model.PaymentStatus, error)
+	CancelPayment(ctx context.Context, orderID string) (*model.PaymentStatus, error)
 	HandlePaymentResponse(ctx context.Context, input *model.OrderResponse) (*model.PaymentResult, error)
 	CancelOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error)
 	ConfirmOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error)
@@ -884,6 +885,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Exhibition.Title(childComplexity), true
 
+	case "Exhibition.userAlarmOn":
+		if e.complexity.Exhibition.UserAlarmOn == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.UserAlarmOn(childComplexity), true
+
 	case "ExhibitionOutput.exhibitions":
 		if e.complexity.ExhibitionOutput.Exhibitions == nil {
 			break
@@ -978,7 +986,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddCartItem(childComplexity, args["input"].(model.CartItemInput)), true
+		return e.complexity.Mutation.AddCartItem(childComplexity, args["cartId"].(string), args["items"].([]*model.CartItemInput)), true
 
 	case "Mutation.cancelOrderItem":
 		if e.complexity.Mutation.CancelOrderItem == nil {
@@ -1002,7 +1010,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CancelPayment(childComplexity, args["input"].(*model.CancelPaymentInput)), true
+		return e.complexity.Mutation.CancelPayment(childComplexity, args["orderId"].(string)), true
 
 	case "Mutation.confirmOrderItem":
 		if e.complexity.Mutation.ConfirmOrderItem == nil {
@@ -1098,7 +1106,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RemoveCartItem(childComplexity, args["input"].(model.CartItemInput)), true
+		return e.complexity.Mutation.RemoveCartItem(childComplexity, args["cartId"].(string), args["items"].([]*model.CartItemInput)), true
 
 	case "Mutation.requestOrder":
 		if e.complexity.Mutation.RequestOrder == nil {
@@ -2358,7 +2366,6 @@ type CartItem {
 }
 
 input CartItemInput {
-  cartId: String!
   productId: String!
   selectsize: String!
   quantity: Int!
@@ -2369,8 +2376,8 @@ extend type Query {
 }
 
 extend type Mutation {
-  addCartItem(input: CartItemInput!): Cart!
-  removeCartItem(input: CartItemInput!): Cart!
+  addCartItem(cartId: String! items: [CartItemInput!]!): Cart!
+  removeCartItem(cartId: String! items: [CartItemInput!]!): Cart!
 }
 `, BuiltIn: false},
 	{Name: "api/apiServer/graph/exhibition.graphqls", Input: `type ProductGroup {
@@ -2410,6 +2417,7 @@ type Exhibition {
   finishTime: Date!  
   numAlarms: Int!
   maxDiscounts: Int!
+  userAlarmOn: Boolean!
 }
 
 input ExhibitionInput {
@@ -2643,15 +2651,10 @@ extend type Query {
   orderItemStatus: [OrderItemStatusDescription!]!
 }
 
-input CancelPaymentInput {
-  impUID: String!
-  merchantUID: String!
-}
-
 extend type Mutation {
   requestOrder(input: OrderInput): OrderWithPayment!
   requestPayment(input: PaymentClientInput): PaymentStatus!
-  cancelPayment(input: CancelPaymentInput): PaymentStatus!
+  cancelPayment(orderId: String!): PaymentStatus!
   handlePaymentResponse(input: OrderResponse): PaymentResult!
 
   cancelOrderItem(orderId: String!, orderItemId: String!): PaymentStatus!
@@ -2815,15 +2818,24 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 func (ec *executionContext) field_Mutation_addCartItem_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.CartItemInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCartItemInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCartItemInput(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["cartId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cartId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["cartId"] = arg0
+	var arg1 []*model.CartItemInput
+	if tmp, ok := rawArgs["items"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("items"))
+		arg1, err = ec.unmarshalNCartItemInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCartItemInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["items"] = arg1
 	return args, nil
 }
 
@@ -2854,15 +2866,15 @@ func (ec *executionContext) field_Mutation_cancelOrderItem_args(ctx context.Cont
 func (ec *executionContext) field_Mutation_cancelPayment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.CancelPaymentInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOCancelPaymentInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCancelPaymentInput(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["orderId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["orderId"] = arg0
 	return args, nil
 }
 
@@ -3001,15 +3013,24 @@ func (ec *executionContext) field_Mutation_registerNotification_args(ctx context
 func (ec *executionContext) field_Mutation_removeCartItem_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.CartItemInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCartItemInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCartItemInput(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["cartId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cartId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["cartId"] = arg0
+	var arg1 []*model.CartItemInput
+	if tmp, ok := rawArgs["items"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("items"))
+		arg1, err = ec.unmarshalNCartItemInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCartItemInputᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["items"] = arg1
 	return args, nil
 }
 
@@ -5527,6 +5548,41 @@ func (ec *executionContext) _Exhibition_maxDiscounts(ctx context.Context, field 
 	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Exhibition_userAlarmOn(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserAlarmOn, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _ExhibitionOutput_exhibitions(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionOutput) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -6224,7 +6280,7 @@ func (ec *executionContext) _Mutation_addCartItem(ctx context.Context, field gra
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddCartItem(rctx, args["input"].(model.CartItemInput))
+		return ec.resolvers.Mutation().AddCartItem(rctx, args["cartId"].(string), args["items"].([]*model.CartItemInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6266,7 +6322,7 @@ func (ec *executionContext) _Mutation_removeCartItem(ctx context.Context, field 
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveCartItem(rctx, args["input"].(model.CartItemInput))
+		return ec.resolvers.Mutation().RemoveCartItem(rctx, args["cartId"].(string), args["items"].([]*model.CartItemInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -6434,7 +6490,7 @@ func (ec *executionContext) _Mutation_cancelPayment(ctx context.Context, field g
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CancelPayment(rctx, args["input"].(*model.CancelPaymentInput))
+		return ec.resolvers.Mutation().CancelPayment(rctx, args["orderId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12681,37 +12737,6 @@ func (ec *executionContext) unmarshalInputBrandsInput(ctx context.Context, obj i
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCancelPaymentInput(ctx context.Context, obj interface{}) (model.CancelPaymentInput, error) {
-	var it model.CancelPaymentInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "impUID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("impUID"))
-			it.ImpUID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "merchantUID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("merchantUID"))
-			it.MerchantUID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputCartItemInput(ctx context.Context, obj interface{}) (model.CartItemInput, error) {
 	var it model.CartItemInput
 	asMap := map[string]interface{}{}
@@ -12721,14 +12746,6 @@ func (ec *executionContext) unmarshalInputCartItemInput(ctx context.Context, obj
 
 	for k, v := range asMap {
 		switch k {
-		case "cartId":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cartId"))
-			it.CartID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "productId":
 			var err error
 
@@ -13976,6 +13993,11 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			}
 		case "maxDiscounts":
 			out.Values[i] = ec._Exhibition_maxDiscounts(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "userAlarmOn":
+			out.Values[i] = ec._Exhibition_userAlarmOn(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -16053,9 +16075,30 @@ func (ec *executionContext) marshalNCartItem2ᚖgithubᚗcomᚋlessbutterᚋallo
 	return ec._CartItem(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCartItemInput2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCartItemInput(ctx context.Context, v interface{}) (model.CartItemInput, error) {
+func (ec *executionContext) unmarshalNCartItemInput2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCartItemInputᚄ(ctx context.Context, v interface{}) ([]*model.CartItemInput, error) {
+	var vSlice []interface{}
+	if v != nil {
+		if tmp1, ok := v.([]interface{}); ok {
+			vSlice = tmp1
+		} else {
+			vSlice = []interface{}{v}
+		}
+	}
+	var err error
+	res := make([]*model.CartItemInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNCartItemInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCartItemInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalNCartItemInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCartItemInput(ctx context.Context, v interface{}) (*model.CartItemInput, error) {
 	res, err := ec.unmarshalInputCartItemInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNCategory2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Category) graphql.Marshaler {
@@ -17263,14 +17306,6 @@ func (ec *executionContext) unmarshalOBrandsInput2ᚖgithubᚗcomᚋlessbutter�
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputBrandsInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOCancelPaymentInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCancelPaymentInput(ctx context.Context, v interface{}) (*model.CancelPaymentInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputCancelPaymentInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

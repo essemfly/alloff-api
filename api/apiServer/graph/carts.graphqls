@@ -11,7 +11,6 @@ type CartItem {
 }
 
 input CartItemInput {
-  cartId: String!
   productId: String!
   selectsize: String!
   quantity: Int!
@@ -22,6 +21,6 @@ extend type Query {
 }
 
 extend type Mutation {
-  addCartItem(input: CartItemInput!): Cart!
-  removeCartItem(input: CartItemInput!): Cart!
+  addCartItem(cartId: String! items: [CartItemInput!]!): Cart!
+  removeCartItem(cartId: String! items: [CartItemInput!]!): Cart!
 }

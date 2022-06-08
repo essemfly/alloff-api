@@ -10,6 +10,7 @@ import (
 const (
 	EURO_EXCHANGE_RATE   = 1350
 	DOLLAR_EXCHANGE_RATE = 1220
+	POUND_EXCHANGE_RATE  = 1650
 )
 
 func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyType, marginPolicy string) (int, int) {
@@ -19,6 +20,9 @@ func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyT
 	} else if currencyType == domain.CurrencyUSD {
 		origPrice *= DOLLAR_EXCHANGE_RATE
 		discPrice *= DOLLAR_EXCHANGE_RATE
+	} else if currencyType == domain.CurrencyPOUND {
+		origPrice *= POUND_EXCHANGE_RATE
+		discPrice *= POUND_EXCHANGE_RATE
 	}
 
 	if marginPolicy == "INTREND" {
@@ -73,6 +77,13 @@ func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyT
 	} else if marginPolicy == "CLAUDIEPIERLOT" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateClaudiePierlotPrice(int(discPrice))
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
+		return origPriceKRW, discPriceKRW
+	} else if marginPolicy == "FLANNELS" {
+		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
+		discPriceKRW := CalculateClaudiePierlotPrice(int(discPrice)) // TO BE SPECIFIED WITH FLANNELS
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000

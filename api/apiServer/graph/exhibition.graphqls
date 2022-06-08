@@ -35,6 +35,7 @@ type Exhibition {
   finishTime: Date!  
   numAlarms: Int!
   maxDiscounts: Int!
+  userAlarmOn: Boolean!
 }
 
 input ExhibitionInput {

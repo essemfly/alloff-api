@@ -11,9 +11,10 @@ import (
 type CurrencyType string
 
 const (
-	CurrencyKRW CurrencyType = "KRW"
-	CurrencyUSD CurrencyType = "USD"
-	CurrencyEUR CurrencyType = "EUR"
+	CurrencyKRW   CurrencyType = "KRW"
+	CurrencyUSD   CurrencyType = "USD"
+	CurrencyEUR   CurrencyType = "EUR"
+	CurrencyPOUND CurrencyType = "POUND"
 )
 
 type DeliveryType string

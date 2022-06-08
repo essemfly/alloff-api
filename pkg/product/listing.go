@@ -56,7 +56,7 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 			if err != nil {
 				continue
 			}
-			query = append(query, bson.M{"alloffinventory.alloffsizes._id": oid})
+			query = append(query, bson.M{"productinfo.inventory.alloffsizes._id": oid})
 		}
 		filter["$or"] = query
 	}
@@ -117,6 +117,10 @@ func (input *ProductListInput) BuildSorting() (bson.D, error) {
 		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: 1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.DISCOUNTRATE_DESCENDING {
 		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: -1}, {Key: "_id", Value: 1}}
+	} else if input.PriceSorting == domain.INVENTORY_ASCENDING {
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.inventory.quantity", Value: 1}, {Key: "_id", Value: 1}}
+	} else if input.PriceSorting == domain.INVENTORY_DESCENDING {
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.inventory.quantity", Value: -1}, {Key: "_id", Value: 1}}
 	}
 
 	return options, nil
@@ -128,16 +132,38 @@ func ListProducts(input ProductListInput) ([]*domain.ProductDAO, int, error) {
 		log.Println("Error in getting products filter ", err)
 		return nil, 0, err
 	}
+
 	sortingOptions, err := input.BuildSorting()
-	if err != nil {
-		log.Println("Error in getting products sorting ", err)
-		return nil, 0, err
-	}
+	// Need to sorting by aggregate query if input.sorting is about inventory
+	if input.PriceSorting == domain.INVENTORY_DESCENDING || input.PriceSorting == domain.INVENTORY_ASCENDING {
+		pipelines := []interface{}{
+			bson.M{"$addFields": bson.M{
+				"totalQuantity": bson.M{
+					"$add": []bson.M{
+						{"$sum": "$productinfo.inventory.quantity"},
+					},
+				},
+			}},
+			bson.M{"$limit": input.Offset + input.Limit},
+			bson.M{"$skip": input.Offset},
+			bson.M{"$sort": sortingOptions},
+		}
+		products, cnt, err := ioc.Repo.Products.Aggregate(filter, pipelines)
+		if err != nil {
+			return nil, cnt, err
+		}
 
-	products, cnt, err := ioc.Repo.Products.List(input.Offset, input.Limit, filter, sortingOptions)
-	if err != nil {
-		return nil, cnt, err
-	}
+		return products, cnt, nil
+	} else {
+		if err != nil {
+			log.Println("Error in getting products sorting ", err)
+			return nil, 0, err
+		}
+		products, cnt, err := ioc.Repo.Products.List(input.Offset, input.Limit, filter, sortingOptions)
+		if err != nil {
+			return nil, cnt, err
+		}
 
-	return products, cnt, nil
+		return products, cnt, nil
+	}
 }

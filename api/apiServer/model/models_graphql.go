@@ -68,11 +68,6 @@ type CancelDescription struct {
 	RefundFee       int  `json:"refundFee"`
 }
 
-type CancelPaymentInput struct {
-	ImpUID      string `json:"impUID"`
-	MerchantUID string `json:"merchantUID"`
-}
-
 type Cart struct {
 	ID    string      `json:"id"`
 	Items []*CartItem `json:"items"`
@@ -86,7 +81,6 @@ type CartItem struct {
 }
 
 type CartItemInput struct {
-	CartID     string `json:"cartId"`
 	ProductID  string `json:"productId"`
 	Selectsize string `json:"selectsize"`
 	Quantity   int    `json:"quantity"`
@@ -127,6 +121,7 @@ type Exhibition struct {
 	FinishTime     string              `json:"finishTime"`
 	NumAlarms      int                 `json:"numAlarms"`
 	MaxDiscounts   int                 `json:"maxDiscounts"`
+	UserAlarmOn    bool                `json:"userAlarmOn"`
 }
 
 type ExhibitionInput struct {

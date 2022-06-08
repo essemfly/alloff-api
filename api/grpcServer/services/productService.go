@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -39,6 +40,11 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		alloffCategoryID = *req.Query.AlloffCategoryId
 	}
 
+	brandID := ""
+	if req.Query.BrandId != nil {
+		brandID = *req.Query.BrandId
+	}
+
 	searchKeyword := ""
 	if req.Query.SearchQuery != nil {
 		searchKeyword = *req.Query.SearchQuery
@@ -62,7 +68,7 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 	query := productinfo.ProductInfoListInput{
 		Offset:                int(req.Offset),
 		Limit:                 int(req.Limit),
-		BrandID:               "",
+		BrandID:               brandID,
 		AlloffCategoryID:      alloffCategoryID,
 		Keyword:               searchKeyword,
 		Modulename:            moduleName,

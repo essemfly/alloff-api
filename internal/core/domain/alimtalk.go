@@ -11,9 +11,11 @@ type AlimtalkStatus string
 const (
 	DELIVERY_START       = "deliveryStarted"
 	DELIVERY_START_TRACK = "deliveryStartedTrack"
-	PAYMENT_CANCEL       = "paymentCanceled"
-	PAYMENT_OK           = "paymentOk"
+	PAYMENT_CANCEL       = "paymentCanceled2"
+	PAYMENT_OK           = "paymentOk2"
+	PAYMENT_OK_OVERSEAS  = "paymentOkOverseas"
 	EXHIBITION_ALARM     = "exhibitionAlarmOk"
+	DEAL_OPEN            = "timedealOpenNoti2"
 )
 
 const (

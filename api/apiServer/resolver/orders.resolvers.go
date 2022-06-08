@@ -15,7 +15,7 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/internal/pkg/amplitude"
+	"github.com/lessbutter/alloff-api/internal/pkg/alimtalk"
 	"github.com/lessbutter/alloff-api/pkg/basket"
 	"go.uber.org/zap"
 )
@@ -99,7 +99,7 @@ func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.Paym
 	return result, nil
 }
 
-func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.CancelPaymentInput) (*model.PaymentStatus, error) {
+func (r *mutationResolver) CancelPayment(ctx context.Context, orderID string) (*model.PaymentStatus, error) {
 	/*
 		0. 주문창까지 넘어갔다가 취소된 경우 발생하는 API
 		1. Payment가 취소 되면서, 재고가 다시 회복됩니다.
@@ -111,12 +111,12 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, input *model.Cance
 		return nil, fmt.Errorf("ERR000:invalid token")
 	}
 
-	orderDao, err := ioc.Repo.Orders.GetByAlloffID(input.MerchantUID)
+	orderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
 	if err != nil {
 		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
-	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(input.MerchantUID, orderDao.TotalPrice)
+	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(orderID, orderDao.TotalPrice)
 	if err != nil {
 		return nil, fmt.Errorf("ERR404:failed to find payment order not found")
 	}
@@ -178,13 +178,11 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 		return nil, fmt.Errorf("ERR405: failed to verify payment " + err.Error())
 	}
 
-	amplitude.LogOrderRecord(user, orderDao, paymentDao)
-
 	return &model.PaymentResult{
 		Success:     true,
 		ErrorMsg:    "",
-		Order:       nil,
-		PaymentInfo: nil,
+		Order:       mapper.MapOrder(orderDao),
+		PaymentInfo: mapper.MapPayment(paymentDao),
 	}, nil
 }
 
@@ -222,7 +220,7 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 		return result, fmt.Errorf("ERR308:failed to cancel order " + err.Error())
 	}
 
-	amplitude.LogCancelOrderItemRecord(user, orderItemDao, paymentDao)
+	alimtalk.NotifyOrderCancelAlarm(orderItemDao)
 
 	result.Success = true
 	return result, nil

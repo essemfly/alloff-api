@@ -8,6 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/repository"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type alimtalkRepo struct {
@@ -21,7 +22,7 @@ func (repo *alimtalkRepo) GetByDetail(userID, templateCode, referenceID string) 
 	filter := bson.M{
 		"templatecode": templateCode,
 		"referenceid":  referenceID,
-		"userId":       userID,
+		"userid":       userID,
 	}
 
 	var alimtalk *domain.AlimtalkDAO
@@ -39,29 +40,24 @@ func (repo *alimtalkRepo) Insert(alimtalk *domain.AlimtalkDAO) (*domain.Alimtalk
 		return nil, err
 	}
 
-	var newAlimtalk *domain.AlimtalkDAO
+	var newAlimtalk domain.AlimtalkDAO
 	filter := bson.M{"_id": oid.InsertedID}
-	err = repo.col.FindOne(ctx, filter).Decode(newAlimtalk)
+	err = repo.col.FindOne(ctx, filter).Decode(&newAlimtalk)
 	if err != nil {
 		return nil, err
 	}
 
-	return newAlimtalk, nil
+	return &newAlimtalk, nil
 }
 
 func (repo *alimtalkRepo) Update(alimtalk *domain.AlimtalkDAO) (*domain.AlimtalkDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	filter := bson.M{
-		"status":       alimtalk.Status,
-		"templatecode": alimtalk.TemplateCode,
-		"referenceid":  alimtalk.ReferenceID,
-		"userId":       alimtalk.UserID,
-		"updated":      time.Now(),
-	}
-	_, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &alimtalk})
-	if err != nil {
+	opts := options.Update().SetUpsert(true)
+	alimtalk.UpdatedAt = time.Now()
+	filter := bson.M{"_id": alimtalk.ID}
+	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &alimtalk}, opts); err != nil {
 		return nil, err
 	}
 

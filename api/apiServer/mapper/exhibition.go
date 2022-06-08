@@ -22,6 +22,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		FinishTime:     exDao.FinishTime.Add(9 * time.Hour).String(),
 		NumAlarms:      exDao.NumAlarms,
 		MaxDiscounts:   exDao.MaxDiscounts,
+		UserAlarmOn:    false,
 	}
 }
 
