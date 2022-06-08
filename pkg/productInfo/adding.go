@@ -1,6 +1,7 @@
 package productinfo
 
 import (
+	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config"
@@ -106,18 +107,23 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
 	pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
 	pdInfo.SetInformation(request.Information)
-	descImages := append(request.DescriptionImages, request.Images...)
+	//descImages := append(request.DescriptionImages, request.Images...) TODO 이렇게 하면 Images가 수정될때마다 수정되는 친구들이 계속 descImages에 쌓이게 된다.
+	descImages := request.DescriptionImages
 	if request.ModuleName == "intrend" {
 		descImages = append([]string{
 			"https://alloff.s3.ap-northeast-2.amazonaws.com/description/Intrend_info.png",
 		}, descImages...)
 	}
 
+	log.Println(pdInfo.Images)
+
 	pdInfo.SetDesc(descImages, request.Description, request.DescriptionInfos)
 	pdInfo.SetDeliveryDesc(request.IsForeignDelivery, 0, request.EarliestDeliveryDays, request.LatestDeliveryDays)
 	pdInfo.SetCancelDesc(request.IsRefundPossible, request.RefundFee)
+	pdInfo.SetThumbnail(request.ThumbnailImage)
+	pdInfo.SetCachedImages(request.Images)
 
-	if request.AlloffCategory.ID != primitive.NilObjectID {
+	if request.AlloffCategory != nil && request.AlloffCategory.ID != primitive.NilObjectID {
 		alloffcat, _ := ioc.Repo.AlloffCategories.Get(request.AlloffCategory.ID.Hex())
 		productAlloffCat, err := alloffcategory.BuildProductAlloffCategory(alloffcat, true)
 		if err != nil {
@@ -126,7 +132,7 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 		pdInfo.SetAlloffCategory(productAlloffCat)
 	}
 
-	if request.AlloffCategory.ID == primitive.NilObjectID || !pdInfo.AlloffCategory.Done {
+	if request.AlloffCategory == nil || request.AlloffCategory.ID == primitive.NilObjectID || !pdInfo.AlloffCategory.Done {
 		productAlloffCat, err := alloffcategory.InferAlloffCategory(pdInfo)
 		if err != nil {
 			config.Logger.Error("err occured on infer alloffcategory: pdinfo "+pdInfo.ID.Hex(), zap.Error(err))

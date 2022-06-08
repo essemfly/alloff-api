@@ -250,6 +250,18 @@ func (pdInfo *ProductMetaInfoDAO) SetCancelDesc(isRefundPossible bool, refundFee
 	}
 }
 
+func (pdInfo *ProductMetaInfoDAO) SetThumbnail(thumbnailUrl string) {
+	pdInfo.ThumbnailImage = thumbnailUrl
+}
+
+// SetCachedImages : TODO 캐싱된경우 proto 에서 cached_images 필드로 메시지를 받아 캐싱여부 판단하는 것으로 바꿔야함 (백오피스 / proto 둘다 수정필요)
+func (pdInfo *ProductMetaInfoDAO) SetCachedImages(cachedImages []string) {
+	if cachedImages[0][0:14] == "https://alloff" {
+		pdInfo.CachedImages = cachedImages
+		pdInfo.IsImageCached = true
+	}
+}
+
 func (pdInfo *ProductMetaInfoDAO) SetAlloffCategory(cat *ProductAlloffCategoryDAO) {
 	pdInfo.AlloffCategory = cat
 	pdInfo.IsCategoryClassified = true
