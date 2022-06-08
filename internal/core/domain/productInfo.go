@@ -25,9 +25,10 @@ const (
 )
 
 type ProductDescriptionDAO struct {
-	Images []string
-	Texts  []string
-	Infos  map[string]string
+	Images   []string
+	Texts    []string
+	Infos    map[string]string
+	RawInfos map[string]string
 }
 
 type DeliveryDescriptionDAO struct {
@@ -50,6 +51,7 @@ type AlloffInstructionDAO struct {
 	DeliveryDescription *DeliveryDescriptionDAO
 	CancelDescription   *CancelDescriptionDAO
 	Information         map[string]string
+	RawInformation      map[string]string
 }
 
 type TaggingResultDAO struct {
