@@ -2,10 +2,11 @@ package mongo
 
 import (
 	"context"
-	"github.com/lessbutter/alloff-api/config"
-	"go.uber.org/zap"
 	"log"
 	"time"
+
+	"github.com/lessbutter/alloff-api/config"
+	"go.uber.org/zap"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -98,10 +99,7 @@ func (repo *productRepo) Aggregate(filter interface{}, pipelines []interface{}) 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	pipelines = append(pipelines, bson.M{"$match": filter})
-
 	totalCount, _ := repo.col.CountDocuments(ctx, filter)
-
 	cursor, err := repo.col.Aggregate(ctx, pipelines)
 	if err != nil {
 		config.Logger.Error("error on aggregating products : ", zap.Error(err))

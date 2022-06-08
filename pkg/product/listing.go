@@ -1,12 +1,12 @@
 package product
 
 import (
-	"log"
-
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.uber.org/zap"
 )
 
 // For API Servers
@@ -123,9 +123,11 @@ func (input *ProductListInput) BuildSorting() (bson.D, error) {
 	} else if input.PriceSorting == domain.DISCOUNTRATE_DESCENDING {
 		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: -1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.INVENTORY_ASCENDING {
-		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.inventory.quantity", Value: 1}, {Key: "_id", Value: 1}}
+		options = bson.D{{Key: "totalQuantity", Value: 1}, {Key: "_id", Value: 1}}
+		// options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.inventory.quantity", Value: 1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.INVENTORY_DESCENDING {
-		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.inventory.quantity", Value: -1}, {Key: "_id", Value: 1}}
+		options = bson.D{{Key: "totalQuantity", Value: -1}, {Key: "_id", Value: 1}}
+		// options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.inventory.quantity", Value: -1}, {Key: "_id", Value: 1}}
 	}
 
 	return options, nil
@@ -134,41 +136,33 @@ func (input *ProductListInput) BuildSorting() (bson.D, error) {
 func ListProducts(input ProductListInput) ([]*domain.ProductDAO, int, error) {
 	filter, err := input.BuildFilter()
 	if err != nil {
-		log.Println("Error in getting products filter ", err)
+		config.Logger.Error("Error in getting products filter ", zap.Error(err))
 		return nil, 0, err
 	}
 
 	sortingOptions, err := input.BuildSorting()
-	// Need to sorting by aggregate query if input.sorting is about inventory
-	if input.PriceSorting == domain.INVENTORY_DESCENDING || input.PriceSorting == domain.INVENTORY_ASCENDING {
-		pipelines := []interface{}{
-			bson.M{"$addFields": bson.M{
-				"totalQuantity": bson.M{
-					"$add": []bson.M{
-						{"$sum": "$productinfo.inventory.quantity"},
-					},
-				},
-			}},
-			bson.M{"$limit": input.Offset + input.Limit},
-			bson.M{"$skip": input.Offset},
-			bson.M{"$sort": sortingOptions},
-		}
-		products, cnt, err := ioc.Repo.Products.Aggregate(filter, pipelines)
-		if err != nil {
-			return nil, cnt, err
-		}
-
-		return products, cnt, nil
-	} else {
-		if err != nil {
-			log.Println("Error in getting products sorting ", err)
-			return nil, 0, err
-		}
-		products, cnt, err := ioc.Repo.Products.List(input.Offset, input.Limit, filter, sortingOptions)
-		if err != nil {
-			return nil, cnt, err
-		}
-
-		return products, cnt, nil
+	if err != nil {
+		config.Logger.Error("Error in getting products sorting options ", zap.Error(err))
+		return nil, 0, err
 	}
+
+	pipelines := []interface{}{
+		bson.M{"$match": filter},
+		bson.M{"$addFields": bson.M{
+			"totalquantity": bson.M{
+				"$add": []bson.M{
+					{"$sum": "$productinfo.inventory.quantity"},
+				},
+			},
+		}},
+		bson.M{"$sort": sortingOptions},
+		bson.M{"$limit": input.Limit + input.Offset},
+		bson.M{"$skip": input.Offset},
+	}
+	products, cnt, err := ioc.Repo.Products.Aggregate(filter, pipelines)
+	if err != nil {
+		return nil, cnt, err
+	}
+
+	return products, cnt, nil
 }
