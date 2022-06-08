@@ -33,4 +33,22 @@ func TestPriceCalculate(t *testing.T) {
 		_, disTax := GetProductPrice(originalPrice, discountPriceWithoutTax, currencyType, marginPolicy)
 		require.Equal(t, 882000, disTax)
 	})
+
+	t.Run("calculate flannels", func(t *testing.T) {
+		currencyType := domain.CurrencyPOUND
+		originalPrice := float32(105.00)
+		discountPrice := float32(105.00)
+		marginPolicy := "FLANNELS"
+		_, disPrice := GetProductPrice(originalPrice, discountPrice, currencyType, marginPolicy)
+		require.Equal(t, 214000, disPrice)
+	})
+
+	t.Run("calculate afound", func(t *testing.T) {
+		currencyType := domain.CurrencyEUR
+		originalPrice := float32(35.00)
+		discountPrice := float32(35.00)
+		marginPolicy := "AFOUND"
+		_, disPrice := GetProductPrice(originalPrice, discountPrice, currencyType, marginPolicy)
+		require.Equal(t, 71000, disPrice)
+	})
 }
