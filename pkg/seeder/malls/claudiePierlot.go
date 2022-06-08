@@ -2,10 +2,11 @@ package malls
 
 import (
 	"fmt"
-	"github.com/lessbutter/alloff-api/config/ioc"
-	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"log"
 	"time"
+
+	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
 func AddClaudiePierlot() {

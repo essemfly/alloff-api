@@ -48,7 +48,7 @@ func NewMongoDB() *MongoDB {
 		productCol:           db.Collection("products_v1"),
 		productMetaInfoCol:   db.Collection("product_infos_v1"),
 		productGroupCol:      db.Collection("productgroups_v1"),
-		crawlSourceCol:       db.Collection("sources"),
+		crawlSourceCol:       db.Collection("sources_to_be_removed"),
 		crawlRecordCol:       db.Collection("crawling_records"),
 		categoryCol:          db.Collection("categories_v1"),
 		alloffCategoryCol:    db.Collection("alloffcategories_v1"),
