@@ -49,6 +49,7 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 		filter["productgroupid"] = input.ProductGroupID
 	}
 
+	andQuery := []bson.M{}
 	if len(input.AlloffSizeIDs) > 0 {
 		query := []bson.M{}
 		for _, id := range input.AlloffSizeIDs {
@@ -58,7 +59,7 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 			}
 			query = append(query, bson.M{"productinfo.inventory.alloffsizes._id": oid})
 		}
-		filter["$or"] = query
+		andQuery = append(andQuery, bson.M{"$or": query})
 	}
 
 	if len(input.BrandIDs) > 0 {
@@ -70,7 +71,11 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 			}
 			query = append(query, bson.M{"productinfo.brand._id": oid})
 		}
-		filter["$or"] = query
+		andQuery = append(andQuery, bson.M{"$or": query})
+	}
+
+	if len(andQuery) > 0 {
+		filter["$and"] = andQuery
 	}
 
 	priceQueryRanges := []bson.M{}
