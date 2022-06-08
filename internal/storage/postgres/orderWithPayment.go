@@ -175,8 +175,12 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 	if len(orderDao.OrderItems) == 0 {
 		return fmt.Errorf("ERR304:empty orders")
 	}
+
 	if orderDao.OrderStatus != domain.ORDER_CREATED && orderDao.OrderStatus != domain.ORDER_RECREATED {
-		return fmt.Errorf("ERR400:already ongoing order exists")
+		if orderDao.OrderStatus != domain.ORDER_PAYMENT_PENDING {
+			return fmt.Errorf("ERR400:already ongoing order finished")
+		}
+		repo.CancelPayment(orderDao, paymentDao)
 	}
 
 	// 이제 Stock 옵션 줄이면 된다. + Order의 상태 및 timestamp찍으면 된다.
