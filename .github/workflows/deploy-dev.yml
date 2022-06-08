@@ -112,7 +112,7 @@ jobs:
           image: ${{ steps.build-image.outputs.image }}
       
       - name: (GRPC) Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
+        id: task-def-grpc
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ${{ env.ECS_GRPC_TASK_DEFINITION }}
@@ -130,7 +130,7 @@ jobs:
       - name: (GRPC) Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          task-definition: ${{ steps.task-def-grpc.outputs.task-definition }}
           service: ${{ env.ECS_GRPC_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
           wait-for-service-stability: true
