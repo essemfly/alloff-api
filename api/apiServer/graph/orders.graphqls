@@ -191,15 +191,10 @@ extend type Query {
   orderItemStatus: [OrderItemStatusDescription!]!
 }
 
-input CancelPaymentInput {
-  impUID: String!
-  merchantUID: String!
-}
-
 extend type Mutation {
   requestOrder(input: OrderInput): OrderWithPayment!
   requestPayment(input: PaymentClientInput): PaymentStatus!
-  cancelPayment(input: CancelPaymentInput): PaymentStatus!
+  cancelPayment(orderId: String!): PaymentStatus!
   handlePaymentResponse(input: OrderResponse): PaymentResult!
 
   cancelOrderItem(orderId: String!, orderItemId: String!): PaymentStatus!

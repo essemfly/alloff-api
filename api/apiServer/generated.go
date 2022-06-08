@@ -172,7 +172,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		AddCartItem           func(childComplexity int, cartID string, items []*model.CartItemInput) int
 		CancelOrderItem       func(childComplexity int, orderID string, orderItemID string) int
-		CancelPayment         func(childComplexity int, input *model.CancelPaymentInput) int
+		CancelPayment         func(childComplexity int, orderID string) int
 		ConfirmOrderItem      func(childComplexity int, orderID string, orderItemID string) int
 		CreateUser            func(childComplexity int, input model.NewUser) int
 		HandlePaymentResponse func(childComplexity int, input *model.OrderResponse) int
@@ -393,7 +393,7 @@ type MutationResolver interface {
 	SetAlarm(ctx context.Context, id string) (bool, error)
 	RequestOrder(ctx context.Context, input *model.OrderInput) (*model.OrderWithPayment, error)
 	RequestPayment(ctx context.Context, input *model.PaymentClientInput) (*model.PaymentStatus, error)
-	CancelPayment(ctx context.Context, input *model.CancelPaymentInput) (*model.PaymentStatus, error)
+	CancelPayment(ctx context.Context, orderID string) (*model.PaymentStatus, error)
 	HandlePaymentResponse(ctx context.Context, input *model.OrderResponse) (*model.PaymentResult, error)
 	CancelOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error)
 	ConfirmOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error)
@@ -1010,7 +1010,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CancelPayment(childComplexity, args["input"].(*model.CancelPaymentInput)), true
+		return e.complexity.Mutation.CancelPayment(childComplexity, args["orderId"].(string)), true
 
 	case "Mutation.confirmOrderItem":
 		if e.complexity.Mutation.ConfirmOrderItem == nil {
@@ -2651,15 +2651,10 @@ extend type Query {
   orderItemStatus: [OrderItemStatusDescription!]!
 }
 
-input CancelPaymentInput {
-  impUID: String!
-  merchantUID: String!
-}
-
 extend type Mutation {
   requestOrder(input: OrderInput): OrderWithPayment!
   requestPayment(input: PaymentClientInput): PaymentStatus!
-  cancelPayment(input: CancelPaymentInput): PaymentStatus!
+  cancelPayment(orderId: String!): PaymentStatus!
   handlePaymentResponse(input: OrderResponse): PaymentResult!
 
   cancelOrderItem(orderId: String!, orderItemId: String!): PaymentStatus!
@@ -2871,15 +2866,15 @@ func (ec *executionContext) field_Mutation_cancelOrderItem_args(ctx context.Cont
 func (ec *executionContext) field_Mutation_cancelPayment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.CancelPaymentInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalOCancelPaymentInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCancelPaymentInput(ctx, tmp)
+	var arg0 string
+	if tmp, ok := rawArgs["orderId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["input"] = arg0
+	args["orderId"] = arg0
 	return args, nil
 }
 
@@ -6495,7 +6490,7 @@ func (ec *executionContext) _Mutation_cancelPayment(ctx context.Context, field g
 	fc.Args = args
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CancelPayment(rctx, args["input"].(*model.CancelPaymentInput))
+		return ec.resolvers.Mutation().CancelPayment(rctx, args["orderId"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12742,37 +12737,6 @@ func (ec *executionContext) unmarshalInputBrandsInput(ctx context.Context, obj i
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCancelPaymentInput(ctx context.Context, obj interface{}) (model.CancelPaymentInput, error) {
-	var it model.CancelPaymentInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	for k, v := range asMap {
-		switch k {
-		case "impUID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("impUID"))
-			it.ImpUID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "merchantUID":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("merchantUID"))
-			it.MerchantUID, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputCartItemInput(ctx context.Context, obj interface{}) (model.CartItemInput, error) {
 	var it model.CartItemInput
 	asMap := map[string]interface{}{}
@@ -17342,14 +17306,6 @@ func (ec *executionContext) unmarshalOBrandsInput2ᚖgithubᚗcomᚋlessbutter�
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputBrandsInput(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOCancelPaymentInput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐCancelPaymentInput(ctx context.Context, v interface{}) (*model.CancelPaymentInput, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputCancelPaymentInput(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

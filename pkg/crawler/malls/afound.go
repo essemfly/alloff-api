@@ -36,7 +36,6 @@ func CrawlAfound(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 
 	totalProducts := 0
 	currentPageNum := 1
-
 	c.OnHTML("#afpl-products-list-container > div", func(e *colly.HTMLElement) {
 		var productInfoJson ProductInfoJson
 		productInfoStr := e.ChildAttr("a", "data-gtm-product")
@@ -68,7 +67,6 @@ func CrawlAfound(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			return
 		}
 
-		log.Println("now on ", productUrl)
 		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:          productName,
 			ProductID:           productId,
@@ -82,7 +80,7 @@ func CrawlAfound(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			AlloffCategory:      &domain.AlloffCategoryDAO{},
 			Images:              images,
 			Colors:              colors,
-			Infos:               infos,
+			DescriptionInfos:    infos,
 			Sizes:               sizes,
 			Inventory:           inventories,
 			Information:         description,

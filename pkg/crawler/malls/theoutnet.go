@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/url"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -149,11 +150,10 @@ func CrawlTheoutnet(worker chan bool, done chan bool, source *domain.CrawlSource
 
 func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.CrawlSourceDAO, brand *domain.BrandDAO) int {
 	numProducts := 0
-	urlPrefix := "https://www.theoutnet.com/en-de/shop/product"
+	urlPrefix := "https://www.theoutnet.com/en-us/shop/product"
 
 	for _, pd := range pds {
-		sizes, inventories, description, images := CrawlTheoutnetDetail(pd.Seo.SeoUrl)
-
+		composition, sizes, inventories, description, images := CrawlTheoutnetDetail(pd.Seo.SeoUrl)
 		colors := []string{}
 		for _, colorResp := range pd.Colors {
 			colors = append(colors, colorResp.Label)
@@ -178,6 +178,11 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			images = newImages
 		}
 
+		infos := map[string]string{
+			"소재": composition,
+			"색상": colors[0],
+		}
+
 		addRequest := &productinfo.AddMetaInfoRequest{
 			AlloffName:          pd.Name,
 			ProductID:           pd.ProductID,
@@ -193,6 +198,7 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			Colors:              colors,
 			Sizes:               sizes,
 			Inventory:           inventories,
+			DescriptionInfos:    infos,
 			Information:         description,
 			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
@@ -209,11 +215,13 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 	return numProducts
 }
 
-func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []*domain.InventoryDAO, description map[string]string, images []string) {
+func CrawlTheoutnetDetail(productUrl string) (composition string, sizes []string, inventories []*domain.InventoryDAO, description map[string]string, images []string) {
 	c := colly.NewCollector(
 		colly.AllowedDomains("www.theoutnet.com", "www.theoutnet.com:443"),
 		colly.UserAgent("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11"),
 	)
+
+	isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
 
 	c.OnRequest(func(r *colly.Request) {
 		r.Headers.Set("x-ibm-client-id", "19c36e19-5bc7-4de4-a4a9-65ffb9dcb727")
@@ -224,12 +232,16 @@ func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []*dom
 		r.Headers.Set("content-type", "application/x-www-form-urlencoded")
 	})
 
-	urlPrefix := "https://www.theoutnet.com/en-de/shop/product"
+	urlPrefix := "https://www.theoutnet.com/en-us/shop/product"
 	description = map[string]string{}
 
 	c.OnHTML(".multipleSizes", func(e *colly.HTMLElement) {
 		e.ForEach("ul li", func(_ int, el *colly.HTMLElement) {
 			size := el.ChildText(".GridSelect11__optionBox")
+			size = strings.Replace(size, " ", "", -1) // alloffSize 와 맞추기 위해 중간에 공백을 없애준다 (FR 32 -> FR32)
+			if isDigit.MatchString(size) {
+				size = "EU" + size
+			}
 			unavailable := el.ChildAttr(".GridSelect11__optionBox", "aria-label")
 			sizes = append(sizes, size)
 			if !strings.Contains(unavailable, "sold out") {
@@ -241,10 +253,19 @@ func CrawlTheoutnetDetail(productUrl string) (sizes []string, inventories []*dom
 		})
 	})
 
-	c.OnHTML(".AccordionSection3", func(e *colly.HTMLElement) {
-		title := e.ChildText(".EditorialAccordion84__accordionTitle")
-		descs := e.ChildText(".EditorialAccordion84__accordionContent")
-		description[title] = descs
+	c.OnHTML("#SIZE_AND_FIT", func(e *colly.HTMLElement) {
+		description["사이즈 및 핏"] = e.ChildText(".EditorialAccordion84__accordionContent--size_and_fit > p")
+	})
+
+	c.OnHTML("#TECHNICAL_DESCRIPTION", func(e *colly.HTMLElement) {
+		desc := ""
+		e.ForEach(".EditorialAccordion84__accordionContent--technical_description p", func(_ int, el *colly.HTMLElement) {
+			desc += el.Text + "\n"
+		})
+		desc = strings.TrimRight(desc, "\n")
+		description["제품설명"] = desc
+
+		composition = e.ChildText(".EditorialAccordion84__composition")
 	})
 
 	c.OnHTML("ul.ImageCarousel84__track", func(e *colly.HTMLElement) {

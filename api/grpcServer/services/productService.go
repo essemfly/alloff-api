@@ -264,15 +264,15 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		updatedRequest.Inventory = invDaos
 	}
 
-	if req.Description != nil {
+	if &req.Description != nil {
 		updatedRequest.Description = req.Description
 	}
 
-	if req.DescriptionInfos != nil {
+	if &req.DescriptionInfos != nil {
 		updatedRequest.DescriptionInfos = req.DescriptionInfos
 	}
 
-	if req.ProductInfos != nil {
+	if &req.ProductInfos != nil {
 		updatedRequest.Information = req.ProductInfos
 	}
 
