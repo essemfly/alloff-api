@@ -154,6 +154,10 @@ func MapProductSortingAndRanges(sortings []model.ProductsSortingType) (priceRang
 			priceSorting = domain.DISCOUNTRATE_ASCENDING
 		} else if sorting == model.ProductsSortingTypeDiscountrateDescending {
 			priceSorting = domain.DISCOUNTRATE_DESCENDING
+		} else if sorting == model.ProductsSortingTypeInventoryAscending {
+			priceSorting = domain.INVENTORY_ASCENDING
+		} else if sorting == model.ProductsSortingTypeInventoryDescending {
+			priceSorting = domain.INVENTORY_DESCENDING
 		} else {
 			if sorting == model.ProductsSortingTypeDiscount0_30 {
 				priceRanges = append(priceRanges, domain.PRICE_RANGE_30)

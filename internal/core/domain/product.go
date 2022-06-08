@@ -21,6 +21,8 @@ const (
 	PRICE_DESCENDING        PriceSortingType = "descending"
 	DISCOUNTRATE_ASCENDING  PriceSortingType = "discountrateAscending"
 	DISCOUNTRATE_DESCENDING PriceSortingType = "discountrateDescending"
+	INVENTORY_ASCENDING     PriceSortingType = "inventoryAscending"
+	INVENTORY_DESCENDING    PriceSortingType = "inventoryDescending"
 )
 
 type PriceRangeType string
