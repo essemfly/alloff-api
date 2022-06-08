@@ -16,7 +16,6 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/pkg/alimtalk"
-	"github.com/lessbutter/alloff-api/internal/pkg/amplitude"
 	"github.com/lessbutter/alloff-api/pkg/basket"
 	"go.uber.org/zap"
 )
@@ -179,8 +178,6 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 		return nil, fmt.Errorf("ERR405: failed to verify payment " + err.Error())
 	}
 
-	amplitude.LogOrderRecord(user, orderDao, paymentDao)
-
 	return &model.PaymentResult{
 		Success:     true,
 		ErrorMsg:    "",
@@ -224,7 +221,6 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 	}
 
 	alimtalk.NotifyOrderCancelAlarm(orderItemDao)
-	amplitude.LogCancelOrderItemRecord(user, orderItemDao, paymentDao)
 
 	result.Success = true
 	return result, nil
