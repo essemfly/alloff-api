@@ -10,7 +10,7 @@ env:
   AWS_REGION: ap-northeast-2
   ECR_REPOSITORY: alloff-api-prod
   ECS_TASK_DEFINITION: .aws/task-definition-prod.json
-  ECS_GRPC_TASK_DEFINITION: .aws/task-definition-prod.json
+  ECS_GRPC_TASK_DEFINITION: .aws/task-definition-grpc-prod.json
   ECS_CLUSTER: alloff-api
   ECS_SERVICE: alloff-api-prod
   ECS_GRPC_SERVICE: alloff-grpc-prod
