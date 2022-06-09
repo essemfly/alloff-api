@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"errors"
-
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -328,7 +327,9 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		updatedRequest.ThumbnailImage = *req.ThumbnailImage
 	}
 
-	newPdInfoDao, err := productinfo.UpdateProductInfo(pdInfoDao, updatedRequest)
+	// TODO proto에서 cached_images 라는 메시지 필드를 만들고, 백오피스에서 캐싱 성공하면 지금은 images 로 넘겨주는 것을 cached_images 로 넘겨주도록 수정하고 이걸 받아 처리하는 방식으로 바꿔야함
+
+	newPdInfoDao, err := productinfo.UpdateProductInfo(pdInfoDao, updatedRequest, "GRPC")
 	if err != nil {
 		return nil, err
 	}

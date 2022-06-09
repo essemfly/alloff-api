@@ -18,7 +18,7 @@ func ProcessCrawlingInfoRequests(request *AddMetaInfoRequest) error {
 		return err
 	}
 
-	_, err = UpdateProductInfo(pdInfo, request)
+	_, err = UpdateProductInfo(pdInfo, request, "CRAWLER")
 	return err
 }
 
