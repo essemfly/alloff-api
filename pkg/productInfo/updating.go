@@ -5,8 +5,8 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"go.uber.org/zap"
+	"time"
 )
 
 func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest, requestFrom string) (*domain.ProductMetaInfoDAO, error) {
@@ -15,6 +15,7 @@ func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRe
 	case "CRAWLER":
 		inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
 		pdInfo.SetInventory(inventories)
+		pdInfo.IsRemoved = false
 
 		updatedPdInfo, err := Update(pdInfo)
 		if err != nil {
@@ -60,7 +61,9 @@ func LoadMetaInfoRequest(pdInfoDao *domain.ProductMetaInfoDAO) *AddMetaInfoReque
 		Description:          pdInfoDao.SalesInstruction.Description.Texts,
 		DescriptionImages:    pdInfoDao.SalesInstruction.Description.Images,
 		DescriptionInfos:     pdInfoDao.SalesInstruction.Description.Infos,
+		DescriptionRawInfos:  pdInfoDao.SalesInstruction.Description.RawInfos,
 		Information:          pdInfoDao.SalesInstruction.Information,
+		RawInformation:       pdInfoDao.SalesInstruction.RawInformation,
 		IsForeignDelivery:    pdInfoDao.SalesInstruction.DeliveryDescription.DeliveryType == domain.Foreign,
 		EarliestDeliveryDays: pdInfoDao.SalesInstruction.DeliveryDescription.EarliestDeliveryDays,
 		LatestDeliveryDays:   pdInfoDao.SalesInstruction.DeliveryDescription.LatestDeliveryDays,
@@ -76,6 +79,7 @@ func LoadMetaInfoRequest(pdInfoDao *domain.ProductMetaInfoDAO) *AddMetaInfoReque
 }
 
 func Update(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error) {
+	pdInfo.Updated = time.Now()
 	updatedPdInfo, err := ioc.Repo.ProductMetaInfos.Upsert(pdInfo)
 	if err != nil {
 		config.Logger.Error("error on adding product infos", zap.Error(err))
@@ -94,8 +98,9 @@ func Update(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, erro
 		if err != nil {
 			config.Logger.Error("error on updating products"+pd.ID.Hex(), zap.Error(err))
 		}
-		exDao, _ := ioc.Repo.Exhibitions.Get(pd.ExhibitionID)
-		go exhibition.ExhibitionSyncer(exDao)
+		// from alloff 1.0 exhibition will not persist products data in product groups
+		//exDao, _ := ioc.Repo.Exhibitions.Get(pd.ExhibitionID)
+		//go exhibition.ExhibitionSyncer(exDao)
 	}
 
 	return updatedPdInfo, nil
