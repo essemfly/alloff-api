@@ -62,12 +62,11 @@ func (repo *orderRepo) List(userID string, onlyPaid bool) ([]*domain.OrderDAO, e
 			return nil, err
 		}
 		for _, item := range orderItems {
-			if item.OrderItemStatus == domain.ORDER_ITEM_RETURN_FINISHED || item.OrderItemStatus == domain.ORDER_ITEM_CANCEL_FINISHED {
+			if item.OrderItemStatus == domain.ORDER_ITEM_CANCEL_FINISHED {
 				refundInfo := new(domain.RefundItemDAO)
-				if err := repo.db.Model(refundInfo).Where("order_item_id = ?", item.ID).Order("id ASC").Select(); err != nil {
-					return nil, err
+				if err := repo.db.Model(refundInfo).Where("order_item_id = ?", item.ID).Order("id ASC").Select(); err == nil {
+					item.RefundInfo = *refundInfo
 				}
-				item.RefundInfo = *refundInfo
 			}
 		}
 		order.OrderItems = orderItems
