@@ -39,13 +39,15 @@ func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAllof
 	possibleCat2 := []string{}
 	classifier, err := ioc.Repo.ClassifyRules.GetByKeyname(pdInfo.Brand.KeyName, pdInfo.Category.Name)
 	if err != nil {
-		log.Println("Brand key Category Key find no rules:", pdInfo.Brand.KeyName, pdInfo.Category.Name, " find using ommnious")
-		alloffCat, err := omniousClassifier(pdInfo)
-		if err != nil {
-			config.Logger.Error("error occurred on get omnious data : ", zap.Error(err))
-			return nil, err
-		}
-		return alloffCat, nil
+		//log.Println("Brand key Category Key find no rules:", pdInfo.Brand.KeyName, pdInfo.Category.Name, " find using ommnious")
+		//alloffCat, err := omniousClassifier(pdInfo)
+		//if err != nil {
+		//	config.Logger.Error("error occurred on get omnious data : ", zap.Error(err))
+		//	return nil, err
+		//}
+		//return alloffCat, nil
+		log.Println("Brand key Category Key find no rules:", pdInfo.Brand.KeyName, pdInfo.Category.Name, " set alloff category to nil")
+		return nil, err
 	}
 
 	for k, v := range classifier.HeuristicRules {
@@ -57,13 +59,15 @@ func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAllof
 
 	if classifier.AlloffCategory1 == nil {
 		if len(possibleCat2) == 0 {
-			log.Println("Brand key Category Key find no rules:", pdInfo.Brand.KeyName, pdInfo.Category.Name, " find using ommnious")
-			alloffCat, err := omniousClassifier(pdInfo)
-			if err != nil {
-				config.Logger.Error("error occurred on get omnious data : ", zap.Error(err))
-				return nil, err
-			}
-			return alloffCat, nil
+			//log.Println("Brand key Category Key find no rules:", pdInfo.Brand.KeyName, pdInfo.Category.Name, " find using ommnious")
+			//alloffCat, err := omniousClassifier(pdInfo)
+			//if err != nil {
+			//	config.Logger.Error("error occurred on get omnious data : ", zap.Error(err))
+			//	return nil, err
+			//}
+			//return alloffCat, nil
+			log.Println("Brand key Category Key find no rules:", pdInfo.Brand.KeyName, pdInfo.Category.Name, " set alloff category to nil")
+			return nil, err
 		} else if len(possibleCat2) == 1 {
 			cat2, err := ioc.Repo.AlloffCategories.GetByName(possibleCat2[0])
 			if err != nil {

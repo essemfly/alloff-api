@@ -15,6 +15,7 @@ func AddMaje() {
 		"outlet",
 		"last-chance",
 		"sale",
+		"pre-sale",
 	}
 
 	crawlUrl := "https://de.maje.com/de/%s/kategorien/%s/?&sz=10000&format=ajax"
