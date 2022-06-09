@@ -18,16 +18,56 @@ func NotifyPaymentSuccessAlarm(payment *domain.PaymentDAO) {
 	order, _ := ioc.Repo.Orders.GetByAlloffID(payment.MerchantUid)
 	user, _ := ioc.Repo.Users.Get(order.User.ID.Hex())
 
+	templateCode := domain.PAYMENT_OK
+	for _, item := range order.OrderItems {
+		if item.DeliveryDescription.DeliveryType == domain.Foreign {
+			templateCode = domain.PAYMENT_OK_OVERSEAS
+			break
+		}
+	}
+
 	newAlimtalk := &domain.AlimtalkDAO{
 		UserID:       user.ID.Hex(),
 		Mobile:       user.Mobile,
-		TemplateCode: domain.PAYMENT_OK,
+		TemplateCode: templateCode,
 		ReferenceID:  strconv.Itoa(payment.ID),
 		SendDate:     nil,
 		TemplateParams: map[string]string{
 			"orderedAt":   utils.TimeFormatterForKorea(order.UpdatedAt),
 			"productName": payment.Name,
 			"amount":      utils.PriceFormatter(payment.Amount),
+		},
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	requestId, err := SendMessage(newAlimtalk)
+	if err != nil {
+		newAlimtalk.Status = domain.ALIMTALK_STATUS_FAILED
+	} else {
+		newAlimtalk.ToastRequestID = requestId
+		newAlimtalk.Status = domain.ALIMTALK_STATUS_COMPLETED
+	}
+
+	_, err = ioc.Repo.Alimtalks.Insert(newAlimtalk)
+	if err != nil {
+		config.Logger.Error("error on insert alimtalks", zap.Error(err))
+	}
+}
+
+func NotifyOrderCancelAlarm(orderItem *domain.OrderItemDAO) {
+	user, _ := ioc.Repo.Users.Get(orderItem.User.ID.Hex())
+
+	newAlimtalk := &domain.AlimtalkDAO{
+		UserID:       user.ID.Hex(),
+		Mobile:       user.Mobile,
+		TemplateCode: domain.PAYMENT_CANCEL,
+		ReferenceID:  strconv.Itoa(orderItem.OrderID),
+		SendDate:     nil,
+		TemplateParams: map[string]string{
+			"취소시간": utils.TimeFormatterForKorea(orderItem.CancelFinishedAt),
+			"상품명":  orderItem.ProductName,
+			"결제금액": utils.PriceFormatter(orderItem.RefundInfo.RefundAmount),
 		},
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -99,7 +139,7 @@ func ChangeExhibitionNotifyStatus(userDao *domain.UserDAO, exhibitionDao *domain
 		ID:           primitive.NewObjectID(),
 		UserID:       uid,
 		Mobile:       userDao.Mobile,
-		TemplateCode: domain.EXHIBITION_ALARM,
+		TemplateCode: domain.DEAL_OPEN,
 		ReferenceID:  exId,
 		TemplateParams: map[string]string{
 			"createdAt":      utils.TimeFormatterForKorea(time.Now().Add(time.Hour * 9)),

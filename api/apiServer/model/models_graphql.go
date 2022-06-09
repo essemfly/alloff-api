@@ -68,11 +68,6 @@ type CancelDescription struct {
 	RefundFee       int  `json:"refundFee"`
 }
 
-type CancelPaymentInput struct {
-	ImpUID      string `json:"impUID"`
-	MerchantUID string `json:"merchantUID"`
-}
-
 type Cart struct {
 	ID    string      `json:"id"`
 	Items []*CartItem `json:"items"`

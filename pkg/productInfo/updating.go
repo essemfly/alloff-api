@@ -1,6 +1,7 @@
 package productinfo
 
 import (
+	"fmt"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -8,30 +9,35 @@ import (
 	"go.uber.org/zap"
 )
 
-func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {
-	inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
-	pdInfo.SetInventory(inventories)
-	pdInfo.SetInformation(request.Information, request.Infos)
+func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest, requestFrom string) (*domain.ProductMetaInfoDAO, error) {
+	switch requestFrom {
+	// only update inventories for requests from crawler
+	case "CRAWLER":
+		inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
+		pdInfo.SetInventory(inventories)
 
-	if pdInfo.IsTranslateRequired {
-		translated, err := TranslateProductInfo(pdInfo)
+		updatedPdInfo, err := Update(pdInfo)
 		if err != nil {
-			// 번역에 실패해도 인벤토리와 인포메이션은 업데이트 되도록 여기서 return 하지 않는다.
-			config.Logger.Error("err occurred on translate product info : ", zap.Error(err))
+			config.Logger.Error("error on adding product infos", zap.Error(err))
+			return nil, err
 		}
-		if translated != nil {
-			pdInfo.IsTranslateRequired = false
-			pdInfo = translated
+
+		return updatedPdInfo, nil
+	// update data on requests from grpc
+	case "GRPC":
+		newPdInfo := makeBaseProductInfo(request)
+		newPdInfo.ID = pdInfo.ID
+
+		updatedPdInfo, err := Update(newPdInfo)
+		if err != nil {
+			config.Logger.Error("error on adding product infos", zap.Error(err))
+			return nil, err
 		}
-	}
 
-	updatedPdInfo, err := Update(pdInfo)
-	if err != nil {
-		config.Logger.Error("error on adding product infos", zap.Error(err))
-		return nil, err
+		return updatedPdInfo, nil
+	default:
+		return nil, fmt.Errorf("requests not supported")
 	}
-
-	return updatedPdInfo, nil
 }
 
 func LoadMetaInfoRequest(pdInfoDao *domain.ProductMetaInfoDAO) *AddMetaInfoRequest {

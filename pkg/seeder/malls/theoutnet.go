@@ -592,16 +592,21 @@ func AddTheoutnet() {
 				log.Println(err)
 			}
 
+			priceMarginPolicty := "THEOUTNET"
+			if key == "악세서리" || key == "구두" || key == "가방" {
+				priceMarginPolicty = "THEOUTNET_NON_FASHION"
+			}
+
 			source := domain.CrawlSourceDAO{
 				BrandKeyname:         upsertedBrand.KeyName,
 				BrandIdentifier:      shopID,
 				MainCategoryKey:      updatedCat.KeyName,
 				Category:             *updatedCat,
-				CrawlUrl:             "https://www.theoutnet.com/api/yoox/ton/search/resources/store/theoutnet_DE/productview/byCategory",
+				CrawlUrl:             "https://www.theoutnet.com/api/yoox/ton/search/resources/store/theoutnet_US/productview/byCategory",
 				CrawlModuleName:      modulename,
 				IsSalesProducts:      true,
 				IsForeignDelivery:    true,
-				PriceMarginPolicy:    "THEOUTNET",
+				PriceMarginPolicy:    priceMarginPolicty,
 				DeliveryPrice:        0,
 				EarliestDeliveryDays: 10,
 				LatestDeliveryDays:   14,

@@ -1,24 +1,18 @@
 package malls
 
 import (
+	"log"
+	"net/url"
 	"time"
 
+	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-const MODULE_NAME = "flannels"
+const FLANNELS_MODULE_NAME = "flannels"
 
 func AddFlannels() {
-	crawlUrl := "https://www.flannels.com/outlet-brands/"
-
-	productTypes := map[domain.AlloffProductType]string{
-		domain.Male:   "Mens",
-		domain.Female: "Womens",
-		domain.Kids:   "Kids",
-	}
-
-	categories := map[string]string{}
-
 	brands := map[string]domain.BrandDAO{
 		"alexander-mcqueen": {
 			KorName:               "알렉산더 맥퀸",
@@ -728,4 +722,105 @@ func AddFlannels() {
 		},
 	}
 
+	for brandUrlName, brand := range brands {
+		brDao, err := ioc.Repo.Brands.GetByKeyname(brand.KeyName)
+		if err != nil && err == mongo.ErrNoDocuments {
+			brDao, _ = ioc.Repo.Brands.Upsert(&brand)
+		}
+
+		source := domain.CrawlSourceDAO{
+			BrandKeyname:         brDao.KeyName,
+			BrandIdentifier:      brandUrlName,
+			ProductType:          nil,
+			CrawlUrl:             getCrawlUrl(brandUrlName),
+			CrawlModuleName:      FLANNELS_MODULE_NAME,
+			IsSalesProducts:      true,
+			IsForeignDelivery:    true,
+			PriceMarginPolicy:    "FLANNELS",
+			DeliveryPrice:        0,
+			EarliestDeliveryDays: 7,
+			LatestDeliveryDays:   14,
+			DeliveryDesc:         nil,
+			RefundAvailable:      true,
+			ChangeAvailable:      true,
+			RefundFee:            100000,
+			ChangeFee:            100000,
+		}
+
+		_, err = ioc.Repo.CrawlSources.Upsert(&source)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+}
+
+func getCrawlUrl(brandUrlName string) string {
+	brandKeys := map[string]string{
+		"alexander-mcqueen":         "FLAN_CLEBRAALEXANDERMCQUEEN",
+		"apc":                       "FLAN_CLEBRAAPC",
+		"balenciaga":                "FLAN_APC",
+		"balmain":                   "FLAN_CLEBRABALENCIAGA",
+		"bash":                      "FLAN_CLEBRABASH",
+		"burberry":                  "FLAN_CLEBRABURBERRY",
+		"barbour-international":     "FLAN_CLEBRABARBOURINTERNATIONAL",
+		"barbour":                   "FLAN_CLEBRABARBOUR",
+		"coach":                     "FLAN_CLEBRACOACH",
+		"champion":                  "FLAN_CLEBRACHAMPION",
+		"calvin-klein-underwear":    "FLAN_CLEBRACALVINKLEINUNDERWEAR",
+		"calvin-klein-performance":  "FLAN_CLEBRACALVINKLEINPERFORMANCE",
+		"calvin-klein-jeans":        "FLAN_CLEBRACALVINKLEINJEANS",
+		"canada-goose":              "FLAN_CLEBRACANADAGOOSE",
+		"casablanca":                "FLAN_CLEBRACANADAGOOSE",
+		"comme-des-garcons-play":    "FLAN_CLEBRACASABLANCA",
+		"cp-company":                "FLAN_CLEBRACPCOMPANY",
+		"chloe":                     "FLAN_CLEBRACHLOE",
+		"emporio-armani":            "FLAN_CLEBRAEMPORIOARMANI",
+		"fred-perry":                "FLAN_CLEBRAFREDPERRY",
+		"fendi":                     "FLAN_CLEBRAFENDI",
+		"ganni":                     "FLAN_CLEBRAGANNI",
+		"givenchy":                  "FLAN_CLEBRAGIVENCHY",
+		"golden-goose-deluxe-brand": "FLAN_CLEBRAGOLDENGOOSEDELUXEBRAND",
+		"isabel-marant-etoile":      "FLAN_CLEBRAISABELMARANTETOILE",
+		"james-perse":               "FLAN_CLEBRAJAMESPERSE",
+		"jimmy-choo":                "FLAN_CLEBRAJIMMYCHOO",
+		"jacquemus":                 "FLAN_CLEBRAJACQUEMUS",
+		"jw-anderson":               "FLAN_CLEBRAJWANDERSON",
+		"kenzo":                     "FLAN_CLEBRAKENZO",
+		"lacoste":                   "FLAN_CLEBRALACOSTE",
+		"lauren-by-ralph-lauren":    "FLAN_CLEBRALAURENBYRALPHLAUREN",
+		"loewe":                     "FLAN_CLEBRALOEWE",
+		"marcelo-burlon":            "FLAN_CLEBRAMARCELOBURLON",
+		"marni":                     "FLAN_CLEBRAMARNI",
+		"max-mara":                  "FLAN_CLEBRAMAXMARA",
+		"max-mara-studio":           "FLAN_CLEBRAMAXMARASTUDIO",
+		"max-mara-weekend":          "FLAN_CLEBRAMAXMARAWEEKEND",
+		"miu-miu":                   "FLAN_CLEBRAMIUMIU",
+		"moschino":                  "FLAN_CLEBRAMOSCHINO",
+		"moncler":                   "FLAN_CLEBRAMONCLER",
+		"moose-knuckles":            "FLAN_CLEBRAMOOSEKNUCKLES",
+		"off-white":                 "FLAN_CLEBRAOFFWHITE",
+		"polo-ralph-lauren":         "FLAN_CLEBRAPOLORALPHLAUREN",
+		"palm-angels":               "FLAN_CLEBRAPALMANGELS",
+		"prada":                     "FLAN_CLEBRAPRADA",
+		"rick-owens-drkshdw":        "FLAN_CLEBRARICKOWENSDRKSHDW",
+		"stone-island":              "FLAN_CLEBRASTONEISLAND",
+		"stella-mccartney":          "FLAN_CLEBRASTELLAMCCARTNEY",
+		"sportmax":                  "FLAN_CLEBRASPORTMAX",
+		"sporty-and-rich":           "FLAN_CLEBRASPORTYANDRICH",
+		"thom-browne":               "FLAN_CLEBRATHOMBROWNE",
+		"tommy-hilfiger":            "FLAN_CLEBRATOMMYHILFIGER",
+		"tory-burch":                "FLAN_CLEBRATORYBURCH",
+		"ten-c":                     "FLAN_CLEBRATENC",
+		"under-armour":              "FLAN_CLEBRAUNDERARMOUR",
+		"ugg":                       "FLAN_CLEBRAUGG",
+		"valentino":                 "FLAN_CLEBRAVALENTINO",
+		"vivienne-westwood":         "FLAN_CLEBRAVIVIENNEWESTWOOD",
+	}
+
+	baseUrl := "https://www.flannels.com/api/productlist/v1/getforcategory"
+	v := url.Values{}
+	v.Set("page", "1")
+	v.Set("productsPerPage", "10")
+	v.Set("categoryId", brandKeys[brandUrlName])
+	return baseUrl + "?" + v.Encode()
 }

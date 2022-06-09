@@ -18,6 +18,7 @@ type ProductsRepository interface {
 	GetByMetaID(metaID, exhibitionID string) (*domain.ProductDAO, error)
 	ListByMetaID(metaID string) ([]*domain.ProductDAO, error)
 	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
+	Aggregate(filter interface{}, pipelines []interface{}) ([]*domain.ProductDAO, int, error)
 	ListDistinctBrands(alloffCategoryID string) ([]*domain.BrandDAO, error)
 	ListDistinctInfos(filter interface{}) ([]*domain.BrandCountsData, []*domain.AlloffCategoryDAO, []*domain.AlloffSizeDAO)
 	ListInfos(filter interface{}) (brands []*domain.BrandCountsData, cats []*domain.AlloffCategoryDAO, sizes []*domain.AlloffSizeDAO)
@@ -86,12 +87,7 @@ type OrdersRepository interface {
 }
 
 type OrderItemsRepository interface {
-	Get(ID int) (*domain.OrderItemDAO, error)
 	GetByCode(code string) (*domain.OrderItemDAO, error)
-	ListByProductGroupID(pgID string) ([]*domain.OrderItemDAO, int, error)
-	ListByOrderID(orderID int) ([]*domain.OrderItemDAO, error)
-	ListByExhibitionID(exhibitionID string) ([]*domain.OrderItemDAO, error)
-	ListAllCanceled() ([]*domain.OrderItemDAO, error)
 	Update(*domain.OrderItemDAO) (*domain.OrderItemDAO, error)
 }
 type PaymentsRepository interface {
