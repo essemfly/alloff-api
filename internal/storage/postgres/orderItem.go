@@ -17,7 +17,7 @@ func (repo *orderItemRepo) GetByCode(code string) (*domain.OrderItemDAO, error) 
 		return nil, err
 	}
 
-	if orderItem.OrderItemStatus == domain.ORDER_ITEM_RETURN_FINISHED {
+	if orderItem.OrderItemStatus == domain.ORDER_ITEM_RETURN_FINISHED || orderItem.OrderItemStatus == domain.ORDER_ITEM_CANCEL_FINISHED {
 		refundInfo := new(domain.RefundItemDAO)
 		if err := repo.db.Model(refundInfo).Where("order_item_id = ?", orderItem.ID).Order("id ASC").Select(); err != nil {
 			return nil, err
