@@ -5,7 +5,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
@@ -18,9 +17,9 @@ import (
 )
 
 func (r *mutationResolver) SetAlarm(ctx context.Context, id string) (bool, error) {
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return false, fmt.Errorf("ERR000:invalid token")
+	user, err := middleware.ForContext(ctx)
+	if err != nil {
+		return false, err
 	}
 
 	exhibitionDao, err := ioc.Repo.Exhibitions.Get(id)
@@ -56,7 +55,13 @@ func (r *queryResolver) Exhibition(ctx context.Context, id string) (*model.Exhib
 }
 
 func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionInput) (*model.ExhibitionOutput, error) {
-	user := middleware.ForContext(ctx)
+	user, err := middleware.ForContext(ctx)
+	switch err {
+	case middleware.ErrInvalidToken:
+		return nil, err
+	case middleware.ErrDeviceChanged:
+		return nil, err
+	}
 
 	offset, limit := 0, 100
 	query := ""
