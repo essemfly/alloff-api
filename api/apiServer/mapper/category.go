@@ -14,6 +14,9 @@ func MapCategoryDaoToCategory(catDao *domain.CategoryDAO) *model.Category {
 }
 
 func MapAlloffCatDaoToAlloffCat(catDao *domain.AlloffCategoryDAO) *model.AlloffCategory {
+	if catDao == nil {
+		return nil
+	}
 	if catDao.CategoryType == "NORMAL" {
 		newItem := model.AlloffCategory{
 			ID:       catDao.ID.Hex(),
