@@ -8,7 +8,6 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 	"go.uber.org/zap"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -103,7 +102,6 @@ func CrawlAfound(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			if currentPageNum < lastPageNum {
 				currentPageNum += 1
 				url := source.CrawlUrl + "&page=" + strconv.Itoa(currentPageNum)
-				log.Println(url)
 				c.Visit(url)
 			}
 		}

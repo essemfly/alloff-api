@@ -128,6 +128,11 @@ func CrawlFlannels(worker chan bool, done chan bool, source *domain.CrawlSourceD
 	for _, req := range productRequests {
 		req.Brand = brand
 		req.Source = source
+
+		if req.AlloffCategory.KeyName == "1_bags" || req.AlloffCategory.KeyName == "1_shoes" || req.AlloffCategory.KeyName == "1_accessory" || req.AlloffCategory.KeyName == "1_jewelry" {
+			req.Source.PriceMarginPolicy = "FLANNELS_NON_FASHION"
+		}
+
 		productinfo.ProcessCrawlingInfoRequests(req)
 	}
 
@@ -299,7 +304,8 @@ func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
 func parseOnlyNumbers(texts string) float32 {
 	re := regexp.MustCompile(`[-]?\d[\d,]*[\.]?[\d{2}]*`)
 	onlyNumbers := re.FindAllString(texts, -1)
-	num, _ := strconv.ParseFloat(onlyNumbers[0], 32)
+	numStr := strings.Replace(onlyNumbers[0], ",", "", -1)
+	num, _ := strconv.ParseFloat(numStr, 32)
 	return float32(num)
 }
 

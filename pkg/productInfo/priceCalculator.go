@@ -1,7 +1,6 @@
 package productinfo
 
 import (
-	"log"
 	"math"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -89,6 +88,13 @@ func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyT
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
+	} else if marginPolicy == "FLANNELS_NON_FASHION" {
+		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
+		discPriceKRW := CalculateFlannelsNonFashionPrice(int(discPrice))
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
+		return origPriceKRW, discPriceKRW
 	} else if marginPolicy == "AFOUND" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
 		discPriceKRW := CalculateAfoundPrice(int(discPrice))
@@ -118,13 +124,38 @@ func CalculateFlannelsPrice(priceKRW int) int {
 	customTaxRate := 0.00
 
 	floatKRW += deliveryFeeInUk // 현지배송비는 원가에 포함한다.
-	log.Println("1 : ", floatKRW)
+	if (floatKRW / DOLLAR_EXCHANGE_RATE) >= 150.00 {
+		vatRate = 0.1
+		customTaxRate = 0.13
+	}
+	floatKRW = floatKRW + (customTaxRate * originalPriceKRW)                               // 관세
+	floatKRW = floatKRW + deliveryFeeOversea + ((floatKRW + deliveryFeeOversea) * vatRate) // 부가세 + 해외배송
+	floatKRW = floatKRW * 110 / 100                                                        // 마진
+	floatKRW = floatKRW + deliveryFeeDomestic                                              // 국내배송
+
+	floatKRW = floatKRW / 1000.00
+	floatKRW = math.Round(floatKRW)
+	priceKRW = int(floatKRW)
+	priceKRW = priceKRW * 1000
+
+	return priceKRW
+}
+
+func CalculateFlannelsNonFashionPrice(priceKRW int) int {
+	floatKRW := float64(priceKRW)
+	originalPriceKRW := floatKRW
+	deliveryFeeInUk := 11000.00
+	deliveryFeeOversea := 15000.00
+	deliveryFeeDomestic := 3000.00
+	vatRate := 0.00
+	customTaxRate := 0.00
+
+	floatKRW += deliveryFeeInUk // 현지배송비는 원가에 포함한다.
 	if (floatKRW / DOLLAR_EXCHANGE_RATE) >= 150.00 {
 		vatRate = 0.1
 		customTaxRate = 0.08
 	}
-	floatKRW = floatKRW + (customTaxRate * originalPriceKRW) // 관세
-	log.Println("2 : ", floatKRW)
+	floatKRW = floatKRW + (customTaxRate * originalPriceKRW)                               // 관세
 	floatKRW = floatKRW + deliveryFeeOversea + ((floatKRW + deliveryFeeOversea) * vatRate) // 부가세 + 해외배송
 	floatKRW = floatKRW * 110 / 100                                                        // 마진
 	floatKRW = floatKRW + deliveryFeeDomestic                                              // 국내배송
