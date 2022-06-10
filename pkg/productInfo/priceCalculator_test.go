@@ -14,11 +14,11 @@ func TestPriceCalculate(t *testing.T) {
 		discountPriceWithTax := float32(520.00)
 		marginPolicy := "THEOUTNET"
 		_, disTax := GetProductPrice(originalPrice, discountPriceWithTax, currencyType, marginPolicy)
-		require.Equal(t, 889000, disTax)
+		require.Equal(t, 923000, disTax)
 
 		discountPriceWithoutTax := float32(158.00)
 		_, disNoTax := GetProductPrice(originalPrice, discountPriceWithoutTax, currencyType, marginPolicy)
-		require.Equal(t, 232000, disNoTax)
+		require.Equal(t, 240000, disNoTax)
 	})
 
 	t.Run("calculate theoutnet nonfashion", func(t *testing.T) {
@@ -27,11 +27,11 @@ func TestPriceCalculate(t *testing.T) {
 		discountPriceWithTax := float32(82.00)
 		marginPolicy := "THEOUTNET_NON_FASHION"
 		_, disNoTax := GetProductPrice(originalPrice, discountPriceWithTax, currencyType, marginPolicy)
-		require.Equal(t, 130000, disNoTax)
+		require.Equal(t, 134000, disNoTax)
 
 		discountPriceWithoutTax := float32(540.00)
 		_, disTax := GetProductPrice(originalPrice, discountPriceWithoutTax, currencyType, marginPolicy)
-		require.Equal(t, 882000, disTax)
+		require.Equal(t, 917000, disTax)
 	})
 
 	t.Run("calculate flannels", func(t *testing.T) {
