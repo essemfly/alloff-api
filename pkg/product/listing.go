@@ -123,10 +123,10 @@ func (input *ProductListInput) BuildSorting() (bson.D, error) {
 	} else if input.PriceSorting == domain.DISCOUNTRATE_DESCENDING {
 		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: -1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.INVENTORY_ASCENDING {
-		options = bson.D{{Key: "totalQuantity", Value: 1}, {Key: "_id", Value: 1}}
+		options = bson.D{{Key: "totalquantity", Value: 1}, {Key: "_id", Value: 1}}
 		// options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.inventory.quantity", Value: 1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.INVENTORY_DESCENDING {
-		options = bson.D{{Key: "totalQuantity", Value: -1}, {Key: "_id", Value: 1}}
+		options = bson.D{{Key: "totalquantity", Value: -1}, {Key: "_id", Value: 1}}
 		// options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.inventory.quantity", Value: -1}, {Key: "_id", Value: 1}}
 	}
 
