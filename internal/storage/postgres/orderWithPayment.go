@@ -15,6 +15,7 @@ import (
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/core/service"
 	"github.com/lessbutter/alloff-api/internal/pkg/alimtalk"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 )
 
 type orderPaymentService struct {
@@ -86,10 +87,10 @@ func (repo *orderPaymentService) CancelOrderRequest(orderDao *domain.OrderDAO, o
 			}
 
 			pd.ProductInfo.CheckSoldout()
-			_, err = ioc.Repo.Products.Upsert(pd)
+			_, err = productinfo.Update(pd.ProductInfo)
 			if err != nil {
-				log.Println("productDao Update", err)
-				return err
+				config.Logger.Error("Productinfo update failed")
+				return fmt.Errorf("ERR106:product update failed" + err.Error())
 			}
 
 			newRefundInfo := &domain.RefundItemDAO{
@@ -218,8 +219,9 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 			totalProductPrices += item.Quantity * item.SalesPrice
 			pd.ProductInfo.CheckSoldout()
 
-			_, err = ioc.Repo.Products.Upsert(pd)
+			_, err = productinfo.Update(pd.ProductInfo)
 			if err != nil {
+				config.Logger.Error("Productinfo update failed")
 				return fmt.Errorf("ERR106:product update failed" + err.Error())
 			}
 
