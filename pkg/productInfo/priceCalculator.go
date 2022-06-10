@@ -9,7 +9,7 @@ import (
 
 const (
 	EURO_EXCHANGE_RATE   = 1350
-	DOLLAR_EXCHANGE_RATE = 1220
+	DOLLAR_EXCHANGE_RATE = 1269
 	POUND_EXCHANGE_RATE  = 1579
 )
 
@@ -223,7 +223,7 @@ func CalculateIntrendPrice(priceKRW int) int {
 	deliveryFeeDomestic := 3000.00
 	vatRate := 0.00
 	customTaxRate := 0.00
-	if originalPriceKRW >= 180000.00 {
+	if (floatKRW / DOLLAR_EXCHANGE_RATE) >= 150.00 {
 		vatRate = 0.1
 		customTaxRate = 0.13
 	}
@@ -247,7 +247,7 @@ func CalculateIntrendNonFashionPrice(priceKRW int) int {
 	deliveryFeeDomestic := 3000.00
 	vatRate := 0.00
 	customTaxRate := 0.00
-	if originalPriceKRW >= 180000.00 {
+	if (floatKRW / DOLLAR_EXCHANGE_RATE) >= 150.00 {
 		vatRate = 0.1
 		customTaxRate = 0.08
 	}
