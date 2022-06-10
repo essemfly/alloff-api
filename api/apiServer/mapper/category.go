@@ -15,7 +15,7 @@ func MapCategoryDaoToCategory(catDao *domain.CategoryDAO) *model.Category {
 
 func MapAlloffCatDaoToAlloffCat(catDao *domain.AlloffCategoryDAO) *model.AlloffCategory {
 	if catDao == nil {
-		return nil
+		return &model.AlloffCategory{}
 	}
 	if catDao.CategoryType == "NORMAL" {
 		newItem := model.AlloffCategory{
@@ -28,5 +28,5 @@ func MapAlloffCatDaoToAlloffCat(catDao *domain.AlloffCategoryDAO) *model.AlloffC
 		}
 		return &newItem
 	}
-	return nil
+	return &model.AlloffCategory{}
 }
