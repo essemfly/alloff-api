@@ -194,39 +194,6 @@ func (repo *productRepo) ListDistinctBrands(alloffCategoryID string) ([]*domain.
 	return brands, nil
 }
 
-func (repo *productRepo) CountNewProducts(brandModules []string) int {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	filter := bson.M{"score.isnewlycrawled": true, "removed": false, "productinfo.source.crawlmodulename": bson.M{"$in": brandModules}}
-	newProducts, err := repo.col.CountDocuments(ctx, filter)
-	if err != nil {
-		log.Println("Find num of new crawled products error", err)
-	}
-
-	return int(newProducts)
-}
-
-func (repo *productRepo) MakeOutdateProducts(brandModules []string, lastUpdatedDate time.Time) int {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	outProducts, err := repo.col.UpdateMany(
-		ctx,
-		bson.M{
-			"removed":                            false,
-			"productinfo.source.crawlmodulename": bson.M{"$in": brandModules},
-			"updated": bson.M{
-				"$lte": primitive.NewDateTimeFromTime(lastUpdatedDate),
-			},
-		}, bson.M{"$set": bson.M{"removed": true}})
-	if err != nil {
-		log.Println("Find num of outdated products error", err)
-	}
-
-	return int(outProducts.ModifiedCount)
-}
-
 func (repo *productRepo) ListDistinctInfos(filter interface{}) (brands []*domain.BrandCountsData, cats []*domain.AlloffCategoryDAO, sizes []*domain.AlloffSizeDAO) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
@@ -423,6 +390,41 @@ func (repo *productMetaInfoRepo) Upsert(product *domain.ProductMetaInfoDAO) (*do
 	}
 
 	return updatedProduct, nil
+}
+
+func (repo *productMetaInfoRepo) CountNewProducts(brandModules []string, lastUpdatedDate time.Time) int {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"isremoved": false, "source.crawlmodulename": bson.M{"$in": brandModules}, "created": bson.M{
+		"$gte": primitive.NewDateTimeFromTime(lastUpdatedDate),
+	}}
+	newProducts, err := repo.col.CountDocuments(ctx, filter)
+	if err != nil {
+		config.Logger.Error("Find num of new crawled products error", zap.Error(err))
+	}
+
+	return int(newProducts)
+}
+
+func (repo *productMetaInfoRepo) MakeOutdatedProducts(brandModules []string, lastUpdatedDate time.Time) int {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	outProducts, err := repo.col.UpdateMany(
+		ctx,
+		bson.M{
+			"isremoved":              false,
+			"source.crawlmodulename": bson.M{"$in": brandModules},
+			"updated": bson.M{
+				"$lte": primitive.NewDateTimeFromTime(lastUpdatedDate),
+			},
+		}, bson.M{"$set": bson.M{"removed": true}})
+	if err != nil {
+		log.Println("Find num of outdated products error", err)
+	}
+
+	return int(outProducts.ModifiedCount)
 }
 
 func MongoProductMetaInfosRepo(conn *MongoDB) repository.ProductMetaInfoRepository {

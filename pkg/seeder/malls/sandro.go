@@ -15,6 +15,7 @@ func AddSandro() {
 		"outlet",
 		"last-chance",
 		"sale",
+		"soft-sale",
 	}
 
 	crawlUrl := "https://de.sandro-paris.com/de/damen/%s/%s/?sz=10000&format=ajax"

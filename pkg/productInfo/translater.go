@@ -66,11 +66,9 @@ func TranslateRequiredProducts() {
 		}
 
 		newPd.IsTranslateRequired = false
-		updated, err := ioc.Repo.ProductMetaInfos.Upsert(newPd)
+		_, err = ioc.Repo.ProductMetaInfos.Upsert(newPd)
 		if err != nil {
 			log.Println(err)
 		}
-		log.Println(updated.SalesInstruction.Information)
-		log.Println(updated.SalesInstruction.Description.Infos)
 	}
 }

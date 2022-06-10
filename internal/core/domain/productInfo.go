@@ -212,10 +212,16 @@ func (pdInfo *ProductMetaInfoDAO) SetDesc(descImages, texts []string, infos map[
 		Texts:  texts,
 		Infos:  infos,
 	}
+	if pdInfo.SalesInstruction.Description.RawInfos == nil {
+		pdInfo.SalesInstruction.Description.RawInfos = infos
+	}
 }
 
 func (pdInfo *ProductMetaInfoDAO) SetInformation(information map[string]string) {
 	pdInfo.SalesInstruction.Information = information
+	if pdInfo.SalesInstruction.RawInformation == nil {
+		pdInfo.SalesInstruction.RawInformation = information
+	}
 }
 
 func (pdInfo *ProductMetaInfoDAO) SetDeliveryDesc(isForeignDelivery bool, deliveryPrice, earliestDeliveryDays, latestDeliveryDays int) {

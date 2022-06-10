@@ -56,6 +56,23 @@ func AddAfound() {
 			NumNewProductsIn3days: 0,
 			UseAlloffCategory:     false,
 		},
+		"arket-kids": {
+			KorName:               "아르켓 키즈",
+			EngName:               "ARKET KIDS",
+			KeyName:               "ARKETKIDS",
+			Description:           "컨템포러리",
+			LogoImgUrl:            "",
+			BackImgUrl:            "",
+			SizeGuide:             []domain.SizeGuideDAO{},
+			Created:               time.Now(),
+			Onpopular:             false,
+			MaxDiscountRate:       0,
+			IsOpen:                false,
+			IsHide:                false,
+			InMaintenance:         false,
+			NumNewProductsIn3days: 0,
+			UseAlloffCategory:     false,
+		},
 	}
 
 	for brandId, brand := range brands {
@@ -123,17 +140,6 @@ func AddAfound() {
 				"arket-f-sports":             "arket?department=1073743391_on_F_U&p_categoryid=1073743451",
 				"arket-f-jeans":              "arket?department=1073743391_on_F_U&p_categoryid=1073743412",
 				"arket-f-skirts":             "arket?department=1073743391_on_F_U&p_categoryid=1073743455",
-
-				"arket-kids-sweater":            "arket?department=1073743355&p_categoryid=1073743519",
-				"arket-kids-bottoms":            "arket?department=1073743355&p_categoryid=1073743390",
-				"arket-kids-sweatshirts":        "arket?department=1073743355&p_categoryid=1073743518",
-				"arket-kids-accessories":        "arket?department=1073743355&p_categoryid=1073743373",
-				"arket-kids-tops":               "arket?department=1073743355&p_categoryid=1073743367",
-				"arket-kids-dresses":            "arket?department=1073743355&p_categoryid=1073743381",
-				"arket-kids-jumpsuits":          "arket?department=1073743355&p_categoryid=1073743520",
-				"arket-kids-bodysuits":          "arket?department=1073743355&p_categoryid=1073743384",
-				"arket-kids-shorts":             "arket?department=1073743355&p_categoryid=1073743386",
-				"arket-kids-functionalclothing": "arket?department=1073743355&p_categoryid=1073743361",
 			}
 		case "otherStories":
 			categories = map[string]string{
@@ -150,6 +156,19 @@ func AddAfound() {
 				"otherStories-f-beachwear":          "other-stories?department=1073743391&p_categoryid=1073743424",
 				"otherStories-f-sports":             "other-stories?department=1073743391&p_categoryid=1073743451",
 				"otherStories-f-shorts":             "other-stories?department=1073743391&p_categoryid=1073743456",
+			}
+		case "arket-kids":
+			categories = map[string]string{
+				"arket-kids-sweater":            "arket?department=1073743355&p_categoryid=1073743519",
+				"arket-kids-bottoms":            "arket?department=1073743355&p_categoryid=1073743390",
+				"arket-kids-sweatshirts":        "arket?department=1073743355&p_categoryid=1073743518",
+				"arket-kids-accessories":        "arket?department=1073743355&p_categoryid=1073743373",
+				"arket-kids-tops":               "arket?department=1073743355&p_categoryid=1073743367",
+				"arket-kids-dresses":            "arket?department=1073743355&p_categoryid=1073743381",
+				"arket-kids-jumpsuits":          "arket?department=1073743355&p_categoryid=1073743520",
+				"arket-kids-bodysuits":          "arket?department=1073743355&p_categoryid=1073743384",
+				"arket-kids-shorts":             "arket?department=1073743355&p_categoryid=1073743386",
+				"arket-kids-functionalclothing": "arket?department=1073743355&p_categoryid=1073743361",
 			}
 		}
 

@@ -19,13 +19,13 @@ func PrintCrawlResults(source *domain.CrawlSourceDAO, totalProducts int) {
 
 func WriteCrawlRecords(brandModules []string) {
 	lastRecord, err := ioc.Repo.CrawlRecords.GetLast()
-	lastUpdatedDate := time.Now().Add(-1 * time.Hour)
+	lastUpdatedDate := time.Now().Add(7 * -24 * time.Hour)
 	if err == nil {
 		lastUpdatedDate = lastRecord.Date
 	}
 
-	numNewProducts := ioc.Repo.Products.CountNewProducts(brandModules)
-	numOutProducts := ioc.Repo.Products.MakeOutdateProducts(brandModules, lastUpdatedDate)
+	numNewProducts := ioc.Repo.ProductMetaInfos.CountNewProducts(brandModules, lastRecord.Date)
+	numOutProducts := ioc.Repo.ProductMetaInfos.MakeOutdatedProducts(brandModules, lastRecord.Date)
 
 	newRecord := &domain.CrawlRecordDAO{
 		Date:          time.Now(),

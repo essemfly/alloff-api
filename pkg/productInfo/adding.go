@@ -1,7 +1,6 @@
 package productinfo
 
 import (
-	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config"
@@ -32,7 +31,9 @@ type AddMetaInfoRequest struct {
 	Description          []string
 	DescriptionImages    []string
 	DescriptionInfos     map[string]string
+	DescriptionRawInfos  map[string]string
 	Information          map[string]string
+	RawInformation       map[string]string
 	IsForeignDelivery    bool
 	EarliestDeliveryDays int
 	LatestDeliveryDays   int
@@ -114,8 +115,6 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 			"https://alloff.s3.ap-northeast-2.amazonaws.com/description/Intrend_info.png",
 		}, descImages...)
 	}
-
-	log.Println(pdInfo.Images)
 
 	pdInfo.SetDesc(descImages, request.Description, request.DescriptionInfos)
 	pdInfo.SetDeliveryDesc(request.IsForeignDelivery, 0, request.EarliestDeliveryDays, request.LatestDeliveryDays)

@@ -24,8 +24,6 @@ type ProductsRepository interface {
 	ListInfos(filter interface{}) (brands []*domain.BrandCountsData, cats []*domain.AlloffCategoryDAO, sizes []*domain.AlloffSizeDAO)
 	Insert(*domain.ProductDAO) (*domain.ProductDAO, error)
 	Upsert(*domain.ProductDAO) (*domain.ProductDAO, error)
-	CountNewProducts([]string) int
-	MakeOutdateProducts([]string, time.Time) int
 }
 
 type ProductMetaInfoRepository interface {
@@ -34,6 +32,8 @@ type ProductMetaInfoRepository interface {
 	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductMetaInfoDAO, int, error)
 	Insert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
 	Upsert(*domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, error)
+	CountNewProducts([]string, time.Time) int
+	MakeOutdatedProducts([]string, time.Time) int
 }
 
 type CrawlSourcesRepository interface {

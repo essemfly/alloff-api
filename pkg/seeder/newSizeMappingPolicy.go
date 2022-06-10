@@ -10,7 +10,6 @@ import (
 	"log"
 )
 
-// TODO : Upsert로 변경
 func NewSizeMappingPolicy() {
 	alloffSizes, _, err := ioc.Repo.AlloffSizes.List(0, 1000)
 	if err != nil {
@@ -21,7 +20,7 @@ func NewSizeMappingPolicy() {
 		sizes := []string{}
 		switch alloffSize.AlloffSizeName {
 		case "44":
-			sizes = []string{"XP", "P/S", "P", "XXS", "XS", "DE32", "IT36", "FR34", "US32", "US0", "US2", "UK4", "EU32", "EU34"}
+			sizes = []string{"XP", "P/S", "P", "XXS", "XS", "DE32", "IT36", "FR34", "US32", "US0", "US2", "UK4", "EU32", "EU34", "EU0"}
 		case "55":
 			sizes = []string{"P/S", "S", "DE34", "DE36", "IT38", "IT40", "FR36", "FR38", "US34", "US36", "US4", "US6", "UK6", "UK8", "EU36", "EU38"}
 		case "66":
