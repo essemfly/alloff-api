@@ -6,7 +6,6 @@ package resolver
 import (
 	"context"
 	"fmt"
-
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
@@ -145,10 +144,13 @@ func (r *queryResolver) ExhibitionInfo(ctx context.Context, input model.MetaInfo
 			NumProducts: brandCount.Counts,
 		})
 	}
+
 	alloffcats := []*model.AlloffCategory{}
 	for _, cat := range alloffcatData {
 		alloffcats = append(alloffcats, mapper.MapAlloffCatDaoToAlloffCat(cat))
 	}
+	orderedAlloffcats := mapper.MapOrderedAlloffCats(alloffcats)
+
 	sizes := []*model.AlloffSize{}
 	for _, size := range sizeData {
 		sizes = append(sizes, mapper.MapAlloffSizeDaoToAlloffSize(size))
@@ -156,7 +158,7 @@ func (r *queryResolver) ExhibitionInfo(ctx context.Context, input model.MetaInfo
 
 	return &model.MetaInfoOutput{
 		Brands:           brandOutputs,
-		AlloffCategories: alloffcats,
+		AlloffCategories: orderedAlloffcats,
 		AlloffSizes:      sizes,
 	}, nil
 }

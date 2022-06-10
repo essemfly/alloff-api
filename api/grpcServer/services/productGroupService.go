@@ -233,9 +233,17 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 			config.Logger.Error("err occured on products insert on pg : "+productPriority.ProductId, zap.Error(err))
 		}
 	}
+	exDao, err := ioc.Repo.Exhibitions.Get(pgDao.ExhibitionID)
+	if err != nil {
+		return nil, err
+	}
+	go exhibition.ExhibitionSyncer(exDao)
 
+	// TODO edit offset & limit should be fixed normally
 	productListInput := product.ProductListInput{
 		ProductGroupID: pgDao.ID.Hex(),
+		Offset:         0,
+		Limit:          10000,
 	}
 
 	pds, _, err := product.ListProducts(productListInput)
@@ -277,8 +285,11 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 	exDao, _ := ioc.Repo.Exhibitions.Get(pgDao.ExhibitionID)
 	go exhibition.ExhibitionSyncer(exDao)
 
+	// TODO edit offset & limit should be fixed normally
 	productListInput := product.ProductListInput{
 		ProductGroupID: newPgDao.ID.Hex(),
+		Offset:         0,
+		Limit:          10000,
 	}
 
 	pdDaos, _, err := product.ListProducts(productListInput)
