@@ -146,6 +146,10 @@ func ListProducts(input ProductListInput) ([]*domain.ProductDAO, int, error) {
 		return nil, 0, err
 	}
 
+	if input.Limit == 0 {
+		input.Limit = 10
+	}
+
 	pipelines := []interface{}{
 		bson.M{"$match": filter},
 		bson.M{"$addFields": bson.M{
@@ -159,6 +163,7 @@ func ListProducts(input ProductListInput) ([]*domain.ProductDAO, int, error) {
 		bson.M{"$limit": input.Limit + input.Offset},
 		bson.M{"$skip": input.Offset},
 	}
+
 	products, cnt, err := ioc.Repo.Products.Aggregate(filter, pipelines)
 	if err != nil {
 		return nil, cnt, err
