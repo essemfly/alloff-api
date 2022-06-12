@@ -30,7 +30,7 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 			Title:            req.Title,
 			Message:          req.Message,
 			Notificationid:   "/" + utils.CreateShortUUID(),
-			ReferenceID:      req.ReferenceId,
+			ReferenceID:      req.ReferenceId + "?notiType=general&title=" + req.Title + "&message=" + req.Message,
 			NavigateTo:       "/",
 		}
 	} else if req.NotiType == string(domain.NOTIFICATION_PRODUCT_DIFF_NOTIFICATION) {
@@ -40,7 +40,7 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 			Title:            req.Title,
 			Message:          req.Message,
 			Notificationid:   "/products" + req.ReferenceId,
-			ReferenceID:      "/" + req.ReferenceId,
+			ReferenceID:      "/" + req.ReferenceId + "?notiType=product&title=" + req.Title + "&message=" + req.Message,
 			NavigateTo:       "/products",
 		}
 	} else if req.NotiType == string(domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION) {
@@ -50,7 +50,7 @@ func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNoti
 			Title:            req.Title,
 			Message:          req.Message,
 			Notificationid:   "/deals" + req.ReferenceId,
-			ReferenceID:      "/" + req.ReferenceId,
+			ReferenceID:      "/" + req.ReferenceId + "?notiType=dealopen&title=" + req.Title + "&message=" + req.Message,
 			NavigateTo:       "/deals",
 		}
 	} else {
