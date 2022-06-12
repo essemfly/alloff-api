@@ -159,9 +159,9 @@ func GetFlannelProductList(categoryUrl, productType, categoryName string) []*pro
 	productTypes := map[string][]domain.AlloffProductType{
 		"Mens":          {domain.Male},
 		"Womens":        {domain.Female},
-		"Boys":          {domain.Boy},
-		"Girls":         {domain.Girl},
-		"Unisex Kids":   {domain.Boy, domain.Girl},
+		"Boys":          {domain.Kids},
+		"Girls":         {domain.Kids},
+		"Unisex Kids":   {domain.Kids},
 		"Unisex Adults": {domain.Male, domain.Female},
 	}
 
