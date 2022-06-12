@@ -207,7 +207,6 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		return nil, err
 	}
 
-	// Must be fixed
 	for _, productPriority := range req.ProductPriorities {
 		pdInfoDao, err := ioc.Repo.ProductMetaInfos.Get(productPriority.ProductId)
 		if err != nil {
@@ -253,32 +252,24 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 		return nil, err
 	}
 
-	// Must be fixed
-	pds := []*domain.ProductPriorityDAO{}
-	for _, pd := range req.ProductPriorities {
-		productObjId, _ := primitive.ObjectIDFromHex(pd.ProductId)
-		pdDao, _ := ioc.Repo.Products.Get(pd.ProductId)
-
-		newPd := &domain.ProductPriorityDAO{
-			Priority:  int(pd.Priority),
-			ProductID: productObjId,
-			Product:   pdDao,
+	for _, productPriority := range req.ProductPriorities {
+		pdDao, err := ioc.Repo.Products.GetByMetaID(productPriority.ProductId, pgDao.ExhibitionID)
+		if err != nil {
+			config.Logger.Error("err occured in pd not found: "+productPriority.ProductId, zap.Error(err))
+			continue
 		}
-		pds = append(pds, newPd)
+
+		pdDao.Weight = int(productPriority.Priority)
+		pdDao.Updated = time.Now()
+
+		_, err = ioc.Repo.Products.Upsert(pdDao)
+		if err != nil {
+			config.Logger.Error("err occured on products insert on pg : "+productPriority.ProductId, zap.Error(err))
+		}
 	}
-
-	pgDao.Products = pds
-
-	newPgDao, err := ioc.Repo.ProductGroups.Upsert(pgDao)
-	if err != nil {
-		return nil, err
-	}
-
-	exDao, _ := ioc.Repo.Exhibitions.Get(pgDao.ExhibitionID)
-	go exhibition.ExhibitionSyncer(exDao)
 
 	productListInput := product.ProductListInput{
-		ProductGroupID: newPgDao.ID.Hex(),
+		ProductGroupID: pgDao.ID.Hex(),
 	}
 
 	pdDaos, _, err := product.ListProducts(productListInput)
@@ -287,7 +278,7 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 		return nil, err
 	}
 
-	return mapper.ProductGroupMapper(newPgDao, pdDaos), nil
+	return mapper.ProductGroupMapper(pgDao, pdDaos), nil
 }
 
 func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, req *grpcServer.RemoveProductInPgRequest) (*grpcServer.ProductGroupMessage, error) {
