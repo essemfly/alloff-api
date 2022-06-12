@@ -27,3 +27,8 @@ config/config.*.json
 *.json.js
 log.json
 .env.*
+log.*
+grpcServer
+apiServer
+grpcServer-last
+apiServer-last
