@@ -118,7 +118,7 @@ func CalculateFlannelsPrice(priceKRW int) int {
 	floatKRW := float64(priceKRW)
 	originalPriceKRW := floatKRW
 	deliveryFeeInUk := 11000.00
-	deliveryFeeOversea := 15000.00
+	deliveryFeeOversea := 0.00
 	deliveryFeeDomestic := 3000.00
 	vatRate := 0.00
 	customTaxRate := 0.00
@@ -145,7 +145,7 @@ func CalculateFlannelsNonFashionPrice(priceKRW int) int {
 	floatKRW := float64(priceKRW)
 	originalPriceKRW := floatKRW
 	deliveryFeeInUk := 11000.00
-	deliveryFeeOversea := 15000.00
+	deliveryFeeOversea := 0.00
 	deliveryFeeDomestic := 3000.00
 	vatRate := 0.00
 	customTaxRate := 0.00

@@ -219,8 +219,8 @@ func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
 		productRequest.AlloffName = e.Text
 	})
 	c.OnHTML(".product-detail__price", func(e *colly.HTMLElement) {
-		productRequest.OriginalPrice = parseOnlyNumbers(e.ChildText("#lblSellingPrice"))
-		productRequest.DiscountedPrice = parseOnlyNumbers(e.ChildText(".originalprice #lblTicketPrice"))
+		productRequest.DiscountedPrice = parseOnlyNumbers(e.ChildText("#lblSellingPrice"))
+		productRequest.OriginalPrice = parseOnlyNumbers(e.ChildText(".originalprice #lblTicketPrice"))
 		productRequest.CurrencyType = domain.CurrencyPOUND
 	})
 	c.OnHTML("#lblProductCode", func(e *colly.HTMLElement) {
