@@ -1,8 +1,6 @@
 package mapper
 
 import (
-	"time"
-
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
@@ -18,8 +16,8 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		Tags:           exDao.Tags,
 		BannerImage:    exDao.BannerImage,
 		ThumbnailImage: exDao.ThumbnailImage,
-		StartTime:      exDao.StartTime.Add(9 * time.Hour).String(),
-		FinishTime:     exDao.FinishTime.Add(9 * time.Hour).String(),
+		StartTime:      exDao.StartTime.String(),
+		FinishTime:     exDao.FinishTime.String(),
 		NumAlarms:      exDao.NumAlarms,
 		MaxDiscounts:   exDao.MaxDiscounts,
 		UserAlarmOn:    false,
