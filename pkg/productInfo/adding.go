@@ -47,10 +47,12 @@ type AddMetaInfoRequest struct {
 }
 
 func AddProductInfo(request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {
-	_, err := ioc.Repo.ProductMetaInfos.GetByProductID(request.Brand.KeyName, request.ProductID)
-	if err != mongo.ErrNoDocuments {
-		config.Logger.Error("already registered products", zap.Error(err))
-		return nil, err
+	if request.ProductID != "" {
+		_, err := ioc.Repo.ProductMetaInfos.GetByProductID(request.Brand.KeyName, request.ProductID)
+		if err != mongo.ErrNoDocuments {
+			config.Logger.Error("already registered products", zap.Error(err))
+			return nil, err
+		}
 	}
 
 	pdInfo := makeBaseProductInfo(request)
@@ -66,7 +68,7 @@ func AddProductInfo(request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, er
 	//	}
 	//}
 
-	pdInfo, err = ioc.Repo.ProductMetaInfos.Insert(pdInfo)
+	pdInfo, err := ioc.Repo.ProductMetaInfos.Insert(pdInfo)
 	if err != nil {
 		config.Logger.Error("error on adding product infos", zap.Error(err))
 	}
@@ -108,7 +110,7 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
 	pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
 	pdInfo.SetInformation(request.Information)
-	//descImages := append(request.DescriptionImages, request.Images...) TODO 이렇게 하면 Images가 수정될때마다 수정되는 친구들이 계속 descImages에 쌓이게 된다.
+
 	descImages := request.DescriptionImages
 	if request.ModuleName == "intrend" {
 		descImages = append([]string{
