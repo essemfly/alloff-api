@@ -50,6 +50,20 @@ func (repo *brandsRepo) GetByKeyname(keyname string) (*domain.BrandDAO, error) {
 	return brand, nil
 }
 
+func (repo *brandsRepo) GetByKorname(korname string) (*domain.BrandDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	filter := bson.M{"korname": korname}
+
+	var brand *domain.BrandDAO
+	if err := repo.col.FindOne(ctx, filter).Decode(&brand); err != nil {
+		return nil, err
+	}
+
+	return brand, nil
+}
+
 func (repo *brandsRepo) List(offset, limit int, onlyPopular, excludeHide bool, sortingOptions interface{}) ([]*domain.BrandDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()

@@ -11,11 +11,18 @@ import (
 	"log"
 )
 
-func startMigration(pgUrl string) {
+func MigrateFromPGUrl(pgUrl string) {
 	resp, err := utils.MakeRequest(pgUrl, utils.REQUEST_GET, map[string]string{}, "")
 	if err != nil {
 		log.Panic(err)
 	}
+
+	totalProducts := 0
+	errors := []map[string]string{}
+
+	log.Println(":::::::::::::::::::::::::::PG:::::::::::::::::::::::::::")
+	log.Println("now on : ", pgUrl)
+	log.Println("::::::::::::::::::::::::::::::::::::::::::::::::::::::::")
 
 	body, err := ioutil.ReadAll(resp.Body)
 
@@ -24,19 +31,15 @@ func startMigration(pgUrl string) {
 		log.Panic(err)
 	}
 
-	brand, _ := ioc.Repo.Brands.GetByKeyname(result.Brand.Keyname)
-	if brand.KorName != result.Products[0].Product.BrandKorName {
-		log.Panic("브랜드 이상함 재확인 필요")
-	}
-
 	for _, oldPd := range result.Products {
 		log.Println("now add : ", oldPd.Product.AlloffName)
-		alloffCat, err := ioc.Repo.AlloffCategories.GetByName(oldPd.Product.AlloffCategoryName)
+		pd := oldPd.Product
+
+		alloffCat, err := mapAlloffCatByName(pd.AlloffCategoryName)
 		if err == mongo.ErrNoDocuments {
 			alloffCat = &domain.AlloffCategoryDAO{}
+			errors = append(errors, map[string]string{"타입": "카테고리를 찾을 수 없음", "상품": pd.AlloffProductID})
 		}
-
-		pd := oldPd.Product
 
 		color := ""
 		if val, ok := pd.DescriptionInfos["색상"]; ok {
@@ -54,6 +57,14 @@ func startMigration(pgUrl string) {
 				Quantity: int(inv.Quantity),
 				Size:     inv.Size,
 			})
+		}
+
+		// 브랜드 korName이 이상하게 입력되어있는건 checkBrandKorName 에서 거른다.
+		brandKorName := checkBrandKorName(pd.BrandKorName)
+
+		brand, err := ioc.Repo.Brands.GetByKorname(brandKorName)
+		if err != nil {
+			errors = append(errors, map[string]string{"type": "can not find brands from korname", "detail": pd.AlloffProductID})
 		}
 
 		request := &productinfo.AddMetaInfoRequest{
@@ -89,15 +100,21 @@ func startMigration(pgUrl string) {
 			IsRemoved:            false,
 			IsSoldout:            false,
 		}
-
-		log.Println(pd.AlloffProductID)
 		_, err = productinfo.AddProductInfo(request)
 		if err != nil {
+			errors = append(errors, map[string]string{"타입": "상품을 넣을 수 없음", "상품": oldPd.Product.AlloffProductID})
 			continue
 		} else {
+			totalProducts += 1
 			log.Println(oldPd.Product.AlloffName, ": added")
 		}
 	}
+
+	for _, error := range errors {
+		log.Println(error)
+	}
+
+	log.Printf("총 상품 >> [%v] 개 입력완료", totalProducts)
 }
 
 type Resp struct {
@@ -129,4 +146,32 @@ type Resp struct {
 			ThumbnailImage     string `json:"thumbnail_image"`
 		} `json:"product"`
 	} `json:"products"`
+}
+
+func mapAlloffCatByName(catName string) (*domain.AlloffCategoryDAO, error) {
+	lv1CatName := ""
+	switch catName {
+	case "코트", "점퍼", "자켓", "베스트", "패딩", "야상":
+		lv1CatName = "아우터"
+	case "슬랙스", "데님", "팬츠":
+		lv1CatName = "바지"
+	case "티셔츠", "니트/스웨터", "가디건", "블라우스", "셔츠", "맨투맨", "후드", "민소매":
+		lv1CatName = "상의"
+	case "아우터", "상의", "바지", "원피스/세트", "스커트", "라운지/언더웨어", "가방", "신발", "패션잡화":
+		lv1CatName = catName
+	}
+
+	alloffCat, err := ioc.Repo.AlloffCategories.GetByName(lv1CatName)
+	if err != nil {
+		return nil, err
+	}
+	return alloffCat, nil
+
+}
+
+func checkBrandKorName(korName string) string {
+	if korName == "막스마라 (인트렌드)" {
+		return "막스마라(인트렌드)"
+	}
+	return korName
 }
