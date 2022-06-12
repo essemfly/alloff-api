@@ -147,7 +147,7 @@ func ListProducts(input ProductListInput) ([]*domain.ProductDAO, int, error) {
 	}
 
 	if input.Limit == 0 {
-		input.Limit = 10
+		input.Limit = 300
 	}
 
 	pipelines := []interface{}{
