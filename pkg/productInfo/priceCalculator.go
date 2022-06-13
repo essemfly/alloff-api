@@ -10,7 +10,7 @@ import (
 const (
 	EURO_EXCHANGE_RATE   = 1350
 	DOLLAR_EXCHANGE_RATE = 1269
-	POUND_EXCHANGE_RATE  = 1579
+	POUND_EXCHANGE_RATE  = 1580
 )
 
 func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyType, marginPolicy string) (int, int) {
@@ -116,7 +116,6 @@ func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyT
 
 func CalculateFlannelsPrice(priceKRW int) int {
 	floatKRW := float64(priceKRW)
-	originalPriceKRW := floatKRW
 	deliveryFeeInUk := 11000.00
 	deliveryFeeOversea := 0.00
 	deliveryFeeDomestic := 3000.00
@@ -128,10 +127,10 @@ func CalculateFlannelsPrice(priceKRW int) int {
 		vatRate = 0.1
 		customTaxRate = 0.13
 	}
-	floatKRW = floatKRW + (customTaxRate * originalPriceKRW)                               // 관세
-	floatKRW = floatKRW + deliveryFeeOversea + ((floatKRW + deliveryFeeOversea) * vatRate) // 부가세 + 해외배송
-	floatKRW = floatKRW * 110 / 100                                                        // 마진
-	floatKRW = floatKRW + deliveryFeeDomestic                                              // 국내배송
+	floatKRW = floatKRW + (customTaxRate * floatKRW)                  // 관세
+	floatKRW = floatKRW + ((floatKRW + deliveryFeeOversea) * vatRate) // 부가세 + 해외배송
+	floatKRW = floatKRW * 110 / 100                                   // 마진
+	floatKRW = floatKRW + deliveryFeeDomestic                         // 국내배송
 
 	floatKRW = floatKRW / 1000.00
 	floatKRW = math.Round(floatKRW)
@@ -143,7 +142,6 @@ func CalculateFlannelsPrice(priceKRW int) int {
 
 func CalculateFlannelsNonFashionPrice(priceKRW int) int {
 	floatKRW := float64(priceKRW)
-	originalPriceKRW := floatKRW
 	deliveryFeeInUk := 11000.00
 	deliveryFeeOversea := 0.00
 	deliveryFeeDomestic := 3000.00
@@ -155,7 +153,7 @@ func CalculateFlannelsNonFashionPrice(priceKRW int) int {
 		vatRate = 0.1
 		customTaxRate = 0.08
 	}
-	floatKRW = floatKRW + (customTaxRate * originalPriceKRW)                               // 관세
+	floatKRW = floatKRW + (customTaxRate * floatKRW)                                       // 관세
 	floatKRW = floatKRW + deliveryFeeOversea + ((floatKRW + deliveryFeeOversea) * vatRate) // 부가세 + 해외배송
 	floatKRW = floatKRW * 110 / 100                                                        // 마진
 	floatKRW = floatKRW + deliveryFeeDomestic                                              // 국내배송
@@ -177,7 +175,7 @@ func CalculateAfoundPrice(priceKRW int) int {
 	customTaxRate := 0.00
 	if (floatKRW / DOLLAR_EXCHANGE_RATE) >= 150.00 {
 		vatRate = 0.1
-		customTaxRate = 0.08
+		customTaxRate = 0.13
 	}
 	floatKRW = floatKRW + (customTaxRate * originalPriceKRW)                               // 관세
 	floatKRW = floatKRW + deliveryFeeOversea + ((floatKRW + deliveryFeeOversea) * vatRate) // 부가세 + 해외배송
@@ -201,7 +199,7 @@ func CalculateAfoundNonFashionPrice(priceKRW int) int {
 	customTaxRate := 0.00
 	if (floatKRW / DOLLAR_EXCHANGE_RATE) >= 150.00 {
 		vatRate = 0.1
-		customTaxRate = 0.13
+		customTaxRate = 0.08
 	}
 	floatKRW = floatKRW + (customTaxRate * originalPriceKRW)                               // 관세
 	floatKRW = floatKRW + deliveryFeeOversea + ((floatKRW + deliveryFeeOversea) * vatRate) // 부가세 + 해외배송

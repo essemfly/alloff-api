@@ -17,6 +17,9 @@ func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRe
 		inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
 		pdInfo.SetInventory(inventories)
 
+		//alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
+		//pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
+
 		if len(inventories) == 0 {
 			pdInfo.IsSoldout = true
 		}
