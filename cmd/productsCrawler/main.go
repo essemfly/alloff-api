@@ -15,7 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const numWorkers = 1
+const numWorkers = 20
 
 func main() {
 	cmd.SetBaseConfig()
@@ -42,6 +42,7 @@ func main() {
 		// "theory",
 		// "claudiePierlot",
 		"flannels",
+		//"afound",
 	}
 
 	StartCrawling(crawlModules)

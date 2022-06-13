@@ -272,13 +272,9 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		updatedRequest.Description = req.Description
 	}
 
-	if len(req.DescriptionInfos) > 0 {
-		updatedRequest.DescriptionInfos = req.DescriptionInfos
-	}
+	updatedRequest.DescriptionInfos = req.DescriptionInfos
 
-	if len(req.ProductInfos) > 0 {
-		updatedRequest.Information = req.ProductInfos
-	}
+	updatedRequest.Information = req.ProductInfos
 
 	if req.EarliestDeliveryDays != nil {
 		updatedRequest.EarliestDeliveryDays = int(*req.EarliestDeliveryDays)
@@ -331,8 +327,6 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	if req.ThumbnailImage != nil {
 		updatedRequest.ThumbnailImage = *req.ThumbnailImage
 	}
-
-	// TODO proto에서 cached_images 라는 메시지 필드를 만들고, 백오피스에서 캐싱 성공하면 지금은 images 로 넘겨주는 것을 cached_images 로 넘겨주도록 수정하고 이걸 받아 처리하는 방식으로 바꿔야함
 
 	newPdInfoDao, err := productinfo.UpdateProductInfo(pdInfoDao, updatedRequest, "GRPC")
 	if err != nil {

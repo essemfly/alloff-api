@@ -205,6 +205,7 @@ func MapTheoutnetListProducts(pds []TheOutnetResponseProduct, source *domain.Cra
 			ModuleName:          source.CrawlModuleName,
 			IsRemoved:           false,
 			IsSoldout:           false,
+			DescriptionImages:   images,
 		}
 
 		log.Println(urlPrefix + pd.Seo.SeoUrl)

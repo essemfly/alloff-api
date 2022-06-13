@@ -58,14 +58,16 @@ func MapProductTypes(types []domain.AlloffProductType) []model.AlloffProductType
 }
 
 func MapOrderedAlloffCats(alloffCats []*model.AlloffCategory) []*model.AlloffCategory {
-	ordered := [9]*model.AlloffCategory{
+	ordered := [11]*model.AlloffCategory{
 		{Name: "아우터"},
 		{Name: "상의"},
 		{Name: "원피스/세트"},
 		{Name: "스커트"},
 		{Name: "바지"},
 		{Name: "신발"},
+		{Name: "가방"},
 		{Name: "패션잡화"},
+		{Name: "라운지/언더웨어"},
 		{Name: "쥬얼리"},
 		{Name: "비치웨어"},
 	}

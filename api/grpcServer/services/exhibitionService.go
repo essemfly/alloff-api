@@ -175,6 +175,11 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 		return nil, err
 	}
 
+	exDao, err = exhibition.ExhibitionSyncer(exDao)
+	if err != nil {
+		return nil, err
+	}
+
 	return &grpcServer.CreateExhibitionResponse{
 		Exhibition: mapper.ExhibitionMapper(exDao, false),
 	}, nil

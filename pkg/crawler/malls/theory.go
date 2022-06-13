@@ -114,6 +114,7 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			ModuleName:          source.CrawlModuleName,
 			IsRemoved:           false,
 			IsSoldout:           false,
+			DescriptionImages:   images,
 		}
 
 		totalProducts += 1
