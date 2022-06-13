@@ -82,6 +82,31 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 	return newExDao, err
 }
 
+func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) error {
+	productListInput := product.ProductListInput{
+		Offset:         0,
+		Limit:          1000,
+		ProductGroupID: pgDao.ID.Hex(),
+	}
+
+	pds, _, err := product.ListProducts(productListInput)
+	if err != nil {
+		config.Logger.Error("exhibition syncer error", zap.Error(err))
+		return err
+	}
+	for _, pd := range pds {
+		pd.ExhibitionID = ""
+		pd.ExhibitionFinishTime = pgDao.StartTime
+		pd.ExhibitionStartTime = pgDao.StartTime
+		_, err := ioc.Repo.Products.Upsert(pd)
+		if err != nil {
+			config.Logger.Error("exhibition syncer error", zap.Error(err))
+			return err
+		}
+	}
+	return nil
+}
+
 func removeDuplicateType(strSlice []domain.AlloffProductType) []domain.AlloffProductType {
 	allKeys := make(map[domain.AlloffProductType]bool)
 	list := []domain.AlloffProductType{}
