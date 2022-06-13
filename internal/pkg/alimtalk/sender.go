@@ -113,7 +113,6 @@ func DeleteMessage(alimtalk *domain.AlimtalkDAO) error {
 	baseUrl := "https://api-alimtalk.cloud.toast.com"
 	appKey := "sj4UJFouCcvOHajL"
 	realUrl := baseUrl + "/alimtalk/v2.0/appkeys/" + appKey + "/messages/" + alimtalk.ToastRequestID
-
 	resp, err := MakeDeleteRequest(realUrl)
 	if err != nil {
 		log.Println(err)
