@@ -159,9 +159,9 @@ func GetFlannelProductList(categoryUrl, productType, categoryName string) []*pro
 	productTypes := map[string][]domain.AlloffProductType{
 		"Mens":          {domain.Male},
 		"Womens":        {domain.Female},
-		"Boys":          {domain.Boy},
-		"Girls":         {domain.Girl},
-		"Unisex Kids":   {domain.Boy, domain.Girl},
+		"Boys":          {domain.Kids},
+		"Girls":         {domain.Kids},
+		"Unisex Kids":   {domain.Kids},
 		"Unisex Adults": {domain.Male, domain.Female},
 	}
 
@@ -219,8 +219,8 @@ func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
 		productRequest.AlloffName = e.Text
 	})
 	c.OnHTML(".product-detail__price", func(e *colly.HTMLElement) {
-		productRequest.OriginalPrice = parseOnlyNumbers(e.ChildText("#lblSellingPrice"))
-		productRequest.DiscountedPrice = parseOnlyNumbers(e.ChildText(".originalprice #lblTicketPrice"))
+		productRequest.DiscountedPrice = parseOnlyNumbers(e.ChildText("#lblSellingPrice"))
+		productRequest.OriginalPrice = parseOnlyNumbers(e.ChildText(".originalprice #lblTicketPrice"))
 		productRequest.CurrencyType = domain.CurrencyPOUND
 	})
 	c.OnHTML("#lblProductCode", func(e *colly.HTMLElement) {
@@ -240,6 +240,7 @@ func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
 			images = append(images, el.Attr("href"))
 		})
 		productRequest.Images = images
+		productRequest.DescriptionImages = images
 	})
 
 	isDigit := regexp.MustCompile(`^\d*\.?\d+$`)

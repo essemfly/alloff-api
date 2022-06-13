@@ -6,7 +6,6 @@ package resolver
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/apiServer"
@@ -69,9 +68,9 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) 
 }
 
 func (r *mutationResolver) UpdateUserInfo(ctx context.Context, input model.UserInfoInput) (*model.User, error) {
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
+	user, err := middleware.ForContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	if input.Mobile != nil {
@@ -166,9 +165,9 @@ func (r *mutationResolver) RefreshToken(ctx context.Context, input model.Refresh
 }
 
 func (r *queryResolver) User(ctx context.Context) (*model.User, error) {
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
+	user, err := middleware.ForContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	return mapper.MapUserDaoToUser(user), nil

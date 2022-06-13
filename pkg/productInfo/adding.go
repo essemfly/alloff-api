@@ -113,9 +113,10 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 
 	descImages := request.DescriptionImages
 	if request.ModuleName == "intrend" {
-		descImages = append([]string{
-			"https://alloff.s3.ap-northeast-2.amazonaws.com/description/Intrend_info.png",
-		}, descImages...)
+		descImages = []string{"https://alloff.s3.ap-northeast-2.amazonaws.com/description/Intrend_info.png"}
+		for _, img := range request.DescriptionImages {
+			descImages = append(descImages, img)
+		}
 	}
 
 	pdInfo.SetDesc(descImages, request.Description, request.DescriptionInfos)
@@ -143,6 +144,9 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	}
 
 	inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
+	if len(inventories) == 0 {
+		request.IsSoldout = true
+	}
 	pdInfo.SetInventory(inventories)
 
 	pdInfo.IsRemoved = request.IsRemoved

@@ -83,7 +83,7 @@ func CrawlAfound(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			Sizes:               sizes,
 			Inventory:           inventories,
 			Information:         description,
-			DescriptionImages:   []string{},
+			DescriptionImages:   images,
 			IsForeignDelivery:   true,
 			IsTranslateRequired: true,
 			ModuleName:          source.CrawlModuleName,

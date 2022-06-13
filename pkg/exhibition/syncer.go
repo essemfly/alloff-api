@@ -19,6 +19,7 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 	maxDiscountRates := 0
 
 	for _, pg := range exDao.ProductGroups {
+		log.Println(exDao.Title, pg.ID.Hex())
 		pgDao, err := ioc.Repo.ProductGroups.Get(pg.ID.Hex())
 		if err != nil {
 			log.Println("Update exhibition not found pgID: "+pg.ID.Hex(), err)
@@ -58,7 +59,8 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 			if maxDiscountRates < pd.ProductInfo.Price.DiscountRate {
 				maxDiscountRates = pd.ProductInfo.Price.DiscountRate
 			}
-			pd.ExhibitionID = pgDao.ExhibitionID
+			log.Println("pgDaoexh", pgDao.ExhibitionID, updatedPgDao.ExhibitionID)
+			pd.ExhibitionID = updatedPgDao.ExhibitionID
 			pd.ExhibitionStartTime = pgDao.StartTime
 			pd.ExhibitionFinishTime = pgDao.FinishTime
 			_, err := ioc.Repo.Products.Upsert(pd)
@@ -80,6 +82,32 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 	}
 
 	return newExDao, err
+}
+
+func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) error {
+	log.Println("HOIT?", pgDao.ID)
+	productListInput := product.ProductListInput{
+		Offset:         0,
+		Limit:          1000,
+		ProductGroupID: pgDao.ID.Hex(),
+	}
+
+	pds, _, err := product.ListProducts(productListInput)
+	if err != nil {
+		config.Logger.Error("exhibition syncer error", zap.Error(err))
+		return err
+	}
+	for _, pd := range pds {
+		pd.ExhibitionID = ""
+		pd.ExhibitionFinishTime = pgDao.StartTime
+		pd.ExhibitionStartTime = pgDao.StartTime
+		_, err := ioc.Repo.Products.Upsert(pd)
+		if err != nil {
+			config.Logger.Error("exhibition syncer error", zap.Error(err))
+			return err
+		}
+	}
+	return nil
 }
 
 func removeDuplicateType(strSlice []domain.AlloffProductType) []domain.AlloffProductType {

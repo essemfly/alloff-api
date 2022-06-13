@@ -173,7 +173,7 @@ func AddFlannels() {
 		},
 		"canada-goose": {
 			KorName:       "캐나다 구스",
-			EngName:       "CANADA GOOsE",
+			EngName:       "CANADA GOOSE",
 			KeyName:       "CANADAGOOSE",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/CANADAGOOSE.png",
 			Onpopular:     false,
@@ -184,7 +184,7 @@ func AddFlannels() {
 			SizeGuide:     []domain.SizeGuideDAO{},
 		},
 		"casablanca": {
-			KorName:       "캐나다 구스",
+			KorName:       "카사블랑카",
 			EngName:       "CASABLANCA",
 			KeyName:       "CASABLANCA",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/CASABLANCA.png",
@@ -645,7 +645,7 @@ func AddFlannels() {
 		"tommy-hilfiger": {
 			KorName:       "타미 힐피거",
 			EngName:       "Tommy Hilfiger",
-			KeyName:       "TOMMYHILFIGERW",
+			KeyName:       "TOMMYHILFIGER",
 			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/TOMMYHILFIGERW.png",
 			Onpopular:     false,
 			Description:   "트래디셔널 캐주얼",
@@ -758,8 +758,8 @@ func getCrawlUrl(brandUrlName string) string {
 	brandKeys := map[string]string{
 		"alexander-mcqueen":         "FLAN_CLEBRAALEXANDERMCQUEEN",
 		"apc":                       "FLAN_CLEBRAAPC",
-		"balenciaga":                "FLAN_APC",
-		"balmain":                   "FLAN_CLEBRABALENCIAGA",
+		"balenciaga":                "FLAN_CLEBRABALENCIAGA",
+		"balmain":                   "FLAN_CLEBRABALMAIN",
 		"bash":                      "FLAN_CLEBRABASH",
 		"burberry":                  "FLAN_CLEBRABURBERRY",
 		"barbour-international":     "FLAN_CLEBRABARBOURINTERNATIONAL",
@@ -770,8 +770,8 @@ func getCrawlUrl(brandUrlName string) string {
 		"calvin-klein-performance":  "FLAN_CLEBRACALVINKLEINPERFORMANCE",
 		"calvin-klein-jeans":        "FLAN_CLEBRACALVINKLEINJEANS",
 		"canada-goose":              "FLAN_CLEBRACANADAGOOSE",
-		"casablanca":                "FLAN_CLEBRACANADAGOOSE",
-		"comme-des-garcons-play":    "FLAN_CLEBRACASABLANCA",
+		"casablanca":                "FLAN_CLEBRACASABLANCA",
+		"comme-des-garcons-play":    "FLAN_CLEBRACOMMEDESGARCONSPLAY",
 		"cp-company":                "FLAN_CLEBRACPCOMPANY",
 		"chloe":                     "FLAN_CLEBRACHLOE",
 		"emporio-armani":            "FLAN_CLEBRAEMPORIOARMANI",

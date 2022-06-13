@@ -26,7 +26,7 @@ type ProductInfoListInput struct {
 }
 
 func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
-	filter := bson.M{}
+	filter := bson.M{"isremoved": false}
 	if input.BrandID != "" {
 		brandObjID, _ := primitive.ObjectIDFromHex(input.BrandID)
 		filter["brand._id"] = brandObjID
@@ -54,7 +54,7 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 		}
 	}
 
-	if input.IncludeClassifiedType != domain.NO_MATTER_CLASSIFIED {
+	if input.IncludeClassifiedType != "" && input.IncludeClassifiedType != domain.NO_MATTER_CLASSIFIED {
 		if input.IncludeClassifiedType == domain.CLASSIFIED_DONE {
 			filter["alloffcategory.done"] = true
 		} else {

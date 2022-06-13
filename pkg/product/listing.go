@@ -24,7 +24,7 @@ type ProductListInput struct {
 }
 
 func (input *ProductListInput) BuildFilter() (bson.M, error) {
-	filter := bson.M{"isnotsale": false}
+	filter := bson.M{"isnotsale": false, "productinfo.isremoved": false}
 
 	if input.ProductType != "" {
 		filter["productinfo.producttype"] = input.ProductType
@@ -115,17 +115,17 @@ func (input *ProductListInput) BuildFilter() (bson.M, error) {
 func (input *ProductListInput) BuildSorting() (bson.D, error) {
 	options := bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "weight", Value: 1}}
 	if input.PriceSorting == domain.PRICE_ASCENDING {
-		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.currentprice", Value: 1}, {Key: "weight", Value: 1}}
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.currentprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.PRICE_DESCENDING {
-		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.currentprice", Value: -1}, {Key: "weight", Value: 1}}
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.currentprice", Value: -1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.DISCOUNTRATE_ASCENDING {
-		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: 1}, {Key: "weight", Value: 1}}
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: 1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.DISCOUNTRATE_DESCENDING {
-		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: -1}, {Key: "weight", Value: 1}}
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "productinfo.price.discountrate", Value: -1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.INVENTORY_ASCENDING {
-		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "totalquantity", Value: 1}, {Key: "weight", Value: 1}}
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "totalquantity", Value: 1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.INVENTORY_DESCENDING {
-		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "totalquantity", Value: -1}, {Key: "weight", Value: 1}}
+		options = bson.D{{Key: "productinfo.issoldout", Value: 1}, {Key: "totalquantity", Value: -1}, {Key: "_id", Value: 1}}
 	}
 
 	return options, nil

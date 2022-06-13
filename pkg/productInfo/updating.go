@@ -2,11 +2,12 @@ package productinfo
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"go.uber.org/zap"
-	"time"
 )
 
 func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRequest, requestFrom string) (*domain.ProductMetaInfoDAO, error) {
@@ -15,6 +16,14 @@ func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRe
 	case "CRAWLER":
 		inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
 		pdInfo.SetInventory(inventories)
+
+		//alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
+		//pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
+
+		if len(inventories) == 0 {
+			pdInfo.IsSoldout = true
+		}
+
 		pdInfo.IsRemoved = false
 
 		updatedPdInfo, err := Update(pdInfo)
@@ -94,6 +103,9 @@ func Update(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, erro
 
 	for _, pd := range pds {
 		pd.ProductInfo = updatedPdInfo
+		if updatedPdInfo.IsRemoved {
+			pd.IsNotSale = true
+		}
 		_, err = ioc.Repo.Products.Upsert(pd)
 		if err != nil {
 			config.Logger.Error("error on updating products"+pd.ID.Hex(), zap.Error(err))

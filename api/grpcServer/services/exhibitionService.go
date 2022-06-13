@@ -6,10 +6,12 @@ import (
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
+	"go.uber.org/zap"
 )
 
 type ExhibitionService struct {
@@ -103,33 +105,31 @@ func (s *ExhibitionService) EditExhibition(ctx context.Context, req *grpcServer.
 		exDao.IsLive = *req.IsLive
 	}
 
-	pgType := domain.PRODUCT_GROUP_EXHIBITION
-	if exDao.ExhibitionType == domain.EXHIBITION_TIMEDEAL {
-		pgType = domain.PRODUCT_GROUP_TIMEDEAL
-	} else if exDao.ExhibitionType == domain.EXHIBITION_GROUPDEAL {
-		pgType = domain.PRODUCT_GROUP_GROUPDEAL
-	}
-
 	if req.PgIds != nil && len(req.PgIds) > 0 {
 		pgs := []*domain.ProductGroupDAO{}
+		for _, existPg := range exDao.ProductGroups {
+			removed := true
+			for _, newPgId := range req.PgIds {
+				if existPg.ID.Hex() == newPgId {
+					removed = false
+					break
+				}
+			}
+			if removed {
+				err := exhibition.ProductGroupSyncer(existPg)
+				if err != nil {
+					config.Logger.Error("err found on removing pg", zap.Error(err))
+				}
+			}
+		}
+
 		for _, pgID := range req.PgIds {
 			pg, err := ioc.Repo.ProductGroups.Get(pgID)
 			if err != nil {
 				log.Println("get product group failed: "+pgID, err)
 				continue
 			}
-			pg.StartTime = exDao.StartTime
-			pg.FinishTime = exDao.FinishTime
-			if pg.Brand != nil {
-				pgType = domain.PRODUCT_GROUP_BRAND_TIMEDEAL
-			}
-			pg.GroupType = pgType
-			pg.ExhibitionID = exDao.ID.Hex()
-			newPg, err := ioc.Repo.ProductGroups.Upsert(pg)
-			if err != nil {
-				log.Println("update product group failed: "+pgID, err)
-			}
-			pgs = append(pgs, newPg)
+			pgs = append(pgs, pg)
 		}
 		exDao.ProductGroups = pgs
 	}
@@ -171,6 +171,11 @@ func (s *ExhibitionService) CreateExhibition(ctx context.Context, req *grpcServe
 	}
 
 	exDao, err := exhibition.AddExhibition(exhibitionReq)
+	if err != nil {
+		return nil, err
+	}
+
+	exDao, err = exhibition.ExhibitionSyncer(exDao)
 	if err != nil {
 		return nil, err
 	}

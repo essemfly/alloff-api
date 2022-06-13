@@ -43,7 +43,7 @@ func (repo *productRepo) GetByMetaID(metaID, exhibitionID string) (*domain.Produ
 	defer cancel()
 
 	productObjectId, _ := primitive.ObjectIDFromHex(metaID)
-	filter := bson.M{"productinfo._id": productObjectId, "exhibitionid": exhibitionID}
+	filter := bson.M{"productinfo._id": productObjectId, "exhibitionid": exhibitionID, "isnotsale": false}
 	var product *domain.ProductDAO
 	if err := repo.col.FindOne(ctx, filter).Decode(&product); err != nil {
 		return nil, err
@@ -268,6 +268,11 @@ func (repo *productRepo) ListInfos(filter interface{}) (brands []*domain.BrandCo
 		// ******* mapping cats *******
 		catExists := false
 		for _, cat := range cats {
+			if pd.ProductInfo.AlloffCategory == nil || pd.ProductInfo.AlloffCategory.First == nil {
+				// nilcase 인경우 true 로 처리하여 cats에 빈 category가 들어가는걸 막는다.
+				catExists = true
+				continue
+			}
 			if pd.ProductInfo.AlloffCategory.First.ID == cat.ID {
 				catExists = true
 			}
@@ -419,7 +424,7 @@ func (repo *productMetaInfoRepo) MakeOutdatedProducts(brandModules []string, las
 			"updated": bson.M{
 				"$lte": primitive.NewDateTimeFromTime(lastUpdatedDate),
 			},
-		}, bson.M{"$set": bson.M{"removed": true}})
+		}, bson.M{"$set": bson.M{"isremoved": true}})
 	if err != nil {
 		log.Println("Find num of outdated products error", err)
 	}
