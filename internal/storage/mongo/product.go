@@ -424,7 +424,7 @@ func (repo *productMetaInfoRepo) MakeOutdatedProducts(brandModules []string, las
 			"updated": bson.M{
 				"$lte": primitive.NewDateTimeFromTime(lastUpdatedDate),
 			},
-		}, bson.M{"$set": bson.M{"removed": true}})
+		}, bson.M{"$set": bson.M{"isremoved": true}})
 	if err != nil {
 		log.Println("Find num of outdated products error", err)
 	}
