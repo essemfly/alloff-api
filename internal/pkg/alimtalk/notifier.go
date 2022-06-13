@@ -1,7 +1,6 @@
 package alimtalk
 
 import (
-	"log"
 	"strconv"
 	"time"
 
@@ -43,6 +42,7 @@ func NotifyPaymentSuccessAlarm(payment *domain.PaymentDAO) {
 
 	requestId, err := SendMessage(newAlimtalk)
 	if err != nil {
+		config.Logger.Error("send payment alimtalk error", zap.Error(err))
 		newAlimtalk.Status = domain.ALIMTALK_STATUS_FAILED
 	} else {
 		newAlimtalk.ToastRequestID = requestId
@@ -90,19 +90,19 @@ func NotifyOrderCancelAlarm(orderItem *domain.OrderItemDAO) {
 func ChangeExhibitionNotifyStatus(userDao *domain.UserDAO, exhibitionDao *domain.ExhibitionDAO) (*domain.AlimtalkDAO, error) {
 	uid := userDao.ID.Hex()
 	exId := exhibitionDao.ID.Hex()
-	alreadyRegistered, _ := ioc.Repo.Alimtalks.GetByDetail(uid, domain.EXHIBITION_ALARM, exId)
-	// TODO: ALIMTALK_STATUS_READY 인 친구들은 메시지 보내진지 어케 알지 ?
+	alimtalk, _ := ioc.Repo.Alimtalks.GetByDetail(uid, domain.DEAL_OPEN, exId)
 
 	// 이미 등록된 알림톡이 있으며, 그 알림톡이 취소되지않고 전송 대기중인 경우
 	// 메시지 발송을 취소하고, 알림톡 상태를 STATUS_CANCELED로 바꾼다음 persist
-	if alreadyRegistered != nil && alreadyRegistered.Status == domain.ALIMTALK_STATUS_READY {
+	if alimtalk != nil && alimtalk.Status == domain.ALIMTALK_STATUS_READY {
 		// TODO: Check for delete message works
-		err := DeleteMessage(alreadyRegistered)
+		err := DeleteMessage(alimtalk)
 		if err != nil {
-			log.Println("delete message error", err)
+			config.Logger.Error("delete alimtalk message error", zap.Error(err))
 		}
-		alreadyRegistered.Status = domain.ALIMTALK_STATUS_CANCLED
-		_, err = ioc.Repo.Alimtalks.Update(alreadyRegistered)
+		alimtalk.Status = domain.ALIMTALK_STATUS_CANCLED
+		alimtalk.UpdatedAt = time.Now()
+		_, err = ioc.Repo.Alimtalks.Update(alimtalk)
 		if err != nil {
 			return nil, err
 		}
@@ -110,27 +110,28 @@ func ChangeExhibitionNotifyStatus(userDao *domain.UserDAO, exhibitionDao *domain
 
 		// 이미 등록된 알림톡이 있으며, 그 알림톡이 취소되거나 발송에 실패했던 경우
 		// 메시지 발송을 다시 등록하고, 알림톡 상태를 STATUS_READY로 바꾼다음 persist
-	} else if alreadyRegistered != nil && (alreadyRegistered.Status == domain.ALIMTALK_STATUS_CANCLED || alreadyRegistered.Status == domain.ALIMTALK_STATUS_FAILED) {
-		requestId, err := SendMessage(alreadyRegistered)
+	} else if alimtalk != nil && (alimtalk.Status == domain.ALIMTALK_STATUS_CANCLED || alimtalk.Status == domain.ALIMTALK_STATUS_FAILED) {
+		requestId, err := SendMessage(alimtalk)
 		if err != nil {
-			alreadyRegistered.Status = domain.ALIMTALK_STATUS_FAILED
+			config.Logger.Error("resubmit alimtalk error", zap.Error(err))
+			alimtalk.Status = domain.ALIMTALK_STATUS_FAILED
 		} else {
-			alreadyRegistered.ToastRequestID = requestId
-			alreadyRegistered.Status = domain.ALIMTALK_STATUS_READY
+			alimtalk.ToastRequestID = requestId
+			alimtalk.Status = domain.ALIMTALK_STATUS_READY
 		}
 
-		alreadyRegistered.TemplateParams = map[string]string{
-			"createdAt":      utils.TimeFormatterForKorea(time.Now().Add(time.Hour * 9)),
-			"exhibitionName": exhibitionDao.Title,
+		alimtalk.TemplateParams = map[string]string{
+			"title":        exhibitionDao.Title,
+			"exhibitionId": exhibitionDao.ID.Hex(),
 		}
-		alreadyRegistered.UpdatedAt = time.Now()
+		alimtalk.UpdatedAt = time.Now()
 
-		_, err = ioc.Repo.Alimtalks.Update(alreadyRegistered)
+		_, err = ioc.Repo.Alimtalks.Update(alimtalk)
 		if err != nil {
 			config.Logger.Error("error on update alimtalks", zap.Error(err))
 			return nil, err
 		}
-		return alreadyRegistered, nil
+		return alimtalk, nil
 	}
 
 	// 이미 등록된 알림톡이 있어도, 그게 취소된 상태이거나
@@ -141,9 +142,10 @@ func ChangeExhibitionNotifyStatus(userDao *domain.UserDAO, exhibitionDao *domain
 		Mobile:       userDao.Mobile,
 		TemplateCode: domain.DEAL_OPEN,
 		ReferenceID:  exId,
+		SendDate:     &exhibitionDao.StartTime,
 		TemplateParams: map[string]string{
-			"createdAt":      utils.TimeFormatterForKorea(time.Now().Add(time.Hour * 9)),
-			"exhibitionName": exhibitionDao.Title,
+			"title":        exhibitionDao.Title,
+			"exhibitionId": exhibitionDao.ID.Hex(),
 		},
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
@@ -151,6 +153,7 @@ func ChangeExhibitionNotifyStatus(userDao *domain.UserDAO, exhibitionDao *domain
 
 	requestId, err := SendMessage(newAlimtalk)
 	if err != nil {
+		config.Logger.Error("setting alimtalk error", zap.Error(err))
 		newAlimtalk.Status = domain.ALIMTALK_STATUS_FAILED
 	} else {
 		newAlimtalk.ToastRequestID = requestId
