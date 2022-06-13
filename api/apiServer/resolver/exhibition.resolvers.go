@@ -94,7 +94,7 @@ func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionI
 			exs = append(exs, mapper.MapExhibition(exhibitionDao, true))
 			if user != nil {
 				for _, ex := range exs {
-					alreadyRegistered, _ := ioc.Repo.Alimtalks.GetByDetail(user.ID.Hex(), domain.EXHIBITION_ALARM, ex.ID)
+					alreadyRegistered, _ := ioc.Repo.Alimtalks.GetByDetail(user.ID.Hex(), domain.DEAL_OPEN, ex.ID)
 					if alreadyRegistered != nil && alreadyRegistered.Status == domain.ALIMTALK_STATUS_READY {
 						ex.UserAlarmOn = true
 					}
