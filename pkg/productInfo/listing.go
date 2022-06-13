@@ -54,7 +54,7 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 		}
 	}
 
-	if input.IncludeClassifiedType != domain.NO_MATTER_CLASSIFIED {
+	if input.IncludeClassifiedType != "" && input.IncludeClassifiedType != domain.NO_MATTER_CLASSIFIED {
 		if input.IncludeClassifiedType == domain.CLASSIFIED_DONE {
 			filter["alloffcategory.done"] = true
 		} else {
