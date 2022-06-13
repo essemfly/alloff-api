@@ -268,6 +268,11 @@ func (repo *productRepo) ListInfos(filter interface{}) (brands []*domain.BrandCo
 		// ******* mapping cats *******
 		catExists := false
 		for _, cat := range cats {
+			if pd.ProductInfo.AlloffCategory == nil || pd.ProductInfo.AlloffCategory.First == nil {
+				// nilcase 인경우 true 로 처리하여 cats에 빈 category가 들어가는걸 막는다.
+				catExists = true
+				continue
+			}
 			if pd.ProductInfo.AlloffCategory.First.ID == cat.ID {
 				catExists = true
 			}

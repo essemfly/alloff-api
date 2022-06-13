@@ -16,7 +16,6 @@ func Refresh(cart *domain.Basket) (*domain.Basket, bool, string) {
 	globalErrs := []string{}
 
 	for _, item := range cart.Items {
-
 		item.Product, _ = ioc.Repo.Products.Get(item.Product.ID.Hex())
 
 		errs := []string{}
@@ -33,24 +32,19 @@ func Refresh(cart *domain.Basket) (*domain.Basket, bool, string) {
 				isValidSize = true
 				if inv.Quantity >= item.Quantity {
 					isValidQuantity = true
-				} else {
-					item.Quantity = inv.Quantity
 				}
 			}
 		}
 
 		if item.Product.ProductInfo.IsSoldout {
-			item.Quantity = 0
 			errs = append(errs, "ERR105:product soldout")
 		}
 
 		if item.Product.IsNotSale {
-			item.Quantity = 0
 			errs = append(errs, "ERR102:alloffproduct is not for sale")
 		}
 
 		if !isValidSize {
-			item.Quantity = 0
 			errs = append(errs, "ERR104:invalid product option size "+item.Size)
 		}
 

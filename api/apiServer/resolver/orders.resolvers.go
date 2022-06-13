@@ -26,9 +26,9 @@ func (r *mutationResolver) RequestOrder(ctx context.Context, input *model.OrderI
 		2. 여기서 완료되면 Order가 생성이되고, 주문 결제하는 창으로 넘어간다.
 	*/
 
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
+	user, err := middleware.ForContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	basketItems, err := BuildBasketItems(input)
@@ -71,9 +71,9 @@ func (r *mutationResolver) RequestPayment(ctx context.Context, input *model.Paym
 		2. 동시에 상품에서 주문한 상품의 재고를 없애줍니다.
 	*/
 
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
+	_, err := middleware.ForContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	paymentDao := BuildPaymentDao(input)
@@ -106,9 +106,9 @@ func (r *mutationResolver) CancelPayment(ctx context.Context, orderID string) (*
 		2. Order의 Status도 다시 돌아옵니다.
 	*/
 
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
+	_, err := middleware.ForContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
@@ -149,9 +149,9 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 		1. Payment의 결과를 앱에서 iamport로 받는다.
 	*/
 
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
+	_, err := middleware.ForContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	if !input.Success {
@@ -187,7 +187,7 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 }
 
 func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error) {
-	user := middleware.ForContext(ctx)
+	user, _ := middleware.ForContext(ctx)
 	if user == nil {
 		return nil, fmt.Errorf("ERR000:invalid token")
 	}
@@ -227,9 +227,9 @@ func (r *mutationResolver) CancelOrderItem(ctx context.Context, orderID string, 
 }
 
 func (r *mutationResolver) ConfirmOrderItem(ctx context.Context, orderID string, orderItemID string) (*model.PaymentStatus, error) {
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
+	_, err := middleware.ForContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(orderID)
@@ -271,9 +271,9 @@ func (r *mutationResolver) ConfirmOrderItem(ctx context.Context, orderID string,
 }
 
 func (r *queryResolver) Order(ctx context.Context, id string) (*model.OrderInfo, error) {
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
+	_, err := middleware.ForContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(id)
@@ -285,9 +285,9 @@ func (r *queryResolver) Order(ctx context.Context, id string) (*model.OrderInfo,
 }
 
 func (r *queryResolver) Orders(ctx context.Context) ([]*model.OrderInfo, error) {
-	user := middleware.ForContext(ctx)
-	if user == nil {
-		return nil, fmt.Errorf("ERR000:invalid token")
+	user, err := middleware.ForContext(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	onlyPaid := true

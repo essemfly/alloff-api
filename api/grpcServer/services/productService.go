@@ -119,6 +119,10 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 			productTypes = append(productTypes, domain.Male)
 		} else if reqPdType == grpcServer.ProductType_KIDS {
 			productTypes = append(productTypes, domain.Kids)
+		} else if reqPdType == grpcServer.ProductType_BOY {
+			productTypes = append(productTypes, domain.Boy)
+		} else if reqPdType == grpcServer.ProductType_GIRL {
+			productTypes = append(productTypes, domain.Girl)
 		}
 	}
 

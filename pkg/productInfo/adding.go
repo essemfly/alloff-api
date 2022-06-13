@@ -143,6 +143,9 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 	}
 
 	inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
+	if len(inventories) == 0 {
+		request.IsSoldout = true
+	}
 	pdInfo.SetInventory(inventories)
 
 	pdInfo.IsRemoved = request.IsRemoved
