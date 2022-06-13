@@ -16,6 +16,11 @@ func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRe
 	case "CRAWLER":
 		inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
 		pdInfo.SetInventory(inventories)
+
+		if len(inventories) == 0 {
+			pdInfo.IsSoldout = true
+		}
+
 		pdInfo.IsRemoved = false
 
 		updatedPdInfo, err := Update(pdInfo)
