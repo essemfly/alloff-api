@@ -240,6 +240,7 @@ func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
 			images = append(images, el.Attr("href"))
 		})
 		productRequest.Images = images
+		productRequest.DescriptionImages = images
 	})
 
 	isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
