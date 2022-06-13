@@ -14,6 +14,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 func (r *mutationResolver) RegisterNotification(ctx context.Context, deviceID string, allowNotification bool, userID *string) (*model.Device, error) {
@@ -115,7 +116,13 @@ func (r *mutationResolver) Login(ctx context.Context, input model.Login) (string
 	mobile := input.Mobile
 
 	user, err := ioc.Repo.Users.GetByMobile(mobile)
-	if err != nil {
+	if err == mongo.ErrNoDocuments {
+		newUserInput := model.NewUser{
+			UUID:   input.UUID,
+			Mobile: input.Mobile,
+		}
+		return r.CreateUser(ctx, newUserInput)
+	} else if err != nil {
 		return "", err
 	}
 
