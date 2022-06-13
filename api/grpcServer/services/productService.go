@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -263,15 +264,15 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		updatedRequest.Inventory = invDaos
 	}
 
-	if &req.Description != nil {
+	if len(req.Description) > 0 {
 		updatedRequest.Description = req.Description
 	}
 
-	if &req.DescriptionInfos != nil {
+	if len(req.DescriptionInfos) > 0 {
 		updatedRequest.DescriptionInfos = req.DescriptionInfos
 	}
 
-	if &req.ProductInfos != nil {
+	if len(req.ProductInfos) > 0 {
 		updatedRequest.Information = req.ProductInfos
 	}
 
@@ -287,11 +288,11 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 		updatedRequest.IsRefundPossible = *req.IsRefundPossible
 	}
 
-	if req.Images != nil {
+	if len(req.Images) > 0 {
 		updatedRequest.Images = req.Images
 	}
 
-	if req.DescriptionImages != nil {
+	if len(req.DescriptionImages) > 0 {
 		updatedRequest.DescriptionImages = req.DescriptionImages
 	}
 
