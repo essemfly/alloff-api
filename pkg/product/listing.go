@@ -24,7 +24,7 @@ type ProductListInput struct {
 }
 
 func (input *ProductListInput) BuildFilter() (bson.M, error) {
-	filter := bson.M{"isnotsale": false}
+	filter := bson.M{"isnotsale": false, "productinfo.isremoved": false}
 
 	if input.ProductType != "" {
 		filter["productinfo.producttype"] = input.ProductType
