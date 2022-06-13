@@ -43,7 +43,7 @@ func (repo *productRepo) GetByMetaID(metaID, exhibitionID string) (*domain.Produ
 	defer cancel()
 
 	productObjectId, _ := primitive.ObjectIDFromHex(metaID)
-	filter := bson.M{"productinfo._id": productObjectId, "exhibitionid": exhibitionID}
+	filter := bson.M{"productinfo._id": productObjectId, "exhibitionid": exhibitionID, "isnotsale": false}
 	var product *domain.ProductDAO
 	if err := repo.col.FindOne(ctx, filter).Decode(&product); err != nil {
 		return nil, err
