@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
@@ -206,7 +207,29 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		return nil, err
 	}
 
+	// ## check if product is in product group already ##
+	checkTable := make(map[string]bool)
+	productListInput := product.ProductListInput{
+		ProductGroupID: pgDao.ID.Hex(),
+	}
+	pds, _, err := product.ListProducts(productListInput)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, pdInPg := range pds {
+		// 1. if duplicated, the value of checkTable is true
+		checkTable[pdInPg.ProductInfo.ID.Hex()] = true
+	}
+
 	for _, productPriority := range req.ProductPriorities {
+		// 2. so only push the product which not filtered by checkTable
+		if checkTable[productPriority.ProductId] {
+			msg := fmt.Sprintf("try to push products that already in product-groups. pg : %s ||| pd : %s", pgDao.ID.Hex(), productPriority.ProductId)
+			config.Logger.Info(msg)
+			continue
+		}
+
 		pdInfoDao, err := ioc.Repo.ProductMetaInfos.Get(productPriority.ProductId)
 		if err != nil {
 			config.Logger.Error("err occured in pdinfo not found: "+productPriority.ProductId, zap.Error(err))
@@ -232,11 +255,11 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		}
 	}
 
-	productListInput := product.ProductListInput{
+	productListInput = product.ProductListInput{
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 
-	pds, _, err := product.ListProducts(productListInput)
+	pds, _, err = product.ListProducts(productListInput)
 	if err != nil {
 		config.Logger.Error("error occured on listing products on pg mapper", zap.Error(err))
 		return nil, err
