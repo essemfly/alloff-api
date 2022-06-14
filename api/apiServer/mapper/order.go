@@ -11,7 +11,7 @@ import (
 func MapOrder(orderDao *domain.OrderDAO) *model.OrderInfo {
 	orderItems := []*model.OrderItem{}
 	for _, itemDao := range orderDao.OrderItems {
-		orderItems = append(orderItems, MapOrderItem(itemDao))
+		orderItems = append(orderItems, MapOrderItem(itemDao, orderDao.User))
 	}
 
 	orderInfo := &model.OrderInfo{
@@ -30,7 +30,7 @@ func MapOrder(orderDao *domain.OrderDAO) *model.OrderInfo {
 	return orderInfo
 }
 
-func MapOrderItem(orderItemDao *domain.OrderItemDAO) *model.OrderItem {
+func MapOrderItem(orderItemDao *domain.OrderItemDAO, userDao *domain.UserDAO) *model.OrderItem {
 	trackingNumber := ""
 	trackingUrl := ""
 
@@ -38,6 +38,7 @@ func MapOrderItem(orderItemDao *domain.OrderItemDAO) *model.OrderItem {
 		trackingNumber = orderItemDao.DeliveryTrackingNumber[len(orderItemDao.DeliveryTrackingNumber)-1]
 		trackingUrl = orderItemDao.DeliveryTrackingUrl[len(orderItemDao.DeliveryTrackingUrl)-1]
 	}
+
 	return &model.OrderItem{
 		ID:                     strconv.Itoa(orderItemDao.ID),
 		ProductID:              orderItemDao.ProductID,
@@ -65,7 +66,7 @@ func MapOrderItem(orderItemDao *domain.OrderItemDAO) *model.OrderItem {
 		CancelFinishedAt:       orderItemDao.CancelFinishedAt.Add(9 * time.Hour).String(),
 		ConfirmedAt:            orderItemDao.ConfirmedAt.Add(9 * time.Hour).String(),
 		UserID:                 orderItemDao.UserID,
-		User:                   MapUserDaoToUser(orderItemDao.User),
+		User:                   MapUserDaoToUser(userDao),
 	}
 }
 
