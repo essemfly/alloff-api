@@ -39,10 +39,11 @@ func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionSta
 	filter := bson.M{
 		"exhibitiontype": exhibitionType,
 	}
+	sortingOptions := bson.D{{Key: "starttime", Value: -1}}
 	onGoingOptions := options.Find()
 	onGoingOptions.SetSkip(int64(offset))
 	onGoingOptions.SetLimit(int64(limit))
-	//onGoingOptions.SetSort(sortingOptions)
+	onGoingOptions.SetSort(sortingOptions)
 
 	switch exhibitionStatus {
 	case domain.EXHIBITION_NOTOPEN:
