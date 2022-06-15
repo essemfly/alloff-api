@@ -25,12 +25,6 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 	}
 
 	deliveryDesc := MapDeliveryDescription(pdDao.ProductInfo.SalesInstruction.DeliveryDescription)
-	switch pdDao.ProductInfo.Source.IsForeignDelivery {
-	case true:
-		deliveryDesc.DeliveryType = model.DeliveryTypeForeignDelivery
-	case false:
-		deliveryDesc.DeliveryType = model.DeliveryTypeDomesticDelivery
-	}
 
 	isSoldOut := true
 	for _, inv := range pdDao.ProductInfo.Inventory {

@@ -26,10 +26,15 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 		images = pdInfo.CachedImages
 	}
 
+	isForeginDelivery := true
+	if pdInfo.SalesInstruction.DeliveryDescription.DeliveryType == domain.Domestic {
+		isForeginDelivery = false
+	}
+
 	return &grpcServer.ProductMessage{
 		AlloffProductId:      pdInfo.ID.Hex(),
 		AlloffName:           pdInfo.AlloffName,
-		IsForeignDelivery:    pdInfo.Source.IsForeignDelivery,
+		IsForeignDelivery:    isForeginDelivery,
 		ProductId:            pdInfo.ProductID,
 		ProductUrl:           pdInfo.ProductUrl,
 		OriginalPrice:        int32(pdInfo.Price.OriginalPrice),
