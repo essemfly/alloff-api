@@ -55,7 +55,7 @@ func NewMongoDB() *MongoDB {
 		classifyRuleCol:      db.Collection("classifier_v1"),
 		userCol:              db.Collection("users"),
 		deviceCol:            db.Collection("devices"),
-		notificationCol:      db.Collection("notifications"),
+		notificationCol:      db.Collection("notifications_v1"),
 		alimtalkCol:          db.Collection("alimtalks"),
 		likeBrandsCol:        db.Collection("likes_brands"),
 		exhibitionCol:        db.Collection("exhibitions_v1"),

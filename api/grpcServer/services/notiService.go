@@ -3,15 +3,14 @@ package services
 import (
 	"context"
 	"errors"
-	"log"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/internal/pkg/notification"
-	"github.com/lessbutter/alloff-api/internal/utils"
+	"github.com/lessbutter/alloff-api/pkg/notification"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.uber.org/zap"
 )
 
 const CHUNK_SIZE = 500
@@ -22,66 +21,25 @@ type NotiService struct {
 
 // (TODO) 현재는 timedeal 만 생성 할 수 있다. + 이 코드는 pkg안의 코드로 바껴서 사용되어야 한다.
 func (s *NotiService) CreateNoti(ctx context.Context, req *grpcServer.CreateNotiRequest) (*grpcServer.CreateNotiResponse, error) {
-	var notiDao *domain.NotificationDAO
+	notiRequest := notification.CreateNotiRequest{
+		Title:       req.Title,
+		Message:     req.Message,
+		ReferenceID: req.ReferenceId,
+	}
+
 	if req.NotiType == string(domain.NOTIFICATION_GENERAL_NOTIFICATION) {
-		notiDao = &domain.NotificationDAO{
-			Status:           domain.NOTIFICATION_READY,
-			NotificationType: domain.NOTIFICATION_GENERAL_NOTIFICATION,
-			Title:            req.Title,
-			Message:          req.Message,
-			Notificationid:   "/" + utils.CreateShortUUID(),
-			ReferenceID:      req.ReferenceId + "?notiType=general&title=" + req.Title + "&message=" + req.Message,
-			NavigateTo:       "/",
-		}
+		notiRequest.NotiType = domain.NOTIFICATION_GENERAL_NOTIFICATION
 	} else if req.NotiType == string(domain.NOTIFICATION_PRODUCT_DIFF_NOTIFICATION) {
-		notiDao = &domain.NotificationDAO{
-			Status:           domain.NOTIFICATION_READY,
-			NotificationType: domain.NOTIFICATION_PRODUCT_DIFF_NOTIFICATION,
-			Title:            req.Title,
-			Message:          req.Message,
-			Notificationid:   "/products" + req.ReferenceId,
-			ReferenceID:      "/" + req.ReferenceId + "?notiType=product&title=" + req.Title + "&message=" + req.Message,
-			NavigateTo:       "/products",
-		}
+		notiRequest.NotiType = domain.NOTIFICATION_PRODUCT_DIFF_NOTIFICATION
 	} else if req.NotiType == string(domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION) {
-		notiDao = &domain.NotificationDAO{
-			Status:           domain.NOTIFICATION_READY,
-			NotificationType: domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION,
-			Title:            req.Title,
-			Message:          req.Message,
-			Notificationid:   "/deals" + req.ReferenceId,
-			ReferenceID:      "/" + req.ReferenceId + "?notiType=dealopen&title=" + req.Title + "&message=" + req.Message,
-			NavigateTo:       "/deals",
-		}
+		notiRequest.NotiType = domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION
 	} else {
 		return nil, errors.New("invalid notification type")
 	}
 
-	devices, err := ioc.Repo.Devices.ListAllowed()
+	_, err := notification.CreateNotification(&notiRequest)
 	if err != nil {
-		return nil, err
-	}
-
-	deviceIDs := []string{}
-
-	for _, device := range devices {
-		deviceIDs = append(deviceIDs, device.DeviceId)
-		if len(deviceIDs) > 300 {
-			notiDao.ID = primitive.NewObjectID()
-			notiDao.DeviceIDs = deviceIDs
-			_, err := ioc.Repo.Notifications.Insert(notiDao)
-			if err != nil {
-				return nil, err
-			}
-
-			deviceIDs = []string{}
-		}
-	}
-
-	notiDao.ID = primitive.NewObjectID()
-	notiDao.DeviceIDs = deviceIDs
-	_, err = ioc.Repo.Notifications.Insert(notiDao)
-	if err != nil {
+		config.Logger.Error("Err occured when create notification", zap.Error(err))
 		return nil, err
 	}
 
@@ -113,21 +71,18 @@ func (s *NotiService) ListNoti(ctx context.Context, req *grpcServer.ListNotiRequ
 }
 
 func (s *NotiService) SendNoti(ctx context.Context, req *grpcServer.SendNotiRequest) (*grpcServer.SendNotiResponse, error) {
-	notis, err := ioc.Repo.Notifications.Get(req.NotificationId)
+	notis, err := ioc.Repo.Notifications.ListByNotiID(req.NotificationId)
 	if err != nil {
-		return nil, err
+		return &grpcServer.SendNotiResponse{
+			IsSent: false,
+		}, err
 	}
 
+	// Notis를 장기적으로 slice가 아닌 단건으로 바꿀 예정
 	for _, noti := range notis {
-		if noti.Status != domain.NOTIFICATION_READY {
-			continue
-		}
-
-		err := notification.SendNotification(noti)
-		if err != nil {
-			log.Println("err occured in send noti", err)
-		}
+		go notification.Send(noti)
 	}
+
 	return &grpcServer.SendNotiResponse{
 		IsSent: true,
 	}, nil

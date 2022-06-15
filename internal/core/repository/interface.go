@@ -110,15 +110,16 @@ type DevicesRepository interface {
 	GetByDeviceID(deviceID string) (*domain.DeviceDAO, error)
 	ListAllowedByUser(userID string) ([]*domain.DeviceDAO, error)
 	ListAllowed() ([]*domain.DeviceDAO, error)
-	UpdateDevices(deviceID string, allowNotification bool, userID *string) error
-	MakeRemoved(deviceID string) error
+	List(offset, limit int) ([]*domain.DeviceDAO, int, error)
+	Upsert(*domain.DeviceDAO) (*domain.DeviceDAO, error)
+	RemoveByToken(deviceID string) error
+	Delete(ID string) error
 }
 
 type AlimtalksRepository interface {
 	GetByDetail(userID, templateCode, referenceID string) (*domain.AlimtalkDAO, error)
 	Insert(*domain.AlimtalkDAO) (*domain.AlimtalkDAO, error)
 	Update(*domain.AlimtalkDAO) (*domain.AlimtalkDAO, error)
-	// TO BE MODIFIED
 }
 
 type LikeBrandsRepository interface {
@@ -132,7 +133,8 @@ type RefundItemsRepository interface {
 
 type NotificationsRepository interface {
 	Insert(*domain.NotificationDAO) (*domain.NotificationDAO, error)
-	Get(notiID string) ([]*domain.NotificationDAO, error)
+	Get(ID string) (*domain.NotificationDAO, error)
+	ListByNotiID(notiID string) ([]*domain.NotificationDAO, error)
 	List(offset, limit int, notiTypes []domain.NotificationType, onlyReady bool) ([]*domain.NotificationDAO, error)
 	Update(*domain.NotificationDAO) (*domain.NotificationDAO, error)
 }
