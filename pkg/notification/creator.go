@@ -32,7 +32,7 @@ func CreateNotification(request *CreateNotiRequest) (*domain.NotificationDAO, er
 		notiDao.Notificationid = "/productdiff?" + utils.CreateShortUUID()
 		notiDao.ReferenceID = request.ReferenceID + "?notiType=product&title=" + request.Title + "&message=" + request.Message
 		notiDao.NavigateTo = "/products"
-	case domain.NOTIFICATION_EXHIBITION_OPEN_NOTIFICATION:
+	case domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION:
 		notiDao.NotificationType = domain.NOTIFICATION_TIMEDEAL_OPEN_NOTIFICATION
 		notiDao.Notificationid = "/deals?id=" + request.ReferenceID + "?uuid=" + utils.CreateShortUUID()
 		notiDao.ReferenceID = "/" + request.ReferenceID + "?notiType=dealopen&title=" + request.Title + "&message=" + request.Message

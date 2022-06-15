@@ -9,6 +9,7 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"github.com/lessbutter/alloff-api/pkg/product"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -196,6 +197,15 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 	if err != nil {
 		config.Logger.Error("error occured on listing products on pg mapper", zap.Error(err))
 		return nil, err
+	}
+
+	if pgDao.ExhibitionID != "" {
+		exDao, err := ioc.Repo.Exhibitions.Get(pgDao.ExhibitionID)
+		if err != nil {
+			config.Logger.Error("err occured on getting exhibitions", zap.Error(err))
+			return nil, err
+		}
+		go exhibition.ExhibitionSyncer(exDao)
 	}
 
 	return mapper.ProductGroupMapper(newPgDao, pds), nil
