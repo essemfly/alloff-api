@@ -71,7 +71,14 @@ func (s *NotiService) ListNoti(ctx context.Context, req *grpcServer.ListNotiRequ
 }
 
 func (s *NotiService) SendNoti(ctx context.Context, req *grpcServer.SendNotiRequest) (*grpcServer.SendNotiResponse, error) {
-	notis, err := ioc.Repo.Notifications.ListByNotiID(req.NotificationId)
+	notiDao, err := ioc.Repo.Notifications.Get(req.NotificationId)
+	if err != nil {
+		config.Logger.Error("get notification err", zap.Error(err))
+		return &grpcServer.SendNotiResponse{
+			IsSent: false,
+		}, err
+	}
+	notis, err := ioc.Repo.Notifications.ListByNotiID(notiDao.Notificationid)
 	if err != nil {
 		return &grpcServer.SendNotiResponse{
 			IsSent: false,

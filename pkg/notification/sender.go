@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-const CHUNK_SIZE = 500
+const CHUNK_SIZE = 300
 const AWAIT_TIME_FOR_CHUNK = 2
 
 func Send(noti *domain.NotificationDAO) error {
@@ -39,6 +39,7 @@ func Send(noti *domain.NotificationDAO) error {
 		numTotalSend += len(chunk) - len(notiResult.Logs)
 	}
 
+	noti.DeviceIDs = deviceIDs
 	noti.NumUsersFailed = numTotalFailed
 	noti.NumUsersPushed = numTotalSend
 
@@ -52,6 +53,14 @@ func Send(noti *domain.NotificationDAO) error {
 }
 
 func loadAppropriateDevices(noti *domain.NotificationDAO) (deviceIDs []string) {
+	deviceDaos, err := ioc.Repo.Devices.ListAllowed()
+	if err != nil {
+		return nil
+	}
+	for _, device := range deviceDaos {
+		deviceIDs = append(deviceIDs, device.DeviceId)
+	}
+
 	return
 }
 
