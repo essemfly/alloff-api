@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"log"
 	"strings"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type userRepo struct {
@@ -90,11 +90,35 @@ func (repo *deviceRepo) GetByDeviceID(deviceID string) (*domain.DeviceDAO, error
 	return device, nil
 }
 
+func (repo *deviceRepo) List(offset, limit int) ([]*domain.DeviceDAO, int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	options := options.Find()
+	options.SetSkip(int64(offset))
+	options.SetLimit(int64(limit))
+
+	filter := bson.M{}
+	totalCount, _ := repo.col.CountDocuments(ctx, filter)
+	cursor, err := repo.col.Find(ctx, filter, options)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	var devices []*domain.DeviceDAO
+	err = cursor.All(ctx, &devices)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return devices, int(totalCount), nil
+}
+
 func (repo *deviceRepo) ListAllowedByUser(userID string) ([]*domain.DeviceDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	cursor, err := repo.col.Find(ctx, bson.M{"userid": userID, "allownotification": true})
+	cursor, err := repo.col.Find(ctx, bson.M{"userid": userID, "allownotification": true, "isremoved": false})
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +136,7 @@ func (repo *deviceRepo) ListAllowed() ([]*domain.DeviceDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	cursor, err := repo.col.Find(ctx, bson.M{"allownotification": true})
+	cursor, err := repo.col.Find(ctx, bson.M{"allownotification": true, "isremoved": false})
 	if err != nil {
 		return nil, err
 	}
@@ -126,75 +150,39 @@ func (repo *deviceRepo) ListAllowed() ([]*domain.DeviceDAO, error) {
 	return devices, nil
 }
 
-func (repo *deviceRepo) UpdateDevices(deviceID string, allowNotification bool, userID *string) error {
+func (repo *deviceRepo) Upsert(device *domain.DeviceDAO) (*domain.DeviceDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 120*time.Second)
+	defer cancel()
+
+	opts := options.Update().SetUpsert(true)
+	filter := bson.M{"_id": device.ID}
+	if _, err := repo.col.UpdateOne(ctx, filter, bson.M{"$set": &device}, opts); err != nil {
+		return nil, err
+	}
+
+	var updatedDevice *domain.DeviceDAO
+	if err := repo.col.FindOne(ctx, filter).Decode(&updatedDevice); err != nil {
+		return nil, err
+	}
+
+	return updatedDevice, nil
+}
+
+func (repo *deviceRepo) Delete(ID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	filter := bson.M{"deviceid": deviceID}
-	var devices []*domain.DeviceDAO
+	deviceObjectId, _ := primitive.ObjectIDFromHex(ID)
+	filter := bson.M{"_id": deviceObjectId}
 
-	// 기존에 하나만 있던 경우
-	cursor, err := repo.col.Find(ctx, filter)
-	if err != nil {
-		log.Println("err on update devices", err)
+	if _, err := repo.col.DeleteOne(ctx, filter); err != nil {
 		return err
-	}
-
-	err = cursor.All(ctx, &devices)
-	if err != nil {
-		log.Println("decode error on devices", err)
-		return err
-	}
-
-	if len(devices) == 0 {
-		newDevice := domain.DeviceDAO{
-			ID:                primitive.NewObjectID(),
-			DeviceId:          deviceID,
-			AllowNotification: allowNotification,
-			IsRemoved:         false,
-			Created:           time.Now(),
-			Updated:           time.Now(),
-		}
-		if userID != nil {
-			newDevice.UserId = *userID
-		}
-
-		_, err := repo.col.InsertOne(ctx, newDevice)
-		return err
-	}
-
-	for idx, device := range devices {
-		if idx > 0 {
-			device.IsRemoved = true
-			device.Updated = time.Now()
-			_, err := repo.col.UpdateByID(ctx, device.ID, bson.M{"$set": &device})
-			if err != nil {
-				log.Println("err on update device", err)
-			}
-			continue
-		}
-
-		if userID != nil {
-			filter := bson.M{"$or": []bson.M{{"userid": userID}, {"deviceid": deviceID}}}
-			_, err := repo.col.UpdateMany(ctx, filter, bson.M{"$set": bson.M{"allownotification": allowNotification, "userid": userID, "updated": time.Now()}})
-			if err != nil {
-				log.Println("err on update user devices", err)
-			}
-		}
-
-		device.IsRemoved = false
-		device.AllowNotification = allowNotification
-		device.Updated = time.Now()
-		_, err := repo.col.UpdateByID(ctx, device.ID, bson.M{"$set": &device})
-		if err != nil {
-			log.Println("err on update device", err)
-		}
 	}
 
 	return nil
 }
 
-func (repo *deviceRepo) MakeRemoved(deviceID string) error {
+func (repo *deviceRepo) RemoveByToken(deviceID string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 

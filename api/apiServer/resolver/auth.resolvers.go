@@ -12,19 +12,27 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/mapper"
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/model"
+	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
 )
 
 func (r *mutationResolver) RegisterNotification(ctx context.Context, deviceID string, allowNotification bool, userID *string) (*model.Device, error) {
-	err := ioc.Repo.Devices.UpdateDevices(deviceID, allowNotification, userID)
+	device, _ := ioc.Repo.Devices.GetByDeviceID(deviceID)
+	device.AllowNotification = allowNotification
+	if userID != nil {
+		device.UserId = *userID
+	}
+
+	updatedDevice, err := ioc.Repo.Devices.Upsert(device)
 	if err != nil {
+		config.Logger.Error("Update device failed", zap.Error(err))
 		return nil, err
 	}
 
-	device, _ := ioc.Repo.Devices.GetByDeviceID(deviceID)
-	return mapper.MapDeviceDaoToDevice(device), nil
+	return mapper.MapDeviceDaoToDevice(updatedDevice), nil
 }
 
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.NewUser) (string, error) {

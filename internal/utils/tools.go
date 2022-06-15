@@ -31,23 +31,6 @@ func StandardizeSpaces(s string) []string {
 	return strings.Fields(s)
 }
 
-func RemoveDuplicates(sizes []string) []string {
-	var newSizes []string
-	for _, size := range sizes {
-		isThere := false
-		for _, ns := range newSizes {
-			if ns == string(size) {
-				isThere = true
-				break
-			}
-		}
-		if !isThere {
-			newSizes = append(newSizes, size)
-		}
-	}
-	return newSizes
-}
-
 func ItemExists(slice interface{}, item interface{}) bool {
 	s := reflect.ValueOf(slice)
 
@@ -62,4 +45,16 @@ func ItemExists(slice interface{}, item interface{}) bool {
 	}
 
 	return false
+}
+
+func RemoveDuplicateString(strSlice []string) []string {
+	allKeys := make(map[string]bool)
+	list := []string{}
+	for _, item := range strSlice {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
 }

@@ -187,4 +187,23 @@ func NewAlloffSizes() {
 			log.Println("upserted : ", upserted)
 		}
 	}
+
+	// **** 키즈 :: 의류 (아우터,상의,원피스/세트,스커트/바지) ****
+	cats9 := []*domain.AlloffCategoryDAO{catOuter, catTop, catSet, catSkirt, catPants}
+	sizes9 := []string{"3-6개월", "6-12개월", "12-18개월", "2-3세", "3-4세", "4-5세", "5-6세", "6-7세", "7-8세", "8-9세", "9-10세"}
+
+	for _, cat := range cats9 {
+		for _, size := range sizes9 {
+			alloffSizeDao := &domain.AlloffSizeDAO{
+				AlloffCategory: cat,
+				AlloffSizeName: size,
+				ProductType:    []domain.AlloffProductType{domain.Kids},
+			}
+			upserted, err := ioc.Repo.AlloffSizes.Upsert(alloffSizeDao)
+			if err != nil {
+				log.Panic(cat, size, alloffSizeDao.ProductType)
+			}
+			log.Println("upserted : ", upserted)
+		}
+	}
 }

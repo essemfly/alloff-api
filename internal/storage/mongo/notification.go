@@ -31,19 +31,26 @@ func (repo *notificationRepo) Insert(noti *domain.NotificationDAO) (*domain.Noti
 	return noti, nil
 }
 
-func (repo *notificationRepo) Get(notiID string) ([]*domain.NotificationDAO, error) {
+func (repo *notificationRepo) Get(ID string) (*domain.NotificationDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	notiObjID, _ := primitive.ObjectIDFromHex(notiID)
+	notiObjID, _ := primitive.ObjectIDFromHex(ID)
 
 	noti := &domain.NotificationDAO{}
 	if err := repo.col.FindOne(ctx, bson.M{"_id": notiObjID}).Decode(noti); err != nil {
 		return nil, err
 	}
 
+	return noti, nil
+}
+
+func (repo *notificationRepo) ListByNotiID(notiID string) ([]*domain.NotificationDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
 	notis := []*domain.NotificationDAO{}
-	cursor, err := repo.col.Find(ctx, bson.M{"notificationid": noti.Notificationid})
+	cursor, err := repo.col.Find(ctx, bson.M{"notificationid": notiID})
 	if err != nil {
 		return nil, err
 	}

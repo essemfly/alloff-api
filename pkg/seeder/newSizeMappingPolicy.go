@@ -20,15 +20,15 @@ func NewSizeMappingPolicy() {
 		sizes := []string{}
 		switch alloffSize.AlloffSizeName {
 		case "44":
-			sizes = []string{"XP", "P/S", "P", "XXS", "XS", "DE32", "IT36", "FR34", "US32", "US0", "US2", "UK4", "EU32", "EU34", "EU0"}
+			sizes = []string{"XP", "P/S", "P", "XXS", "XS", "DE32", "IT36", "FR34", "US32", "US0", "US2", "UK4", "EU32", "EU34", "EU0", "EU00"}
 		case "55":
-			sizes = []string{"P/S", "S", "DE34", "DE36", "IT38", "IT40", "FR36", "FR38", "US34", "US36", "US4", "US6", "UK6", "UK8", "EU36", "EU38"}
+			sizes = []string{"P/S", "S", "DE34", "DE36", "IT38", "IT40", "FR36", "FR38", "US34", "US36", "US4", "US6", "UK6", "UK8", "EU36", "EU38", "EU1", "EU2"}
 		case "66":
-			sizes = []string{"M/L", "M", "DE36", "DE38", "DE40", "IT40", "IT42", "IT44", "FR38", "FR40", "FR42", "US36", "US38", "US40", "US6", "US8", "US10", "UK8", "UK10", "UK12", "EU38", "EU40", "EU42"}
+			sizes = []string{"M/L", "M", "DE36", "DE38", "DE40", "IT40", "IT42", "IT44", "FR38", "FR40", "FR42", "US36", "US38", "US40", "US6", "US8", "US10", "UK8", "UK10", "UK12", "EU38", "EU40", "EU42", "EU3", "EU4"}
 		case "77":
-			sizes = []string{"M/L", "L", "DE40", "DE42", "DE44", "IT44", "IT46", "IT48", "FR42", "FR44", "FR46", "US40", "US42", "US44", "US10", "US12", "US14", "UK12", "UK14", "UK16", "EU42", "EU44", "EU46"}
+			sizes = []string{"M/L", "L", "DE40", "DE42", "DE44", "IT44", "IT46", "IT48", "FR42", "FR44", "FR46", "US40", "US42", "US44", "US10", "US12", "US14", "UK12", "UK14", "UK16", "EU42", "EU44", "EU46", "EU4"}
 		case "88":
-			sizes = []string{"XL", "XXL", "DE44", "DE46", "DE48", "IT48", "IT50", "IT52", "FR46", "FR48", "FR50", "US44", "US46", "US48", "US14", "US16", "US18", "UK16", "UK18", "UK20", "EU46", "EU48", "EU50"}
+			sizes = []string{"XL", "XXL", "DE44", "DE46", "DE48", "IT48", "IT50", "IT52", "FR46", "FR48", "FR50", "US44", "US46", "US48", "US14", "US16", "US18", "UK16", "UK18", "UK20", "EU46", "EU48", "EU50", "EU5"}
 		case "99(이상)":
 			sizes = []string{"XXL", "DE48", "IT52", "FR50", "US48", "US18", "UK20", "EU50"}
 		case "24-25":
@@ -84,19 +84,19 @@ func NewSizeMappingPolicy() {
 		case "280(이상)":
 			sizes = []string{"IT43", "US10", "UK9"}
 		case "90":
-			sizes = []string{"XS", "FR44", "IT44", "EU44", "US34", "UK34", "UK1"}
+			sizes = []string{"XS", "FR44", "IT44", "EU44", "US34", "UK34", "UK1", "EU0"}
 		case "95":
-			sizes = []string{"S", "FR46", "IT46", "EU46", "US36", "UK36", "UK2"}
+			sizes = []string{"S", "FR46", "IT46", "EU46", "US36", "UK36", "UK2", "EU1"}
 		case "100":
-			sizes = []string{"M", "FR48", "IT48", "EU48", "US38", "UK38", "UK3"}
+			sizes = []string{"M", "FR48", "IT48", "EU48", "US38", "UK38", "UK3", "EU2"}
 		case "105":
-			sizes = []string{"L", "FR50", "IT50", "EU50", "US40", "UK40", "UK4"}
+			sizes = []string{"L", "FR50", "IT50", "EU50", "US40", "UK40", "UK4", "EU3"}
 		case "110":
-			sizes = []string{"XL", "FR52", "IT52", "EU52", "US42", "UK42", "UK5"}
+			sizes = []string{"XL", "FR52", "IT52", "EU52", "US42", "UK42", "UK5", "EU4"}
 		case "115":
-			sizes = []string{"XXL", "FR54", "IT54", "EU54", "US44", "UK44", "UK6"}
+			sizes = []string{"XXL", "FR54", "IT54", "EU54", "US44", "UK44", "UK6", "EU5"}
 		case "120(이상)":
-			sizes = []string{"XXXL", "US46", "UK46"}
+			sizes = []string{"XXXL", "US46", "UK46", "EU6"}
 		case "28":
 			sizes = []string{"IT44", "US32", "US34", "UK34", "FR36"}
 		case "30":
@@ -139,6 +139,30 @@ func NewSizeMappingPolicy() {
 			sizes = []string{"US15", "UK14.5", "EU33.5"}
 		case "FREE":
 			sizes = []string{"-", "Uni", "Unica", "one size"}
+		case "3-6개월":
+			sizes = []string{"6-12M"}
+		case "6-12개월":
+			sizes = []string{"12M", "18M"}
+		case "12-18개월":
+			sizes = []string{"18M", "24M"}
+		case "18-24개월":
+			sizes = []string{"24M", "2Y"}
+		case "2-3세":
+			sizes = []string{"2Y", "3Y"}
+		case "3-4세":
+			sizes = []string{"3Y", "4Y", "4A"}
+		case "4-5세":
+			sizes = []string{"4Y", "4A", "5A", "5Y"}
+		case "5-6세":
+			sizes = []string{"5A", "5Y", "6A", "6Y"}
+		case "6-7세":
+			sizes = []string{"6Y", "6A", "7A", "7Y"}
+		case "7-8세":
+			sizes = []string{"7A", "7Y", "8A", "8Y"}
+		case "8-9세":
+			sizes = []string{"8Y", "8A", "9A", "9Y"}
+		case "9-10세":
+			sizes = []string{"9A", "9Y", "10A", "10Y"}
 		}
 
 		sizeMappingPolicyDao := domain.SizeMappingPolicyDAO{
@@ -154,14 +178,14 @@ func NewSizeMappingPolicy() {
 	}
 
 	// 새로 추가한 사이즈들을 여기다 넣어줘야함
-	newlyAddedSizes := []string{"XP", "P/S", "M/L"}
+	newlyAddedSizes := []string{"6-12M", "12M", "18M", "24M", "2Y", "3Y", "4Y", "4A", "4A", "5A", "5Y", "6A", "6Y", "7A", "7Y", "8A", "8Y", "9A", "9Y", "10A", "10Y"}
 	AssignProdcutsInventoryOfNewSizes(newlyAddedSizes)
 }
 
 func AssignProdcutsInventoryOfNewSizes(sizes []string) {
 	sizeQueries := []bson.M{}
 	for _, size := range sizes {
-		sizeQueries = append(sizeQueries, bson.M{"sizes": size})
+		sizeQueries = append(sizeQueries, bson.M{"inventory.size": size})
 	}
 	filter := bson.M{
 		"$or": sizeQueries,
