@@ -14,6 +14,9 @@ const (
 )
 
 func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyType, marginPolicy string) (int, int) {
+	if currencyType == domain.CurrencyKRW {
+		return int(origPrice), int(discPrice)
+	}
 	if currencyType == domain.CurrencyEUR {
 		origPrice *= EURO_EXCHANGE_RATE
 		discPrice *= EURO_EXCHANGE_RATE

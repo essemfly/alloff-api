@@ -15,12 +15,25 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 )
 
 func (r *mutationResolver) RegisterNotification(ctx context.Context, deviceID string, allowNotification bool, userID *string) (*model.Device, error) {
-	device, _ := ioc.Repo.Devices.GetByDeviceID(deviceID)
+	device, err := ioc.Repo.Devices.GetByDeviceID(deviceID)
+	if err == mongo.ErrNoDocuments {
+		device = &domain.DeviceDAO{
+			ID:       primitive.NewObjectID(),
+			DeviceId: deviceID,
+			Created:  time.Now(),
+			Updated:  time.Now(),
+		}
+	} else if err != nil {
+		config.Logger.Error("register notification failed", zap.Error(err))
+		return nil, err
+	}
+
 	device.AllowNotification = allowNotification
 	if userID != nil {
 		device.UserId = *userID
