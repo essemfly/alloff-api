@@ -4,8 +4,8 @@ import (
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/internal/pkg/broker"
 	"github.com/lessbutter/alloff-api/internal/utils"
+	"github.com/lessbutter/alloff-api/pkg/brand"
 	"github.com/lessbutter/alloff-api/pkg/product"
 	"go.uber.org/zap"
 )
@@ -42,6 +42,6 @@ func AddSizeGuide(sizeGuide []domain.SizeGuideDAO) {
 		if err != nil {
 			config.Logger.Error("error occurred on upsert brand : ", zap.Error(err))
 		}
-		broker.BrandSyncer(bdDao.KeyName)
+		brand.BrandSyncer(bdDao.KeyName)
 	}
 }
