@@ -8,7 +8,7 @@ import (
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/internal/pkg/notification"
+	"github.com/lessbutter/alloff-api/internal/pkg/push"
 	"github.com/lessbutter/alloff-api/internal/utils"
 	grpcServer "github.com/lessbutter/alloff-grpc-protos/gen/goalloff"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -123,7 +123,7 @@ func (s *NotiService) SendNoti(ctx context.Context, req *grpcServer.SendNotiRequ
 			continue
 		}
 
-		err := notification.SendNotification(noti)
+		err := push.SendNotification(noti)
 		if err != nil {
 			log.Println("err occured in send noti", err)
 		}

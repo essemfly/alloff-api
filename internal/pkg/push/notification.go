@@ -1,4 +1,4 @@
-package notification
+package push
 
 import (
 	"bytes"
@@ -110,6 +110,7 @@ func SendNotification(noti *domain.NotificationDAO) error {
 	for _, logResult := range notiResult.Logs {
 		if logResult.Type == "failed-push" {
 			failedCounts += 1
+			log.Println("log fail results", logResult)
 			failedDeviceIds = append(failedDeviceIds, logResult.Token)
 		}
 	}
@@ -127,11 +128,13 @@ func SendNotification(noti *domain.NotificationDAO) error {
 	noti.NumUsersFailed = failedCounts
 	noti.NumUsersPushed = len(noti.DeviceIDs) - failedCounts
 
-	_, err = ioc.Repo.Notifications.Update(noti)
-	if err != nil {
-		return err
-	}
+	log.Println("failed counts", failedCounts)
 	return nil
+	// _, err = ioc.Repo.Notifications.Update(noti)
+	// if err != nil {
+	// 	return err
+	// }
+	// return nil
 }
 
 func MakePayload(noti *domain.NotificationDAO) []byte {
