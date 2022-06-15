@@ -1,6 +1,7 @@
 package productinfo
 
 import (
+	"github.com/lessbutter/alloff-api/internal/utils"
 	"time"
 
 	"github.com/lessbutter/alloff-api/config"
@@ -118,6 +119,7 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 			descImages = append(descImages, img)
 		}
 	}
+	descImages = utils.RemoveDuplicateString(descImages)
 
 	pdInfo.SetDesc(descImages, request.Description, request.DescriptionInfos)
 	pdInfo.SetDeliveryDesc(request.IsForeignDelivery, 0, request.EarliestDeliveryDays, request.LatestDeliveryDays)
