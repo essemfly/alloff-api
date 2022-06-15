@@ -7,10 +7,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/lessbutter/alloff-api/config"
-	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
@@ -88,53 +86,24 @@ type NotificationResult struct {
 // 모아보기 /brands
 // 상품상세 /products/:productId
 
-func SendNotification(noti *domain.NotificationDAO) error {
+func SendNotification(noti *domain.NotificationDAO) (*NotificationResponse, error) {
 	client := &http.Client{}
 
 	payload := MakePayload(noti)
 	resp, err := CallWithJson(client, config.NotificationUrl, POST, payload)
 	if err != nil {
 		log.Println(err, "err occured in send notification")
-		return err
+		return nil, err
 	}
 
 	var notiResult NotificationResponse
 	err = json.Unmarshal(resp, &notiResult)
 	if err != nil {
 		log.Println("Err occured in result unmarshaling", err)
-		return err
+		return nil, err
 	}
 
-	failedCounts := 0
-	failedDeviceIds := []string{}
-	for _, logResult := range notiResult.Logs {
-		if logResult.Type == "failed-push" {
-			failedCounts += 1
-			log.Println("log fail results", logResult)
-			failedDeviceIds = append(failedDeviceIds, logResult.Token)
-		}
-	}
-
-	for _, failedDeviceID := range failedDeviceIds {
-		err := ioc.Repo.Devices.MakeRemoved(failedDeviceID)
-		if err != nil {
-			log.Println("err on failed make removed", err)
-		}
-	}
-
-	noti.Sended = time.Now()
-	noti.Updated = time.Now()
-	noti.Status = domain.NOTIFICATION_SUCCEEDED
-	noti.NumUsersFailed = failedCounts
-	noti.NumUsersPushed = len(noti.DeviceIDs) - failedCounts
-
-	log.Println("failed counts", failedCounts)
-	return nil
-	// _, err = ioc.Repo.Notifications.Update(noti)
-	// if err != nil {
-	// 	return err
-	// }
-	// return nil
+	return &notiResult, nil
 }
 
 func MakePayload(noti *domain.NotificationDAO) []byte {
