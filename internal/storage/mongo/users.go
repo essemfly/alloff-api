@@ -112,7 +112,7 @@ func (repo *deviceRepo) ListAllowed() ([]*domain.DeviceDAO, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
-	cursor, err := repo.col.Find(ctx, bson.M{"allownotification": true, "isremoved": false})
+	cursor, err := repo.col.Find(ctx, bson.M{"allownotification": true})
 	if err != nil {
 		return nil, err
 	}
