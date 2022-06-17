@@ -113,7 +113,7 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 }
 
 func (input *ProductInfoListInput) BuildSorting() (bson.D, error) {
-	options := bson.D{{Key: "issoldout", Value: 1}}
+	options := bson.D{{Key: "issoldout", Value: 1}, {Key: "_id", Value: -1}}
 	if input.PriceSorting == domain.PRICE_ASCENDING {
 		options = bson.D{{Key: "issoldout", Value: 1}, {Key: "price.currentprice", Value: 1}, {Key: "_id", Value: 1}}
 	} else if input.PriceSorting == domain.PRICE_DESCENDING {
