@@ -1,10 +1,12 @@
 package brand
 
 import (
+	"github.com/lessbutter/alloff-api/config"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
+	"go.uber.org/zap"
 	"log"
 
 	"github.com/lessbutter/alloff-api/config/ioc"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 func BrandSyncer(brandKeyname string) {
@@ -12,24 +14,25 @@ func BrandSyncer(brandKeyname string) {
 
 	newBrand, _ := ioc.Repo.Brands.GetByKeyname(brandKeyname)
 
-	filter := bson.M{
-		"productinfo.brand.keyname": brandKeyname,
+	query := productinfo.ProductInfoListInput{
+		Offset:  offset,
+		Limit:   limit,
+		BrandID: newBrand.ID.Hex(),
 	}
 
-	pds, _, err := ioc.Repo.Products.List(offset, limit, filter, nil)
+	products, _, err := productinfo.ListProductInfos(query)
 	if err != nil {
-		log.Println("err", err)
+		config.Logger.Error("error occurred on listing product infos : ", zap.Error(err))
 	}
 
-	for idx, pd := range pds {
+	for idx, pd := range products {
 		if idx%100 == 0 {
 			log.Println("IDX", idx)
 		}
-		pd.ProductInfo.Brand = newBrand
-		_, err := ioc.Repo.Products.Upsert(pd)
+		pd.Brand = newBrand
+		_, err := productinfo.Update(pd)
 		if err != nil {
 			log.Println("err occured", err)
 		}
 	}
-
 }
