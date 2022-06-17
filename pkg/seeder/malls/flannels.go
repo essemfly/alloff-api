@@ -646,7 +646,7 @@ func AddFlannels() {
 			KorName:       "타미 힐피거",
 			EngName:       "Tommy Hilfiger",
 			KeyName:       "TOMMYHILFIGER",
-			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/TOMMYHILFIGERW.png",
+			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/TOMMYHILFIGER.png",
 			Onpopular:     false,
 			Description:   "트래디셔널 캐주얼",
 			Created:       time.Now(),

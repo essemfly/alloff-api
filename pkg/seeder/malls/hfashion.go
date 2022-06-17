@@ -28,8 +28,8 @@ func AddHfashion() {
 		"T2HGR": {
 			KorName:       "타미 힐피거",
 			EngName:       "TOMMY HILFIGER",
-			KeyName:       "TOMMYHILFIGERW",
-			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/TOMMYHILFIGERW.png",
+			KeyName:       "TOMMYHILFIGER",
+			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/TOMMYHILFIGER.png",
 			Onpopular:     false,
 			Description:   "트래디셔널 캐주얼",
 			Created:       time.Now(),
@@ -43,8 +43,8 @@ func AddHfashion() {
 		"VWHGR": {
 			KorName:       "캘빈 클라인",
 			EngName:       "Calvin Klein",
-			KeyName:       "CALVINKLEINW",
-			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/CALVINKLEINW.png",
+			KeyName:       "CALVINKLEIN",
+			LogoImgUrl:    "https://alloff.s3.ap-northeast-2.amazonaws.com/brands/CALVINKLEIN.png",
 			Onpopular:     false,
 			Description:   "컨템포러리 디자이너",
 			Created:       time.Now(),

@@ -808,19 +808,19 @@
 알렉산더왕,alexanderwang,ALEXANDERWANG,코트,아우터,코트,,
 알렉산더왕,alexanderwang,ALEXANDERWANG,점퍼,아우터,점퍼,,
 알렉산더왕,alexanderwang,ALEXANDERWANG,원피스/점프수트,원피스/세트,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-dresses,원피스/세트,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-bottoms,바지,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-jeans,바지,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-knitwear,상의,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-tops,상의,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-functionalclothing,아우터,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-shoes,신발,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-skirts,스커트,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-accessories,패션잡화,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-shirts,상의,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-beachwear,비치웨어,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-sports,,,,
-앤아더스토리즈,&OTHERSTORIES,OTHERSTORIES,otherStories-f-shorts,바지,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-dresses,원피스/세트,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-bottoms,바지,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-jeans,바지,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-knitwear,상의,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-tops,상의,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-functionalclothing,아우터,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-shoes,신발,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-skirts,스커트,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-accessories,패션잡화,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-shirts,상의,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-beachwear,비치웨어,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-sports,,,,
+앤아더스토리즈,OTHERSTORIES,OTHERSTORIES,otherStories-f-shorts,바지,,,
 에고이스트,EGOIST,EGOIST,OUTER,아우터,,,"{'자켓': '자켓', '블레이저': '자켓', '재킷': '자켓', '블레이져': '자켓', 'blazer': '자켓', 'jacket': '자켓', '코트': '코트', 'coat': '코트','점퍼': '점퍼', 'jumper': '점퍼', '베스트': '베스트', 'vest': '베스트', '트렌치': '코트', '버버리': '코트', 'trench': '코트', '패딩': '패딩', '다운': '패딩', 'padding': '패딩', 'down': '패딩'}"
 에고이스트,EGOIST,EGOIST,TOP,,,,"{'블라우스': '블라우스', 'blouse': '블라우스', '셔츠': '셔츠', 'shirt': '셔츠', 'shirts': '셔츠', '티셔츠': '티셔츠', '가디건': '가디건', 'cardigan': '가디건', '니트': '니트/스웨터', '스웨터': '니트/스웨터', 'knit': '니트/스웨터', 'sweater': '니트/스웨터'}"
 에고이스트,EGOIST,EGOIST,BOTTOM,,,,"{'스커트': '스커트', 'skirt': '스커트', '데님': '데님', '진': '데님', '청바지': '데님', 'denim': '데님', 'jeans': '데님', '팬츠': '팬츠', 'pants': '팬츠', '바지': '팬츠', '슬랙스': '팬츠'}"
@@ -1079,24 +1079,24 @@
 질스튜어트 뉴욕,JILLSTUART NEW YORK,JILLSTUARTNY,언더/라운지웨어,,,,
 질스튜어트 뉴욕,JILLSTUART NEW YORK,JILLSTUARTNY,여성비치웨어,,,,
 질스튜어트 뉴욕,JILLSTUART NEW YORK,JILLSTUARTNY,티셔츠,상의,티셔츠,,
-캘빈 클라인,Calvin Klein,CALVINKLEINW,아우터,아우터,,,"{'자켓': '자켓','블레이저': '자켓','재킷': '자켓','블레이져': '자켓','blazer': '자켓','jacket': '자켓','코트': '코트','coat': '코트','점퍼': '점퍼','jumper': '점퍼','베스트': '베스트','vest': '베스트','트렌치': '코트','버버리': '코트','trench': '코트','패딩': '패딩','다운': '패딩','padding': '패딩','down': '패딩'}"
-캘빈 클라인,Calvin Klein,CALVINKLEINW,상의,상의,,,"{'블라우스': '블라우스','blouse': '블라우스','셔츠': '셔츠','shirt': '셔츠','shirts': '셔츠'}"
-캘빈 클라인,Calvin Klein,CALVINKLEINW,팬츠,팬츠/데님,,,"{'데님': '데님','진': '데님','청바지': '데님','denim': '데님','jeans': '데님','팬츠': '팬츠','pants': '팬츠','바지': '팬츠','슬랙스': '팬츠'}"
-캘빈 클라인,Calvin Klein,CALVINKLEINW,니트/스웨터,상의,,,"{'가디건': '가디건', 'cardigan': '가디건', '니트': '니트/스웨터', '스웨터': '니트/스웨터', 'knit': '니트/스웨터', 'sweater': '니트/스웨터'}"
-캘빈 클라인,Calvin Klein,CALVINKLEINW,티셔츠,상의,티셔츠,,
-캘빈 클라인,Calvin Klein,CALVINKLEINW,원피스,원피스/세트,,,
-캘빈 클라인,Calvin Klein,CALVINKLEINW,스커트,스커트,,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,상의,상의,,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,코트,아우터,코트,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,자켓,아우터,자켓,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,니트,상의,니트/스웨터,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,드레스,원피스/세트,,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,스커트,스커트,,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,캐시미어,상의,니트/스웨터,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,라운지,라운지/언더웨어,라운지웨어,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,가방,가방,,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,구두,신발,,,
-캘빈클라인,Calvin Klein,CALVINKLEIN,악세서리,패션잡화,,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,아우터,아우터,,,"{'자켓': '자켓','블레이저': '자켓','재킷': '자켓','블레이져': '자켓','blazer': '자켓','jacket': '자켓','코트': '코트','coat': '코트','점퍼': '점퍼','jumper': '점퍼','베스트': '베스트','vest': '베스트','트렌치': '코트','버버리': '코트','trench': '코트','패딩': '패딩','다운': '패딩','padding': '패딩','down': '패딩'}"
+캘빈 클라인,Calvin Klein,CALVINKLEIN,상의,상의,,,"{'블라우스': '블라우스','blouse': '블라우스','셔츠': '셔츠','shirt': '셔츠','shirts': '셔츠'}"
+캘빈 클라인,Calvin Klein,CALVINKLEIN,팬츠,팬츠/데님,,,"{'데님': '데님','진': '데님','청바지': '데님','denim': '데님','jeans': '데님','팬츠': '팬츠','pants': '팬츠','바지': '팬츠','슬랙스': '팬츠'}"
+캘빈 클라인,Calvin Klein,CALVINKLEIN,니트/스웨터,상의,,,"{'가디건': '가디건', 'cardigan': '가디건', '니트': '니트/스웨터', '스웨터': '니트/스웨터', 'knit': '니트/스웨터', 'sweater': '니트/스웨터'}"
+캘빈 클라인,Calvin Klein,CALVINKLEIN,티셔츠,상의,티셔츠,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,원피스,원피스/세트,,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,스커트,스커트,,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,상의,상의,,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,코트,아우터,코트,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,자켓,아우터,자켓,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,니트,상의,니트/스웨터,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,드레스,원피스/세트,,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,스커트,스커트,,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,캐시미어,상의,니트/스웨터,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,라운지,라운지/언더웨어,라운지웨어,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,가방,가방,,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,구두,신발,,,
+캘빈 클라인,Calvin Klein,CALVINKLEIN,악세서리,패션잡화,,,
 케네스레이디,KENNETHLADY,KENNETHLADY,아울렛,,,,"{'자켓': '자켓', '블레이저': '자켓', '재킷': '자켓', '블레이져': '자켓', 'blazer': '자켓', 'jacket': '자켓', '코트': '코트', 'coat': '코트','점퍼': '점퍼', 'jumper': '점퍼', '베스트': '베스트', 'vest': '베스트', '트렌치': '코트', '버버리': '코트', 'trench': '코트', '패딩': '패딩', '다운': '패딩', 'padding': '패딩', 'down': '패딩', '블라우스': '블라우스', 'blouse': '블라우스', '셔츠': '셔츠', 'shirt': '셔츠', 'shirts': '셔츠', '티셔츠': '티셔츠', '가디건': '가디건', 'cardigan': '가디건', '니트': '니트/스웨터', '스웨터': '니트/스웨터', 'knit': '니트/스웨터', 'sweater': '니트/스웨터', '스커트': '스커트', 'skirt': '스커트', '데님': '데님', '진': '데님', '청바지': '데님', 'denim': '데님', 'jeans': '데님', '팬츠': '팬츠', 'pants': '팬츠', '바지': '팬츠', '슬랙스': '팬츠'}"
 코스,COS,COS,cos-m-knitwear,상의,,,
 코스,COS,COS,cos-m-bottoms,바지,,,
@@ -1138,14 +1138,14 @@
 클럽모나코,CLUB MONACO,CLUBMONACO,팬츠,,,,"{'데님': '데님','진': '데님','청바지': '데님','denim': '데님','jeans': '데님','팬츠': '팬츠','pants': '팬츠','바지': '팬츠','슬랙스': '팬츠'}"
 클럽모나코,CLUB MONACO,CLUBMONACO,스커트,,,,
 클럽모나코,CLUB MONACO,CLUBMONACO,드레스,,,,
-타미힐피거,TOMMY HILFIGER,TOMMYHILFIGERW,아우터,아우터,,,"{'자켓': '자켓','블레이저': '자켓','재킷': '자켓','블레이져': '자켓','blazer': '자켓','jacket': '자켓','코트': '코트','coat': '코트','점퍼': '점퍼','jumper': '점퍼','베스트': '베스트','vest': '베스트','트렌치': '코트','버버리': '코트','trench': '코트','패딩': '패딩','다운': '패딩','padding': '패딩','down': '패딩'}"
-타미힐피거,TOMMY HILFIGER,TOMMYHILFIGERW,상의,상의,,,"{'블라우스': '블라우스','blouse': '블라우스','셔츠': '셔츠','shirt': '셔츠','shirts': '셔츠'}"
-타미힐피거,TOMMY HILFIGER,TOMMYHILFIGERW,팬츠,팬츠/데님,,,"{'데님': '데님','진': '데님','청바지': '데님','denim': '데님','jeans': '데님','팬츠': '팬츠','pants': '팬츠','바지': '팬츠','슬랙스': '팬츠'}"
-타미힐피거,TOMMY HILFIGER,TOMMYHILFIGERW,니트/스웨터,상의,,,"{'가디건': '가디건', 'cardigan': '가디건', '니트': '니트/스웨터', '스웨터': '니트/스웨터', 'knit': '니트/스웨터', 'sweater': '니트/스웨터'}"
-타미힐피거,TOMMY HILFIGER,TOMMYHILFIGERW,티셔츠,상의,티셔츠,,
-타미힐피거,TOMMY HILFIGER,TOMMYHILFIGERW,데님,,,,
-타미힐피거,TOMMY HILFIGER,TOMMYHILFIGERW,원피스,원피스/세트,,,
-타미힐피거,TOMMY HILFIGER,TOMMYHILFIGERW,스커트,스커트,,,
+타미힐피거,TOMMY HILFIGER,TOMMYHILFIGER,아우터,아우터,,,"{'자켓': '자켓','블레이저': '자켓','재킷': '자켓','블레이져': '자켓','blazer': '자켓','jacket': '자켓','코트': '코트','coat': '코트','점퍼': '점퍼','jumper': '점퍼','베스트': '베스트','vest': '베스트','트렌치': '코트','버버리': '코트','trench': '코트','패딩': '패딩','다운': '패딩','padding': '패딩','down': '패딩'}"
+타미힐피거,TOMMY HILFIGER,TOMMYHILFIGER,상의,상의,,,"{'블라우스': '블라우스','blouse': '블라우스','셔츠': '셔츠','shirt': '셔츠','shirts': '셔츠'}"
+타미힐피거,TOMMY HILFIGER,TOMMYHILFIGER,팬츠,팬츠/데님,,,"{'데님': '데님','진': '데님','청바지': '데님','denim': '데님','jeans': '데님','팬츠': '팬츠','pants': '팬츠','바지': '팬츠','슬랙스': '팬츠'}"
+타미힐피거,TOMMY HILFIGER,TOMMYHILFIGER,니트/스웨터,상의,,,"{'가디건': '가디건', 'cardigan': '가디건', '니트': '니트/스웨터', '스웨터': '니트/스웨터', 'knit': '니트/스웨터', 'sweater': '니트/스웨터'}"
+타미힐피거,TOMMY HILFIGER,TOMMYHILFIGER,티셔츠,상의,티셔츠,,
+타미힐피거,TOMMY HILFIGER,TOMMYHILFIGER,데님,,,,
+타미힐피거,TOMMY HILFIGER,TOMMYHILFIGER,원피스,원피스/세트,,,
+타미힐피거,TOMMY HILFIGER,TOMMYHILFIGER,스커트,스커트,,,
 타임,TIME,TIME,아우터,아우터,,,"{'자켓': '자켓','블레이저': '자켓','재킷': '자켓','블레이져': '자켓','blazer': '자켓','jacket': '자켓','코트': '코트','coat': '코트','점퍼': '점퍼','jumper': '점퍼','베스트': '베스트','vest': '베스트','트렌치': '코트','버버리': '코트','trench': '코트','패딩': '패딩','다운': '패딩','padding': '패딩','down': '패딩'}"
 타임,TIME,TIME,탑,,,,"{'블라우스': '블라우스','blouse': '블라우스','셔츠': '셔츠','shirt': '셔츠','shirts': '셔츠','티셔츠': '티셔츠','가디건': '가디건','cardigan': '가디건','니트': '니트/스웨터','스웨터': '니트/스웨터','knit': '니트/스웨터','sweater': '니트/스웨터'}"
 타임,TIME,TIME,팬츠,팬츠/데님,,,"{'데님': '데님','진': '데님','청바지': '데님','denim': '데님','jeans': '데님','팬츠': '팬츠','pants': '팬츠','바지': '팬츠','슬랙스': '팬츠'}"
