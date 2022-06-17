@@ -117,8 +117,6 @@ func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionI
 }
 
 func (r *queryResolver) ExhibitionInfo(ctx context.Context, input model.MetaInfoInput) (*model.MetaInfoOutput, error) {
-	pdType := mapper.MapModelProductTypeToDomain(input.ProductType)
-
 	brandIds := []string{}
 	if len(input.BrandIds) > 0 {
 		brandIds = input.BrandIds
@@ -129,10 +127,16 @@ func (r *queryResolver) ExhibitionInfo(ctx context.Context, input model.MetaInfo
 	}
 
 	query := product.ProductListInput{
-		ProductType:      pdType,
-		ExhibitionID:     input.ExhibitionID,
 		BrandIDs:         brandIds,
 		AlloffCategoryID: alloffcatID,
+	}
+
+	if input.ExhibitionID != nil {
+		query.ExhibitionID = *input.ExhibitionID
+	}
+
+	if input.ProductType != nil {
+		query.ProductType = mapper.MapModelProductTypeToDomain(*input.ProductType)
 	}
 
 	filter, err := query.BuildFilter()

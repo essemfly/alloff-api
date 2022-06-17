@@ -161,10 +161,10 @@ type Login struct {
 }
 
 type MetaInfoInput struct {
-	ExhibitionID     string            `json:"exhibitionId"`
-	ProductType      AlloffProductType `json:"productType"`
-	AlloffCategoryID *string           `json:"alloffCategoryId"`
-	BrandIds         []string          `json:"brandIds"`
+	ExhibitionID     *string            `json:"exhibitionId"`
+	ProductType      *AlloffProductType `json:"productType"`
+	AlloffCategoryID *string            `json:"alloffCategoryId"`
+	BrandIds         []string           `json:"brandIds"`
 }
 
 type MetaInfoOutput struct {

@@ -2437,8 +2437,8 @@ type BrandOutput {
 }
 
 input MetaInfoInput {
-  exhibitionId: String!
-  productType: AlloffProductType!
+  exhibitionId: String
+  productType: AlloffProductType
   alloffCategoryId: String
   brandIds: [String!]
 }
@@ -12897,7 +12897,7 @@ func (ec *executionContext) unmarshalInputMetaInfoInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exhibitionId"))
-			it.ExhibitionID, err = ec.unmarshalNString2string(ctx, v)
+			it.ExhibitionID, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12905,7 +12905,7 @@ func (ec *executionContext) unmarshalInputMetaInfoInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productType"))
-			it.ProductType, err = ec.unmarshalNAlloffProductType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductType(ctx, v)
+			it.ProductType, err = ec.unmarshalOAlloffProductType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductType(ctx, v)
 			if err != nil {
 				return it, err
 			}
