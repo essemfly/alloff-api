@@ -13,6 +13,7 @@ import (
 type ProductListInput struct {
 	Offset           int
 	Limit            int
+	OnSale           bool
 	ProductType      domain.AlloffProductType
 	ProductGroupID   string
 	ExhibitionID     string
@@ -24,8 +25,11 @@ type ProductListInput struct {
 }
 
 func (input *ProductListInput) BuildFilter() (bson.M, error) {
-	filter := bson.M{"isnotsale": false, "productinfo.isremoved": false}
+	filter := bson.M{"productinfo.isremoved": false}
 
+	if input.OnSale {
+		filter["isnotsale"] = false
+	}
 	if input.ProductType != "" {
 		filter["productinfo.producttype"] = input.ProductType
 	}
