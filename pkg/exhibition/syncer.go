@@ -91,6 +91,7 @@ func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) error {
 	productListInput := product.ProductListInput{
 		Offset:         0,
 		Limit:          1000,
+		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 

@@ -26,6 +26,7 @@ func (s *ProductGroupService) GetProductGroup(ctx context.Context, req *grpcServ
 		return nil, err
 	}
 	productListInput := product.ProductListInput{
+		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 
@@ -190,6 +191,7 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 	}
 
 	productListInput := product.ProductListInput{
+		OnSale:         true,
 		ProductGroupID: newPgDao.ID.Hex(),
 	}
 
@@ -220,6 +222,7 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 	// ## check if product is in product group already ##
 	checkTable := make(map[string]bool)
 	productListInput := product.ProductListInput{
+		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 	pds, _, err := product.ListProducts(productListInput)
@@ -266,6 +269,7 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 	}
 
 	productListInput = product.ProductListInput{
+		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 
@@ -301,6 +305,7 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 	}
 
 	productListInput := product.ProductListInput{
+		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 
@@ -316,21 +321,25 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, req *grpcServer.RemoveProductInPgRequest) (*grpcServer.ProductGroupMessage, error) {
 	pgDao, err := ioc.Repo.ProductGroups.Get(req.ProductGroupId)
 	if err != nil {
+		config.Logger.Error("remove prodcut in group: get pg", zap.Error(err))
 		return nil, err
 	}
 
 	pd, err := ioc.Repo.Products.GetByMetaID(req.ProductId, pgDao.ExhibitionID)
 	if err != nil {
+		config.Logger.Error("remove prodcut in group: get product", zap.Error(err))
 		return nil, err
 	}
 
 	pd.IsNotSale = true
 	_, err = ioc.Repo.Products.Upsert(pd)
 	if err != nil {
+		config.Logger.Error("remove prodcut in group: upsert product", zap.Error(err))
 		return nil, err
 	}
 
 	productListInput := product.ProductListInput{
+		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 
