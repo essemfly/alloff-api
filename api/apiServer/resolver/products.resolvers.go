@@ -27,6 +27,7 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 	query := product.ProductListInput{
 		Offset:        input.Offset,
 		Limit:         input.Limit,
+		OnSale:        true,
 		BrandIDs:      input.BrandIds,
 		AlloffSizeIDs: input.AlloffSizeIds,
 		PriceRanges:   priceRanges,

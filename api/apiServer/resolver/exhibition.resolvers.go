@@ -127,6 +127,7 @@ func (r *queryResolver) ExhibitionInfo(ctx context.Context, input model.MetaInfo
 	}
 
 	query := product.ProductListInput{
+		OnSale:           true,
 		BrandIDs:         brandIds,
 		AlloffCategoryID: alloffcatID,
 	}

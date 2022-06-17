@@ -88,7 +88,6 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 }
 
 func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) error {
-	log.Println("HOIT?", pgDao.ID)
 	productListInput := product.ProductListInput{
 		Offset:         0,
 		Limit:          1000,
