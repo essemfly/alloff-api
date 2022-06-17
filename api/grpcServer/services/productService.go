@@ -150,6 +150,14 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		thumbnailImage = *req.ThumbnailImage
 	}
 
+	descriptionImages := []string{}
+	for _, img := range req.Images {
+		descriptionImages = append(descriptionImages, img)
+	}
+	for _, img := range req.DescriptionImages {
+		descriptionImages = append(descriptionImages, img)
+	}
+
 	brand, _ := ioc.Repo.Brands.GetByKeyname(req.BrandKeyName)
 	alloffcat, _ := ioc.Repo.AlloffCategories.Get(*req.AlloffCategoryId)
 	invDaos := []*domain.InventoryDAO{}
@@ -176,7 +184,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		Colors:               []string{},
 		Sizes:                []string{},
 		Description:          req.Description,
-		DescriptionImages:    req.DescriptionImages,
+		DescriptionImages:    descriptionImages,
 		DescriptionInfos:     descInfos,
 		Information:          pdInfos,
 		IsForeignDelivery:    req.IsForeignDelivery,

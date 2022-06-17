@@ -16,6 +16,7 @@ func AddSizeGuide(sizeGuide []domain.SizeGuideDAO) {
 	liveBrands := []string{}
 	for _, exhibition := range exhibitions {
 		productListInput := product.ProductListInput{
+			OnSale:       true,
 			Offset:       0,
 			Limit:        1000,
 			ExhibitionID: exhibition.ID.Hex(),
