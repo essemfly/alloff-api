@@ -26,7 +26,6 @@ func (s *ProductGroupService) GetProductGroup(ctx context.Context, req *grpcServ
 		return nil, err
 	}
 	productListInput := product.ProductListInput{
-		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 
@@ -191,7 +190,6 @@ func (s *ProductGroupService) EditProductGroup(ctx context.Context, req *grpcSer
 	}
 
 	productListInput := product.ProductListInput{
-		OnSale:         true,
 		ProductGroupID: newPgDao.ID.Hex(),
 	}
 
@@ -222,7 +220,6 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 	// ## check if product is in product group already ##
 	checkTable := make(map[string]bool)
 	productListInput := product.ProductListInput{
-		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 	pds, _, err := product.ListProducts(productListInput)
@@ -255,11 +252,16 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 			ProductGroupID:       pgDao.ID.Hex(),
 			ExhibitionID:         pgDao.ExhibitionID,
 			Weight:               int(productPriority.Priority),
-			IsNotSale:            false,
+			IsRemoved:            false,
+			OnSale:               false,
 			ExhibitionStartTime:  pgDao.StartTime,
 			ExhibitionFinishTime: pgDao.FinishTime,
 			Created:              time.Now(),
 			Updated:              time.Now(),
+		}
+
+		if newPdDao.IsSaleable() {
+			newPdDao.OnSale = true
 		}
 
 		_, err = ioc.Repo.Products.Insert(newPdDao)
@@ -269,7 +271,6 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 	}
 
 	productListInput = product.ProductListInput{
-		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 
@@ -305,7 +306,6 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 	}
 
 	productListInput := product.ProductListInput{
-		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 
@@ -331,7 +331,7 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 		return nil, err
 	}
 
-	pd.IsNotSale = true
+	pd.IsRemoved = true
 	_, err = ioc.Repo.Products.Upsert(pd)
 	if err != nil {
 		config.Logger.Error("remove prodcut in group: upsert product", zap.Error(err))
@@ -339,7 +339,6 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 	}
 
 	productListInput := product.ProductListInput{
-		OnSale:         true,
 		ProductGroupID: pgDao.ID.Hex(),
 	}
 

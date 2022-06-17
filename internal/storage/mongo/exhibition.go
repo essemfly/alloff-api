@@ -58,6 +58,7 @@ func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionSta
 	case domain.EXHIBITION_CLOSED:
 		filter["finishtime"] = bson.M{"$lte": now}
 		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: -1}})
+	default:
 	}
 
 	if onlyLive {

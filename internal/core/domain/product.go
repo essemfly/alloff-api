@@ -47,7 +47,8 @@ type ProductDAO struct {
 	ProductGroupID       string
 	ExhibitionID         string
 	Weight               int
-	IsNotSale            bool // Exhibition이 종료되거나 혹은 backoffice에서 삭제했을때
+	IsRemoved            bool
+	OnSale               bool
 	ExhibitionStartTime  time.Time
 	ExhibitionFinishTime time.Time
 	Created              time.Time
