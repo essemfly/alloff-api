@@ -254,6 +254,16 @@ func CrawlTheoutnetDetail(productUrl string) (composition string, sizes []string
 		})
 	})
 
+	if len(sizes) == 0 {
+		c.OnHTML(" div.SizeSelect84__size.ProductDetails84__sizeSelect.ProductDetails84__sizeSelect--isOneSize > div > span.SizeSelect84__oneSizeLabel", func(e *colly.HTMLElement) {
+			sizes = append(sizes, e.Text)
+			inventories = append(inventories, &domain.InventoryDAO{
+				Size:     sizes[0],
+				Quantity: 1,
+			})
+		})
+	}
+
 	c.OnHTML("#SIZE_AND_FIT", func(e *colly.HTMLElement) {
 		description["사이즈 및 핏"] = e.ChildText(".EditorialAccordion84__accordionContent--size_and_fit > p")
 	})
