@@ -55,8 +55,8 @@ type BrandOutput {
 }
 
 input MetaInfoInput {
-  exhibitionId: String!
-  productType: AlloffProductType!
+  exhibitionId: String
+  productType: AlloffProductType
   alloffCategoryId: String
   brandIds: [String!]
 }

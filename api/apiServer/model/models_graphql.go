@@ -161,10 +161,10 @@ type Login struct {
 }
 
 type MetaInfoInput struct {
-	ExhibitionID     string            `json:"exhibitionId"`
-	ProductType      AlloffProductType `json:"productType"`
-	AlloffCategoryID *string           `json:"alloffCategoryId"`
-	BrandIds         []string          `json:"brandIds"`
+	ExhibitionID     *string            `json:"exhibitionId"`
+	ProductType      *AlloffProductType `json:"productType"`
+	AlloffCategoryID *string            `json:"alloffCategoryId"`
+	BrandIds         []string           `json:"brandIds"`
 }
 
 type MetaInfoOutput struct {
@@ -356,8 +356,8 @@ type ProductGroup struct {
 type ProductsInput struct {
 	Offset           int                   `json:"offset"`
 	Limit            int                   `json:"limit"`
-	ProductType      AlloffProductType     `json:"productType"`
-	ExhibitionID     string                `json:"exhibitionId"`
+	ProductType      *AlloffProductType    `json:"productType"`
+	ExhibitionID     *string               `json:"exhibitionId"`
 	AlloffCategoryID *string               `json:"alloffCategoryId"`
 	BrandIds         []string              `json:"brandIds"`
 	AlloffSizeIds    []string              `json:"alloffSizeIds"`

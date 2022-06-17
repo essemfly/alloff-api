@@ -24,17 +24,22 @@ func (r *queryResolver) Product(ctx context.Context, id string) (*model.Product,
 func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error) {
 	priceRanges, priceSorting := mapper.MapProductSortingAndRanges(input.Sorting)
 
-	pdType := mapper.MapModelProductTypeToDomain(input.ProductType)
-
 	query := product.ProductListInput{
 		Offset:        input.Offset,
 		Limit:         input.Limit,
-		ProductType:   pdType,
-		ExhibitionID:  input.ExhibitionID,
+		OnSale:        true,
 		BrandIDs:      input.BrandIds,
 		AlloffSizeIDs: input.AlloffSizeIds,
 		PriceRanges:   priceRanges,
 		PriceSorting:  priceSorting,
+	}
+
+	if input.ExhibitionID != nil {
+		query.ExhibitionID = *input.ExhibitionID
+	}
+
+	if input.ProductType != nil {
+		query.ProductType = mapper.MapModelProductTypeToDomain(*input.ProductType)
 	}
 
 	if input.AlloffCategoryID != nil {
@@ -53,10 +58,9 @@ func (r *queryResolver) Products(ctx context.Context, input model.ProductsInput)
 	}
 
 	return &model.ProductsOutput{
-		TotalCount:   cnt,
-		Offset:       input.Offset,
-		Limit:        input.Limit,
-		ExhibitionID: input.ExhibitionID,
-		Products:     products,
+		TotalCount: cnt,
+		Offset:     input.Offset,
+		Limit:      input.Limit,
+		Products:   products,
 	}, nil
 }

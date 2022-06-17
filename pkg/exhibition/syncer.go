@@ -59,10 +59,13 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 			if maxDiscountRates < pd.ProductInfo.Price.DiscountRate {
 				maxDiscountRates = pd.ProductInfo.Price.DiscountRate
 			}
-			log.Println("pgDaoexh", pgDao.ExhibitionID, updatedPgDao.ExhibitionID)
 			pd.ExhibitionID = updatedPgDao.ExhibitionID
 			pd.ExhibitionStartTime = pgDao.StartTime
 			pd.ExhibitionFinishTime = pgDao.FinishTime
+			pd.IsNotSale = true
+			if pd.IsSaleable() {
+				pd.IsNotSale = false
+			}
 			_, err := ioc.Repo.Products.Upsert(pd)
 			if err != nil {
 				config.Logger.Error("exhibition syncer error", zap.Error(err))
@@ -85,7 +88,6 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 }
 
 func ProductGroupSyncer(pgDao *domain.ProductGroupDAO) error {
-	log.Println("HOIT?", pgDao.ID)
 	productListInput := product.ProductListInput{
 		Offset:         0,
 		Limit:          1000,

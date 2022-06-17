@@ -2437,8 +2437,8 @@ type BrandOutput {
 }
 
 input MetaInfoInput {
-  exhibitionId: String!
-  productType: AlloffProductType!
+  exhibitionId: String
+  productType: AlloffProductType
   alloffCategoryId: String
   brandIds: [String!]
 }
@@ -2764,8 +2764,8 @@ type KeyValueInfo {
 input ProductsInput {
   offset: Int!
   limit: Int!
-  productType: AlloffProductType!
-  exhibitionId: String!
+  productType: AlloffProductType
+  exhibitionId: String
   alloffCategoryId: String
   brandIds: [String!]
   alloffSizeIds: [String!]
@@ -12897,7 +12897,7 @@ func (ec *executionContext) unmarshalInputMetaInfoInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exhibitionId"))
-			it.ExhibitionID, err = ec.unmarshalNString2string(ctx, v)
+			it.ExhibitionID, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -12905,7 +12905,7 @@ func (ec *executionContext) unmarshalInputMetaInfoInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productType"))
-			it.ProductType, err = ec.unmarshalNAlloffProductType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductType(ctx, v)
+			it.ProductType, err = ec.unmarshalOAlloffProductType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -13267,7 +13267,7 @@ func (ec *executionContext) unmarshalInputProductsInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("productType"))
-			it.ProductType, err = ec.unmarshalNAlloffProductType2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductType(ctx, v)
+			it.ProductType, err = ec.unmarshalOAlloffProductType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -13275,7 +13275,7 @@ func (ec *executionContext) unmarshalInputProductsInput(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exhibitionId"))
-			it.ExhibitionID, err = ec.unmarshalNString2string(ctx, v)
+			it.ExhibitionID, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -17267,6 +17267,22 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalOAlloffProductType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductType(ctx context.Context, v interface{}) (*model.AlloffProductType, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(model.AlloffProductType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOAlloffProductType2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductType(ctx context.Context, sel ast.SelectionSet, v *model.AlloffProductType) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {
