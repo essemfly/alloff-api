@@ -19,9 +19,9 @@ func ProductInSaleUpdater() {
 	log.Println("Total products", cnt)
 	for _, pd := range pds {
 		if pd.IsSaleable() {
-			pd.IsNotSale = false
+			pd.OnSale = true
 		} else {
-			pd.IsNotSale = true
+			pd.OnSale = false
 		}
 
 		_, err = ioc.Repo.Products.Upsert(pd)

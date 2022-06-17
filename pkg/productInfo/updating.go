@@ -104,7 +104,7 @@ func Update(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductMetaInfoDAO, erro
 	for _, pd := range pds {
 		pd.ProductInfo = updatedPdInfo
 		if updatedPdInfo.IsRemoved {
-			pd.IsNotSale = true
+			pd.IsRemoved = true
 		}
 		_, err = ioc.Repo.Products.Upsert(pd)
 		if err != nil {

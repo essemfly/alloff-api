@@ -22,7 +22,7 @@ func Refresh(cart *domain.Basket) (*domain.Basket, bool, string) {
 		currentPrice := item.Product.ProductInfo.Price.CurrentPrice
 		totalPrices += currentPrice * item.Quantity
 
-		if item.Product.IsNotSale {
+		if !item.Product.OnSale {
 			errs = append(errs, "ERR200:productgroup timeout"+item.Product.ID.Hex())
 		}
 
@@ -40,7 +40,7 @@ func Refresh(cart *domain.Basket) (*domain.Basket, bool, string) {
 			errs = append(errs, "ERR105:product soldout")
 		}
 
-		if item.Product.IsNotSale {
+		if !item.Product.OnSale {
 			errs = append(errs, "ERR102:alloffproduct is not for sale")
 		}
 
@@ -112,7 +112,7 @@ func BuildOrder(user *domain.UserDAO, basket *domain.Basket) (*domain.OrderDAO, 
 			ProductImg:             item.Product.ProductInfo.Images[0],
 			BrandKeyname:           item.Product.ProductInfo.Brand.KeyName,
 			BrandKorname:           item.Product.ProductInfo.Brand.KorName,
-			Removed:                item.Product.IsNotSale,
+			Removed:                item.Product.IsRemoved,
 			SalesPrice:             productPrice,
 			CancelDescription:      item.Product.ProductInfo.SalesInstruction.CancelDescription,
 			DeliveryDescription:    item.Product.ProductInfo.SalesInstruction.DeliveryDescription,

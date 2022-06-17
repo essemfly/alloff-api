@@ -20,7 +20,7 @@ func MapModelProductTypeToDomain(modelPdType model.AlloffProductType) domain.All
 }
 
 func MapProduct(pdDao *domain.ProductDAO) *model.Product {
-	if pdDao.IsNotSale {
+	if pdDao.IsRemoved {
 		return nil
 	}
 
@@ -60,7 +60,7 @@ func MapProduct(pdDao *domain.ProductDAO) *model.Product {
 
 	return &model.Product{
 		ID:                   pdDao.ID.Hex(),
-		IsNotSale:            pdDao.IsNotSale,
+		IsNotSale:            pdDao.IsRemoved,
 		Brand:                MapBrandDaoToBrand(pdDao.ProductInfo.Brand, false),
 		AlloffCategory:       MapAlloffCatDaoToAlloffCat(pdDao.ProductInfo.AlloffCategory.First),
 		Name:                 pdDao.ProductInfo.AlloffName,

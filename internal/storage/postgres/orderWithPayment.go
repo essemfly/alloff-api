@@ -200,7 +200,7 @@ func (repo *orderPaymentService) RequestPayment(orderDao *domain.OrderDAO, payme
 				return fmt.Errorf("ERR100:alloffproduct not found")
 			}
 
-			if pd.IsNotSale {
+			if !pd.OnSale {
 				return fmt.Errorf("ERR102:alloffproduct is not for sale")
 			}
 
