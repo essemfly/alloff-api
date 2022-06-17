@@ -101,8 +101,8 @@ type KeyValueInfo {
 input ProductsInput {
   offset: Int!
   limit: Int!
-  productType: AlloffProductType!
-  exhibitionId: String!
+  productType: AlloffProductType
+  exhibitionId: String
   alloffCategoryId: String
   brandIds: [String!]
   alloffSizeIds: [String!]
