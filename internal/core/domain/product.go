@@ -53,3 +53,10 @@ type ProductDAO struct {
 	Created              time.Time
 	Updated              time.Time
 }
+
+func (pd *ProductDAO) IsSaleable() bool {
+	if time.Now().After(pd.ExhibitionStartTime) && time.Now().Before(pd.ExhibitionFinishTime) {
+		return true
+	}
+	return false
+}
