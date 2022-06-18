@@ -25,7 +25,7 @@ const BASE_URL = "http://colognese.atelier98.info/en"
 const BRAND_URL = "/brand.html"
 const ALLOWED_DOMAIN = "colognese.atelier98.info"
 const MODULE_NAME = "colognese"
-const COOKIE = "sic=; ASPSESSIONIDSCRCBTRS=AAJDBLBCMIAAJKMEOKCOLEPA; can=; ASPSESSIONIDSASBDSQS=PKHNKECCIAODADMLKBBHCEAP; ASPSESSIONIDQCRDATQR=CCJDGANCLCKINHALAFHCBBAA; ASPSESSIONIDQCQCAQQS=AHNHBHOCEMOFIPOIEMMDAFFG; ASPSESSIONIDSARDARRS=NELBJAPCNMJNMBCMDDKCMGCO; ASPSESSIONIDSASCCRQQ=FIAHLIPCGOKLMCNMKCGMDLCG; impostazioni=trasporto=0&settore=woman&lingua=en&nazione=ITALY&n=30&list=ITA&idvaluta=1&valuta=%E2%82%AC&idnazione=1&carrellonew=3102618%2D%2D%2D2%2D%2D%2D10A%2D%2D%2D10A%2D%2D%2D0%7C%7C%7C3102618%2D%2D%2D2%2D%2D%2D8A%2D%2D%2D8A%2D%2D%2D0%7C%7C%7C4091092%2D%2D%2D1%2D%2D%2D12A%2D%2D%2D12A%2D%2D%2D0%7C%7C%7C"
+const COOKIE = "sic=; ASPSESSIONIDSCRCBTRS=AAJDBLBCMIAAJKMEOKCOLEPA; can=; ASPSESSIONIDSASBDSQS=PKHNKECCIAODADMLKBBHCEAP; ASPSESSIONIDQCRDATQR=CCJDGANCLCKINHALAFHCBBAA; ASPSESSIONIDQCQCAQQS=AHNHBHOCEMOFIPOIEMMDAFFG; ASPSESSIONIDSARDARRS=NELBJAPCNMJNMBCMDDKCMGCO; ASPSESSIONIDSASCCRQQ=FIAHLIPCGOKLMCNMKCGMDLCG; impostazioni=trasporto=0&settore=WOMAN&lingua=en&nazione=ITALY&n=30&list=ITA&idvaluta=1&valuta=%E2%82%AC&idnazione=1&carrellonew=3102618%2D%2D%2D2%2D%2D%2D10A%2D%2D%2D10A%2D%2D%2D0%7C%7C%7C3102618%2D%2D%2D2%2D%2D%2D8A%2D%2D%2D8A%2D%2D%2D0%7C%7C%7C4091092%2D%2D%2D1%2D%2D%2D12A%2D%2D%2D12A%2D%2D%2D0%7C%7C%7C"
 
 func CrawlColognese(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
 	c := colly.NewCollector(
@@ -63,8 +63,10 @@ func CrawlColognese(worker chan bool, done chan bool, source *domain.CrawlSource
 		req.Source = source
 		req.ProductType = source.ProductType
 
-		if req.AlloffCategory.KeyName == "1_bags" || req.AlloffCategory.KeyName == "1_shoes" || req.AlloffCategory.KeyName == "1_accessory" || req.AlloffCategory.KeyName == "1_jewelry" {
-			req.Source.PriceMarginPolicy = "COLOGNESE_NON_FASHION"
+		if req.AlloffCategory != nil {
+			if req.AlloffCategory.KeyName == "1_bags" || req.AlloffCategory.KeyName == "1_shoes" || req.AlloffCategory.KeyName == "1_accessory" || req.AlloffCategory.KeyName == "1_jewelry" {
+				req.Source.PriceMarginPolicy = "COLOGNESE_NON_FASHION"
+			}
 		}
 
 		productinfo.ProcessCrawlingInfoRequests(req)
