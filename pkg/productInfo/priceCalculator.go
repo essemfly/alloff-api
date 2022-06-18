@@ -112,6 +112,20 @@ func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyT
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
 		return origPriceKRW, discPriceKRW
+	} else if marginPolicy == "COLOGNESE" {
+		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
+		discPriceKRW := CalculateColognesePrice(int(discPrice))
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
+		return origPriceKRW, discPriceKRW
+	} else if marginPolicy == "COLOGNESE_NON_FASHION" {
+		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))
+		discPriceKRW := CalculateCologneseNonFashionPrice(int(discPrice))
+		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
+		origPriceKRW = origPriceKRW / 1000
+		origPriceKRW = origPriceKRW * 1000
+		return origPriceKRW, discPriceKRW
 	}
 
 	return int(origPrice), int(discPrice)
@@ -134,6 +148,46 @@ func CalculateFlannelsPrice(priceKRW int) int {
 	floatKRW = floatKRW + ((floatKRW + deliveryFeeOversea) * vatRate) // 부가세 + 해외배송
 	floatKRW = floatKRW * 110 / 100                                   // 마진
 	floatKRW = floatKRW + deliveryFeeDomestic                         // 국내배송
+
+	floatKRW = floatKRW / 1000.00
+	floatKRW = math.Round(floatKRW)
+	priceKRW = int(floatKRW)
+	priceKRW = priceKRW * 1000
+
+	return priceKRW
+}
+
+func CalculateColognesePrice(priceKRW int) int {
+	floatKRW := float64(priceKRW)
+	deliveryFeeOversea := 20000.00
+	deliveryFeeDomestic := 3000.00
+	customTaxRate := 0.08
+	vatRate := 0.1
+
+	floatKRW = floatKRW + (customTaxRate * floatKRW)                                       // 관세
+	floatKRW = floatKRW + deliveryFeeOversea + ((floatKRW + deliveryFeeOversea) * vatRate) // 부가세 + 해외배송
+	floatKRW = floatKRW * 110 / 100                                                        // 마진
+	floatKRW = floatKRW + deliveryFeeDomestic                                              // 국내배송
+
+	floatKRW = floatKRW / 1000.00
+	floatKRW = math.Round(floatKRW)
+	priceKRW = int(floatKRW)
+	priceKRW = priceKRW * 1000
+
+	return priceKRW
+}
+
+func CalculateCologneseNonFashionPrice(priceKRW int) int {
+	floatKRW := float64(priceKRW)
+	deliveryFeeOversea := 20000.00
+	deliveryFeeDomestic := 3000.00
+	customTaxRate := 0.08
+	vatRate := 0.1
+
+	floatKRW = floatKRW + (customTaxRate * floatKRW)                                       // 관세
+	floatKRW = floatKRW + deliveryFeeOversea + ((floatKRW + deliveryFeeOversea) * vatRate) // 부가세 + 해외배송
+	floatKRW = floatKRW * 110 / 100                                                        // 마진
+	floatKRW = floatKRW + deliveryFeeDomestic                                              // 국내배송
 
 	floatKRW = floatKRW / 1000.00
 	floatKRW = math.Round(floatKRW)
