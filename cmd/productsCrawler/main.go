@@ -41,8 +41,9 @@ func main() {
 		// "maje",
 		// "theory",
 		// "claudiePierlot",
-		"flannels",
+		// "flannels",
 		//"afound",
+		"colognese",
 	}
 
 	StartCrawling(crawlModules)
@@ -126,6 +127,8 @@ func StartCrawling(crawlModules []string) {
 				go malls.CrawlAfound(workers, done, source)
 			case "flannels":
 				go malls.CrawlFlannels(workers, done, source)
+			case "colognese":
+				go malls.CrawlColognese(workers, done, source)
 			default:
 				log.Println("Empty Source")
 				<-workers

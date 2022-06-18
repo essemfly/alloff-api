@@ -72,6 +72,7 @@ func categoryClassifier(pdInfo *domain.ProductMetaInfoDAO) (*domain.ProductAllof
 			cat2, err := ioc.Repo.AlloffCategories.GetByName(possibleCat2[0])
 			if err != nil {
 				log.Println("error: no matched possible cat2", err)
+				return nil, nil
 			}
 			if cat2.Level == 2 {
 				cat1, _ := ioc.Repo.AlloffCategories.Get(cat2.ParentId.Hex())

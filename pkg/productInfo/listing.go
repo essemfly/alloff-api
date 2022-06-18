@@ -51,6 +51,7 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 		filter["$or"] = []bson.M{
 			{"originalname": primitive.Regex{Pattern: input.Keyword, Options: "i"}},
 			{"alloffname": primitive.Regex{Pattern: input.Keyword, Options: "i"}},
+			{"source.crawlmodulename": primitive.Regex{Pattern: input.Keyword, Options: "i"}},
 		}
 	}
 

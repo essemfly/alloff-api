@@ -1,8 +1,9 @@
 package productinfo
 
 import (
-	"github.com/lessbutter/alloff-api/internal/utils"
 	"time"
+
+	"github.com/lessbutter/alloff-api/internal/utils"
 
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -138,10 +139,10 @@ func makeBaseProductInfo(request *AddMetaInfoRequest) *domain.ProductMetaInfoDAO
 
 	if request.AlloffCategory == nil || request.AlloffCategory.ID == primitive.NilObjectID || !pdInfo.AlloffCategory.Done {
 		productAlloffCat, err := alloffcategory.InferAlloffCategory(pdInfo)
-		if err != nil {
-			config.Logger.Error("err occured on infer alloffcategory: pdinfo "+pdInfo.ID.Hex(), zap.Error(err))
-		} else {
+		if err == nil {
 			pdInfo.SetAlloffCategory(productAlloffCat)
+			// } else {
+			// 	config.Logger.Error("err occured on infer alloffcategory: pdinfo "+pdInfo.ID.Hex(), zap.Error(err))
 		}
 	}
 

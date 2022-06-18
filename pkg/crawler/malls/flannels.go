@@ -258,6 +258,7 @@ func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
 			if el.Attr("value") != "0" {
 				size := strings.TrimSpace(el.Attr("value"))
 				size = strings.Replace(size, " ", "", -1)
+				size = flannelsSizeMapper(size)
 				if isDigit.MatchString(size) {
 					size = "UK" + size
 				}
@@ -358,4 +359,27 @@ func flannelsCategoryMapper(categoryKeyname string) *domain.AlloffCategoryDAO {
 
 	config.Logger.Warn("Not matched category keyname in flannels" + categoryKeyname)
 	return &domain.AlloffCategoryDAO{}
+}
+
+func flannelsSizeMapper(size string) string {
+	switch size {
+	case "2XSmall":
+		return "XXS"
+	case "XSmall":
+		return "XS"
+	case "Small":
+		return "S"
+	case "Medium":
+		return "M"
+	case "Large":
+		return "L"
+	case "XLarge", "ExtraLge":
+		return "XL"
+	case "2XLarge":
+		return "XXL"
+	case "3XLarge":
+		return "XXXL"
+	}
+
+	return size
 }
