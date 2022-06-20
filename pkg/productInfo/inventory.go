@@ -11,7 +11,7 @@ func AssignProductsInventory(pdDao *domain.ProductMetaInfoDAO) {
 	newInv := AssignAlloffSizesToInventories(pdDao.Inventory, pdDao.ProductType, pdDao.AlloffCategory)
 	pdDao.Inventory = newInv
 
-	_, err := ioc.Repo.ProductMetaInfos.Upsert(pdDao)
+	_, err := Update(pdDao)
 	if err != nil {
 		config.Logger.Error("error occurred on upsert product-meta-info : ", zap.Error(err))
 	}
