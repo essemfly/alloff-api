@@ -34,13 +34,6 @@ const (
 	PRICE_RANGE_100 PriceRangeType = "100"
 )
 
-type AlloffSizeDAO struct {
-	ID             primitive.ObjectID `bson:"_id,omitempty"`
-	AlloffCategory *AlloffCategoryDAO
-	AlloffSizeName string
-	ProductType    []AlloffProductType
-}
-
 type ProductDAO struct {
 	ID                   primitive.ObjectID `bson:"_id,omitempty"`
 	ProductInfo          *ProductMetaInfoDAO

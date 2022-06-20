@@ -41,6 +41,7 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 		DiscountedPrice:      int32(pdInfo.Price.CurrentPrice),
 		SpecialPrice:         int32(pdInfo.Price.CurrentPrice),
 		BrandKorName:         pdInfo.Brand.KorName,
+		BrandKeyName:         pdInfo.Brand.KeyName,
 		Inventory:            InventoryMapper(pdInfo),
 		Description:          pdInfo.SalesInstruction.Description.Texts,
 		EarliestDeliveryDays: int32(pdInfo.SalesInstruction.DeliveryDescription.EarliestDeliveryDays),
@@ -78,6 +79,24 @@ func ProductTypeMapper(pdTypes []domain.AlloffProductType) []grpcServer.ProductT
 			productTypes = append(productTypes, grpcServer.ProductType_BOY)
 		} else if pdtype == domain.Girl {
 			productTypes = append(productTypes, grpcServer.ProductType_GIRL)
+		}
+	}
+	return productTypes
+}
+
+func ProductTypeReverseMapper(ptypes []grpcServer.ProductType) []domain.AlloffProductType {
+	productTypes := []domain.AlloffProductType{}
+	for _, reqPdType := range ptypes {
+		if reqPdType == grpcServer.ProductType_FEMALE {
+			productTypes = append(productTypes, domain.Female)
+		} else if reqPdType == grpcServer.ProductType_MALE {
+			productTypes = append(productTypes, domain.Male)
+		} else if reqPdType == grpcServer.ProductType_KIDS {
+			productTypes = append(productTypes, domain.Kids)
+		} else if reqPdType == grpcServer.ProductType_BOY {
+			productTypes = append(productTypes, domain.Boy)
+		} else if reqPdType == grpcServer.ProductType_GIRL {
+			productTypes = append(productTypes, domain.Girl)
 		}
 	}
 	return productTypes

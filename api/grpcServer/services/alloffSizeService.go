@@ -44,6 +44,14 @@ func (s *AlloffSizeService) EditAlloffSize(ctx context.Context, req *grpcServer.
 		alloffSizeDao.AlloffCategory = cat
 	}
 
+	if len(req.ProductTypes) > 0 {
+		alloffSizeDao.ProductType = mapper.ProductTypeReverseMapper(req.ProductTypes)
+	}
+
+	if len(req.Sizes) > 0 {
+		alloffSizeDao.Sizes = req.Sizes
+	}
+
 	newAlloffSizeDao, err := ioc.Repo.AlloffSizes.Upsert(alloffSizeDao)
 	if err != nil {
 		return nil, err
@@ -58,6 +66,8 @@ func (s *AlloffSizeService) CreateAlloffSize(ctx context.Context, req *grpcServe
 		ID:             primitive.NewObjectID(),
 		AlloffSizeName: req.AlloffSizeName,
 		AlloffCategory: cat,
+		Sizes:          req.Sizes,
+		ProductType:    mapper.ProductTypeReverseMapper(req.ProductTypes),
 	}
 
 	newAlloffSize, err := ioc.Repo.AlloffSizes.Upsert(alloffSizeDao)

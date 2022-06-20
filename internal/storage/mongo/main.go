@@ -83,7 +83,6 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.Notifications = MongoNotificationsRepo(conn)
 	ioc.Repo.AlloffSizes = MongoAlloffSizeRepo(conn)
 	ioc.Repo.Carts = MongoCartsRepo(conn)
-	ioc.Repo.SizeMappingPolicy = MongoSizeMappingPolicyRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context) (*mongo.Client, error) {

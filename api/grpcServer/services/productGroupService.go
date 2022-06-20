@@ -290,7 +290,7 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 	}
 
 	for _, productPriority := range req.ProductPriorities {
-		pdDao, err := ioc.Repo.Products.GetByMetaID(productPriority.ProductId, pgDao.ExhibitionID)
+		pdDao, err := ioc.Repo.Products.GetByMetaID(productPriority.ProductId, pgDao.ExhibitionID, pgDao.ID.Hex())
 		if err != nil {
 			config.Logger.Error("err occured in pd not found: "+productPriority.ProductId, zap.Error(err))
 			continue
@@ -325,7 +325,7 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 		return nil, err
 	}
 
-	pd, err := ioc.Repo.Products.GetByMetaID(req.ProductId, pgDao.ExhibitionID)
+	pd, err := ioc.Repo.Products.GetByMetaID(req.ProductId, pgDao.ExhibitionID, pgDao.ID.Hex())
 	if err != nil {
 		config.Logger.Error("remove prodcut in group: get product", zap.Error(err))
 		return nil, err

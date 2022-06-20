@@ -388,14 +388,6 @@ type SizeGuide struct {
 	ImgURL string `json:"imgUrl"`
 }
 
-type SizeMappingPolicy struct {
-	ID                string              `json:"id"`
-	AlloffSize        *AlloffSize         `json:"alloffSize"`
-	AlloffCategory    *AlloffCategory     `json:"alloffCategory"`
-	Sizes             []string            `json:"sizes"`
-	AlloffProductType []AlloffProductType `json:"alloffProductType"`
-}
-
 type User struct {
 	ID                    string  `json:"id"`
 	UUID                  string  `json:"uuid"`

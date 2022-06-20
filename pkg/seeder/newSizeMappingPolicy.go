@@ -1,13 +1,14 @@
 package seeder
 
 import (
+	"log"
+
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.uber.org/zap"
-	"log"
 )
 
 func NewSizeMappingPolicy() {
@@ -165,24 +166,17 @@ func NewSizeMappingPolicy() {
 			sizes = []string{"9A", "9Y", "10A", "10Y"}
 		}
 
-		sizeMappingPolicyDao := domain.SizeMappingPolicyDAO{
-			AlloffSize:        alloffSize,
-			AlloffCategory:    alloffSize.AlloffCategory,
-			Sizes:             sizes,
-			AlloffProductType: alloffSize.ProductType,
-		}
-		_, err := ioc.Repo.SizeMappingPolicy.Upsert(&sizeMappingPolicyDao)
+		alloffSize.Sizes = sizes
+		_, err := ioc.Repo.AlloffSizes.Upsert(alloffSize)
 		if err != nil {
 			log.Panic(err)
 		}
 	}
-
-	// 새로 추가한 사이즈들을 여기다 넣어줘야함
-	newlyAddedSizes := []string{"24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37"}
-	AssignProdcutsInventoryOfNewSizes(newlyAddedSizes)
 }
 
-func AssignProdcutsInventoryOfNewSizes(sizes []string) {
+func AssignProdcutsInventoryOfNewSizes() {
+	sizes := []string{"24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37"}
+
 	sizeQueries := []bson.M{}
 	for _, size := range sizes {
 		sizeQueries = append(sizeQueries, bson.M{"inventory.size": size})

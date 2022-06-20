@@ -16,7 +16,7 @@ type BrandsRepository interface {
 
 type ProductsRepository interface {
 	Get(ID string) (*domain.ProductDAO, error)
-	GetByMetaID(metaID, exhibitionID string) (*domain.ProductDAO, error)
+	GetByMetaID(metaID, exhibitionID string, productgroupID string) (*domain.ProductDAO, error)
 	ListByMetaID(metaID string) ([]*domain.ProductDAO, error)
 	List(offset, limit int, filter, sortingOptions interface{}) ([]*domain.ProductDAO, int, error)
 	Aggregate(filter interface{}, pipelines []interface{}) ([]*domain.ProductDAO, int, error)
@@ -143,17 +143,10 @@ type AlloffSizeRepository interface {
 	Get(alloffSizeID string) (*domain.AlloffSizeDAO, error)
 	Upsert(dao *domain.AlloffSizeDAO) (*domain.AlloffSizeDAO, error)
 	List(offset, limit int) ([]*domain.AlloffSizeDAO, int, error)
+	ListByDetail(size string, productTypes []domain.AlloffProductType, alloffCategpryID string) ([]*domain.AlloffSizeDAO, error)
 }
 
 type CartsRepository interface {
 	Get(cartID string) (*domain.Basket, error)
 	Upsert(cartDao *domain.Basket) (*domain.Basket, error)
-}
-
-type SizeMappingPolicyRepository interface {
-	Insert(dao *domain.SizeMappingPolicyDAO) (*domain.SizeMappingPolicyDAO, error)
-	Upsert(dao *domain.SizeMappingPolicyDAO) (*domain.SizeMappingPolicyDAO, error)
-	Get(id string) (*domain.SizeMappingPolicyDAO, error)
-	List() ([]*domain.SizeMappingPolicyDAO, error)
-	ListByDetail(size string, productTypes []domain.AlloffProductType, alloffCategpryID string) ([]*domain.SizeMappingPolicyDAO, error)
 }
