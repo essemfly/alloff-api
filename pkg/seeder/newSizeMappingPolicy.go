@@ -32,17 +32,17 @@ func NewSizeMappingPolicy() {
 		case "99(이상)":
 			sizes = []string{"XXL", "DE48", "IT52", "FR50", "US48", "US18", "UK20", "EU50"}
 		case "24-25":
-			sizes = []string{"XXS", "XS", "IT36", "IT38", "FR32", "FR34", "US0", "US2", "UK4", "UK6", "EU32", "EU34"}
+			sizes = []string{"XXS", "XS", "IT36", "IT38", "FR32", "FR34", "US0", "US2", "UK4", "UK6", "EU32", "EU34", "24", "25"}
 		case "26-27":
-			sizes = []string{"S", "IT40", "FR36", "US4", "UK8", "EU36"}
+			sizes = []string{"S", "IT40", "FR36", "US4", "UK8", "EU36", "26", "27"}
 		case "28-29":
-			sizes = []string{"M", "L", "IT42", "IT44", "FR38", "FR40", "US6", "US8", "UK10", "UK12", "EU38", "EU40"}
+			sizes = []string{"M", "L", "IT42", "IT44", "FR38", "FR40", "US6", "US8", "UK10", "UK12", "EU38", "EU40", "28", "29"}
 		case "30-31":
-			sizes = []string{"M", "L", "IT42", "IT44", "IT46", "FR38", "FR40", "FR42", "US6", "US8", "US10", "UK10", "UK12", "UK14", "EU38", "EU40", "EU42"}
+			sizes = []string{"M", "L", "IT42", "IT44", "IT46", "FR38", "FR40", "FR42", "US6", "US8", "US10", "UK10", "UK12", "UK14", "EU38", "EU40", "EU42", "30", "31"}
 		case "32-33":
-			sizes = []string{"M", "L", "IT44", "IT46", "FR40", "FR42", "US8", "US10", "UK12", "UK14", "EU40", "EU42"}
+			sizes = []string{"M", "L", "IT44", "IT46", "FR40", "FR42", "US8", "US10", "UK12", "UK14", "EU40", "EU42", "32", "33"}
 		case "34(이상)":
-			sizes = []string{"XL", "XXL", "IT48", "IT50", "FR44", "FR46", "FR48", "US12", "US14", "US16", "US18", "UK16", "UK18", "EU46", "EU48", "EU50"}
+			sizes = []string{"XL", "XXL", "IT48", "IT50", "FR44", "FR46", "FR48", "US12", "US14", "US16", "US18", "UK16", "UK18", "EU46", "EU48", "EU50", "34", "35", "36", "37"}
 		case "220":
 			sizes = []string{"UK2", "EU35", "FR36", "US5"}
 		case "225":
@@ -178,7 +178,7 @@ func NewSizeMappingPolicy() {
 	}
 
 	// 새로 추가한 사이즈들을 여기다 넣어줘야함
-	newlyAddedSizes := []string{"6-12M", "12M", "18M", "24M", "2Y", "3Y", "4Y", "4A", "4A", "5A", "5Y", "6A", "6Y", "7A", "7Y", "8A", "8Y", "9A", "9Y", "10A", "10Y"}
+	newlyAddedSizes := []string{"24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37"}
 	AssignProdcutsInventoryOfNewSizes(newlyAddedSizes)
 }
 
