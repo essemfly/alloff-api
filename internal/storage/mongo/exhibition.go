@@ -62,7 +62,6 @@ func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionSta
 	}
 
 	if onlyLive {
-		filter["finishtime"] = bson.M{"$gte": now}
 		filter["islive"] = true
 		onGoingOptions.SetSort(bson.D{{Key: "starttime", Value: -1}})
 	} else {
