@@ -3,6 +3,8 @@ package malls
 import (
 	"encoding/json"
 	"log"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -180,6 +182,26 @@ func getClaudiePierlotDetail(productUrl string) (
 			// 파싱한 사이즈의 값이 "선택"이 아니고, "모델 스펙"이 아닐때에만 입력
 			if size != "Größe" {
 				if isSize {
+					size = strings.Replace(size, " ", "", -1)
+
+					isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
+					if isDigit.MatchString(size) {
+						intSize, _ := strconv.Atoi(size)
+						// if size system is form of 32, 33, 34 ....
+						if intSize > 20 {
+							size = "FR" + size
+						} else {
+							// if size system is form of 0, 1, 2, 3 ....
+							size = "EU" + size
+						}
+					}
+
+					// if size is form of DE32/FR42
+					sizeArray := strings.Split(size, "/")
+					if len(sizeArray) >= 2 {
+						size = sizeArray[0]
+					}
+
 					sizes = append(sizes, size)
 					inventories = append(inventories, &domain.InventoryDAO{
 						Size:     size,

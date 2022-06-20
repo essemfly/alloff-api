@@ -38,7 +38,8 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			originalPriceStr = strings.Replace(originalPriceStr, ",", ".", -1)
 			originalPrice, err = strconv.ParseFloat(originalPriceStr, 32)
 			if err != nil {
-				config.Logger.Error("err : ", zap.Error(err))
+				msg := fmt.Sprintf("err on parse original price %v : ", originalPrice)
+				config.Logger.Error(msg, zap.Error(err))
 				return
 			}
 		}
@@ -49,7 +50,8 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		discountedPriceStr = strings.Replace(discountedPriceStr, ",", ".", -1)
 		discountedPrice, err := strconv.ParseFloat(discountedPriceStr, 32)
 		if err != nil {
-			config.Logger.Error("err : ", zap.Error(err))
+			msg := fmt.Sprintf("err on parse discount price %v : ", originalPrice)
+			config.Logger.Error(msg, zap.Error(err))
 			return
 		}
 

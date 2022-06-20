@@ -16,9 +16,11 @@ func UpdateProductInfo(pdInfo *domain.ProductMetaInfoDAO, request *AddMetaInfoRe
 	case "CRAWLER":
 		inventories := AssignAlloffSizesToInventories(request.Inventory, pdInfo.ProductType, pdInfo.AlloffCategory)
 		pdInfo.SetInventory(inventories)
+		alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
 
-		//alloffOrigPrice, alloffDiscPrice := GetProductPrice(float32(request.OriginalPrice), float32(request.DiscountedPrice), request.CurrencyType, request.Source.PriceMarginPolicy)
-		//pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
+		// do not update original price when cralwer update the products
+		alloffOrigPrice = pdInfo.Price.OriginalPrice
+		pdInfo.SetPrices(alloffOrigPrice, alloffDiscPrice, domain.CurrencyKRW)
 
 		if len(inventories) == 0 {
 			pdInfo.IsSoldout = true

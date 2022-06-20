@@ -3,6 +3,8 @@ package malls
 import (
 	"fmt"
 	"log"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -140,6 +142,26 @@ func getSandroDetail(productUrl string) (
 		e.ForEach("li.emptyswatch", func(_ int, li *colly.HTMLElement) {
 			outOfStock := strings.Contains(li.Attr("class"), "notinstock")
 			size := li.ChildText("span.sizeDisplayValue")
+			size = strings.Replace(size, " ", "", -1)
+
+			isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
+			if isDigit.MatchString(size) {
+				intSize, _ := strconv.Atoi(size)
+				// if size system is form of 32, 33, 34 ....
+				if intSize > 20 {
+					size = "FR" + size
+				} else {
+					// if size system is form of 0, 1, 2, 3 ....
+					size = "EU" + size
+				}
+			}
+
+			// if size is form of DE32/FR42
+			sizeArray := strings.Split(size, "/")
+			if len(sizeArray) >= 2 {
+				size = sizeArray[0]
+			}
+
 			stock := defaultStock
 			if outOfStock {
 				stock = 0

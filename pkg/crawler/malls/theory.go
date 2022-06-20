@@ -1,6 +1,7 @@
 package malls
 
 import (
+	"fmt"
 	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -66,7 +67,8 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			originalPriceStr = strings.Trim(originalPriceStr, " ")
 			originalPrice, err = strconv.ParseFloat(originalPriceStr, 32)
 			if err != nil {
-				log.Printf("err on %s", err)
+				msg := fmt.Sprintf("err on parse original price %v : %s : ", originalPrice, productUrl)
+				config.Logger.Error(msg, zap.Error(err))
 				return
 			}
 		}
@@ -76,7 +78,8 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		discountedPriceStr = strings.Replace(discountedPriceStr, ",", "", -1)
 		discountedPrice, err := strconv.ParseFloat(discountedPriceStr, 32)
 		if err != nil {
-			log.Println("err", err)
+			msg := fmt.Sprintf("err on parse discount price %v : %s : ", originalPrice, productUrl)
+			config.Logger.Error(msg, zap.Error(err))
 			return
 		}
 		if discountedPrice == 0 {

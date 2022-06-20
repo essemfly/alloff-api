@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -30,6 +31,13 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 	if err != nil {
 		log.Println(err)
 	}
+
+	c.OnHTML("#kr_maje_bandeaux_pages_marronnier_fin_operations > h2.sub-title.sub-title--desktop", func(e *colly.HTMLElement) {
+		if e.Text == "VERKÄUFE KOMMEN BALD AUF MAJE.COM" || e.Text == "DIE LAST CHANCE WIRD BALD AUF MAJE.COM ZURÜCK SEIN" {
+			log.Println("no product detected")
+			return
+		}
+	})
 
 	c.OnHTML(".infosProduct", func(e *colly.HTMLElement) {
 		colorMap := map[string]string{majeDeafultColor: majeDeafultColor}
@@ -71,7 +79,6 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 				productNameForDb += " - " + colorName
 			}
 
-			log.Println(productUrl)
 			addRequest := &productinfo.AddMetaInfoRequest{
 				AlloffName:          productNameForDb,
 				ProductID:           productIdForDb,
@@ -149,6 +156,27 @@ func getMajeDetail(productUrl string) (
 		e.ForEach("li.emptyswatch", func(_ int, li *colly.HTMLElement) {
 			outOfStock := strings.Contains(li.Attr("class"), "unselectable")
 			size := li.ChildText("div.defaultSize")
+
+			size = strings.Replace(size, " ", "", -1)
+
+			isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
+			if isDigit.MatchString(size) {
+				intSize, _ := strconv.Atoi(size)
+				// if size system is form of 32, 33, 34 ....
+				if intSize > 20 {
+					size = "FR" + size
+				} else {
+					// if size system is form of 0, 1, 2, 3 ....
+					size = "EU" + size
+				}
+			}
+
+			// if size is form of DE32/FR42
+			sizeArray := strings.Split(size, "/")
+			if len(sizeArray) >= 2 {
+				size = sizeArray[0]
+			}
+
 			stock := defaultStock
 			if outOfStock {
 				stock = 0
@@ -259,14 +287,15 @@ func getMajeDetail(productUrl string) (
 		priceParsed = true
 	})
 
-	// 이미지
-	c.OnHTML("ul.swiper-wrapper li", func(container *colly.HTMLElement) {
+	c.OnHTML("div.product-image-container ul.swiper-wrapper li", func(container *colly.HTMLElement) {
 		src, exists := container.DOM.Find("source").First().Attr("data-srcset")
 		if !exists {
 			return
 		}
 		imageUrl := strings.Split(src, "?")[0]
-		images = append(images, imageUrl)
+		if !strings.Contains(imageUrl, "VIDEO") {
+			images = append(images, imageUrl)
+		}
 	})
 
 	// 색상
