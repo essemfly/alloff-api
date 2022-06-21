@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"errors"
-
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -60,6 +59,15 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		searchKeyword = *req.Query.SearchQuery
 	}
 
+	productUrl := ""
+	if req.Query.ProductUrl != nil {
+		productUrl = *req.Query.ProductUrl
+	}
+
+	alloffSizeIds := req.Query.AlloffSizeIds
+
+	productTypes := mapper.ProductTypeReverseMapper(req.Query.ProductTypes)
+
 	classifiedType := domain.NO_MATTER_CLASSIFIED
 	if req.Query.IsClassifiedDone != nil {
 		if *req.Query.IsClassifiedDone {
@@ -80,7 +88,10 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		Limit:                 int(req.Limit),
 		BrandID:               brandID,
 		AlloffCategoryID:      alloffCategoryID,
+		AlloffSizeIDs:         alloffSizeIds,
+		ProductTypes:          productTypes,
 		Keyword:               searchKeyword,
+		ProductUrl:            productUrl,
 		Modulename:            moduleName,
 		IncludeClassifiedType: classifiedType,
 		PriceRanges:           priceRanges,

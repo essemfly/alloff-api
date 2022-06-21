@@ -151,6 +151,8 @@ func ProductSortingAndRangesMapper(sortings []grpcServer.SortingOptions) (priceR
 			priceSorting = domain.DISCOUNTRATE_ASCENDING
 		} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_DESCENDING {
 			priceSorting = domain.DISCOUNTRATE_DESCENDING
+		} else if sorting == grpcServer.SortingOptions_CREATED_DESCENDING {
+			priceSorting = domain.CREATED_DESCENDING
 		} else {
 			if sorting == grpcServer.SortingOptions_DISCOUNT_0_30 {
 				priceRanges = append(priceRanges, domain.PRICE_RANGE_30)

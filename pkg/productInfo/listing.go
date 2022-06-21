@@ -16,9 +16,11 @@ type ProductInfoListInput struct {
 	BrandID                string
 	AlloffCategoryID       string
 	AlloffSizeIDs          []string
+	ProductTypes           []domain.AlloffProductType
 	CategoryClassifierName string
 	Modulename             string
 	Keyword                string
+	ProductUrl             string
 	IncludeClassifiedType  domain.CategoryClassifiedType
 	PriceRanges            []domain.PriceRangeType
 	PriceSorting           domain.PriceSortingType
@@ -53,6 +55,14 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 			{"alloffname": primitive.Regex{Pattern: input.Keyword, Options: "i"}},
 			{"source.crawlmodulename": primitive.Regex{Pattern: input.Keyword, Options: "i"}},
 		}
+	}
+
+	if input.ProductUrl != "" {
+		filter["producturl"] = primitive.Regex{Pattern: input.ProductUrl, Options: "i"}
+	}
+
+	if len(input.ProductTypes) > 0 {
+		filter["producttype"] = bson.M{"$all": input.ProductTypes}
 	}
 
 	if input.IncludeClassifiedType != "" && input.IncludeClassifiedType != domain.NO_MATTER_CLASSIFIED {
