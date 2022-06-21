@@ -246,6 +246,13 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 			continue
 		}
 
+		pdInfoDao.ExhibitionHistory = &domain.ExhibitionHistoryDAO{
+			ExhibitionID: pgDao.ExhibitionID,
+			Title:        pgDao.Title,
+			StartTime:    pgDao.StartTime,
+			FinishTime:   pgDao.FinishTime,
+		}
+
 		newPdDao := &domain.ProductDAO{
 			ID:                   primitive.NewObjectID(),
 			ProductInfo:          pdInfoDao,
@@ -267,6 +274,11 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		_, err = ioc.Repo.Products.Insert(newPdDao)
 		if err != nil {
 			config.Logger.Error("err occured on products insert on pg : "+productPriority.ProductId, zap.Error(err))
+		}
+
+		_, err = ioc.Repo.ProductMetaInfos.Upsert(pdInfoDao)
+		if err != nil {
+			config.Logger.Error("err occurred on upsert productmetainfo : "+pdInfoDao.ID.Hex(), zap.Error(err))
 		}
 	}
 

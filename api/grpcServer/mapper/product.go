@@ -59,9 +59,12 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 		IsClassifiedDone:     IsClassifiedDone,
 		IsClassifiedTouched:  IsClassifiedTouched,
 		ProductInfos:         pdInfo.SalesInstruction.Information,
+		RawProductInfos:      pdInfo.SalesInstruction.RawInformation,
 		DescriptionInfos:     pdInfo.SalesInstruction.Description.Infos,
+		RawDescriptionInfos:  pdInfo.SalesInstruction.Description.RawInfos,
 		ThumbnailImage:       pdInfo.ThumbnailImage,
 		ProductTypes:         ProductTypeMapper(pdInfo.ProductType),
+		ExhibitionHistory:    ExhibitionHistoryMapper(pdInfo.ExhibitionHistory),
 	}
 }
 
@@ -167,4 +170,19 @@ func ProductSortingAndRangesMapper(sortings []grpcServer.SortingOptions) (priceR
 	}
 
 	return
+}
+
+func ExhibitionHistoryMapper(exhibitionHistory *domain.ExhibitionHistoryDAO) map[string]string {
+	// for check nil case
+	if exhibitionHistory == nil {
+		return map[string]string{}
+	}
+	startTime := exhibitionHistory.StartTime.Format("2006-01-02T15:04:05Z07:00")
+	finishTime := exhibitionHistory.FinishTime.Format("2006-01-02T15:04:05Z07:00")
+	return map[string]string{
+		"exhibition_id": exhibitionHistory.ExhibitionID,
+		"title":         exhibitionHistory.Title,
+		"start_time":    startTime,
+		"finish_time":   finishTime,
+	}
 }
