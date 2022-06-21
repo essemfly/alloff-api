@@ -83,7 +83,7 @@ func GetProductPrice(origPrice, discPrice float32, currencyType domain.CurrencyT
 		origPriceKRW := 100 * discPriceKRW / (100 - discountRate)
 		origPriceKRW = origPriceKRW / 1000
 		origPriceKRW = origPriceKRW * 1000
-		origPriceKRW += 20000
+		origPriceKRW += 50000
 		return origPriceKRW, discPriceKRW
 	} else if marginPolicy == "FLANNELS" {
 		discountRate := utils.CalculateDiscountRate(int(origPrice), int(discPrice))

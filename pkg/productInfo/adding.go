@@ -46,6 +46,7 @@ type AddMetaInfoRequest struct {
 	IsInventoryMapped    bool
 	IsRemoved            bool
 	IsSoldout            bool
+	DeliveryFee          int
 }
 
 func AddProductInfo(request *AddMetaInfoRequest) (*domain.ProductMetaInfoDAO, error) {

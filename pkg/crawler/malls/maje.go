@@ -32,82 +32,83 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 		log.Println(err)
 	}
 
-	c.OnHTML("#kr_maje_bandeaux_pages_marronnier_fin_operations > h2.sub-title.sub-title--desktop", func(e *colly.HTMLElement) {
-		if e.Text == "VERKÄUFE KOMMEN BALD AUF MAJE.COM" || e.Text == "DIE LAST CHANCE WIRD BALD AUF MAJE.COM ZURÜCK SEIN" {
-			log.Println("no product detected")
-			return
-		}
-	})
+	noProducts := checkNoProducts(source.CrawlUrl)
 
-	c.OnHTML(".infosProduct", func(e *colly.HTMLElement) {
-		colorMap := map[string]string{majeDeafultColor: majeDeafultColor}
-		e.ForEach("ul.swatch-list li", func(_ int, li *colly.HTMLElement) {
-			colorId := li.ChildAttr("img", "data-colorid")
-			colorName := li.ChildAttr("img", "data-colorname")
-			colorMap[colorId] = colorName
+	if !noProducts {
+		c.OnHTML(".infosProduct", func(e *colly.HTMLElement) {
+			colorMap := map[string]string{majeDeafultColor: majeDeafultColor}
+			e.ForEach("ul.swatch-list li", func(_ int, li *colly.HTMLElement) {
+				colorId := li.ChildAttr("img", "data-colorid")
+				colorName := li.ChildAttr("img", "data-colorname")
+				colorMap[colorId] = colorName
+			})
+			nameUrl := e.ChildAttr(".name-link", "href")
+			urlNodes := strings.Split(nameUrl, "/")
+			productId := strings.Split(urlNodes[len(urlNodes)-1], ".html")[0]
+			colorMapIsEmpty := len(colorMap) == 1
+			for colorId, colorName := range colorMap {
+				if !colorMapIsEmpty && colorId == majeDeafultColor {
+					continue
+				}
+				totalProducts++
+				var productDetailUrl string
+				var productUrl string
+				if colorId == majeDeafultColor || colorId == "" {
+					// 색상이 없을 땐 원본 URL 그대로 사용
+					productDetailUrl = nameUrl
+					productUrl = nameUrl
+				} else {
+					// 색상이 있을 땐 파싱된 swatch 사용하여 URL 재구성
+					productDetailUrl = getMajeDetailUrl(productId, colorId)
+					productUrl = getMajeProductUrl(productId, colorId)
+				}
+				productName, productColor, composition, images, sizes, inventories, description, originalPrice, salesPrice := getMajeDetail(productDetailUrl)
+
+				infos := map[string]string{
+					"소재": composition,
+					"색상": productColor,
+				}
+				productIdForDb := productId
+				productNameForDb := productName
+				if colorId != majeDeafultColor && colorId != "" {
+					productIdForDb += "-" + colorName
+					productNameForDb += " - " + colorName
+				}
+
+				addRequest := &productinfo.AddMetaInfoRequest{
+					AlloffName:           productNameForDb,
+					ProductID:            productIdForDb,
+					ProductUrl:           productUrl,
+					ProductType:          []domain.AlloffProductType{domain.Female},
+					OriginalPrice:        originalPrice,
+					DiscountedPrice:      salesPrice,
+					CurrencyType:         domain.CurrencyEUR,
+					Brand:                brand,
+					Source:               source,
+					AlloffCategory:       &domain.AlloffCategoryDAO{},
+					Images:               images,
+					Colors:               nil,
+					DescriptionInfos:     infos,
+					Sizes:                sizes,
+					Inventory:            inventories,
+					Information:          description,
+					DescriptionImages:    images,
+					IsTranslateRequired:  true,
+					ModuleName:           source.CrawlModuleName,
+					IsRemoved:            false,
+					IsSoldout:            false,
+					IsForeignDelivery:    true,
+					EarliestDeliveryDays: 14,
+					LatestDeliveryDays:   21,
+					IsRefundPossible:     true,
+					RefundFee:            100000,
+				}
+
+				totalProducts += 1
+				productinfo.ProcessCrawlingInfoRequests(addRequest)
+			}
 		})
-		nameUrl := e.ChildAttr(".name-link", "href")
-		urlNodes := strings.Split(nameUrl, "/")
-		productId := strings.Split(urlNodes[len(urlNodes)-1], ".html")[0]
-		colorMapIsEmpty := len(colorMap) == 1
-		for colorId, colorName := range colorMap {
-			if !colorMapIsEmpty && colorId == majeDeafultColor {
-				continue
-			}
-			totalProducts++
-			var productDetailUrl string
-			var productUrl string
-			if colorId == majeDeafultColor || colorId == "" {
-				// 색상이 없을 땐 원본 URL 그대로 사용
-				productDetailUrl = nameUrl
-				productUrl = nameUrl
-			} else {
-				// 색상이 있을 땐 파싱된 swatch 사용하여 URL 재구성
-				productDetailUrl = getMajeDetailUrl(productId, colorId)
-				productUrl = getMajeProductUrl(productId, colorId)
-			}
-			productName, productColor, composition, images, sizes, inventories, description, originalPrice, salesPrice := getMajeDetail(productDetailUrl)
-
-			infos := map[string]string{
-				"소재": composition,
-				"색상": productColor,
-			}
-			productIdForDb := productId
-			productNameForDb := productName
-			if colorId != majeDeafultColor && colorId != "" {
-				productIdForDb += "-" + colorName
-				productNameForDb += " - " + colorName
-			}
-
-			addRequest := &productinfo.AddMetaInfoRequest{
-				AlloffName:          productNameForDb,
-				ProductID:           productIdForDb,
-				ProductUrl:          productUrl,
-				ProductType:         []domain.AlloffProductType{domain.Female},
-				OriginalPrice:       originalPrice,
-				DiscountedPrice:     salesPrice,
-				CurrencyType:        domain.CurrencyEUR,
-				Brand:               brand,
-				Source:              source,
-				AlloffCategory:      &domain.AlloffCategoryDAO{},
-				Images:              images,
-				Colors:              nil,
-				DescriptionInfos:    infos,
-				Sizes:               sizes,
-				Inventory:           inventories,
-				Information:         description,
-				DescriptionImages:   images,
-				IsForeignDelivery:   true,
-				IsTranslateRequired: true,
-				ModuleName:          source.CrawlModuleName,
-				IsRemoved:           false,
-				IsSoldout:           false,
-			}
-
-			totalProducts += 1
-			productinfo.ProcessCrawlingInfoRequests(addRequest)
-		}
-	})
+	}
 
 	err = c.Visit(source.CrawlUrl)
 	if err != nil {
@@ -117,6 +118,24 @@ func CrawlMaje(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) 
 	crawler.PrintCrawlResults(source, totalProducts)
 	<-worker
 	done <- true
+}
+
+func checkNoProducts(source string) bool {
+	c := getCollyCollector(majeAllowedDomain)
+	noProducts := false
+	c.OnHTML("#kr_maje_bandeaux_pages_marronnier_fin_operations > h2.sub-title.sub-title--desktop", func(e *colly.HTMLElement) {
+		if e.Text == "VERKÄUFE KOMMEN BALD AUF MAJE.COM" || e.Text == "DIE LAST CHANCE WIRD BALD AUF MAJE.COM ZURÜCK SEIN" {
+			log.Println("no products detected")
+			noProducts = true
+		}
+	})
+
+	err := c.Visit(source)
+	if err != nil {
+		noProducts = true
+	}
+
+	return noProducts
 }
 
 func getMajeDetailUrl(productId string, colorId string) string {
