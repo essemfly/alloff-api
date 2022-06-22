@@ -168,6 +168,15 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 		return nil, fmt.Errorf("ERR301:failed to find order order not found")
 	}
 
+	if orderDao.OrderStatus == domain.ORDER_PAYMENT_FINISHED {
+		return &model.PaymentResult{
+			Success:     true,
+			ErrorMsg:    "",
+			Order:       nil,
+			PaymentInfo: nil,
+		}, nil
+	}
+
 	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(input.MerchantUID, orderDao.TotalPrice)
 	if err != nil {
 		return nil, fmt.Errorf("ERR404:failed to find payment order not found")
