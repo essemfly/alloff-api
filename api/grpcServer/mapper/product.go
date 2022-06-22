@@ -34,6 +34,7 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 	return &grpcServer.ProductMessage{
 		AlloffProductId:      pdInfo.ID.Hex(),
 		AlloffName:           pdInfo.AlloffName,
+		OriginalName:         pdInfo.OriginalName,
 		IsForeignDelivery:    isForeginDelivery,
 		ProductId:            pdInfo.ProductID,
 		ProductUrl:           pdInfo.ProductUrl,
