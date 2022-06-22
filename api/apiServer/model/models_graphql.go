@@ -388,6 +388,14 @@ type SizeGuide struct {
 	ImgURL string `json:"imgUrl"`
 }
 
+type TopBanner struct {
+	ID           string `json:"id"`
+	ImageURL     string `json:"imageUrl"`
+	ExhibitionID string `json:"exhibitionId"`
+	Title        string `json:"title"`
+	SubTitle     string `json:"subTitle"`
+}
+
 type User struct {
 	ID                    string  `json:"id"`
 	UUID                  string  `json:"uuid"`

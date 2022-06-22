@@ -26,6 +26,7 @@ type iocRepo struct {
 	Refunds          repository.RefundItemsRepository
 	AlloffSizes      repository.AlloffSizeRepository
 	Carts            repository.CartsRepository
+	TopBanners       repository.TopBannersRepository
 }
 
 var Repo iocRepo

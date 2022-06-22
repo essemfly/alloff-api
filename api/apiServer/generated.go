@@ -343,6 +343,7 @@ type ComplexityRoot struct {
 		Orders          func(childComplexity int) int
 		Product         func(childComplexity int, id string) int
 		Products        func(childComplexity int, input model.ProductsInput) int
+		TopBanners      func(childComplexity int) int
 		User            func(childComplexity int) int
 		Version         func(childComplexity int) int
 	}
@@ -357,6 +358,14 @@ type ComplexityRoot struct {
 	SizeGuide struct {
 		ImgURL func(childComplexity int) int
 		Label  func(childComplexity int) int
+	}
+
+	TopBanner struct {
+		ExhibitionID func(childComplexity int) int
+		ID           func(childComplexity int) int
+		ImageURL     func(childComplexity int) int
+		SubTitle     func(childComplexity int) int
+		Title        func(childComplexity int) int
 	}
 
 	User struct {
@@ -402,6 +411,7 @@ type QueryResolver interface {
 	OrderItemStatus(ctx context.Context) ([]*model.OrderItemStatusDescription, error)
 	Product(ctx context.Context, id string) (*model.Product, error)
 	Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error)
+	TopBanners(ctx context.Context) ([]*model.TopBanner, error)
 	Version(ctx context.Context) (*model.AppVersion, error)
 }
 
@@ -2003,6 +2013,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Products(childComplexity, args["input"].(model.ProductsInput)), true
 
+	case "Query.topBanners":
+		if e.complexity.Query.TopBanners == nil {
+			break
+		}
+
+		return e.complexity.Query.TopBanners(childComplexity), true
+
 	case "Query.user":
 		if e.complexity.Query.User == nil {
 			break
@@ -2058,6 +2075,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SizeGuide.Label(childComplexity), true
+
+	case "TopBanner.exhibitionId":
+		if e.complexity.TopBanner.ExhibitionID == nil {
+			break
+		}
+
+		return e.complexity.TopBanner.ExhibitionID(childComplexity), true
+
+	case "TopBanner.id":
+		if e.complexity.TopBanner.ID == nil {
+			break
+		}
+
+		return e.complexity.TopBanner.ID(childComplexity), true
+
+	case "TopBanner.imageUrl":
+		if e.complexity.TopBanner.ImageURL == nil {
+			break
+		}
+
+		return e.complexity.TopBanner.ImageURL(childComplexity), true
+
+	case "TopBanner.subTitle":
+		if e.complexity.TopBanner.SubTitle == nil {
+			break
+		}
+
+		return e.complexity.TopBanner.SubTitle(childComplexity), true
+
+	case "TopBanner.title":
+		if e.complexity.TopBanner.Title == nil {
+			break
+		}
+
+		return e.complexity.TopBanner.Title(childComplexity), true
 
 	case "User.baseAddress":
 		if e.complexity.User.BaseAddress == nil {
@@ -2732,6 +2784,22 @@ extend type Query {
   product(id: String!): Product!
   products(input: ProductsInput!): ProductsOutput!
 }
+`, BuiltIn: false},
+	{Name: "api/apiServer/graph/topbanners.graphqls", Input: `type TopBanner {
+  id: ID!
+  imageUrl: String!
+  exhibitionId: String!
+  title: String!
+  subTitle: String!
+}
+
+extend type Query {
+  topBanners: [TopBanner!]!
+}
+
+ 
+
+
 `, BuiltIn: false},
 	{Name: "api/apiServer/graph/version.graphqls", Input: `type AppVersion {
   latestVersion: String!
@@ -10683,6 +10751,41 @@ func (ec *executionContext) _Query_products(ctx context.Context, field graphql.C
 	return ec.marshalNProductsOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductsOutput(ctx, field.Selections, res)
 }
 
+func (ec *executionContext) _Query_topBanners(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().TopBanners(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.TopBanner)
+	fc.Result = res
+	return ec.marshalNTopBanner2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐTopBannerᚄ(ctx, field.Selections, res)
+}
+
 func (ec *executionContext) _Query_version(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
@@ -10983,6 +11086,181 @@ func (ec *executionContext) _SizeGuide_imgUrl(ctx context.Context, field graphql
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return obj.ImgURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopBanner_id(ctx context.Context, field graphql.CollectedField, obj *model.TopBanner) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopBanner",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopBanner_imageUrl(ctx context.Context, field graphql.CollectedField, obj *model.TopBanner) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopBanner",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ImageURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopBanner_exhibitionId(ctx context.Context, field graphql.CollectedField, obj *model.TopBanner) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopBanner",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExhibitionID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopBanner_title(ctx context.Context, field graphql.CollectedField, obj *model.TopBanner) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopBanner",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _TopBanner_subTitle(ctx context.Context, field graphql.CollectedField, obj *model.TopBanner) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "TopBanner",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SubTitle, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14937,6 +15215,20 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
+		case "topBanners":
+			field := field
+			out.Concurrently(i, func() (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_topBanners(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			})
 		case "version":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
@@ -15026,6 +15318,53 @@ func (ec *executionContext) _SizeGuide(ctx context.Context, sel ast.SelectionSet
 			}
 		case "imgUrl":
 			out.Values[i] = ec._SizeGuide_imgUrl(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var topBannerImplementors = []string{"TopBanner"}
+
+func (ec *executionContext) _TopBanner(ctx context.Context, sel ast.SelectionSet, obj *model.TopBanner) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, topBannerImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("TopBanner")
+		case "id":
+			out.Values[i] = ec._TopBanner_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "imageUrl":
+			out.Values[i] = ec._TopBanner_imageUrl(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "exhibitionId":
+			out.Values[i] = ec._TopBanner_exhibitionId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "title":
+			out.Values[i] = ec._TopBanner_title(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "subTitle":
+			out.Values[i] = ec._TopBanner_subTitle(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -16603,6 +16942,60 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalNTopBanner2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐTopBannerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TopBanner) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTopBanner2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐTopBanner(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNTopBanner2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐTopBanner(ctx context.Context, sel ast.SelectionSet, v *model.TopBanner) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._TopBanner(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNUser2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {

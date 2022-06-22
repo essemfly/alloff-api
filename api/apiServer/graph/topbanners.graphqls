@@ -1,0 +1,11 @@
+type TopBanner {
+  id: ID!
+  imageUrl: String!
+  exhibitionId: String!
+  title: String!
+  subTitle: String!
+}
+
+extend type Query {
+  topBanners: [TopBanner!]!
+}
