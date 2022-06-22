@@ -42,6 +42,8 @@ type ExhibitionBanner struct {
 type ExhibitionDAO struct {
 	ID             primitive.ObjectID `bson:"_id, omitempty"`
 	ProductTypes   []AlloffProductType
+	Brands         []*BrandDAO
+	ChiefProducts  []*ProductDAO
 	ExhibitionType ExhibitionType
 	Title          string
 	SubTitle       string

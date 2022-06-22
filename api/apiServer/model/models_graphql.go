@@ -110,6 +110,8 @@ type Device struct {
 type Exhibition struct {
 	ID             string              `json:"id"`
 	ProductTypes   []AlloffProductType `json:"productTypes"`
+	Brands         []*Brand            `json:"brands"`
+	ChiefProducts  []*Product          `json:"chiefProducts"`
 	ExhibitionType ExhibitionType      `json:"exhibitionType"`
 	Title          string              `json:"title"`
 	SubTitle       string              `json:"subTitle"`

@@ -24,6 +24,8 @@ enum ExhibitionStatus {
 type Exhibition {
   id: ID!
   productTypes: [AlloffProductType!]!
+  brands: [Brand!]!
+  chiefProducts: [Product!]!
   exhibitionType: ExhibitionType!
   title: String!
   subTitle: String!

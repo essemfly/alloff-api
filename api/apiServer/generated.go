@@ -130,6 +130,8 @@ type ComplexityRoot struct {
 
 	Exhibition struct {
 		BannerImage    func(childComplexity int) int
+		Brands         func(childComplexity int) int
+		ChiefProducts  func(childComplexity int) int
 		Description    func(childComplexity int) int
 		ExhibitionType func(childComplexity int) int
 		FinishTime     func(childComplexity int) int
@@ -800,6 +802,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exhibition.BannerImage(childComplexity), true
+
+	case "Exhibition.brands":
+		if e.complexity.Exhibition.Brands == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.Brands(childComplexity), true
+
+	case "Exhibition.chiefProducts":
+		if e.complexity.Exhibition.ChiefProducts == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.ChiefProducts(childComplexity), true
 
 	case "Exhibition.description":
 		if e.complexity.Exhibition.Description == nil {
@@ -2406,6 +2422,8 @@ enum ExhibitionStatus {
 type Exhibition {
   id: ID!
   productTypes: [AlloffProductType!]!
+  brands: [Brand!]!
+  chiefProducts: [Product!]!
   exhibitionType: ExhibitionType!
   title: String!
   subTitle: String!
@@ -2795,12 +2813,7 @@ extend type Query {
 
 extend type Query {
   topBanners: [TopBanner!]!
-}
-
- 
-
-
-`, BuiltIn: false},
+}`, BuiltIn: false},
 	{Name: "api/apiServer/graph/version.graphqls", Input: `type AppVersion {
   latestVersion: String!
   minVersion: String!
@@ -5166,6 +5179,76 @@ func (ec *executionContext) _Exhibition_productTypes(ctx context.Context, field 
 	res := resTmp.([]model.AlloffProductType)
 	fc.Result = res
 	return ec.marshalNAlloffProductType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductTypeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exhibition_brands(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Brands, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Brand)
+	fc.Result = res
+	return ec.marshalNBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exhibition_chiefProducts(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChiefProducts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Product)
+	fc.Result = res
+	return ec.marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Exhibition_exhibitionType(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
@@ -13943,6 +14026,16 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			}
 		case "productTypes":
 			out.Values[i] = ec._Exhibition_productTypes(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "brands":
+			out.Values[i] = ec._Exhibition_brands(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "chiefProducts":
+			out.Values[i] = ec._Exhibition_chiefProducts(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

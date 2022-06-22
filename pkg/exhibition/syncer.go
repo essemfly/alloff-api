@@ -15,6 +15,7 @@ import (
 // Ex가 갖고 있는 ProductGROUPS가 우선임
 func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error) {
 	pdTypes := []domain.AlloffProductType{}
+	brands := []*domain.BrandDAO{}
 	newPgs := []*domain.ProductGroupDAO{}
 	maxDiscountRates := 0
 
@@ -71,12 +72,16 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 				config.Logger.Error("exhibition syncer error", zap.Error(err))
 			}
 			pdTypes = append(pdTypes, pd.ProductInfo.ProductType...)
+			brands = append(brands, pd.ProductInfo.Brand)
 		}
 		pdTypes = removeDuplicateType(pdTypes)
+		brands = removeDuplicateBrands(brands)
+		exDao.ChiefProducts = pds[0:10]
 	}
 
 	exDao.ProductGroups = newPgs
 	exDao.ProductTypes = pdTypes
+	exDao.Brands = brands
 	exDao.MaxDiscounts = maxDiscountRates
 
 	newExDao, err := ioc.Repo.Exhibitions.Upsert(exDao)
@@ -119,6 +124,18 @@ func removeDuplicateType(strSlice []domain.AlloffProductType) []domain.AlloffPro
 	for _, item := range strSlice {
 		if _, value := allKeys[item]; !value {
 			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+	return list
+}
+
+func removeDuplicateBrands(brands []*domain.BrandDAO) []*domain.BrandDAO {
+	allKeys := make(map[string]bool)
+	list := []*domain.BrandDAO{}
+	for _, item := range brands {
+		if _, value := allKeys[item.ID.Hex()]; !value {
+			allKeys[item.ID.Hex()] = true
 			list = append(list, item)
 		}
 	}
