@@ -7,6 +7,7 @@ import (
 
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
+	"github.com/lessbutter/alloff-api/internal/core/domain"
 )
 
 type Handler func(w http.ResponseWriter, r *http.Request) error
@@ -45,6 +46,10 @@ func IamportHandler(w http.ResponseWriter, r *http.Request) error {
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(res.MerchantUID)
 	if err != nil {
 		config.Logger.Error("ERR301:failed to find order order not found")
+		return nil
+	}
+
+	if orderDao.OrderStatus == domain.ORDER_PAYMENT_FINISHED {
 		return nil
 	}
 
