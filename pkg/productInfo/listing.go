@@ -78,15 +78,15 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 	}
 
 	if len(input.AlloffSizeIDs) > 0 {
-		query := []bson.M{}
+		alloffSizeIds := []primitive.ObjectID{}
 		for _, id := range input.AlloffSizeIDs {
 			oid, err := primitive.ObjectIDFromHex(id)
 			if err != nil {
 				continue
 			}
-			query = append(query, bson.M{"alloffinventory.alloffsize._id": oid})
+			alloffSizeIds = append(alloffSizeIds, oid)
 		}
-		filter["$or"] = query
+		filter["inventory.alloffsizes._id"] = bson.M{"$all": alloffSizeIds}
 	}
 
 	priceQueryRanges := []bson.M{}

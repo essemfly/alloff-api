@@ -138,7 +138,6 @@ func MigrateFromOldDb(filter bson.M) {
 	if err = cursor.All(ctx, &pdRes); err != nil {
 		log.Println(err)
 	}
-	log.Println(len(pdRes))
 
 	brand, err := ioc.Repo.Brands.GetByKeyname("THOMBROWNE")
 	if err != nil {
