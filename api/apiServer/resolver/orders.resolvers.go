@@ -182,11 +182,6 @@ func (r *mutationResolver) HandlePaymentResponse(ctx context.Context, input *mod
 		return nil, fmt.Errorf("ERR404:failed to find payment order not found")
 	}
 
-	err = ioc.Service.OrderWithPaymentService.VerifyPayment(orderDao, input.ImpUID)
-	if err != nil {
-		return nil, fmt.Errorf("ERR405: failed to verify payment " + err.Error())
-	}
-
 	return &model.PaymentResult{
 		Success:     true,
 		ErrorMsg:    "",
