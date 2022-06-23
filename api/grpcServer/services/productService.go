@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -339,4 +340,24 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	return &grpcServer.EditProductResponse{
 		Product: pdMessage,
 	}, nil
+}
+
+func (s *ProductService) CacheProductImages(ctx context.Context, req *grpcServer.ProductsUpdateRequest) (*grpcServer.ProductsUpdateResponse, error) {
+	out := new(grpcServer.ProductsUpdateResponse)
+	return out, nil
+}
+
+func (s *ProductService) CrawlProductInventories(ctx context.Context, req *grpcServer.ProductsUpdateRequest) (*grpcServer.ProductsUpdateResponse, error) {
+	out := new(grpcServer.ProductsUpdateResponse)
+	return out, nil
+}
+
+func (s *ProductService) CrawlProductPrices(ctx context.Context, req *grpcServer.ProductsPriceUpdateRequest) (*grpcServer.ProductsUpdateResponse, error) {
+	out := new(grpcServer.ProductsUpdateResponse)
+	return out, nil
+}
+
+func (s *ProductService) TranslateProduct(ctx context.Context, req *grpcServer.ProductsUpdateRequest) (*grpcServer.ProductsUpdateResponse, error) {
+	out := new(grpcServer.ProductsUpdateResponse)
+	return out, nil
 }
