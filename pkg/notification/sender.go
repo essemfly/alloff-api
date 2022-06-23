@@ -39,7 +39,6 @@ func Send(noti *domain.NotificationDAO) error {
 		numTotalSend += len(chunk) - len(notiResult.Logs)
 	}
 
-	noti.DeviceIDs = deviceIDs
 	noti.NumUsersFailed = numTotalFailed
 	noti.NumUsersPushed = numTotalSend
 
