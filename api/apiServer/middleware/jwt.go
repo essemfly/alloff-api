@@ -19,8 +19,7 @@ func GenerateToken(mobile, uuid string) (string, error) {
 	/* Set token claims */
 	claims["mobile"] = mobile
 	claims["uuid"] = uuid
-	//claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	claims["exp"] = time.Now().Add(time.Second * 30).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	tokenString, err := token.SignedString(SecretKey)
 	if err != nil {
 		return "", err
