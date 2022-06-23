@@ -23,6 +23,7 @@ const (
 	DISCOUNTRATE_DESCENDING PriceSortingType = "discountrateDescending"
 	INVENTORY_ASCENDING     PriceSortingType = "inventoryAscending"
 	INVENTORY_DESCENDING    PriceSortingType = "inventoryDescending"
+	CREATED_DESCENDING      PriceSortingType = "createdDescending"
 )
 
 type PriceRangeType string
@@ -33,13 +34,6 @@ const (
 	PRICE_RANGE_70  PriceRangeType = "70"
 	PRICE_RANGE_100 PriceRangeType = "100"
 )
-
-type AlloffSizeDAO struct {
-	ID             primitive.ObjectID `bson:"_id,omitempty"`
-	AlloffCategory *AlloffCategoryDAO
-	AlloffSizeName string
-	ProductType    []AlloffProductType
-}
 
 type ProductDAO struct {
 	ID                   primitive.ObjectID `bson:"_id,omitempty"`

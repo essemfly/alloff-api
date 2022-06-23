@@ -194,12 +194,16 @@ func GetFlannelProductList(categoryUrl, productType, categoryName string) []*pro
 // 상품 상세 페이지에서 크롤링 하는 함수
 func GetFlannelsDetail(productURL string) *productinfo.AddMetaInfoRequest {
 	productRequest := &productinfo.AddMetaInfoRequest{
-		ProductUrl:          productURL,
-		IsForeignDelivery:   true,
-		IsTranslateRequired: true,
-		IsRemoved:           false,
-		IsSoldout:           false,
-		ModuleName:          malls.FLANNELS_MODULE_NAME,
+		ProductUrl:           productURL,
+		IsTranslateRequired:  true,
+		IsRemoved:            false,
+		IsSoldout:            false,
+		ModuleName:           malls.FLANNELS_MODULE_NAME,
+		IsForeignDelivery:    true,
+		EarliestDeliveryDays: 14,
+		LatestDeliveryDays:   21,
+		IsRefundPossible:     true,
+		RefundFee:            100000,
 	}
 
 	colorSplits := strings.Split(productURL, "colcode=")

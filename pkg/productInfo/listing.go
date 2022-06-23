@@ -16,9 +16,11 @@ type ProductInfoListInput struct {
 	BrandID                string
 	AlloffCategoryID       string
 	AlloffSizeIDs          []string
+	ProductTypes           []domain.AlloffProductType
 	CategoryClassifierName string
 	Modulename             string
 	Keyword                string
+	ProductUrl             string
 	IncludeClassifiedType  domain.CategoryClassifiedType
 	PriceRanges            []domain.PriceRangeType
 	PriceSorting           domain.PriceSortingType
@@ -55,6 +57,14 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 		}
 	}
 
+	if input.ProductUrl != "" {
+		filter["producturl"] = primitive.Regex{Pattern: input.ProductUrl, Options: "i"}
+	}
+
+	if len(input.ProductTypes) > 0 {
+		filter["producttype"] = bson.M{"$all": input.ProductTypes}
+	}
+
 	if input.IncludeClassifiedType != "" && input.IncludeClassifiedType != domain.NO_MATTER_CLASSIFIED {
 		if input.IncludeClassifiedType == domain.CLASSIFIED_DONE {
 			filter["alloffcategory.done"] = true
@@ -68,15 +78,15 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 	}
 
 	if len(input.AlloffSizeIDs) > 0 {
-		query := []bson.M{}
+		alloffSizeIds := []primitive.ObjectID{}
 		for _, id := range input.AlloffSizeIDs {
 			oid, err := primitive.ObjectIDFromHex(id)
 			if err != nil {
 				continue
 			}
-			query = append(query, bson.M{"alloffinventory.alloffsize._id": oid})
+			alloffSizeIds = append(alloffSizeIds, oid)
 		}
-		filter["$or"] = query
+		filter["inventory.alloffsizes._id"] = bson.M{"$all": alloffSizeIds}
 	}
 
 	priceQueryRanges := []bson.M{}

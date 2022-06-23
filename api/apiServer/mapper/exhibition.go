@@ -6,6 +6,16 @@ import (
 )
 
 func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
+	brands := []*model.Brand{}
+	pds := []*model.Product{}
+
+	for _, pdDao := range exDao.ChiefProducts {
+		pds = append(pds, MapProduct(pdDao))
+	}
+	for _, brandDao := range exDao.Brands {
+		brands = append(brands, MapBrandDaoToBrand(brandDao, false))
+	}
+
 	return &model.Exhibition{
 		ID:             exDao.ID.Hex(),
 		ProductTypes:   MapProductTypes(exDao.ProductTypes),
@@ -21,6 +31,8 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		NumAlarms:      exDao.NumAlarms,
 		MaxDiscounts:   exDao.MaxDiscounts,
 		UserAlarmOn:    false,
+		Brands:         brands,
+		ChiefProducts:  pds,
 	}
 }
 

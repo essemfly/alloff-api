@@ -3,6 +3,8 @@ package malls
 import (
 	"encoding/json"
 	"log"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -54,26 +56,30 @@ func CrawlClaudiePierlot(worker chan bool, done chan bool, source *domain.CrawlS
 		sizes, inventories, description, colors := getClaudiePierlotDetail(productUrl)
 
 		addRequest := &productinfo.AddMetaInfoRequest{
-			AlloffName:          productName,
-			ProductID:           productId,
-			ProductUrl:          productUrl,
-			ProductType:         []domain.AlloffProductType{domain.Female},
-			OriginalPrice:       float32(originalPrice),
-			DiscountedPrice:     float32(discountedPrice),
-			CurrencyType:        domain.CurrencyEUR,
-			Brand:               brand,
-			Source:              source,
-			AlloffCategory:      &domain.AlloffCategoryDAO{},
-			Images:              images,
-			Colors:              colors,
-			Sizes:               sizes,
-			Inventory:           inventories,
-			Information:         description,
-			IsForeignDelivery:   true,
-			IsTranslateRequired: true,
-			ModuleName:          source.CrawlModuleName,
-			IsRemoved:           false,
-			IsSoldout:           false,
+			AlloffName:           productName,
+			ProductID:            productId,
+			ProductUrl:           productUrl,
+			ProductType:          []domain.AlloffProductType{domain.Female},
+			OriginalPrice:        float32(originalPrice),
+			DiscountedPrice:      float32(discountedPrice),
+			CurrencyType:         domain.CurrencyEUR,
+			Brand:                brand,
+			Source:               source,
+			AlloffCategory:       &domain.AlloffCategoryDAO{},
+			Images:               images,
+			Colors:               colors,
+			Sizes:                sizes,
+			Inventory:            inventories,
+			Information:          description,
+			IsTranslateRequired:  true,
+			ModuleName:           source.CrawlModuleName,
+			IsRemoved:            false,
+			IsSoldout:            false,
+			IsForeignDelivery:    true,
+			EarliestDeliveryDays: 14,
+			LatestDeliveryDays:   21,
+			IsRefundPossible:     true,
+			RefundFee:            100000,
 		}
 
 		totalProducts += 1
@@ -161,17 +167,23 @@ func getClaudiePierlotDetail(productUrl string) (
 		modelSize = strings.TrimSpace(modelSize)
 		modelSize = strings.Trim(modelSize, "\n")
 		e.ForEach("li", func(_ int, el *colly.HTMLElement) {
+			liClass := el.Attr("class")
+			liClassArray := strings.Split(liClass, " ")
+			unselectable := false
+			if len(liClassArray) > 1 {
+				if liClassArray[1] == "unselectable" {
+					unselectable = true
+				}
+			}
 			isSize := true
-			stock := 10
-			outOfStock := e.ChildText(".unclickable .sizeDisplayValue")
+			stock := defaultStock
+			if unselectable {
+				stock = 0
+			}
 			size := el.Text
 			size = strings.TrimSpace(size)
 			size = strings.Trim(size, "\n")
 			size = strings.Replace(size, "\n\n\nNachricht sobald verfügbar", "", -1)
-
-			if strings.Contains(outOfStock, size) {
-				stock = 0
-			}
 
 			if modelSize == size {
 				isSize = false
@@ -180,6 +192,26 @@ func getClaudiePierlotDetail(productUrl string) (
 			// 파싱한 사이즈의 값이 "선택"이 아니고, "모델 스펙"이 아닐때에만 입력
 			if size != "Größe" {
 				if isSize {
+					size = strings.Replace(size, " ", "", -1)
+
+					isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
+					if isDigit.MatchString(size) {
+						intSize, _ := strconv.Atoi(size)
+						// if size system is form of 32, 33, 34 ....
+						if intSize > 20 {
+							size = "FR" + size
+						} else {
+							// if size system is form of 0, 1, 2, 3 ....
+							size = "EU" + size
+						}
+					}
+
+					// if size is form of DE32/FR42
+					sizeArray := strings.Split(size, "/")
+					if len(sizeArray) >= 2 {
+						size = sizeArray[0]
+					}
+
 					sizes = append(sizes, size)
 					inventories = append(inventories, &domain.InventoryDAO{
 						Size:     size,

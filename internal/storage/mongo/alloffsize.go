@@ -2,13 +2,14 @@ package mongo
 
 import (
 	"context"
+	"time"
+
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/core/repository"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"time"
 )
 
 type alloffSizeRepo struct {
@@ -77,6 +78,30 @@ func (repo *alloffSizeRepo) Get(alloffSizeID string) (*domain.AlloffSizeDAO, err
 	}
 
 	return alloffSize, nil
+}
+
+func (repo *alloffSizeRepo) ListByDetail(size string, productTypes []domain.AlloffProductType, alloffCategpryID string) ([]*domain.AlloffSizeDAO, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	alloffCategpryOid, _ := primitive.ObjectIDFromHex(alloffCategpryID)
+	filter := bson.M{
+		"sizes":              size,
+		"alloffcategory._id": alloffCategpryOid,
+		"alloffproducttype":  bson.M{"$all": productTypes},
+	}
+
+	cursor, err := repo.col.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var alloffSizes []*domain.AlloffSizeDAO
+	err = cursor.All(ctx, &alloffSizes)
+	if err != nil {
+		return nil, err
+	}
+	return alloffSizes, nil
 }
 
 func MongoAlloffSizeRepo(conn *MongoDB) repository.AlloffSizeRepository {

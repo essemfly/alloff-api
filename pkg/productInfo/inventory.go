@@ -11,7 +11,7 @@ func AssignProductsInventory(pdDao *domain.ProductMetaInfoDAO) {
 	newInv := AssignAlloffSizesToInventories(pdDao.Inventory, pdDao.ProductType, pdDao.AlloffCategory)
 	pdDao.Inventory = newInv
 
-	_, err := ioc.Repo.ProductMetaInfos.Upsert(pdDao)
+	_, err := Update(pdDao)
 	if err != nil {
 		config.Logger.Error("error occurred on upsert product-meta-info : ", zap.Error(err))
 	}
@@ -30,18 +30,13 @@ func AssignAlloffSizesToInventories(invs []*domain.InventoryDAO, productTypes []
 }
 
 func assignAlloffSizeToInventory(inv *domain.InventoryDAO, productType []domain.AlloffProductType, catID string) *domain.InventoryDAO {
-	sizeMappingPolicies, err := ioc.Repo.SizeMappingPolicy.ListByDetail(inv.Size, productType, catID)
+	alloffSizes, err := ioc.Repo.AlloffSizes.ListByDetail(inv.Size, productType, catID)
 	if err != nil {
-		config.Logger.Error("sizemapping policy err on create product", zap.Error(err))
+		config.Logger.Error("alloffsize listing err on create product", zap.Error(err))
 		return &domain.InventoryDAO{
 			Quantity: int(inv.Quantity),
 			Size:     inv.Size,
 		}
-	}
-
-	alloffSizes := []*domain.AlloffSizeDAO{}
-	for _, policy := range sizeMappingPolicies {
-		alloffSizes = append(alloffSizes, policy.AlloffSize)
 	}
 
 	return &domain.InventoryDAO{

@@ -3,6 +3,8 @@ package malls
 import (
 	"fmt"
 	"log"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/gocolly/colly"
@@ -66,27 +68,31 @@ func CrawlSandro(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 				productNameForDb += " - " + colorName
 			}
 			addRequest := &productinfo.AddMetaInfoRequest{
-				AlloffName:          productNameForDb,
-				ProductID:           productIdForDb,
-				ProductUrl:          productUrl,
-				ProductType:         []domain.AlloffProductType{domain.Female},
-				OriginalPrice:       originalPrice,
-				DiscountedPrice:     salesPrice,
-				CurrencyType:        domain.CurrencyEUR,
-				Brand:               brand,
-				Source:              source,
-				AlloffCategory:      &domain.AlloffCategoryDAO{},
-				Images:              images,
-				Colors:              nil,
-				Sizes:               sizes,
-				Inventory:           inventories,
-				Information:         description,
-				DescriptionImages:   images,
-				IsForeignDelivery:   true,
-				IsTranslateRequired: true,
-				ModuleName:          source.CrawlModuleName,
-				IsRemoved:           false,
-				IsSoldout:           false,
+				AlloffName:           productNameForDb,
+				ProductID:            productIdForDb,
+				ProductUrl:           productUrl,
+				ProductType:          []domain.AlloffProductType{domain.Female},
+				OriginalPrice:        originalPrice,
+				DiscountedPrice:      salesPrice,
+				CurrencyType:         domain.CurrencyEUR,
+				Brand:                brand,
+				Source:               source,
+				AlloffCategory:       &domain.AlloffCategoryDAO{},
+				Images:               images,
+				Colors:               nil,
+				Sizes:                sizes,
+				Inventory:            inventories,
+				Information:          description,
+				DescriptionImages:    images,
+				IsTranslateRequired:  true,
+				ModuleName:           source.CrawlModuleName,
+				IsRemoved:            false,
+				IsSoldout:            false,
+				IsForeignDelivery:    true,
+				EarliestDeliveryDays: 14,
+				LatestDeliveryDays:   21,
+				IsRefundPossible:     true,
+				RefundFee:            100000,
 			}
 
 			totalProducts += 1
@@ -140,6 +146,26 @@ func getSandroDetail(productUrl string) (
 		e.ForEach("li.emptyswatch", func(_ int, li *colly.HTMLElement) {
 			outOfStock := strings.Contains(li.Attr("class"), "notinstock")
 			size := li.ChildText("span.sizeDisplayValue")
+			size = strings.Replace(size, " ", "", -1)
+
+			isDigit := regexp.MustCompile(`^\d*\.?\d+$`)
+			if isDigit.MatchString(size) {
+				intSize, _ := strconv.Atoi(size)
+				// if size system is form of 32, 33, 34 ....
+				if intSize > 20 {
+					size = "FR" + size
+				} else {
+					// if size system is form of 0, 1, 2, 3 ....
+					size = "EU" + size
+				}
+			}
+
+			// if size is form of DE32/FR42
+			sizeArray := strings.Split(size, "/")
+			if len(sizeArray) >= 2 {
+				size = sizeArray[0]
+			}
+
 			stock := defaultStock
 			if outOfStock {
 				stock = 0

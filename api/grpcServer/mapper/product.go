@@ -34,6 +34,7 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 	return &grpcServer.ProductMessage{
 		AlloffProductId:      pdInfo.ID.Hex(),
 		AlloffName:           pdInfo.AlloffName,
+		OriginalName:         pdInfo.OriginalName,
 		IsForeignDelivery:    isForeginDelivery,
 		ProductId:            pdInfo.ProductID,
 		ProductUrl:           pdInfo.ProductUrl,
@@ -41,6 +42,7 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 		DiscountedPrice:      int32(pdInfo.Price.CurrentPrice),
 		SpecialPrice:         int32(pdInfo.Price.CurrentPrice),
 		BrandKorName:         pdInfo.Brand.KorName,
+		BrandKeyName:         pdInfo.Brand.KeyName,
 		Inventory:            InventoryMapper(pdInfo),
 		Description:          pdInfo.SalesInstruction.Description.Texts,
 		EarliestDeliveryDays: int32(pdInfo.SalesInstruction.DeliveryDescription.EarliestDeliveryDays),
@@ -58,9 +60,12 @@ func ProductInfoMapper(pdInfo *domain.ProductMetaInfoDAO) *grpcServer.ProductMes
 		IsClassifiedDone:     IsClassifiedDone,
 		IsClassifiedTouched:  IsClassifiedTouched,
 		ProductInfos:         pdInfo.SalesInstruction.Information,
+		RawProductInfos:      pdInfo.SalesInstruction.RawInformation,
 		DescriptionInfos:     pdInfo.SalesInstruction.Description.Infos,
+		RawDescriptionInfos:  pdInfo.SalesInstruction.Description.RawInfos,
 		ThumbnailImage:       pdInfo.ThumbnailImage,
 		ProductTypes:         ProductTypeMapper(pdInfo.ProductType),
+		ExhibitionHistory:    ExhibitionHistoryMapper(pdInfo.ExhibitionHistory),
 	}
 }
 
@@ -78,6 +83,24 @@ func ProductTypeMapper(pdTypes []domain.AlloffProductType) []grpcServer.ProductT
 			productTypes = append(productTypes, grpcServer.ProductType_BOY)
 		} else if pdtype == domain.Girl {
 			productTypes = append(productTypes, grpcServer.ProductType_GIRL)
+		}
+	}
+	return productTypes
+}
+
+func ProductTypeReverseMapper(ptypes []grpcServer.ProductType) []domain.AlloffProductType {
+	productTypes := []domain.AlloffProductType{}
+	for _, reqPdType := range ptypes {
+		if reqPdType == grpcServer.ProductType_FEMALE {
+			productTypes = append(productTypes, domain.Female)
+		} else if reqPdType == grpcServer.ProductType_MALE {
+			productTypes = append(productTypes, domain.Male)
+		} else if reqPdType == grpcServer.ProductType_KIDS {
+			productTypes = append(productTypes, domain.Kids)
+		} else if reqPdType == grpcServer.ProductType_BOY {
+			productTypes = append(productTypes, domain.Boy)
+		} else if reqPdType == grpcServer.ProductType_GIRL {
+			productTypes = append(productTypes, domain.Girl)
 		}
 	}
 	return productTypes
@@ -132,6 +155,8 @@ func ProductSortingAndRangesMapper(sortings []grpcServer.SortingOptions) (priceR
 			priceSorting = domain.DISCOUNTRATE_ASCENDING
 		} else if sorting == grpcServer.SortingOptions_DISCOUNTRATE_DESCENDING {
 			priceSorting = domain.DISCOUNTRATE_DESCENDING
+		} else if sorting == grpcServer.SortingOptions_CREATED_DESCENDING {
+			priceSorting = domain.CREATED_DESCENDING
 		} else {
 			if sorting == grpcServer.SortingOptions_DISCOUNT_0_30 {
 				priceRanges = append(priceRanges, domain.PRICE_RANGE_30)
@@ -146,4 +171,19 @@ func ProductSortingAndRangesMapper(sortings []grpcServer.SortingOptions) (priceR
 	}
 
 	return
+}
+
+func ExhibitionHistoryMapper(exhibitionHistory *domain.ExhibitionHistoryDAO) map[string]string {
+	// for check nil case
+	if exhibitionHistory == nil {
+		return map[string]string{}
+	}
+	startTime := exhibitionHistory.StartTime.Format("2006-01-02T15:04:05Z07:00")
+	finishTime := exhibitionHistory.FinishTime.Format("2006-01-02T15:04:05Z07:00")
+	return map[string]string{
+		"exhibition_id": exhibitionHistory.ExhibitionID,
+		"title":         exhibitionHistory.Title,
+		"start_time":    startTime,
+		"finish_time":   finishTime,
+	}
 }

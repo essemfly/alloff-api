@@ -3,7 +3,6 @@ package services
 import (
 	"context"
 	"errors"
-
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -24,8 +23,18 @@ func (s *ProductService) GetProduct(ctx context.Context, req *grpcServer.GetProd
 		return nil, err
 	}
 
+	product := mapper.ProductInfoMapper(pdInfoDao)
+
+	if req.ProductGroupId != nil {
+		pdDao, err := ioc.Repo.Products.GetByMetaID(req.AlloffProductId, "", *req.ProductGroupId)
+		if err != nil {
+			return nil, err
+		}
+		product.DealProduct_Id = pdDao.ID.Hex()
+	}
+
 	return &grpcServer.GetProductResponse{
-		Product: mapper.ProductInfoMapper(pdInfoDao),
+		Product: product,
 	}, nil
 }
 
@@ -50,6 +59,15 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		searchKeyword = *req.Query.SearchQuery
 	}
 
+	productUrl := ""
+	if req.Query.ProductUrl != nil {
+		productUrl = *req.Query.ProductUrl
+	}
+
+	alloffSizeIds := req.Query.AlloffSizeIds
+
+	productTypes := mapper.ProductTypeReverseMapper(req.Query.ProductTypes)
+
 	classifiedType := domain.NO_MATTER_CLASSIFIED
 	if req.Query.IsClassifiedDone != nil {
 		if *req.Query.IsClassifiedDone {
@@ -70,7 +88,10 @@ func (s *ProductService) ListProducts(ctx context.Context, req *grpcServer.ListP
 		Limit:                 int(req.Limit),
 		BrandID:               brandID,
 		AlloffCategoryID:      alloffCategoryID,
+		AlloffSizeIDs:         alloffSizeIds,
+		ProductTypes:          productTypes,
 		Keyword:               searchKeyword,
+		ProductUrl:            productUrl,
 		Modulename:            moduleName,
 		IncludeClassifiedType: classifiedType,
 		PriceRanges:           priceRanges,
@@ -111,20 +132,7 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 		moduleName = *req.ModuleName
 	}
 
-	productTypes := []domain.AlloffProductType{}
-	for _, reqPdType := range req.ProductTypes {
-		if reqPdType == grpcServer.ProductType_FEMALE {
-			productTypes = append(productTypes, domain.Female)
-		} else if reqPdType == grpcServer.ProductType_MALE {
-			productTypes = append(productTypes, domain.Male)
-		} else if reqPdType == grpcServer.ProductType_KIDS {
-			productTypes = append(productTypes, domain.Kids)
-		} else if reqPdType == grpcServer.ProductType_BOY {
-			productTypes = append(productTypes, domain.Boy)
-		} else if reqPdType == grpcServer.ProductType_GIRL {
-			productTypes = append(productTypes, domain.Girl)
-		}
-	}
+	productTypes := mapper.ProductTypeReverseMapper(req.ProductTypes)
 
 	productID := ""
 	if req.ProductId != nil {
@@ -151,12 +159,8 @@ func (s *ProductService) CreateProduct(ctx context.Context, req *grpcServer.Crea
 	}
 
 	descriptionImages := []string{}
-	for _, img := range req.Images {
-		descriptionImages = append(descriptionImages, img)
-	}
-	for _, img := range req.DescriptionImages {
-		descriptionImages = append(descriptionImages, img)
-	}
+	descriptionImages = append(descriptionImages, req.Images...)
+	descriptionImages = append(descriptionImages, req.DescriptionImages...)
 
 	brand, _ := ioc.Repo.Brands.GetByKeyname(req.BrandKeyName)
 	alloffcat, _ := ioc.Repo.AlloffCategories.Get(*req.AlloffCategoryId)
@@ -252,17 +256,7 @@ func (s *ProductService) EditProduct(ctx context.Context, req *grpcServer.EditPr
 	}
 
 	if req.ProductTypes != nil && len(req.ProductTypes) > 0 {
-		productTypes := []domain.AlloffProductType{}
-		for _, reqPdType := range req.ProductTypes {
-			if reqPdType == grpcServer.ProductType_FEMALE {
-				productTypes = append(productTypes, domain.Female)
-			} else if reqPdType == grpcServer.ProductType_MALE {
-				productTypes = append(productTypes, domain.Male)
-			} else if reqPdType == grpcServer.ProductType_KIDS {
-				productTypes = append(productTypes, domain.Kids)
-			}
-		}
-		updatedRequest.ProductType = productTypes
+		updatedRequest.ProductType = mapper.ProductTypeReverseMapper(req.ProductTypes)
 	}
 
 	if req.Inventory != nil {

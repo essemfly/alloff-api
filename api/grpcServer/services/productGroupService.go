@@ -246,6 +246,13 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 			continue
 		}
 
+		pdInfoDao.ExhibitionHistory = &domain.ExhibitionHistoryDAO{
+			ExhibitionID: pgDao.ExhibitionID,
+			Title:        pgDao.Title,
+			StartTime:    pgDao.StartTime,
+			FinishTime:   pgDao.FinishTime,
+		}
+
 		newPdDao := &domain.ProductDAO{
 			ID:                   primitive.NewObjectID(),
 			ProductInfo:          pdInfoDao,
@@ -267,6 +274,11 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 		_, err = ioc.Repo.Products.Insert(newPdDao)
 		if err != nil {
 			config.Logger.Error("err occured on products insert on pg : "+productPriority.ProductId, zap.Error(err))
+		}
+
+		_, err = ioc.Repo.ProductMetaInfos.Upsert(pdInfoDao)
+		if err != nil {
+			config.Logger.Error("err occurred on upsert productmetainfo : "+pdInfoDao.ID.Hex(), zap.Error(err))
 		}
 	}
 
@@ -290,7 +302,7 @@ func (s *ProductGroupService) UpdateProductsInProductGroup(ctx context.Context, 
 	}
 
 	for _, productPriority := range req.ProductPriorities {
-		pdDao, err := ioc.Repo.Products.GetByMetaID(productPriority.ProductId, pgDao.ExhibitionID)
+		pdDao, err := ioc.Repo.Products.GetByMetaID(productPriority.ProductId, pgDao.ExhibitionID, pgDao.ID.Hex())
 		if err != nil {
 			config.Logger.Error("err occured in pd not found: "+productPriority.ProductId, zap.Error(err))
 			continue
@@ -325,7 +337,7 @@ func (s *ProductGroupService) RemoveProductInProductGroup(ctx context.Context, r
 		return nil, err
 	}
 
-	pd, err := ioc.Repo.Products.GetByMetaID(req.ProductId, pgDao.ExhibitionID)
+	pd, err := ioc.Repo.Products.GetByMetaID(req.ProductId, pgDao.ExhibitionID, pgDao.ID.Hex())
 	if err != nil {
 		config.Logger.Error("remove prodcut in group: get product", zap.Error(err))
 		return nil, err

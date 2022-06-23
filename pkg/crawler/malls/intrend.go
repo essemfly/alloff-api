@@ -10,9 +10,11 @@ import (
 	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 	"go.uber.org/zap"
 	"log"
+	"math/rand"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDAO) {
@@ -38,7 +40,8 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 			originalPriceStr = strings.Replace(originalPriceStr, ",", ".", -1)
 			originalPrice, err = strconv.ParseFloat(originalPriceStr, 32)
 			if err != nil {
-				config.Logger.Error("err : ", zap.Error(err))
+				msg := fmt.Sprintf("err on parse original price %v : ", originalPrice)
+				config.Logger.Error(msg, zap.Error(err))
 				return
 			}
 		}
@@ -49,14 +52,15 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		discountedPriceStr = strings.Replace(discountedPriceStr, ",", ".", -1)
 		discountedPrice, err := strconv.ParseFloat(discountedPriceStr, 32)
 		if err != nil {
-			config.Logger.Error("err : ", zap.Error(err))
+			msg := fmt.Sprintf("err on parse discount price %v : ", originalPrice)
+			config.Logger.Error(msg, zap.Error(err))
 			return
 		}
 
 		if discountedPrice == 0 {
 			discountedPrice = originalPrice
 		} else if originalPrice == 0.0 {
-			originalPrice = discountedPrice
+			originalPrice = float64(genOriginalPrice(float32(discountedPrice)))
 		}
 
 		productID := e.Attr("data-product-id")
@@ -83,28 +87,32 @@ func CrawlIntrend(worker chan bool, done chan bool, source *domain.CrawlSourceDA
 		}
 
 		addRequest := &productinfo.AddMetaInfoRequest{
-			AlloffName:          title,
-			ProductID:           productID,
-			ProductUrl:          productUrl,
-			ProductType:         []domain.AlloffProductType{domain.Female},
-			OriginalPrice:       float32(originalPrice),
-			DiscountedPrice:     float32(discountedPrice),
-			CurrencyType:        domain.CurrencyEUR,
-			Brand:               brand,
-			Source:              source,
-			AlloffCategory:      &domain.AlloffCategoryDAO{},
-			Images:              images,
-			Colors:              colors,
-			DescriptionInfos:    infos,
-			Sizes:               sizes,
-			Inventory:           inventories,
-			Information:         description,
-			DescriptionImages:   images,
-			IsForeignDelivery:   true,
-			IsTranslateRequired: true,
-			ModuleName:          source.CrawlModuleName,
-			IsRemoved:           false,
-			IsSoldout:           false,
+			AlloffName:           title,
+			ProductID:            productID,
+			ProductUrl:           productUrl,
+			ProductType:          []domain.AlloffProductType{domain.Female},
+			OriginalPrice:        float32(originalPrice),
+			DiscountedPrice:      float32(discountedPrice),
+			CurrencyType:         domain.CurrencyEUR,
+			Brand:                brand,
+			Source:               source,
+			AlloffCategory:       &domain.AlloffCategoryDAO{},
+			Images:               images,
+			Colors:               colors,
+			DescriptionInfos:     infos,
+			Sizes:                sizes,
+			Inventory:            inventories,
+			Information:          description,
+			DescriptionImages:    images,
+			IsTranslateRequired:  true,
+			ModuleName:           source.CrawlModuleName,
+			IsRemoved:            false,
+			IsSoldout:            false,
+			IsForeignDelivery:    true,
+			EarliestDeliveryDays: 14,
+			LatestDeliveryDays:   21,
+			IsRefundPossible:     true,
+			RefundFee:            100000,
 		}
 
 		totalProducts += 1
@@ -169,7 +177,7 @@ func getIntrendDetail(productUrl string) (title, composition, productColor strin
 			sizes = append(sizes, size)
 			if el.Attr("class") != "li-disabled" {
 				inventories = append(inventories, &domain.InventoryDAO{
-					Quantity: 1,
+					Quantity: defaultStock,
 					Size:     size,
 				})
 			}
@@ -209,4 +217,38 @@ func getIntrendDetail(productUrl string) (title, composition, productColor strin
 
 	c.Visit(productUrl)
 	return
+}
+
+func genOriginalPrice(discountedPrice float32) float32 {
+	originalPrice := discountedPrice
+	if discountedPrice <= 20 {
+		disRate := genRandRate(78, 80)
+		originalPrice = discountedPrice * disRate
+	} else if 20 < discountedPrice && discountedPrice <= 50 {
+		disRate := genRandRate(70, 78)
+		originalPrice = discountedPrice * disRate
+	} else if 50 < discountedPrice && discountedPrice <= 70 {
+		disRate := genRandRate(65, 75)
+		originalPrice = discountedPrice * disRate
+	} else if 70 < discountedPrice && discountedPrice <= 100 {
+		disRate := genRandRate(55, 72)
+		originalPrice = discountedPrice * disRate
+	} else if 100 < discountedPrice && discountedPrice <= 300 {
+		disRate := genRandRate(45, 60)
+		originalPrice = discountedPrice * disRate
+	} else if 300 < discountedPrice && discountedPrice <= 400 {
+		disRate := genRandRate(40, 55)
+		originalPrice = discountedPrice * disRate
+	} else if 400 < discountedPrice {
+		disRate := genRandRate(30, 45)
+		originalPrice = discountedPrice * disRate
+	}
+	return originalPrice
+}
+
+func genRandRate(min, max int) float32 {
+	rand.Seed(time.Now().UnixNano())
+	rng := max - min + 1
+	randFloat := (float32(rand.Intn(rng)) + float32(min) + 100.00) / 100.00
+	return randFloat
 }

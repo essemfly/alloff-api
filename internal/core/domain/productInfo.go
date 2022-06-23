@@ -110,6 +110,13 @@ type PriceHistoryDAO struct {
 	Price int
 }
 
+type ExhibitionHistoryDAO struct {
+	ExhibitionID string    `json:"exhibition_id"`
+	Title        string    `json:"title"`
+	StartTime    time.Time `json:"start_time"`
+	FinishTime   time.Time `json:"finish_time"`
+}
+
 type AlloffProductType string
 
 const (
@@ -155,6 +162,7 @@ type ProductMetaInfoDAO struct {
 	IsCategoryClassified bool
 	IsSoldout            bool
 	IsRemoved            bool
+	ExhibitionHistory    *ExhibitionHistoryDAO
 	Created              time.Time
 	Updated              time.Time
 	LastCrawled          time.Time

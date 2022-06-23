@@ -10,5 +10,7 @@ func AlloffSizeMapper(alloffSize *domain.AlloffSizeDAO) *grpcServer.AlloffSizeMe
 		AlloffSizeId:   alloffSize.ID.Hex(),
 		AlloffSizeName: alloffSize.AlloffSizeName,
 		AlloffCategory: AlloffCategoryMapper(alloffSize.AlloffCategory),
+		Sizes:          alloffSize.Sizes,
+		ProductTypes:   ProductTypeMapper(alloffSize.ProductType),
 	}
 }

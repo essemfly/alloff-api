@@ -130,6 +130,8 @@ type ComplexityRoot struct {
 
 	Exhibition struct {
 		BannerImage    func(childComplexity int) int
+		Brands         func(childComplexity int) int
+		ChiefProducts  func(childComplexity int) int
 		Description    func(childComplexity int) int
 		ExhibitionType func(childComplexity int) int
 		FinishTime     func(childComplexity int) int
@@ -332,20 +334,20 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Brand               func(childComplexity int, input *model.BrandInput) int
-		Brands              func(childComplexity int, input *model.BrandsInput) int
-		Cart                func(childComplexity int, id string) int
-		Exhibition          func(childComplexity int, id string) int
-		ExhibitionInfo      func(childComplexity int, input model.MetaInfoInput) int
-		Exhibitions         func(childComplexity int, input model.ExhibitionInput) int
-		Order               func(childComplexity int, id string) int
-		OrderItemStatus     func(childComplexity int) int
-		Orders              func(childComplexity int) int
-		Product             func(childComplexity int, id string) int
-		Products            func(childComplexity int, input model.ProductsInput) int
-		SizeMappingPolicies func(childComplexity int) int
-		User                func(childComplexity int) int
-		Version             func(childComplexity int) int
+		Brand           func(childComplexity int, input *model.BrandInput) int
+		Brands          func(childComplexity int, input *model.BrandsInput) int
+		Cart            func(childComplexity int, id string) int
+		Exhibition      func(childComplexity int, id string) int
+		ExhibitionInfo  func(childComplexity int, input model.MetaInfoInput) int
+		Exhibitions     func(childComplexity int, input model.ExhibitionInput) int
+		Order           func(childComplexity int, id string) int
+		OrderItemStatus func(childComplexity int) int
+		Orders          func(childComplexity int) int
+		Product         func(childComplexity int, id string) int
+		Products        func(childComplexity int, input model.ProductsInput) int
+		TopBanners      func(childComplexity int) int
+		User            func(childComplexity int) int
+		Version         func(childComplexity int) int
 	}
 
 	RefundInfo struct {
@@ -360,12 +362,12 @@ type ComplexityRoot struct {
 		Label  func(childComplexity int) int
 	}
 
-	SizeMappingPolicy struct {
-		AlloffCategory    func(childComplexity int) int
-		AlloffProductType func(childComplexity int) int
-		AlloffSize        func(childComplexity int) int
-		ID                func(childComplexity int) int
-		Sizes             func(childComplexity int) int
+	TopBanner struct {
+		ExhibitionID func(childComplexity int) int
+		ID           func(childComplexity int) int
+		ImageURL     func(childComplexity int) int
+		SubTitle     func(childComplexity int) int
+		Title        func(childComplexity int) int
 	}
 
 	User struct {
@@ -411,7 +413,7 @@ type QueryResolver interface {
 	OrderItemStatus(ctx context.Context) ([]*model.OrderItemStatusDescription, error)
 	Product(ctx context.Context, id string) (*model.Product, error)
 	Products(ctx context.Context, input model.ProductsInput) (*model.ProductsOutput, error)
-	SizeMappingPolicies(ctx context.Context) ([]*model.SizeMappingPolicy, error)
+	TopBanners(ctx context.Context) ([]*model.TopBanner, error)
 	Version(ctx context.Context) (*model.AppVersion, error)
 }
 
@@ -800,6 +802,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exhibition.BannerImage(childComplexity), true
+
+	case "Exhibition.brands":
+		if e.complexity.Exhibition.Brands == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.Brands(childComplexity), true
+
+	case "Exhibition.chiefProducts":
+		if e.complexity.Exhibition.ChiefProducts == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.ChiefProducts(childComplexity), true
 
 	case "Exhibition.description":
 		if e.complexity.Exhibition.Description == nil {
@@ -2013,12 +2029,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Products(childComplexity, args["input"].(model.ProductsInput)), true
 
-	case "Query.sizeMappingPolicies":
-		if e.complexity.Query.SizeMappingPolicies == nil {
+	case "Query.topBanners":
+		if e.complexity.Query.TopBanners == nil {
 			break
 		}
 
-		return e.complexity.Query.SizeMappingPolicies(childComplexity), true
+		return e.complexity.Query.TopBanners(childComplexity), true
 
 	case "Query.user":
 		if e.complexity.Query.User == nil {
@@ -2076,40 +2092,40 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SizeGuide.Label(childComplexity), true
 
-	case "SizeMappingPolicy.alloffCategory":
-		if e.complexity.SizeMappingPolicy.AlloffCategory == nil {
+	case "TopBanner.exhibitionId":
+		if e.complexity.TopBanner.ExhibitionID == nil {
 			break
 		}
 
-		return e.complexity.SizeMappingPolicy.AlloffCategory(childComplexity), true
+		return e.complexity.TopBanner.ExhibitionID(childComplexity), true
 
-	case "SizeMappingPolicy.alloffProductType":
-		if e.complexity.SizeMappingPolicy.AlloffProductType == nil {
+	case "TopBanner.id":
+		if e.complexity.TopBanner.ID == nil {
 			break
 		}
 
-		return e.complexity.SizeMappingPolicy.AlloffProductType(childComplexity), true
+		return e.complexity.TopBanner.ID(childComplexity), true
 
-	case "SizeMappingPolicy.alloffSize":
-		if e.complexity.SizeMappingPolicy.AlloffSize == nil {
+	case "TopBanner.imageUrl":
+		if e.complexity.TopBanner.ImageURL == nil {
 			break
 		}
 
-		return e.complexity.SizeMappingPolicy.AlloffSize(childComplexity), true
+		return e.complexity.TopBanner.ImageURL(childComplexity), true
 
-	case "SizeMappingPolicy.id":
-		if e.complexity.SizeMappingPolicy.ID == nil {
+	case "TopBanner.subTitle":
+		if e.complexity.TopBanner.SubTitle == nil {
 			break
 		}
 
-		return e.complexity.SizeMappingPolicy.ID(childComplexity), true
+		return e.complexity.TopBanner.SubTitle(childComplexity), true
 
-	case "SizeMappingPolicy.sizes":
-		if e.complexity.SizeMappingPolicy.Sizes == nil {
+	case "TopBanner.title":
+		if e.complexity.TopBanner.Title == nil {
 			break
 		}
 
-		return e.complexity.SizeMappingPolicy.Sizes(childComplexity), true
+		return e.complexity.TopBanner.Title(childComplexity), true
 
 	case "User.baseAddress":
 		if e.complexity.User.BaseAddress == nil {
@@ -2406,6 +2422,8 @@ enum ExhibitionStatus {
 type Exhibition {
   id: ID!
   productTypes: [AlloffProductType!]!
+  brands: [Brand!]!
+  chiefProducts: [Product!]!
   exhibitionType: ExhibitionType!
   title: String!
   subTitle: String!
@@ -2785,16 +2803,16 @@ extend type Query {
   products(input: ProductsInput!): ProductsOutput!
 }
 `, BuiltIn: false},
-	{Name: "api/apiServer/graph/sizeMappingPolicy.graphqls", Input: `type SizeMappingPolicy {
-    id: ID!
-    alloffSize: AlloffSize!
-    alloffCategory: AlloffCategory!
-    sizes: [String!]!
-    alloffProductType: [AlloffProductType!]!
+	{Name: "api/apiServer/graph/topbanners.graphqls", Input: `type TopBanner {
+  id: ID!
+  imageUrl: String!
+  exhibitionId: String!
+  title: String!
+  subTitle: String!
 }
 
 extend type Query {
-    sizeMappingPolicies: [SizeMappingPolicy!]!
+  topBanners: [TopBanner!]!
 }`, BuiltIn: false},
 	{Name: "api/apiServer/graph/version.graphqls", Input: `type AppVersion {
   latestVersion: String!
@@ -5161,6 +5179,76 @@ func (ec *executionContext) _Exhibition_productTypes(ctx context.Context, field 
 	res := resTmp.([]model.AlloffProductType)
 	fc.Result = res
 	return ec.marshalNAlloffProductType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductTypeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exhibition_brands(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Brands, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Brand)
+	fc.Result = res
+	return ec.marshalNBrand2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐBrandᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exhibition_chiefProducts(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChiefProducts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Product)
+	fc.Result = res
+	return ec.marshalNProduct2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Exhibition_exhibitionType(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
@@ -10746,7 +10834,7 @@ func (ec *executionContext) _Query_products(ctx context.Context, field graphql.C
 	return ec.marshalNProductsOutput2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐProductsOutput(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _Query_sizeMappingPolicies(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+func (ec *executionContext) _Query_topBanners(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -10764,7 +10852,7 @@ func (ec *executionContext) _Query_sizeMappingPolicies(ctx context.Context, fiel
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().SizeMappingPolicies(rctx)
+		return ec.resolvers.Query().TopBanners(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -10776,9 +10864,9 @@ func (ec *executionContext) _Query_sizeMappingPolicies(ctx context.Context, fiel
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.SizeMappingPolicy)
+	res := resTmp.([]*model.TopBanner)
 	fc.Result = res
-	return ec.marshalNSizeMappingPolicy2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeMappingPolicyᚄ(ctx, field.Selections, res)
+	return ec.marshalNTopBanner2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐTopBannerᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Query_version(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -11097,7 +11185,7 @@ func (ec *executionContext) _SizeGuide_imgUrl(ctx context.Context, field graphql
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _SizeMappingPolicy_id(ctx context.Context, field graphql.CollectedField, obj *model.SizeMappingPolicy) (ret graphql.Marshaler) {
+func (ec *executionContext) _TopBanner_id(ctx context.Context, field graphql.CollectedField, obj *model.TopBanner) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11105,7 +11193,7 @@ func (ec *executionContext) _SizeMappingPolicy_id(ctx context.Context, field gra
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "SizeMappingPolicy",
+		Object:     "TopBanner",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -11132,7 +11220,7 @@ func (ec *executionContext) _SizeMappingPolicy_id(ctx context.Context, field gra
 	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _SizeMappingPolicy_alloffSize(ctx context.Context, field graphql.CollectedField, obj *model.SizeMappingPolicy) (ret graphql.Marshaler) {
+func (ec *executionContext) _TopBanner_imageUrl(ctx context.Context, field graphql.CollectedField, obj *model.TopBanner) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11140,7 +11228,7 @@ func (ec *executionContext) _SizeMappingPolicy_alloffSize(ctx context.Context, f
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "SizeMappingPolicy",
+		Object:     "TopBanner",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -11150,7 +11238,7 @@ func (ec *executionContext) _SizeMappingPolicy_alloffSize(ctx context.Context, f
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.AlloffSize, nil
+		return obj.ImageURL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11162,12 +11250,12 @@ func (ec *executionContext) _SizeMappingPolicy_alloffSize(ctx context.Context, f
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.AlloffSize)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNAlloffSize2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffSize(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _SizeMappingPolicy_alloffCategory(ctx context.Context, field graphql.CollectedField, obj *model.SizeMappingPolicy) (ret graphql.Marshaler) {
+func (ec *executionContext) _TopBanner_exhibitionId(ctx context.Context, field graphql.CollectedField, obj *model.TopBanner) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11175,7 +11263,7 @@ func (ec *executionContext) _SizeMappingPolicy_alloffCategory(ctx context.Contex
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "SizeMappingPolicy",
+		Object:     "TopBanner",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -11185,7 +11273,7 @@ func (ec *executionContext) _SizeMappingPolicy_alloffCategory(ctx context.Contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.AlloffCategory, nil
+		return obj.ExhibitionID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11197,12 +11285,12 @@ func (ec *executionContext) _SizeMappingPolicy_alloffCategory(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.AlloffCategory)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNAlloffCategory2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffCategory(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _SizeMappingPolicy_sizes(ctx context.Context, field graphql.CollectedField, obj *model.SizeMappingPolicy) (ret graphql.Marshaler) {
+func (ec *executionContext) _TopBanner_title(ctx context.Context, field graphql.CollectedField, obj *model.TopBanner) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11210,7 +11298,7 @@ func (ec *executionContext) _SizeMappingPolicy_sizes(ctx context.Context, field 
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "SizeMappingPolicy",
+		Object:     "TopBanner",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -11220,7 +11308,7 @@ func (ec *executionContext) _SizeMappingPolicy_sizes(ctx context.Context, field 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Sizes, nil
+		return obj.Title, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11232,12 +11320,12 @@ func (ec *executionContext) _SizeMappingPolicy_sizes(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) _SizeMappingPolicy_alloffProductType(ctx context.Context, field graphql.CollectedField, obj *model.SizeMappingPolicy) (ret graphql.Marshaler) {
+func (ec *executionContext) _TopBanner_subTitle(ctx context.Context, field graphql.CollectedField, obj *model.TopBanner) (ret graphql.Marshaler) {
 	defer func() {
 		if r := recover(); r != nil {
 			ec.Error(ctx, ec.Recover(ctx, r))
@@ -11245,7 +11333,7 @@ func (ec *executionContext) _SizeMappingPolicy_alloffProductType(ctx context.Con
 		}
 	}()
 	fc := &graphql.FieldContext{
-		Object:     "SizeMappingPolicy",
+		Object:     "TopBanner",
 		Field:      field,
 		Args:       nil,
 		IsMethod:   false,
@@ -11255,7 +11343,7 @@ func (ec *executionContext) _SizeMappingPolicy_alloffProductType(ctx context.Con
 	ctx = graphql.WithFieldContext(ctx, fc)
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.AlloffProductType, nil
+		return obj.SubTitle, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11267,9 +11355,9 @@ func (ec *executionContext) _SizeMappingPolicy_alloffProductType(ctx context.Con
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]model.AlloffProductType)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNAlloffProductType2ᚕgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐAlloffProductTypeᚄ(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _User_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
@@ -13941,6 +14029,16 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "brands":
+			out.Values[i] = ec._Exhibition_brands(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "chiefProducts":
+			out.Values[i] = ec._Exhibition_chiefProducts(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "exhibitionType":
 			out.Values[i] = ec._Exhibition_exhibitionType(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -15210,7 +15308,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				}
 				return res
 			})
-		case "sizeMappingPolicies":
+		case "topBanners":
 			field := field
 			out.Concurrently(i, func() (res graphql.Marshaler) {
 				defer func() {
@@ -15218,7 +15316,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_sizeMappingPolicies(ctx, field)
+				res = ec._Query_topBanners(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&invalids, 1)
 				}
@@ -15327,39 +15425,39 @@ func (ec *executionContext) _SizeGuide(ctx context.Context, sel ast.SelectionSet
 	return out
 }
 
-var sizeMappingPolicyImplementors = []string{"SizeMappingPolicy"}
+var topBannerImplementors = []string{"TopBanner"}
 
-func (ec *executionContext) _SizeMappingPolicy(ctx context.Context, sel ast.SelectionSet, obj *model.SizeMappingPolicy) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, sizeMappingPolicyImplementors)
+func (ec *executionContext) _TopBanner(ctx context.Context, sel ast.SelectionSet, obj *model.TopBanner) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, topBannerImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("SizeMappingPolicy")
+			out.Values[i] = graphql.MarshalString("TopBanner")
 		case "id":
-			out.Values[i] = ec._SizeMappingPolicy_id(ctx, field, obj)
+			out.Values[i] = ec._TopBanner_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "alloffSize":
-			out.Values[i] = ec._SizeMappingPolicy_alloffSize(ctx, field, obj)
+		case "imageUrl":
+			out.Values[i] = ec._TopBanner_imageUrl(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "alloffCategory":
-			out.Values[i] = ec._SizeMappingPolicy_alloffCategory(ctx, field, obj)
+		case "exhibitionId":
+			out.Values[i] = ec._TopBanner_exhibitionId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "sizes":
-			out.Values[i] = ec._SizeMappingPolicy_sizes(ctx, field, obj)
+		case "title":
+			out.Values[i] = ec._TopBanner_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "alloffProductType":
-			out.Values[i] = ec._SizeMappingPolicy_alloffProductType(ctx, field, obj)
+		case "subTitle":
+			out.Values[i] = ec._TopBanner_subTitle(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -16888,60 +16986,6 @@ func (ec *executionContext) marshalNSizeGuide2ᚖgithubᚗcomᚋlessbutterᚋall
 	return ec._SizeGuide(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNSizeMappingPolicy2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeMappingPolicyᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SizeMappingPolicy) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNSizeMappingPolicy2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeMappingPolicy(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNSizeMappingPolicy2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐSizeMappingPolicy(ctx context.Context, sel ast.SelectionSet, v *model.SizeMappingPolicy) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	return ec._SizeMappingPolicy(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -16991,6 +17035,60 @@ func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalNTopBanner2ᚕᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐTopBannerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.TopBanner) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTopBanner2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐTopBanner(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNTopBanner2ᚖgithubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐTopBanner(ctx context.Context, sel ast.SelectionSet, v *model.TopBanner) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	return ec._TopBanner(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNUser2githubᚗcomᚋlessbutterᚋalloffᚑapiᚋapiᚋapiServerᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {

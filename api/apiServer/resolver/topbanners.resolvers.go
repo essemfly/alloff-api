@@ -11,16 +11,18 @@ import (
 	"github.com/lessbutter/alloff-api/config/ioc"
 )
 
-func (r *queryResolver) SizeMappingPolicies(ctx context.Context) ([]*model.SizeMappingPolicy, error) {
-	res := []*model.SizeMappingPolicy{}
-	policies, err := ioc.Repo.SizeMappingPolicy.List()
+func (r *queryResolver) TopBanners(ctx context.Context) ([]*model.TopBanner, error) {
+	offset, limit := 0, 100
+	onlyLive := true
+	bannerDaos, _, err := ioc.Repo.TopBanners.List(offset, limit, onlyLive)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, policy := range policies {
-		res = append(res, mapper.MapSizeMappingPolicy(policy))
+	banners := []*model.TopBanner{}
+	for _, bannerDao := range bannerDaos {
+		banners = append(banners, mapper.MapTopBanner(bannerDao))
 	}
 
-	return res, nil
+	return banners, nil
 }

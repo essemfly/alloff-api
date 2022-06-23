@@ -104,15 +104,22 @@ func ListProductsFromPage(pageURL string) (requests []*productinfo.AddMetaInfoRe
 		imageURL = strings.ReplaceAll(imageURL, "Thumbs_", "")
 		imageURL = strings.ReplaceAll(imageURL, "thumbs_", "")
 		requests = append(requests, &productinfo.AddMetaInfoRequest{
-			ProductUrl:      BASE_URL + "/" + e.ChildAttr(".cotienifoto a", "href"),
-			Images:          []string{imageURL},
-			AlloffName:      e.ChildText(".testofoto a .notranslate"),
-			ProductID:       e.ChildText(".testofoto div strong"),
-			OriginalPrice:   float32(originalPrice),
-			DiscountedPrice: float32(currentPrice),
-			CurrencyType:    domain.CurrencyEUR,
-			Information:     information,
-			Inventory:       []*domain.InventoryDAO{},
+			ProductUrl:           BASE_URL + "/" + e.ChildAttr(".cotienifoto a", "href"),
+			Images:               []string{imageURL},
+			AlloffName:           e.ChildText(".testofoto a .notranslate"),
+			ProductID:            e.ChildText(".testofoto div strong"),
+			OriginalPrice:        float32(originalPrice),
+			DiscountedPrice:      float32(currentPrice),
+			CurrencyType:         domain.CurrencyEUR,
+			Information:          information,
+			Inventory:            []*domain.InventoryDAO{},
+			IsForeignDelivery:    true,
+			EarliestDeliveryDays: 14,
+			LatestDeliveryDays:   21,
+			IsRefundPossible:     true,
+			RefundFee:            100000,
+			IsRemoved:            false,
+			DescriptionImages:    []string{imageURL},
 		})
 	})
 

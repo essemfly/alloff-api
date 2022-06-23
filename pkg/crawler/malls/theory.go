@@ -1,6 +1,7 @@
 package malls
 
 import (
+	"fmt"
 	"github.com/gocolly/colly"
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
@@ -66,7 +67,8 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			originalPriceStr = strings.Trim(originalPriceStr, " ")
 			originalPrice, err = strconv.ParseFloat(originalPriceStr, 32)
 			if err != nil {
-				log.Printf("err on %s", err)
+				msg := fmt.Sprintf("err on parse original price %v : %s : ", originalPrice, productUrl)
+				config.Logger.Error(msg, zap.Error(err))
 				return
 			}
 		}
@@ -76,7 +78,8 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 		discountedPriceStr = strings.Replace(discountedPriceStr, ",", "", -1)
 		discountedPrice, err := strconv.ParseFloat(discountedPriceStr, 32)
 		if err != nil {
-			log.Println("err", err)
+			msg := fmt.Sprintf("err on parse discount price %v : %s : ", originalPrice, productUrl)
+			config.Logger.Error(msg, zap.Error(err))
 			return
 		}
 		if discountedPrice == 0 {
@@ -93,28 +96,32 @@ func CrawlTheory(worker chan bool, done chan bool, source *domain.CrawlSourceDAO
 			"색상": productColor,
 		}
 		addRequest := &productinfo.AddMetaInfoRequest{
-			AlloffName:          productName,
-			ProductID:           productId,
-			ProductUrl:          productUrl,
-			ProductType:         productType,
-			OriginalPrice:       float32(originalPrice),
-			DiscountedPrice:     float32(discountedPrice),
-			CurrencyType:        domain.CurrencyUSD,
-			Brand:               brand,
-			Source:              source,
-			AlloffCategory:      &domain.AlloffCategoryDAO{},
-			Images:              images,
-			Colors:              []string{productColor},
-			DescriptionInfos:    infos,
-			Sizes:               sizes,
-			Inventory:           inventories,
-			Information:         description,
-			IsForeignDelivery:   true,
-			IsTranslateRequired: true,
-			ModuleName:          source.CrawlModuleName,
-			IsRemoved:           false,
-			IsSoldout:           false,
-			DescriptionImages:   images,
+			AlloffName:           productName,
+			ProductID:            productId,
+			ProductUrl:           productUrl,
+			ProductType:          productType,
+			OriginalPrice:        float32(originalPrice),
+			DiscountedPrice:      float32(discountedPrice),
+			CurrencyType:         domain.CurrencyUSD,
+			Brand:                brand,
+			Source:               source,
+			AlloffCategory:       &domain.AlloffCategoryDAO{},
+			Images:               images,
+			Colors:               []string{productColor},
+			DescriptionInfos:     infos,
+			Sizes:                sizes,
+			Inventory:            inventories,
+			Information:          description,
+			IsTranslateRequired:  true,
+			ModuleName:           source.CrawlModuleName,
+			IsRemoved:            false,
+			IsSoldout:            false,
+			DescriptionImages:    images,
+			IsForeignDelivery:    true,
+			EarliestDeliveryDays: 14,
+			LatestDeliveryDays:   21,
+			IsRefundPossible:     true,
+			RefundFee:            100000,
 		}
 
 		totalProducts += 1

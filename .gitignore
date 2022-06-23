@@ -28,7 +28,5 @@ config/config.*.json
 log.json
 .env.*
 log.*
-grpcServer
-apiServer
 grpcServer-last
 apiServer-last

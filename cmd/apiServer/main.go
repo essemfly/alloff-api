@@ -15,8 +15,11 @@ import (
 	"github.com/lessbutter/alloff-api/api/apiServer/middleware"
 	"github.com/lessbutter/alloff-api/api/apiServer/resolver"
 	"github.com/lessbutter/alloff-api/cmd"
+	"github.com/lessbutter/alloff-api/cmd/apiServer/webhooks"
 	"github.com/rs/cors"
 )
+
+type Handler func(w http.ResponseWriter, r *http.Request) error
 
 func main() {
 	cmd.SetBaseConfig()
@@ -31,10 +34,11 @@ func main() {
 	sentryHandler := sentryhttp.New(sentryhttp.Options{
 		Repanic: true,
 	})
-	gqlgenHandler := playground.Handler("Outlet API", "/query")
+	gqlgenHandler := playground.Handler("Alloff API", "/query")
 
 	router.Handle("/", sentryHandler.Handle(gqlgenHandler))
 	router.Handle("/query", sentryHandler.Handle(srv))
+	router.Handle("/webhook/payment", sentryHandler.Handle(webhooks.Handler(webhooks.IamportHandler)))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))

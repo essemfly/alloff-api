@@ -31,6 +31,7 @@ type MongoDB struct {
 	alloffSizeCol        *mongo.Collection
 	cartCol              *mongo.Collection
 	sizeMappingPolicyCol *mongo.Collection
+	topBannersCol        *mongo.Collection
 }
 
 func NewMongoDB() *MongoDB {
@@ -62,6 +63,7 @@ func NewMongoDB() *MongoDB {
 		alloffSizeCol:        db.Collection("alloff_sizes"),
 		cartCol:              db.Collection("carts"),
 		sizeMappingPolicyCol: db.Collection("size_mapping_policy"),
+		topBannersCol:        db.Collection("top_banners"),
 	}
 }
 
@@ -83,7 +85,7 @@ func (conn *MongoDB) RegisterRepos() {
 	ioc.Repo.Notifications = MongoNotificationsRepo(conn)
 	ioc.Repo.AlloffSizes = MongoAlloffSizeRepo(conn)
 	ioc.Repo.Carts = MongoCartsRepo(conn)
-	ioc.Repo.SizeMappingPolicy = MongoSizeMappingPolicyRepo(conn)
+	ioc.Repo.TopBanners = MongoTopBannersRepo(conn)
 }
 
 func makeMongoClient(ctx context.Context) (*mongo.Client, error) {
