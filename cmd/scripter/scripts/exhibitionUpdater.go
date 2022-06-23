@@ -2,12 +2,11 @@ package scripts
 
 import (
 	"log"
-	"time"
 
 	"github.com/lessbutter/alloff-api/config"
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
-	"github.com/lessbutter/alloff-api/pkg/product"
+	"github.com/lessbutter/alloff-api/pkg/exhibition"
 	"go.uber.org/zap"
 )
 
@@ -20,37 +19,9 @@ func ExhibitionStatusUpdater() {
 	}
 	log.Println("total exhibitions", cnt)
 	for _, exDao := range exDaos {
-		// Exhibition Syncer를 태울까 했는데, Exhibition Syncer에는 close하는 것은 안들어가 있다.
-
-		exDao.IsLive = true
-		exhibitionOnSale := true
-		if exDao.StartTime.Before(time.Now()) {
-			// 끝난 딜
-			if exDao.FinishTime.Before(time.Now()) {
-				exDao.IsLive = false
-				exhibitionOnSale = false
-			}
-		} else { // 아직 시작안한 딜
-			exhibitionOnSale = false
-		}
-
-		ioc.Repo.Exhibitions.Upsert(exDao)
-		productListInput := product.ProductListInput{
-			Offset:       0,
-			Limit:        1000,
-			ExhibitionID: exDao.ID.Hex(),
-		}
-		pds, cnt, err := product.ListProducts(productListInput)
-		log.Println("total products# to removed", exDao.ID, cnt)
+		_, err = exhibition.ExhibitionSyncer(exDao)
 		if err != nil {
-			config.Logger.Error("exhibition syncer error", zap.Error(err))
-		}
-		for _, pd := range pds {
-			pd.OnSale = exhibitionOnSale
-			_, err := ioc.Repo.Products.Upsert(pd)
-			if err != nil {
-				config.Logger.Error("exhibition syncer error", zap.Error(err))
-			}
+			config.Logger.Error("exhibitino sync error "+exDao.ID.Hex(), zap.Error(err))
 		}
 	}
 }
