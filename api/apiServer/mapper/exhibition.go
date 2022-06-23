@@ -33,6 +33,7 @@ func MapExhibition(exDao *domain.ExhibitionDAO, brief bool) *model.Exhibition {
 		UserAlarmOn:    false,
 		Brands:         brands,
 		ChiefProducts:  pds,
+		NumProducts:    exDao.NumProducts,
 	}
 }
 

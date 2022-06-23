@@ -17,6 +17,7 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 	pdTypes := []domain.AlloffProductType{}
 	brands := []*domain.BrandDAO{}
 	newPgs := []*domain.ProductGroupDAO{}
+	numProducts := 0
 	maxDiscountRates := 0
 
 	for _, pg := range exDao.ProductGroups {
@@ -77,12 +78,14 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 		pdTypes = removeDuplicateType(pdTypes)
 		brands = removeDuplicateBrands(brands)
 		exDao.ChiefProducts = pds[0:10]
+		numProducts += len(pds)
 	}
 
 	exDao.ProductGroups = newPgs
 	exDao.ProductTypes = pdTypes
 	exDao.Brands = brands
 	exDao.MaxDiscounts = maxDiscountRates
+	exDao.NumProducts = numProducts
 
 	newExDao, err := ioc.Repo.Exhibitions.Upsert(exDao)
 	if err != nil {
