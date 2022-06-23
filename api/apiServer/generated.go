@@ -138,6 +138,7 @@ type ComplexityRoot struct {
 		ID             func(childComplexity int) int
 		MaxDiscounts   func(childComplexity int) int
 		NumAlarms      func(childComplexity int) int
+		NumProducts    func(childComplexity int) int
 		ProductTypes   func(childComplexity int) int
 		StartTime      func(childComplexity int) int
 		SubTitle       func(childComplexity int) int
@@ -858,6 +859,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Exhibition.NumAlarms(childComplexity), true
+
+	case "Exhibition.numProducts":
+		if e.complexity.Exhibition.NumProducts == nil {
+			break
+		}
+
+		return e.complexity.Exhibition.NumProducts(childComplexity), true
 
 	case "Exhibition.productTypes":
 		if e.complexity.Exhibition.ProductTypes == nil {
@@ -2436,6 +2444,7 @@ type Exhibition {
   numAlarms: Int!
   maxDiscounts: Int!
   userAlarmOn: Boolean!
+  numProducts: Int!
 }
 
 input ExhibitionInput {
@@ -5669,6 +5678,41 @@ func (ec *executionContext) _Exhibition_userAlarmOn(ctx context.Context, field g
 	res := resTmp.(bool)
 	fc.Result = res
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Exhibition_numProducts(ctx context.Context, field graphql.CollectedField, obj *model.Exhibition) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Exhibition",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   false,
+		IsResolver: false,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NumProducts, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _ExhibitionOutput_exhibitions(ctx context.Context, field graphql.CollectedField, obj *model.ExhibitionOutput) (ret graphql.Marshaler) {
@@ -14096,6 +14140,11 @@ func (ec *executionContext) _Exhibition(ctx context.Context, sel ast.SelectionSe
 			}
 		case "userAlarmOn":
 			out.Values[i] = ec._Exhibition_userAlarmOn(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "numProducts":
+			out.Values[i] = ec._Exhibition_numProducts(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}

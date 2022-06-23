@@ -59,6 +59,7 @@ type ExhibitionDAO struct {
 	MaxDiscounts   int
 	CreatedAt      time.Time
 	UpdatedAt      time.Time
+	NumProducts    int
 }
 
 func (exDao *ExhibitionDAO) IsSales() bool {
