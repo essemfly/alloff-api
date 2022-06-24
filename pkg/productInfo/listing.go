@@ -49,14 +49,6 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 		filter["source.crawlmodulename"] = input.Modulename
 	}
 
-	if input.Keyword != "" {
-		filter["$or"] = []bson.M{
-			{"originalname": primitive.Regex{Pattern: input.Keyword, Options: "i"}},
-			{"alloffname": primitive.Regex{Pattern: input.Keyword, Options: "i"}},
-			{"source.crawlmodulename": primitive.Regex{Pattern: input.Keyword, Options: "i"}},
-		}
-	}
-
 	if input.ProductUrl != "" {
 		filter["producturl"] = primitive.Regex{Pattern: input.ProductUrl, Options: "i"}
 	}
@@ -89,6 +81,17 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 		filter["inventory.alloffsizes._id"] = bson.M{"$all": alloffSizeIds}
 	}
 
+	andQuries := []bson.M{}
+	keyWordQueries := []bson.M{}
+	if input.Keyword != "" {
+		keyWordQueries = append(keyWordQueries, bson.M{"originalname": primitive.Regex{Pattern: input.Keyword, Options: "i"}})
+		keyWordQueries = append(keyWordQueries, bson.M{"alloffname": primitive.Regex{Pattern: input.Keyword, Options: "i"}})
+		keyWordQueries = append(keyWordQueries, bson.M{"source.crawlmodulename": primitive.Regex{Pattern: input.Keyword, Options: "i"}})
+	}
+	if len(keyWordQueries) > 0 {
+		andQuries = append(andQuries, bson.M{"$or": keyWordQueries})
+	}
+
 	priceQueryRanges := []bson.M{}
 	for _, priceRange := range input.PriceRanges {
 		if priceRange == "30" {
@@ -115,9 +118,12 @@ func (input *ProductInfoListInput) BuildFilter() (bson.M, error) {
 			}})
 		}
 	}
-
 	if len(priceQueryRanges) > 0 {
-		filter["$or"] = priceQueryRanges
+		andQuries = append(andQuries, bson.M{"$or": priceQueryRanges})
+	}
+
+	if len(andQuries) > 0 {
+		filter["$and"] = andQuries
 	}
 
 	return filter, nil
