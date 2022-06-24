@@ -143,7 +143,7 @@ type AlloffSizeRepository interface {
 	Get(alloffSizeID string) (*domain.AlloffSizeDAO, error)
 	Upsert(dao *domain.AlloffSizeDAO) (*domain.AlloffSizeDAO, error)
 	List(offset, limit int) ([]*domain.AlloffSizeDAO, int, error)
-	ListByDetail(size string, productTypes []domain.AlloffProductType, alloffCategpryID string) ([]*domain.AlloffSizeDAO, error)
+	ListByDetail(size string, productTypes []domain.AlloffProductType, alloffCategoryID string) ([]*domain.AlloffSizeDAO, error)
 }
 
 type CartsRepository interface {

@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/lessbutter/alloff-api/internal/core/domain"
@@ -80,15 +81,17 @@ func (repo *alloffSizeRepo) Get(alloffSizeID string) (*domain.AlloffSizeDAO, err
 	return alloffSize, nil
 }
 
-func (repo *alloffSizeRepo) ListByDetail(size string, productTypes []domain.AlloffProductType, alloffCategpryID string) ([]*domain.AlloffSizeDAO, error) {
+func (repo *alloffSizeRepo) ListByDetail(size string, productTypes []domain.AlloffProductType, alloffCategoryID string) ([]*domain.AlloffSizeDAO, error) {
+	log.Println(size)
+	log.Println(productTypes)
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
-
-	alloffCategpryOid, _ := primitive.ObjectIDFromHex(alloffCategpryID)
+	alloffCategoryOid, _ := primitive.ObjectIDFromHex(alloffCategoryID)
+	log.Println(alloffCategoryOid)
 	filter := bson.M{
 		"sizes":              size,
-		"alloffcategory._id": alloffCategpryOid,
-		"alloffproducttype":  bson.M{"$all": productTypes},
+		"alloffcategory._id": alloffCategoryOid,
+		"producttype":        bson.M{"$all": productTypes},
 	}
 
 	cursor, err := repo.col.Find(ctx, filter)

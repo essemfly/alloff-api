@@ -44,5 +44,4 @@ func assignAlloffSizeToInventory(inv *domain.InventoryDAO, productType []domain.
 		Quantity:    int(inv.Quantity),
 		Size:        inv.Size,
 	}
-
 }
