@@ -16,6 +16,7 @@ import (
 func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error) {
 	pdTypes := []domain.AlloffProductType{}
 	brands := []*domain.BrandDAO{}
+	brandKeynames := []string{}
 	newPgs := []*domain.ProductGroupDAO{}
 	allpds := []*domain.ProductDAO{}
 	numProducts := 0
@@ -74,17 +75,24 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 				config.Logger.Error("exhibition syncer error", zap.Error(err))
 			}
 			pdTypes = append(pdTypes, pd.ProductInfo.ProductType...)
-			brands = append(brands, pd.ProductInfo.Brand)
+			brandKeynames = append(brandKeynames, pd.ProductInfo.Brand.KeyName)
 		}
 		pdTypes = removeDuplicateType(pdTypes)
-		brands = removeDuplicateBrands(brands)
+		brandKeynames = removeDuplicateBrands(brandKeynames)
 		allpds = append(allpds, pds...)
 		numProducts += len(pds)
 	}
 
+	for _, keyname := range brandKeynames {
+		brand, err := ioc.Repo.Brands.GetByKeyname(keyname)
+		if err != nil {
+			config.Logger.Error("get brand by keyname error", zap.Error(err))
+		}
+		brands = append(brands, brand)
+	}
+	exDao.Brands = brands
 	exDao.ProductGroups = newPgs
 	exDao.ProductTypes = pdTypes
-	exDao.Brands = brands
 	exDao.MaxDiscounts = maxDiscountRates
 	exDao.NumProducts = numProducts
 	exDao.ChiefProducts = allpds
@@ -138,12 +146,12 @@ func removeDuplicateType(strSlice []domain.AlloffProductType) []domain.AlloffPro
 	return list
 }
 
-func removeDuplicateBrands(brands []*domain.BrandDAO) []*domain.BrandDAO {
+func removeDuplicateBrands(brandKeynames []string) []string {
 	allKeys := make(map[string]bool)
-	list := []*domain.BrandDAO{}
-	for _, item := range brands {
-		if _, value := allKeys[item.ID.Hex()]; !value {
-			allKeys[item.ID.Hex()] = true
+	list := []string{}
+	for _, item := range brandKeynames {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
 			list = append(list, item)
 		}
 	}
