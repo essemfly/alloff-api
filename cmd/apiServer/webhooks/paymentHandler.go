@@ -17,7 +17,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		// handle returned error here.
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("bad"))
+		w.Write([]byte("error occured"))
 	}
 }
 
@@ -46,7 +46,7 @@ func IamportHandler(w http.ResponseWriter, r *http.Request) error {
 	orderDao, err := ioc.Repo.Orders.GetByAlloffID(res.MerchantUID)
 	if err != nil {
 		config.Logger.Error("ERR301:failed to find order order not found")
-		return nil
+		return err
 	}
 
 	if orderDao.OrderStatus == domain.ORDER_PAYMENT_FINISHED {
@@ -56,9 +56,8 @@ func IamportHandler(w http.ResponseWriter, r *http.Request) error {
 	err = ioc.Service.OrderWithPaymentService.VerifyPayment(orderDao, res.ImpUID)
 	if err != nil {
 		config.Logger.Error("ERR405: failed to verify payment " + err.Error())
-		return nil
+		return err
 	}
 
-	w.Write([]byte("foo"))
 	return nil
 }
