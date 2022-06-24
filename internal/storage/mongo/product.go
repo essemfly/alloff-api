@@ -428,7 +428,7 @@ func (repo *productMetaInfoRepo) MakeOutdatedProducts(brandModules []string, las
 			"isremoved":              false,
 			"source.crawlmodulename": bson.M{"$in": brandModules},
 			"updated": bson.M{
-				"$lte": primitive.NewDateTimeFromTime(lastUpdatedDate),
+				"$lte": time.Now().Add(-24 * 7 * time.Hour),
 			},
 		}, bson.M{"$set": bson.M{"isremoved": true}})
 	if err != nil {
