@@ -12,5 +12,5 @@ type RefundItemDAO struct {
 	RefundFee    int       `pg:"refund_fee"`
 	RefundAmount int       `pg:"refund_amount"`
 	CreatedAt    time.Time `pg:"created_at"`
-	UpdatedAt    time.Time `pg:"updated_at`
+	UpdatedAt    time.Time `pg:"updated_at"`
 }
