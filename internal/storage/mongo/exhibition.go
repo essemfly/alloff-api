@@ -38,7 +38,7 @@ func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionSta
 	now := primitive.NewDateTimeFromTime(time.Now())
 	filter := bson.M{
 		"exhibitiontype": exhibitionType,
-		"islive": onlyLive,,
+		"islive":         onlyLive,
 	}
 	sortingOptions := bson.D{{Key: "starttime", Value: -1}}
 	onGoingOptions := options.Find()
