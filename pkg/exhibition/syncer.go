@@ -67,7 +67,7 @@ func ExhibitionSyncer(exDao *domain.ExhibitionDAO) (*domain.ExhibitionDAO, error
 			pd.ExhibitionStartTime = pgDao.StartTime
 			pd.ExhibitionFinishTime = pgDao.FinishTime
 			pd.OnSale = false
-			if pd.IsSaleable() {
+			if pd.IsSaleable() && exDao.IsLive {
 				pd.OnSale = true
 			}
 			_, err := ioc.Repo.Products.Upsert(pd)
