@@ -30,9 +30,9 @@ func (s *ExhibitionService) GetExhibition(ctx context.Context, req *grpcServer.G
 }
 
 func (s *ExhibitionService) ListExhibitions(ctx context.Context, req *grpcServer.ListExhibitionsRequest) (*grpcServer.ListExhibitionsResponse, error) {
-	onlyLive := false
-	if req.IsLive {
-		onlyLive = true
+	onlyLive := true
+	if !req.IsLive {
+		onlyLive = false
 	}
 
 	groupType := domain.EXHIBITION_NORMAL
