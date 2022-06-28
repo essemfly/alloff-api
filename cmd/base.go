@@ -21,4 +21,5 @@ func SetBaseConfig() {
 	config.InitSentry()
 	config.InitAmplitude()
 	config.InitOmnious()
+	config.InitAws()
 }
