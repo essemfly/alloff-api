@@ -20,10 +20,12 @@ func CacheProductImages(pdInfoDao *domain.ProductMetaInfoDAO) *domain.ProductMet
 
 	newImageUrls, err := cacheImages(pdInfoDao.ID.Hex(), pdInfoDao.Images)
 	if err != nil {
+		config.Logger.Error("cache image error", zap.Error(err))
 		return pdInfoDao
 	}
 	newDescImageUrls, err := cacheImages(pdInfoDao.ID.Hex()+"-desc", pdInfoDao.SalesInstruction.Description.Images)
 	if err != nil {
+		config.Logger.Error("cache desc image error", zap.Error(err))
 		return pdInfoDao
 	}
 
@@ -46,15 +48,21 @@ func cacheImages(pdInfoID string, images []string) ([]string, error) {
 		}
 		defer imgResp.Body.Close()
 
+		if imgResp.StatusCode != 200 {
+			return nil, errors.New("status code: " + strconv.Itoa(imgResp.StatusCode))
+		}
+
 		extension, err := getFileExtensionFromUrl(imgURL)
 		if err != nil {
 			config.Logger.Error("failed to get extension from url: "+imgURL, zap.Error(err))
+			return nil, err
 		}
 
 		filename := pdInfoID + "-" + strconv.Itoa(idx)
 		filekey, err := aws.UploadImage(imgResp.Body, filename, extension)
 		if err != nil {
 			config.Logger.Error("failed to upload image for pdinfo ID: "+pdInfoID, zap.Error(err))
+			return nil, err
 		}
 		newImageUrls = append(newImageUrls, filekey)
 	}
