@@ -349,49 +349,40 @@ func (repo *orderPaymentService) VerifyPayment(orderDao *domain.OrderDAO, impUID
 		return errors.New("payment amount not equal")
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := repo.db.RunInTransaction(ctx, func(tx *pg.Tx) error {
-		orderDao.OrderStatus = domain.ORDER_PAYMENT_FINISHED
-		orderDao.UpdatedAt = time.Now()
-		orderDao.OrderedAt = time.Now()
-		_, err := tx.Model(orderDao).WherePK().Update()
-		if err != nil {
-			log.Println("err on orderDAO", err)
-			return err
-		}
-		for _, orderItemDAO := range orderDao.OrderItems {
-			orderItemDAO.OrderItemStatus = domain.ORDER_ITEM_PAYMENT_FINISHED
-			orderItemDAO.UpdatedAt = time.Now()
-			orderItemDAO.OrderedAt = time.Now()
-			_, err = tx.Model(orderItemDAO).WherePK().Update()
-			if err != nil {
-				log.Println("err on orderItemDAO", err)
-				return err
-			}
-		}
-
-		paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(orderDao.AlloffOrderID, int(payment.Amount))
-		if err != nil {
-			return err
-		}
-		paymentDao.PaymentStatus = domain.PAYMENT_CONFIRMED
-		paymentDao.ImpUID = impUID
-		paymentDao.UpdatedAt = time.Now()
-		_, err = tx.Model(paymentDao).WherePK().Update()
-		if err != nil {
-			log.Println("err on paymentdao", err)
-			return err
-		}
-
-		alimtalk.NotifyPaymentSuccessAlarm(paymentDao)
-		WritePaymentSuccessSlack(paymentDao)
-
-		return nil
-	}); err != nil {
+	orderDao.OrderStatus = domain.ORDER_PAYMENT_FINISHED
+	orderDao.UpdatedAt = time.Now()
+	orderDao.OrderedAt = time.Now()
+	_, err = repo.db.Model(orderDao).WherePK().Update()
+	if err != nil {
+		log.Println("err on orderDAO", err)
 		return err
 	}
+	for _, orderItemDAO := range orderDao.OrderItems {
+		orderItemDAO.OrderItemStatus = domain.ORDER_ITEM_PAYMENT_FINISHED
+		orderItemDAO.UpdatedAt = time.Now()
+		orderItemDAO.OrderedAt = time.Now()
+		_, err = repo.db.Model(orderItemDAO).WherePK().Update()
+		if err != nil {
+			log.Println("err on orderItemDAO", err)
+			return err
+		}
+	}
+
+	paymentDao, err := ioc.Repo.Payments.GetByOrderIDAndAmount(orderDao.AlloffOrderID, int(payment.Amount))
+	if err != nil {
+		return err
+	}
+	paymentDao.PaymentStatus = domain.PAYMENT_CONFIRMED
+	paymentDao.ImpUID = impUID
+	paymentDao.UpdatedAt = time.Now()
+	_, err = repo.db.Model(paymentDao).WherePK().Update()
+	if err != nil {
+		log.Println("err on paymentdao", err)
+		return err
+	}
+
+	alimtalk.NotifyPaymentSuccessAlarm(paymentDao)
+	WritePaymentSuccessSlack(paymentDao)
 
 	return nil
 }
