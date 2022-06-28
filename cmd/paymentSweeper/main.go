@@ -17,8 +17,7 @@ func main() {
 	}
 
 	log.Println("length of pending", len(payments))
-	for idx, paymentDao := range payments {
-		log.Println("idx", idx, paymentDao.ID)
+	for _, paymentDao := range payments {
 		if paymentDao.UpdatedAt.Before(time.Now().Add(time.Minute * -10)) {
 			orderDao, err := ioc.Repo.Orders.GetByAlloffID(paymentDao.MerchantUid)
 			if err != nil {

@@ -3,6 +3,10 @@ package scripts
 import (
 	"context"
 	"encoding/json"
+	"io/ioutil"
+	"log"
+	"time"
+
 	"github.com/lessbutter/alloff-api/config/ioc"
 	"github.com/lessbutter/alloff-api/internal/core/domain"
 	"github.com/lessbutter/alloff-api/internal/utils"
@@ -13,9 +17,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"io/ioutil"
-	"log"
-	"time"
 )
 
 func MigrateFromPGUrl(pgUrl string) {

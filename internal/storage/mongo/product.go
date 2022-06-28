@@ -290,9 +290,7 @@ func (repo *productRepo) ListInfos(filter interface{}) (brands []*domain.BrandCo
 		// ******* mapping sizes *******
 		alloffSizes := []*domain.AlloffSizeDAO{}
 		for _, inv := range pd.ProductInfo.Inventory {
-			for _, alloffSize := range inv.AlloffSizes {
-				alloffSizes = append(alloffSizes, alloffSize)
-			}
+			alloffSizes = append(alloffSizes, inv.AlloffSizes...)
 		}
 		for _, target := range alloffSizes {
 			isThere := false
