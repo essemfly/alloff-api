@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	productinfo "github.com/lessbutter/alloff-api/pkg/productInfo"
 	"time"
 
 	"github.com/lessbutter/alloff-api/api/grpcServer/mapper"
@@ -276,7 +277,7 @@ func (s *ProductGroupService) PushProductsInProductGroup(ctx context.Context, re
 			config.Logger.Error("err occured on products insert on pg : "+productPriority.ProductId, zap.Error(err))
 		}
 
-		_, err = ioc.Repo.ProductMetaInfos.Upsert(pdInfoDao)
+		_, err = productinfo.Update(pdInfoDao)
 		if err != nil {
 			config.Logger.Error("err occurred on upsert productmetainfo : "+pdInfoDao.ID.Hex(), zap.Error(err))
 		}
