@@ -394,6 +394,8 @@ github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220630072424-9a7237c10088 h1
 github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220630072424-9a7237c10088/go.mod h1:YNUTDezx6zOBfeXXiQN+w3kzhqIKfv4wssYnbgBdLy8=
 github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220630072607-2ba406531eeb h1:dxIpNeLxFooHosKMgy9PPJLWYJ2Qj0Iyzz5DnkF2apE=
 github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220630072607-2ba406531eeb/go.mod h1:YNUTDezx6zOBfeXXiQN+w3kzhqIKfv4wssYnbgBdLy8=
+github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220630081004-8b6cec630016 h1:Um03L0h7Xr82Fkfh57dABPHv3oFJYu0/jzEUrIhYVqY=
+github.com/lessbutter/alloff-grpc-protos v0.2.1-0.20220630081004-8b6cec630016/go.mod h1:YNUTDezx6zOBfeXXiQN+w3kzhqIKfv4wssYnbgBdLy8=
 github.com/logrusorgru/aurora v0.0.0-20200102142835-e9ef32dff381/go.mod h1:7rIyQOR62GCctdiQpZ/zOJlFyk6y+94wXzv6RNZgaR4=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.6 h1:5ibWZ6iY0NctNGWo87LalDlEZ6R41TqbbDamhfG/Qzo=
