@@ -11,7 +11,8 @@ import (
 )
 
 func UpdateExhibitionHistory() {
-	exs, _, err := ioc.Repo.Exhibitions.List(0, 100, true, domain.EXHIBITION_LIVE, domain.EXHIBITION_TIMEDEAL, "")
+	onlyLive := true
+	exs, _, err := ioc.Repo.Exhibitions.List(0, 100, &onlyLive, domain.EXHIBITION_STATUS_ALL, domain.EXHIBITION_TIMEDEAL, "")
 	if err != nil {
 		config.Logger.Error("error on get live exhibitions : ", zap.Error(err))
 		return

@@ -31,15 +31,22 @@ func (repo *exhibitionRepo) Get(ID string) (*domain.ExhibitionDAO, error) {
 
 }
 
-func (repo *exhibitionRepo) List(offset, limit int, onlyLive bool, exhibitionStatus domain.ExhibitionStatus, exhibitionType domain.ExhibitionType, query string) ([]*domain.ExhibitionDAO, int, error) {
+// List :
+// isLive(nullable) is only working when exhibitionStatus is domain.EXHIBITION_STATUS_ALL
+// so if exhibitionStatus field is not domain.EXHIBITION_STATUS_ALL, recommend to set isLive field to nil value
+func (repo *exhibitionRepo) List(offset, limit int, isLive *bool, exhibitionStatus domain.ExhibitionStatus, exhibitionType domain.ExhibitionType, query string) ([]*domain.ExhibitionDAO, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
 
 	now := primitive.NewDateTimeFromTime(time.Now())
 	filter := bson.M{
 		"exhibitiontype": exhibitionType,
-		"islive":         onlyLive,
 	}
+
+	if isLive != nil {
+		filter["islive"] = &isLive
+	}
+
 	sortingOptions := bson.D{{Key: "starttime", Value: -1}}
 	onGoingOptions := options.Find()
 	onGoingOptions.SetSkip(int64(offset))

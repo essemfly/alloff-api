@@ -11,7 +11,8 @@ import (
 )
 
 func AddSizeGuide(sizeGuide []domain.SizeGuideDAO) {
-	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 1000, false, domain.EXHIBITION_STATUS_ALL, domain.EXHIBITION_TIMEDEAL, "")
+	onlyLive := true
+	exhibitions, _, _ := ioc.Repo.Exhibitions.List(0, 1000, &onlyLive, domain.EXHIBITION_STATUS_ALL, domain.EXHIBITION_TIMEDEAL, "")
 
 	liveBrands := []string{}
 	for _, exhibition := range exhibitions {

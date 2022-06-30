@@ -78,12 +78,12 @@ func (r *queryResolver) Exhibitions(ctx context.Context, input model.ExhibitionI
 	}
 
 	// only live
-	liveDaos, liveCnt, err := ioc.Repo.Exhibitions.List(offset, limit, false, domain.EXHIBITION_LIVE, domain.EXHIBITION_TIMEDEAL, query)
+	liveDaos, liveCnt, err := ioc.Repo.Exhibitions.List(offset, limit, nil, domain.EXHIBITION_LIVE, domain.EXHIBITION_TIMEDEAL, query)
 	if err != nil {
 		return nil, err
 	}
 	// not open
-	notOpenDaos, notOpenCnt, err := ioc.Repo.Exhibitions.List(offset, limit, false, domain.EXHIBITION_NOTOPEN, domain.EXHIBITION_TIMEDEAL, query)
+	notOpenDaos, notOpenCnt, err := ioc.Repo.Exhibitions.List(offset, limit, nil, domain.EXHIBITION_NOTOPEN, domain.EXHIBITION_TIMEDEAL, query)
 	if err != nil {
 		return nil, err
 	}
